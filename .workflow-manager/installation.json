@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "workflow_version": "2.5.1",
+  "profile": "full",
+  "upstream": {
+    "repository": "repflow-android",
+    "tag": "workflow-v2.3.1",
+    "commit": "1f954fbb6c689ec690fefe5a2f27b1e4a0ca6db6"
+  },
+  "provenance": {
+    "origin": "authored",
+    "base_release": "2.5.0",
+    "overlay_commit": "0fa3222793173922fa1b095aaa416dcd58dba2e7"
+  },
+  "installed_at": "2026-09-26T22:54:33Z",
+  "updated_at": "2026-09-26T22:54:33Z",
+  "managed": {
+    ".claude/commands/accept-milestone.md": {
+      "sha256": "ddf2f49aacd802d831602ac89673a4bba1d65960d4acad13fdad1578d5feff0a",
+      "executable": false
+    },
+    ".claude/commands/apply-functional-review.md": {
+      "sha256": "a29cb42921d9ecadb9cfbc995896ece1a1348d4835eb2619aa385879c3cb21aa",
+      "executable": false
+    },
+    ".claude/commands/apply-implementation-review.md": {
+      "sha256": "fd47b646eeb4d557e51f42c6fc39d8393490cd1496a5093f47c8f1d558c4c1b4",
+      "executable": false
+    },
+    ".claude/commands/apply-plan-review.md": {
+      "sha256": "3182ff9a6239e3c4787fc3d0410a5f23daa56df26489c8588e7f71cfaa721a82",
+      "executable": false
+    },
+    ".claude/commands/approve-review.md": {
+      "sha256": "0ff381aa856ac7a8a0d30c66cbb8204b376922599ae74aa1c02002cafb70a034",
+      "executable": false
+    },
+    ".claude/commands/bootstrap-workflow-v2.md": {
+      "sha256": "01d5873ba807e78f0d0618eb944246783cb3827fe3e31ad253e0158f879e5cae",
+      "executable": false
+    },
+    ".claude/commands/milestone-implement.md": {
+      "sha256": "937cd2b0fd75e87df4317a9567397294c2ff11c555974704387228745b58276f",
+      "executable": false
+    },
+    ".claude/commands/milestone-plan.md": {
+      "sha256": "90cb51b7c0a45fefeeb19b9d300bf7d93f86e167130c4def9df6a852a725f525",
+      "executable": false
+    },
+    ".claude/commands/prepare-functional-review.md": {
+      "sha256": "49480af8183c0f194131018fe0fc1b1296762e734252de5a5cce90f9f8046921",
+      "executable": false
+    },
+    ".claude/commands/prepare-review.md": {
+      "sha256": "236a91d16478fa78f6afcb2033f30fdc67dbf11ae4099662a1e2228bbf679de2",
+      "executable": false
+    },
+    ".claude/commands/record-manual-implementation-review.md": {
+      "sha256": "26feba9273dede6758b7aed8bbbd984910aa2e7bf10500fd8ff82c3d9ddc68ae",
+      "executable": false
+    },
+    ".claude/commands/record-manual-plan-review.md": {
+      "sha256": "63d567f98bf70a39e5b1626fdf0aef37a73725a5bba065f39cf623e9c541995c",
+      "executable": false
+    },
+    ".claude/commands/recover-implementation-provenance.md": {
+      "sha256": "5274aaeeaf340b4f2a8bf3cfc529b1baba4580f78b4e1cd416e795ce811e41fe",
+      "executable": false
+    },
+    ".claude/commands/request-plan-amendment.md": {
+      "sha256": "ce96bcd8ed24f1989666f50a6047d5b1e97fcfbcd09bf63778520397032c58fc",
+      "executable": false
+    },
+    ".claude/commands/review-functional.md": {
+      "sha256": "c373a7eb795e433627345b2b098b36a0c1020ddf4f80f804347b58d0ebb207af",
+      "executable": false
+    },
+    ".claude/commands/review-implementation.md": {
+      "sha256": "df6de5ba869bfee1e6fc31cf7a07932fecb66dbb36b55a906d8d0d4b831caf62",
+      "executable": false
+    },
+    ".claude/commands/review-plan.md": {
+      "sha256": "37d2896320c30e3039e69bd9499c88dd6d60e97bfb1189af7d35737719a831a2",
+      "executable": false
+    },
+    ".github/workflows/workflow-conformance.yml": {
+      "sha256": "81691f4cbef328679c29e14790892f81cfc4f21223f1afbb01cf92749bb5c321",
+      "executable": false
+    },
+    "docs/ai-workflow/IMPLEMENTATION_REVIEW_WORKFLOW.md": {
+      "sha256": "55a6c02d1d0149222f8813224d86053fc541e65d5fe07d701fea57ceb2e00285",
+      "executable": false
+    },
+    "docs/ai-workflow/MILESTONE_WORKFLOW.md": {
+      "sha256": "e16f83129ca11800adeb7da2cb14339ddc54f119e6bb94fc475dcc5cd1859551",
+      "executable": false
+    },
+    "docs/ai-workflow/PLAN_REVIEW_WORKFLOW.md": {
+      "sha256": "02785fd6ffa36157a59e3b292b8c8e878179ddb84dfebbb802ec93e204948748",
+      "executable": false
+    },
+    "docs/ai-workflow/REVIEW_PROTOCOL.md": {
+      "sha256": "706922bf4e0913ed0162a87c5591ec6a78d43798d22d33b7eb2eb8d036559562",
+      "executable": false
+    },
+    "docs/ai-workflow/WORKFLOW_V2_1_OPERATOR_REFERENCE.md": {
+      "sha256": "c449d7e475d2a62a9c43148e712de6b47d605f238ba38bc57be5f24a8fb683fc",
+      "executable": false
+    },
+    "docs/ai-workflow/WORKFLOW_V2_3_FOLLOWUPS.md": {
+      "sha256": "ea6dd9def5dc0ad8e43fe7f61e5b24c0fc8f857fc03273a64637ac9d3779bbda",
+      "executable": false
+    },
+    "docs/ai-workflow/WORKFLOW_V2_3_FOLLOWUPS_PLAN.md": {
+      "sha256": "25976089c90f39fbb29e60eb89ae1f2c780b9e8d16d49fcc261734dadf0ea36f",
+      "executable": false
+    },
+    "docs/ai-workflow/WORKFLOW_V2_3_PLAN.md": {
+      "sha256": "45f76fafe4acff505b69bb781fd5b519a0a53ec4e223e740b18829ba66bf140e",
+      "executable": false
+    },
+    "docs/ai-workflow/WORKFLOW_V2_AUDIT.md": {
+      "sha256": "c22189056a1279fc04d2c9821b807b9eeec2cd710d824f6c1c67e17bde33c200",
+      "executable": false
+    },
+    "docs/ai-workflow/WORKFLOW_V2_PLAN.md": {
+      "sha256": "ba0350454c6709e2d61acf4999f6b98d4633adcc35c5adcd2eeca0f96dfe52ac",
+      "executable": false
+    },
+    "docs/ai-workflow/audit/WORKFLOW_ACCEPTANCE_MATRIX.md": {
+      "sha256": "c7ef00279bc59029781200600c2ab3e2d8b1d184057d1472bea5d07cfda226f1",
+      "executable": false
+    },
+    "docs/ai-workflow/audit/WORKFLOW_DEFECT_LEDGER.md": {
+      "sha256": "436b3894e21fa015cc8d08b4f9424f2857a3e055cf295d551138fa374aa61210",
+      "executable": false
+    },
+    "docs/ai-workflow/audit/WORKFLOW_REPAIR_PLAN.md": {
+      "sha256": "22b28d4d4122614a56c9380e436241d887d626895d6e4e42f123ae357d58d3d2",
+      "executable": false
+    },
+    "docs/ai-workflow/audit/WORKFLOW_SYSTEM_AUDIT.md": {
+      "sha256": "1c13670b5d9959a195e51993815bee738574ecfbfa01db6c0ec8e5a55c209ec3",
+      "executable": false
+    },
+    "docs/ai-workflow/diagrams/workflow-v2-1-lifecycle.drawio.svg": {
+      "sha256": "83ab006005b7bbdfe8a782aa0ba90461a4c364a859e39177e91e1ce8dc414edd",
+      "executable": false
+    },
+    "docs/ai-workflow/dry-run/verify_372h_lock_primitive_predicate.py": {
+      "sha256": "11f534c470b571e22ffcda1ee933808f463529a1a6c1b306fa4d31a3dc307027",
+      "executable": false
+    },
+    "docs/ai-workflow/dry-run/verify_372h_raw_edge_derivation.py": {
+      "sha256": "0a47dc57e8975a07af0af60a0a8a1afa65d3bf0d287d6066a1398c0bb42d6a0c",
+      "executable": false
+    },
+    "docs/ai-workflow/registry/workflow-v2-1-core-artifacts.json": {
+      "sha256": "d1d84a8d79d59a63d8bf58ce211b0f30d11f9504a377392923b7e8f7089a7cbc",
+      "executable": false
+    },
+    "docs/ai-workflow/registry/workflow-v2-1-core-ledger-status.json": {
+      "sha256": "e0539bac86adb686c2ebb7da0641c0cdaa1008829b02ba7f045597da7b352700",
+      "executable": false
+    },
+    "docs/ai-workflow/registry/workflow-v2-1-core-registry.json": {
+      "sha256": "36d06bc5dbc5be4cf06f37e8749938d41e9066a2f2f44fc8b1d22e429e27fd2e",
+      "executable": false
+    },
+    "docs/ai-workflow/registry/workflow-v2-1-core-wf8c-evidence.json": {
+      "sha256": "08fc355a3b5056d25a9d10c08cc464333dcc12dcad2f8cd67e7c3ab149114601",
+      "executable": false
+    },
+    "docs/ai-workflow/registry/workflow-v2-3-artifacts.json": {
+      "sha256": "514841e31d57d61e87810bdc60bcb2f1e79f2e785b2a7a600b98ffb40fecb08c",
+      "executable": false
+    },
+    "docs/ai-workflow/registry/workflow-v2-3-followups-artifacts.json": {
+      "sha256": "dd2f6bcb17cfdaec225d5ca72e38fd218e5efce0f13e447e8ec3b772cf6a564a",
+      "executable": false
+    },
+    "docs/ai-workflow/registry/workflow-v2-3-followups-registry.json": {
+      "sha256": "6989b811b74da3def10f7356980fe277bc653b06767d3be66377a642b457f5cb",
+      "executable": false
+    },
+    "docs/ai-workflow/registry/workflow-v2-3-registry.json": {
+      "sha256": "3a05f072f191863f3b20487d5f2fd99e55c83f4d068fa72b5e42b6c3ead50507",
+      "executable": false
+    },
+    "docs/ai-workflow/requirements/workflow-v2-1-core-ledger.md": {
+      "sha256": "62c08de1fd09c71a79477c7841baba618e3a9c011b51232c612cfc51e9c4a7e0",
+      "executable": false
+    },
+    "docs/ai-workflow/requirements/workflow-v2-1-core-mapping.json": {
+      "sha256": "bb218fbf2a6d0cf2479b5930c4053d611ec10bfef2dd071bdcc92dd065f96fd4",
+      "executable": false
+    },
+    "docs/ai-workflow/requirements/workflow-v2-3-followups-ledger.md": {
+      "sha256": "1c17c24a1fc4d213fc5005f6a3f769c6f4300fb93a5a39cd997c08d211401fb6",
+      "executable": false
+    },
+    "docs/ai-workflow/requirements/workflow-v2-3-followups-mapping.json": {
+      "sha256": "2cfd39a864de9d64d7ebc2066c823f334f0ae1ccbf44a4e97d9039c415d99d22",
+      "executable": false
+    },
+    "docs/ai-workflow/requirements/workflow-v2-3-ledger.md": {
+      "sha256": "ed727b3d77d83d9db1afb6983c0acc95b0040eb525b5fde85229d77ac986725d",
+      "executable": false
+    },
+    "docs/ai-workflow/requirements/workflow-v2-3-mapping.json": {
+      "sha256": "91815da7a4cb5c8b88f1f844bc966869b872cd848a6267d5e76985ef1ac76351",
+      "executable": false
+    },
+    "scripts/prepare-ai-review.sh": {
+      "sha256": "902c3be9b5ff54228c5635d044828af618246d6ccca81df856eac271bf495c5e",
+      "executable": true
+    },
+    "scripts/workflow_acceptance_matrix_test.py": {
+      "sha256": "5049f23916b5513bef467f8151ecbd92a8f6cb386ecee5f05664ffcbc4cb84a5",
+      "executable": false
+    },
+    "scripts/workflow_fingerprint.py": {
+      "sha256": "212f30021551010772a3a6cf3d5a9c7ae50b8a33d7a41e5d5e9601703007ed9a",
+      "executable": true
+    },
+    "scripts/workflow_fingerprint_demo_test.py": {
+      "sha256": "9c43e363d29ce317d82b29cd30debf1f926bd2575980d1e28094fd62f3a31e9e",
+      "executable": false
+    },
+    "scripts/workflow_fingerprint_generalization_test.py": {
+      "sha256": "857734878cb35ddc4c5671de543387012a884c3d12ea03d4b3890d0abe666eef",
+      "executable": false
+    },
+    "scripts/workflow_fingerprint_test.py": {
+      "sha256": "9004afc891728db11684a8f4349048f57186374dd486c2f91cc370e67f5f5ccb",
+      "executable": false
+    },
+    "scripts/workflow_integration_test.py": {
+      "sha256": "b313349388b6c471f891b24376d1091073b85f9680a832904b9cd8ca9a9e7cee",
+      "executable": false
+    },
+    "scripts/workflow_state.py": {
+      "sha256": "1d13718567e194c9aea0be0d8f4e54656aa6146c539ee8556e558158f73be2a1",
+      "executable": false
+    },
+    "scripts/workflow_state_completion_obligations_test.py": {
+      "sha256": "3adb03f2954a49bac1a339a5c3015c3dffa30984d4589cd5ee55f85bac22c8fd",
+      "executable": false
+    },
+    "scripts/workflow_state_demo_test.py": {
+      "sha256": "6bd862aab93a0ec152ac3c861a436768431dcb1c62fef5de61ba19fd756d2d33",
+      "executable": false
+    },
+    "scripts/workflow_state_test.py": {
+      "sha256": "7daf67a7c46a3df4b279152e89a691dbaf4edd7c170c1237697c5ccff87eafba",
+      "executable": false
+    },
+    "scripts/workflow_test_harness.py": {
+      "sha256": "1a280bbc32ced3e18c39c4dcb130c40caf3c0bf1625ec35f9b0786b4644e5a75",
+      "executable": false
+    },
+    "scripts/workflow_test_harness_test.py": {
+      "sha256": "c142275c2895b1494a81509f99dde029097abffc425c54b948376282844ece51",
+      "executable": false
+    }
+  },
+  "generated": {
+    "docs/ACTIVE_MILESTONE.md": {
+      "sha256": "b71380281ba969b6c3c1a85e92270eba5509b68712f7dbb0b83516a5a2d3d1ea",
+      "source": "template"
+    },
+    "docs/ai-workflow/WORKFLOW_CONFIG.json": {
+      "sha256": "fedcad75b5b96e2ee39f1e3e128fadab455423a6ae346c85c5fe5537c1766012",
+      "source": "template"
+    },
+    "docs/ai-workflow/WORKFLOW_STATE.json": {
+      "sha256": "96067f314db85bc732594120938b5fa67a95c95afd9d7659f5d5b5edca549303",
+      "source": "template"
+    }
+  },
+  "merged": {
+    ".gitignore": {
+      "fragment_sha256": "28066c4d838134518b08ed39ecc5762f116970153522bf2eaa26dd3c04075b12",
+      "action": "created"
+    },
+    "CLAUDE.md": {
+      "managed_section_sha256": "28cdb75d9bc444f16d0cfa22f9d582208e1621ff6ee3b376efa90bb6d2332b86",
+      "action": "created"
+    }
+  }
+}
