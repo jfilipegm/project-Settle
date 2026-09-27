@@ -36,7 +36,7 @@ Guiding principles:
 
 | #  | Milestone                                   | Status      |
 |----|---------------------------------------------|-------------|
-| M0 | Project foundation                          | Not started |
+| M0 | Project foundation                          | Complete    |
 | M1 | Bill splitter (manual entry)                | Not started |
 | M2 | Receipt upload and built-in parsing         | Not started |
 | M3 | Bring-your-own-key receipt reading          | Not started |
@@ -51,7 +51,8 @@ Guiding principles:
 
 ## M0 — Project foundation
 
-**Status:** Not started
+**Status:** Complete (accepted 2026-09-27; PR #1). Plan archived at
+`docs/milestones/completed/milestone-0-PLAN.md`.
 
 **Goal:** An empty but deployable app skeleton with tooling in place.
 
@@ -90,6 +91,11 @@ split math and the UI right before OCR adds uncertainty.
 - "Who owes what" dashboard: per-person total, item breakdown, and who owes
   whom (one payer by default).
 - Export or share the result (copy as text; image or PDF optional).
+- Region setting: the user can change the locale (number format) and the
+  currency used to enter and show amounts. The default is `pt-PT` / `EUR`
+  (decided in M0). This is the Settings page's first real section.
+  `parseAmount` accepts only `€` today, so its symbol set grows with the
+  currencies offered; `formatAmount` already takes a locale and currency.
 
 **Done when**
 - Unit tests cover the split math, including rounding, shared items, tax,
@@ -383,6 +389,14 @@ usable.
 
 ### Tech stack (to decide in M0)
 
+**Decided in M0** (`docs/adr/0001-web-app-tech-stack.md`): TypeScript +
+React + Vite, with npm as the package manager and path-based routes
+(`/split`, not `/#/split`). Path routes need a host that serves the site
+at `/` and rewrites unknown paths to `index.html`. Node comes from the
+system package (Node 24 LTS, matching `app/.nvmrc`).
+
+The original suggestion, for reference:
+
 Suggested: **TypeScript + React + Vite**, SheetJS or ExcelJS for `.xlsx`,
 a chart library (e.g. Recharts or ECharts), and PWA support via
 `vite-plugin-pwa`. This keeps one codebase for web and a later Capacitor
@@ -390,7 +404,9 @@ app. Alternatives (Next.js, SvelteKit, Flutter) are worth considering.
 
 ### Other open questions
 
-- Default currency and locale (EUR, with `,` as the decimal separator?).
+- ~~Default currency and locale~~ **Decided in M0:** `pt-PT` / `EUR` by
+  default (`,` decimal separator), and changeable by the user (M1 scope,
+  "Region setting").
 - Should dashboards support several people in one household file, or is it
   one file per person?
 - Hosting target for the web app (a static host is enough until M9, or

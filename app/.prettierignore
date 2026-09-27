@@ -1,0 +1,3 @@
+# npm writes short os/cpu arrays across several lines; Prettier would reflow
+# them and fail format:check on every install.
+package-lock.json

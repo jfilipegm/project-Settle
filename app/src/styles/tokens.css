@@ -1,0 +1,71 @@
+/*
+ * Design tokens. The light palette is the default; the dark palette applies
+ * when the system prefers dark, unless the user forced light. A forced mode
+ * is data-theme="light" | "dark" on <html>, set by src/app/theme.ts and,
+ * before first paint, by public/theme-init.js.
+ *
+ * The two dark blocks must stay identical, and --color-surface must match
+ * THEME_COLORS in src/app/theme.ts: tokens.test.ts checks both.
+ */
+
+:root {
+  color-scheme: light;
+
+  --color-bg: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-text: #1b1e24;
+  --color-text-muted: #5b616e;
+  --color-border: #d5d9e0;
+  --color-accent: #2553c9;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-full: 999px;
+
+  --font-family-base:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --line-height-tight: 1.2;
+  --line-height-base: 1.5;
+
+  --gutter: 1rem;
+  --content-max-width: 60rem;
+  --header-height: 3.5rem;
+  --tab-bar-height: 3.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+
+    --color-bg: #111318;
+    --color-surface: #1b1e25;
+    --color-text: #e7e9ee;
+    --color-text-muted: #a4abb8;
+    --color-border: #353a46;
+    --color-accent: #8db0ff;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-bg: #111318;
+  --color-surface: #1b1e25;
+  --color-text: #e7e9ee;
+  --color-text-muted: #a4abb8;
+  --color-border: #353a46;
+  --color-accent: #8db0ff;
+}
