@@ -14,7 +14,7 @@
 | M1-CP2 | Split engine | Complete |
 | M1-CP3 | Bill state and local draft | Complete |
 | M1-CP4 | Split page UI | Complete |
-| M1-CP5 | READMEs, home page and end-to-end test | Not started |
+| M1-CP5 | READMEs, home page and end-to-end test | Complete |
 
 ### M1-CP1 — verified state
 
@@ -120,10 +120,35 @@
 - Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`,
   `vitest run` (376 tests) and `npm run build` pass.
 
+### M1-CP5 — verified state
+
+- `README.md` (root, new): what project-W is, what works today (the bill
+  splitter, the Region setting, themes), how to try it locally (no
+  hosted version yet), privacy (browser storage only; "New bill" clears
+  the bill), and the roadmap and releases.
+- `app/README.md`: the layout now shows `features/split/`, the money
+  section covers `parseAmount`'s currency, `allocateExact`, `percentOf`
+  and the engine's three rounding points, and a new "Browser storage"
+  table lists the three keys.
+- `app/src/pages/HomePage.tsx`: "Coming soon." replaced by a short
+  description and a "Split a bill" link (router test added).
+- `app/src/pages/SplitPage.e2e.test.tsx`: a 12-item Portuguese restaurant
+  receipt for Ana, Rui and Maria, typed through the UI, with shared
+  items, a 2 : 1 wine share, a 10 % proportional tip and 5,00 € off.
+  The totals (32,21 / 32,21 / 30,79 € of 95,21 €) were computed by hand
+  with exact fractions, independently of the engine. The test also
+  checks the summary, the settle-up and the copied text.
+- The e2e test exposed a real accessibility defect: every item's share
+  steppers had the same names. They now name the item ("Increase Ana's
+  share of Vinho da casa").
+- Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`,
+  `vitest run` (378 tests) and `npm run build` pass.
+
 ## Next action
 
-`/milestone-implement` for M1-CP5 (READMEs, home page and end-to-end
-test).
+All five checkpoints are complete. `/milestone-implement` again for the
+self-review, the full verification and the implementation review
+bundle.
 
 ## Last completed: M0 — Project foundation
 

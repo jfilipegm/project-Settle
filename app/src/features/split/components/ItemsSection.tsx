@@ -226,8 +226,8 @@ function ItemRow({
                   value={assignment.weight}
                   min={1}
                   max={LIMITS.maxShare}
-                  decreaseLabel={`Decrease ${who}'s share`}
-                  increaseLabel={`Increase ${who}'s share`}
+                  decreaseLabel={`Decrease ${who}'s share of ${itemName(item, index)}`}
+                  increaseLabel={`Increase ${who}'s share of ${itemName(item, index)}`}
                   error={error(field)}
                   onChange={(weight) => {
                     dispatch({

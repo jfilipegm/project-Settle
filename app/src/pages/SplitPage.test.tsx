@@ -160,7 +160,9 @@ describe('Split page', () => {
 
     fireEvent.click(chip('Person 2'))
     fireEvent.click(
-      screen.getByRole('button', { name: "Increase Person 1's share" }),
+      screen.getByRole('button', {
+        name: "Increase Person 1's share of Item 1",
+      }),
     )
     expect(totals()).toEqual(['Person 1 6,67 €', 'Person 2 3,33 €'])
   })
@@ -305,7 +307,9 @@ describe('Split page', () => {
 
     fireEvent.click(screen.getByText('Shares', { selector: 'summary' }))
     fireEvent.click(
-      screen.getByRole('button', { name: "Increase Person 1's share" }),
+      screen.getByRole('button', {
+        name: "Increase Person 1's share of Item 1",
+      }),
     )
     type('Item 1 Unit price', '4,00')
     expect(totals()).toEqual(['Person 1 4,00 €', 'Person 2 0,00 €'])

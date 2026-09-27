@@ -46,9 +46,13 @@ app/
 │   └── icons/            SVG sources and the PNGs rendered from them
 └── src/
     ├── main.tsx          Entry point: global styles, then <App />
-    ├── App.tsx           The router
-    ├── app/              Shell: routes, layout, theme
+    ├── App.tsx           The region provider and the router
+    ├── app/              Shell: routes, layout, theme, region
     ├── pages/            One component per route
+    ├── features/
+    │   └── split/        The bill splitter: model and validation,
+    │       │             the split engine, bill reducer, saved draft
+    │       └── components/  The Split page's sections and inputs
     ├── lib/              Framework-free logic (money.ts)
     ├── styles/           Design tokens and global CSS
     └── test/             Test setup and helpers
@@ -64,9 +68,35 @@ Tests sit next to the code they cover, as `*.test.ts(x)`.
 `toFixed` or your own rounding. If `money.ts` lacks what you need, add it
 there, with tests.
 
+- `parseAmount(input, locale, currency)` reads typed amounts in the user's
+  Region: the locale's separators and the currency's symbols (`€`, `£`,
+  `US$` or `$`). `formatAmount` shows them.
+- `allocate` and `allocateExact` split a total by weights with the
+  largest-remainder method, exactly. `allocateExact` takes BigInt weights
+  of any size.
+- `multiplyRatio` and `percentOf` apply exact quantities and percentages,
+  rounding half away from zero.
+
+The split engine (`src/features/split/split.ts`) rounds in exactly three
+places: each line total, each percentage adjustment, and one allocation of
+the bill total over everyone's exact share. Its algorithm is specified in
+[`docs/milestones/milestone-1-PLAN.md`](../docs/milestones/milestone-1-PLAN.md)
+("Split algorithm").
+
+## Browser storage
+
+Each key is validated when read, and anything unreadable falls back to a
+default:
+
+| Key                | Holds                                             |
+| ------------------ | ------------------------------------------------- |
+| `project-w.theme`  | The theme mode.                                   |
+| `project-w.region` | `{ locale, currency }`.                           |
+| `project-w.bill`   | The bill being edited, as `{ version: 1, bill }`. |
+
 ## Hosting
 
-M0 deploys nowhere, but the build assumes a host that:
+The app isn't deployed yet, but the build assumes a host that:
 
 - serves the site at the domain root, `/` (Vite `base: '/'` and the
   manifest's `start_url: "/"`), and

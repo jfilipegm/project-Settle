@@ -53,6 +53,20 @@ describe('routes', () => {
     },
   )
 
+  it('links from the home page to the split page', () => {
+    renderAt('/')
+
+    fireEvent.click(
+      within(screen.getByRole('main')).getByRole('link', {
+        name: 'Split a bill',
+      }),
+    )
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Split a bill' }),
+    ).toBeInTheDocument()
+  })
+
   it('renders the split page at /split', () => {
     renderAt('/split')
 
