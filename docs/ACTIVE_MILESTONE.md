@@ -12,7 +12,7 @@
 |----|------|--------|
 | M1-CP1 | Money extensions + Region setting | Complete |
 | M1-CP2 | Split engine | Complete |
-| M1-CP3 | Bill state and local draft | Not started |
+| M1-CP3 | Bill state and local draft | Complete |
 | M1-CP4 | Split page UI | Not started |
 | M1-CP5 | READMEs, home page and end-to-end test | Not started |
 
@@ -63,12 +63,34 @@
 - Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`
   and `vitest run` (318 tests) pass.
 
+### M1-CP3 — verified state
+
+- `app/src/features/split/billReducer.ts`: a pure reducer with every
+  action the plan lists. Actions that create people or items carry
+  their ids (`newId()` = `crypto.randomUUID()`, made by the
+  dispatcher), so the reducer stays deterministic. New people are
+  stored unnamed and shown as "Person n" (`displayName`), rather than
+  storing the text "Person 3". The people count is clamped to 1–20 and
+  items stop at 100. Removing a person drops their assignments and
+  moves the payer to the first remaining person; the last person can't
+  be removed.
+- O-8 / O-EXT-1 applied: `createBill` (a fresh bill, and `newBill`)
+  starts with two unnamed people and one empty item assigned to both.
+  That bill is valid, so a fresh Split page shows zeros instead of a
+  validation error.
+- `app/src/features/split/draft.ts`: `loadDraft` rebuilds the bill from
+  known fields and rejects a wrong version, a bad shape or bad
+  references (via `validateBill`'s `invalidReference` errors). Range
+  errors load as they are, for the editor to show. `saveDraft`
+  overwrites the draft, so "New bill" replaces it with the fresh bill.
+- `app/src/features/split/useBill.ts`: `useReducer` initialised from the
+  draft (or a fresh bill), saved after every change.
+- Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`
+  and `vitest run` (361 tests) pass.
+
 ## Next action
 
-`/milestone-implement` for M1-CP3 (bill state and local draft).
-
-Open review note to handle in CP3/CP4 (O-8 / O-EXT-1): the new-bill
-starting state, so a fresh bill doesn't open on a validation error.
+`/milestone-implement` for M1-CP4 (Split page UI).
 
 ## Last completed: M0 — Project foundation
 
