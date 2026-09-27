@@ -36,7 +36,7 @@ Guiding principles:
 
 | #  | Milestone                                   | Status      |
 |----|---------------------------------------------|-------------|
-| M0 | Project foundation                          | Not started |
+| M0 | Project foundation                          | Complete    |
 | M1 | Bill splitter (manual entry)                | Not started |
 | M2 | Receipt upload and built-in parsing         | Not started |
 | M3 | Bring-your-own-key receipt reading          | Not started |
@@ -51,7 +51,8 @@ Guiding principles:
 
 ## M0 — Project foundation
 
-**Status:** Not started
+**Status:** Complete (accepted 2026-09-27; PR #1). Plan archived at
+`docs/milestones/completed/milestone-0-PLAN.md`.
 
 **Goal:** An empty but deployable app skeleton with tooling in place.
 
