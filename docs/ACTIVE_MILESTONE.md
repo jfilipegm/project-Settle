@@ -3,7 +3,9 @@
 ## Milestone
 
 **M1 — Bill splitter (manual entry)** (work item `milestone-1`), phase
-`IMPLEMENTING`. Plan revision 3, approved in commit `3720792`. Branch
+`AWAITING_FUNCTIONAL_REVIEW`. Plan revision 3, approved in commit
+`3720792`. Implementation revision 2, technically approved in `163f344`
+(external review round 1 REVISE, then APPROVE). Branch
 `feature/milestone-1`, PR #4.
 
 ## Checkpoints
@@ -144,11 +146,20 @@
 - Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`,
   `vitest run` (378 tests) and `npm run build` pass.
 
+### Implementation review
+
+- Self-review fixes (`554d14a`): the line total can no longer throw on a
+  saved draft with an out-of-range price, and people with no items get
+  no zero tax or tip lines.
+- External review round 1 (REVISE): B-EXT-1, an explicit timeout for the
+  e2e test that timed out on CI (`0c0cf17`); B-EXT-2, "New bill" now
+  resets the tax, tip and discount inputs (`9bd19f5`). Round 2: APPROVE.
+
 ## Next action
 
-All five checkpoints are complete. `/milestone-implement` again for the
-self-review, the full verification and the implementation review
-bundle.
+Manual functional review: the checklist below. Findings go to
+`.ai-review/feedback/FUNCTIONAL_REVIEW.md`. When testing is clean, run
+`/accept-milestone`.
 
 ## Last completed: M0 — Project foundation
 
@@ -194,9 +205,147 @@ at `docs/milestones/completed/milestone-0-PLAN.md`.
 
 ## Functional review checklist
 
-Empty. `/prepare-functional-review` writes the numbered checklist for the
-active work item into this section; `/apply-functional-review` and
-`/accept-milestone` read it back from here.
+M1 functional review, implementation revision 2. Report findings in
+`.ai-review/feedback/FUNCTIONAL_REVIEW.md`: the item number, what you
+did, what you saw, and what you expected.
+
+**Setup**
+
+- From `app/`: `npm ci`, then `npm run dev` and open
+  http://localhost:5173. (Item 10 can use `npm run build && npm run
+  preview` at http://localhost:4173 instead.)
+- Use a Chromium browser. DevTools' device toolbar (Ctrl+Shift+M) sets
+  the width.
+- Start clean: in DevTools → Application → Local storage, delete
+  `project-w.bill` and `project-w.region` (or use a private window).
+- Amounts below are typed in the default Portuguese format (`12,50`).
+  Totals are shown like `32,21 €`.
+
+**Checklist**
+
+1. **Home page.** Open `/`.
+   *Expected:* "Coming soon." is gone. There's a short description and a
+   "Split a bill" link, which opens the Split page.
+2. **A fresh bill.** Open Split.
+   *Expected:* two people (placeholders "Person 1", "Person 2"), one
+   empty item shared by both, and "Who owes what" showing `0,00 €` for
+   each person, with no error.
+3. **A real 12-item receipt for 3 people** (M1's "Done when"). Click
+   "+" once for 3 people, name them Ana, Rui and Maria, and leave Ana as
+   the payer. Enter these items (quantity 1 unless noted), setting "Shared
+   by" with the chips:
+
+   | # | Name | Qty | Unit price | Shared by |
+   |---|------|-----|-----------|-----------|
+   | 1 | Bacalhau à Brás | 1 | 14,50 | Ana |
+   | 2 | Bitoque | 1 | 12,90 | Rui |
+   | 3 | Polvo à lagareiro | 1 | 18,50 | Maria |
+   | 4 | Salada mista | 1 | 4,50 | all three |
+   | 5 | Pão e azeitonas | 1 | 3,20 | all three |
+   | 6 | Vinho da casa | 1 | 12,00 | Ana and Rui, **Ana's share 2** (Shares → +) |
+   | 7 | Água | 1 | 2,80 | Maria |
+   | 8 | Sumo de laranja | 2 | 3,20 | Rui |
+   | 9 | Batatas fritas | 1 | 3,90 | Rui and Maria |
+   | 10 | Arroz de tomate | 1 | 5,50 | Ana and Maria |
+   | 11 | Café | 3 | 0,90 | all three |
+   | 12 | Pudim | 1 | 4,20 | Ana and Rui |
+
+   Then set Tip → Percentage `10` (by what each person had), and Discount
+   amount `5,00`.
+   *Expected:*
+   - "Add item" puts the cursor in the new item's name.
+   - The line totals show 6,40 € for item 8 and 2,70 € for item 11.
+   - Items subtotal **91,10 €**, Tip 9,11 €, Discount −5,00 €, Bill total
+     **95,21 €**.
+   - **Ana 32,21 €, Rui 32,21 €, Maria 30,79 €**, which sum to 95,21 €.
+   - Settle up: "Rui owes Ana 32,21 €" and "Maria owes Ana 30,79 €".
+   - Each person's Breakdown lists their items, tip and discount, adding
+     up exactly to their total, with the note about rounding within your
+     total.
+4. **Copy as text.** On that bill, click "Copy as text" and paste into a
+   text editor.
+   *Expected:* the "Copied." message appears. The text has the bill
+   total, each person's total, and the two "owes" lines.
+5. **Saved on this device.** Reload the page (F5).
+   *Expected:* the whole bill from item 3 is still there, with the same
+   result. The note under "New bill" says it's saved on this device.
+6. **New bill.** Click "New bill" and choose Cancel, then click it again
+   and choose OK.
+   *Expected:* Cancel keeps everything. OK gives a fresh bill (item 2's
+   state). The Tax, Tip and Discount fields are all empty again and
+   switched back to Amount. A reload keeps the fresh bill.
+7. **Fairness.** On a fresh bill, set 3 people. Add items until there
+   are 10, each priced `1,00` and shared by all three.
+   *Expected:* the totals are **3,34 / 3,33 / 3,33 €**, not
+   3,40 / 3,30 / 3,30. In a breakdown, one item can show 0,34 € for each
+   person (1,02 € in all); the rounding note explains why.
+8. **Typing mistakes never change the result.** On any item with a price,
+   type each of these in turn into its Unit price.
+   *Expected:*
+   - `12,5,0` shows "Enter an amount, like 12,50".
+   - `12,505` shows "Use at most 2 decimal places".
+   - `-3` shows "Can't be negative".
+   - `1000000,01` shows "At most 1 000 000,00 €".
+   - The field keeps what you typed and turns red, and the totals don't
+     move while it's invalid.
+
+   In Quantity:
+   - `0` shows the "more than 0" message.
+   - `0,0001` shows "Use at most 3 decimal places".
+   - `1,0000` is accepted.
+9. **Errors instead of a result.** Deselect every chip on one item; then,
+   separately, set a Discount larger than the items subtotal.
+   *Expected:* "Who owes what" is replaced by "Fix these to see the
+   split" and a list ("Choose who shares this item", "The discount can't
+   be more than the items subtotal"). Each list entry is a link that
+   jumps to its field. Fixing the field brings the result back.
+10. **Payer, and people with no items.** On the item-3 bill, choose Rui
+    under "Who paid?". Then add a 4th person with no items.
+    *Expected:* the settle-up now says Ana and Maria owe Rui. The 4th
+    person pays 0,00 € with the tip "By what each person had". Switch the
+    tip to "Equally": they now pay a share of the tip, and the total is
+    still 95,21 €.
+11. **Region.** Settings → Region: set Number format "English (UK)" and
+    Currency "Pound sterling (£)".
+    *Expected:*
+    - The example shows `£1,234.56`, and the note says currency changes
+      don't convert amounts.
+    - On Split, amounts show as `£…` with `.` decimals.
+    - Typing `12.50` or `£12.50` is accepted, and `€12,50` shows the
+      invalid-amount error.
+    - After a reload the region is kept.
+    - Set it back to Portuguese / Euro when you're done.
+12. **Phone, tablet and dark mode.** Device toolbar at 360 × 640, then
+    768 px. Also switch the theme to Dark.
+    *Expected:*
+    - One column with no horizontal scrolling at 360 px.
+    - Every field and button is reachable, nothing hides behind the
+      bottom tab bar, and "See result" jumps to "Who owes what".
+    - Error text, chips and cards stay readable in dark mode.
+13. **Keyboard and screen-reader basics.** Use Tab only on the Split
+    page.
+    *Expected:*
+    - Every input, chip, stepper button and link can be reached, with a
+      visible focus ring.
+    - Space toggles a chip, and a pressed chip shows a ✓.
+    - Optional, with a screen reader: inputs announce e.g. "Item 1 Unit
+      price", chips announce pressed or not pressed, and share buttons
+      name their item ("Increase Ana's share of Vinho da casa").
+14. **CI on GitHub.** Open https://github.com/jfilipegm/project-W/pull/4.
+    *Expected:* `app`, `workflow-conformance` and `pr-title` are green.
+
+**Known limitations (not findings for M1)**
+
+- No receipt photos or OCR (M2/M3), no multiple payers, no negative line
+  items (use the discount), no currency conversion, no image/PDF export,
+  no bill history. There's one saved bill per device.
+- The discount is always split in proportion to what each person had,
+  and percentages are taken from the items subtotal. These are plan Open
+  questions 1 and 3, still yours to confirm.
+- Text you typed that isn't valid yet is lost when you change the Region
+  (the fields reload from the saved values).
+- In a breakdown, one item's shares across people can add up to a cent
+  or two more or less than its price. Each person's total is exact.
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is
