@@ -315,6 +315,25 @@ describe('Split page', () => {
     expect(totals()).toEqual(['Person 1 4,00 €', 'Person 2 0,00 €'])
   })
 
+  it('renders a saved draft whose line total would overflow', () => {
+    const bill = createBill(['p1', 'p2', 'i1'])
+    saveDraft({
+      ...bill,
+      items: [
+        {
+          ...bill.items[0]!,
+          unitPrice: 9_000_000_000_000_000 as never,
+          quantity: { numerator: 10, denominator: 1 },
+        },
+      ],
+    })
+
+    renderSplit()
+
+    expect(resultSection()).toHaveTextContent('Fix these to see the split')
+    expect(screen.getByText(/Line total/)).toHaveTextContent('—')
+  })
+
   it('asks before starting a new bill', () => {
     renderSplit()
     type('Item 1 Unit price', '10,00')

@@ -166,13 +166,14 @@ export function computeSplit(bill: Bill): SplitOutcome {
         }
       }
     })
-    if (tax > 0) {
+    // Tax and tip lines only for a person who pays part of them.
+    if ((taxD[p] ?? 0n) > 0n) {
       positive.push({
         line: { kind: 'tax', amount: 0 as Cents },
         weight: taxD[p] ?? 0n,
       })
     }
-    if (tip > 0) {
+    if ((tipD[p] ?? 0n) > 0n) {
       positive.push({
         line: { kind: 'tip', amount: 0 as Cents },
         weight: tipD[p] ?? 0n,

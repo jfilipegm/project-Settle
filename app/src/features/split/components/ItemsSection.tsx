@@ -4,7 +4,6 @@ import { formatAmount } from '../../../lib/money.ts'
 import { newId, type BillAction } from '../billReducer.ts'
 import {
   displayName,
-  isBillRatio,
   lineTotal,
   LIMITS,
   type Bill,
@@ -100,8 +99,14 @@ function ItemRow({
     ({ kind: 'item', itemId: item.id, part }) as const
   const error = (field: BillField) => fieldError(errors, field, bill, region)
   const assignedIds = new Set(item.assignees.map((a) => a.personId))
-  const lineIsValid =
-    isBillRatio(item.quantity) && Number.isSafeInteger(item.unitPrice)
+  // validateBill always range-checks both fields, so with no error on
+  // either the line total is safe to compute.
+  const lineIsValid = !errors.some(
+    ({ field }) =>
+      field.kind === 'item' &&
+      field.itemId === item.id &&
+      (field.part === 'quantity' || field.part === 'unitPrice'),
+  )
 
   return (
     <li className={styles.itemRow}>
