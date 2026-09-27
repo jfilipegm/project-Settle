@@ -15,12 +15,13 @@ cents through one shared, tested module.
 
 ## Current checkpoint
 
-None in progress. Next: `M0-CP2` (quality tooling).
+None in progress. Next: `M0-CP3` (money module); `M0-CP4` (app shell) is
+also unblocked.
 
 | Checkpoint | Status | Verified state |
 |---|---|---|
 | M0-CP1 — Stack ADR + Vite/React/TS scaffold in `app/` | Complete | `npm ci && npm run build` pass from `app/` (Node 24.21.0, npm 12.1.0, TypeScript 6.0.3, Vite 8.3.1). `npm run dev` served the placeholder page. ADR at `docs/adr/0001-web-app-tech-stack.md`. |
-| M0-CP2 — Quality tooling | Not started | — |
+| M0-CP2 — Quality tooling | Complete | `npm run check` (typecheck, lint with `--max-warnings=0`, format:check, test) passes, both in the working tree and in a clean copy after `npm ci`; `npm run build` still passes. ESLint 10.11 + typescript-eslint 8.70, Prettier 3.9, Vitest 5.0 + jsdom 30 + Testing Library. |
 | M0-CP3 — Money module | Not started | — |
 | M0-CP4 — App shell | Not started | — |
 | M0-CP5 — CI workflow, web manifest, developer README | Not started | — |
@@ -30,6 +31,12 @@ Implementation notes:
 - TypeScript is pinned to `~6.0.2`, not the current 7.x, because
   `typescript-eslint` (CP2) supports only TypeScript `<6.1.0`. This is
   recorded in the ADR's consequences.
+- ESLint's type-aware `recommendedTypeChecked` rules apply only to
+  `**/*.{ts,tsx}`; plain JS (`eslint.config.js`, CP4's `public/*.js`) gets
+  the untyped recommended rules. Checked with `eslint --print-config` and
+  throwaway files, not only by the clean run.
+- Vitest globals are off, so `src/test/setup.ts` calls Testing Library's
+  `cleanup()` in `afterEach` itself.
 
 ## Current blockers
 
