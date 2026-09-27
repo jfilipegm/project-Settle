@@ -47,7 +47,9 @@ and `master` is protected.
 
 1. **Start from an up-to-date `master`.** Before planning milestone X,
    run `git switch master && git pull`, then
-   `git switch -c feature/milestone-X`. Do this only after the previous
+   `git switch -c feature/milestone-X`. X is the number of the milestone
+   this branch works on: M1 is built on `feature/milestone-1`, M2 on
+   `feature/milestone-2`, and so on. Do this only after the previous
    milestone's PR is merged into `master`.
 2. **Open the PR after the first commit** on `feature/milestone-X`. Push
    the branch (`git push -u origin feature/milestone-X`), then
