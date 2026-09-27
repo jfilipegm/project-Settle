@@ -24,8 +24,23 @@ const SEPARATORS = {
 /** A locale whose separators {@link parseAmount} knows. */
 export type MoneyLocale = keyof typeof SEPARATORS
 
+// Each currency's symbols as `Intl` prints them in the supported locales,
+// longest first so `US$` is matched before `$`: USD is `1234,56 US$` under
+// pt-PT, `US$1,234.56` under en-GB and `$1,234.56` under en-US.
+const SYMBOLS = {
+  EUR: ['€'],
+  GBP: ['£'],
+  USD: ['US$', '$'],
+} as const satisfies Record<string, readonly string[]>
+
+/** A currency whose symbols {@link parseAmount} knows. */
+export type MoneyCurrency = keyof typeof SYMBOLS
+
+export const SUPPORTED_LOCALES = Object.keys(SEPARATORS) as MoneyLocale[]
+export const SUPPORTED_CURRENCIES = Object.keys(SYMBOLS) as MoneyCurrency[]
+
 export const DEFAULT_LOCALE: MoneyLocale = 'pt-PT'
-export const DEFAULT_CURRENCY = 'EUR'
+export const DEFAULT_CURRENCY: MoneyCurrency = 'EUR'
 
 const MAX = BigInt(Number.MAX_SAFE_INTEGER)
 
@@ -114,6 +129,28 @@ export function multiplyRatio(
   return checkedBig(product < 0n ? -quotient : quotient)
 }
 
+/** An exact ratio `numerator / denominator`, as {@link parseRatio} reads it. */
+export interface Ratio {
+  numerator: number
+  denominator: number
+}
+
+/**
+ * `ratio` percent of `amount` (`12,5` % is `125/10`), rounded half away from
+ * zero: {@link multiplyRatio} by `numerator / (denominator × 100)`. Throws
+ * `RangeError` when `denominator × 100` isn't a safe integer, or for any
+ * input {@link multiplyRatio} rejects.
+ */
+export function percentOf(amount: Cents, ratio: Ratio): Cents {
+  const divisor = ratio.denominator * 100
+  if (!Number.isSafeInteger(divisor)) {
+    throw new RangeError(
+      `Percentage denominator × 100 is not a safe integer: ${ratio.denominator}`,
+    )
+  }
+  return multiplyRatio(amount, ratio.numerator, divisor)
+}
+
 export type ParseRatioResult =
   | { ok: true; numerator: number; denominator: number }
   | { ok: false; error: 'empty' | 'invalid' | 'outOfRange' }
@@ -186,6 +223,28 @@ export function allocate(total: Cents, weights: readonly number[]): Cents[] {
   if (weightSum > MAX) {
     throw new RangeError('Weights sum beyond the safe integer range')
   }
+  return allocateExact(total, bigWeights)
+}
+
+/**
+ * {@link allocate} over BigInt weights, with the same rules, guarantees and
+ * errors, except that the weights and their sum may be any size. The split
+ * engine uses it for exact per-person shares scaled to a common
+ * denominator, which easily exceed 2^53.
+ */
+export function allocateExact(
+  total: Cents,
+  weights: readonly bigint[],
+): Cents[] {
+  if (weights.length === 0) {
+    throw new RangeError('Cannot allocate over an empty list of weights')
+  }
+  for (const weight of weights) {
+    if (weight < 0n) {
+      throw new RangeError(`Weights must be non-negative: ${weight}`)
+    }
+  }
+  const weightSum = weights.reduce((acc, weight) => acc + weight, 0n)
   if (weightSum === 0n) {
     if (total !== 0) {
       throw new RangeError('Cannot allocate a non-zero total over zero weights')
@@ -195,8 +254,8 @@ export function allocate(total: Cents, weights: readonly number[]): Cents[] {
 
   const negative = total < 0
   const whole = abs(BigInt(total))
-  const quotients = bigWeights.map((weight) => (whole * weight) / weightSum)
-  const remainders = bigWeights.map((weight) => (whole * weight) % weightSum)
+  const quotients = weights.map((weight) => (whole * weight) / weightSum)
+  const remainders = weights.map((weight) => (whole * weight) % weightSum)
   const leftover = Number(
     whole - quotients.reduce((acc, quotient) => acc + quotient, 0n),
   )
@@ -238,24 +297,31 @@ export type ParseAmountResult =
  * `"1.234,56 €"`. Never throws for user input and never rounds: more than 2
  * decimal digits is `subCent`.
  *
- * Accepts at most one `€` (prefix or suffix) and at most one ASCII `-`,
- * right before the digits or right before a prefix `€`. Grouping must be
+ * Accepts at most one symbol of `currency` (prefix or suffix: `€` for EUR,
+ * `£` for GBP, `US$` or `$` for USD) and at most one ASCII `-`, right
+ * before the digits or right before a prefix symbol. Another currency's
+ * symbol is `invalid`. Grouping must be
  * 1–3 digits followed by groups of exactly 3, with one separator character
  * throughout. When the locale's decimal separator is absent, a lone `.` or
  * `,` followed by 1–2 final digits is read as the decimal separator
  * (`"12.50"` under pt-PT).
  *
- * Throws `RangeError` for a locale missing from the separator table: the
- * locale comes from app settings, never from user input.
+ * Throws `RangeError` for a locale or currency missing from its table: both
+ * come from app settings, never from user input.
  */
 export function parseAmount(
   input: string,
   locale: MoneyLocale = DEFAULT_LOCALE,
+  currency: MoneyCurrency = DEFAULT_CURRENCY,
 ): ParseAmountResult {
   if (!Object.hasOwn(SEPARATORS, locale)) {
     throw new RangeError(`No separator table for locale: ${locale}`)
   }
+  if (!Object.hasOwn(SYMBOLS, currency)) {
+    throw new RangeError(`No symbol table for currency: ${currency}`)
+  }
   const { decimal, grouping } = SEPARATORS[locale]
+  const symbols: readonly string[] = SYMBOLS[currency]
   const invalid: ParseAmountResult = { ok: false, error: 'invalid' }
 
   // 1. Surrounding whitespace.
@@ -264,17 +330,23 @@ export function parseAmount(
     return { ok: false, error: 'empty' }
   }
 
-  // 2–3. At most one `€`, prefix or suffix, and at most one `-`, right
-  // before the digits or right before a prefix `€`.
+  // 2–3. At most one currency symbol, prefix or suffix, and at most one
+  // `-`, right before the digits or right before a prefix symbol. Symbols
+  // are tried longest first.
   let negative = false
   let symbol = false
-  if (rest.startsWith('-€')) {
-    negative = true
-    symbol = true
-    rest = rest.slice(2).trimStart()
-  } else if (rest.startsWith('€')) {
-    symbol = true
-    rest = rest.slice(1).trimStart()
+  for (const candidate of symbols) {
+    if (rest.startsWith(`-${candidate}`)) {
+      negative = true
+      symbol = true
+      rest = rest.slice(candidate.length + 1).trimStart()
+      break
+    }
+    if (rest.startsWith(candidate)) {
+      symbol = true
+      rest = rest.slice(candidate.length).trimStart()
+      break
+    }
   }
   if (rest.startsWith('-')) {
     if (negative) {
@@ -283,8 +355,11 @@ export function parseAmount(
     negative = true
     rest = rest.slice(1)
   }
-  if (!symbol && rest.endsWith('€')) {
-    rest = rest.slice(0, -1).trimEnd()
+  if (!symbol) {
+    const suffix = symbols.find((candidate) => rest.endsWith(candidate))
+    if (suffix !== undefined) {
+      rest = rest.slice(0, -suffix.length).trimEnd()
+    }
   }
 
   // 4. Only digits and the locale's separators, starting with a digit.

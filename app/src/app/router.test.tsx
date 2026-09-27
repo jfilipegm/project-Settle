@@ -1,13 +1,16 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { afterEach, describe, expect, it } from 'vitest'
+import { RegionProvider } from './RegionProvider.tsx'
 import { AppRoutes } from './router.tsx'
 
 function renderAt(path: string) {
   return render(
-    <MemoryRouter initialEntries={[path]}>
-      <AppRoutes />
-    </MemoryRouter>,
+    <RegionProvider>
+      <MemoryRouter initialEntries={[path]}>
+        <AppRoutes />
+      </MemoryRouter>
+    </RegionProvider>,
   )
 }
 
@@ -39,11 +42,6 @@ describe('routes', () => {
       'Finances',
       'Coming in M5: Finance file import and dashboards.',
     ],
-    [
-      '/settings',
-      'Settings',
-      'Coming in M3: Bring-your-own-key receipt reading.',
-    ],
   ])(
     'renders the %s placeholder with its heading and milestone',
     (path, heading, milestone) => {
@@ -55,6 +53,17 @@ describe('routes', () => {
       expect(screen.getByText(milestone)).toBeInTheDocument()
     },
   )
+
+  it('renders the settings page at /settings', () => {
+    renderAt('/settings')
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Settings' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Region' }),
+    ).toBeInTheDocument()
+  })
 
   it('renders not found for an unknown path, with a working link home', () => {
     renderAt('/no/such/page')

@@ -2,19 +2,47 @@
 
 ## Milestone
 
-None active. The last milestone, M0 — Project foundation (work item
-`milestone-0`), is `MILESTONE_COMPLETE`, accepted on 2026-09-27.
+**M1 — Bill splitter (manual entry)** (work item `milestone-1`), phase
+`IMPLEMENTING`. Plan revision 3, approved in commit `3720792`. Branch
+`feature/milestone-1`, PR #4.
+
+## Checkpoints
+
+| id | name | status |
+|----|------|--------|
+| M1-CP1 | Money extensions + Region setting | Complete |
+| M1-CP2 | Split engine | Not started |
+| M1-CP3 | Bill state and local draft | Not started |
+| M1-CP4 | Split page UI | Not started |
+| M1-CP5 | READMEs, home page and end-to-end test | Not started |
+
+### M1-CP1 — verified state
+
+- `app/src/lib/money.ts`: `allocateExact` (BigInt weights, no safe-sum
+  limit; `allocate` now validates and delegates to it, unchanged
+  behaviour), `percentOf`, the `Ratio` type, and
+  `parseAmount(input, locale?, currency?)` with the symbol table
+  `EUR: €`, `GBP: £`, `USD: US$ | $` (longest first). `MoneyCurrency`,
+  `SUPPORTED_LOCALES` and `SUPPORTED_CURRENCIES` are exported.
+- `app/src/app/region.ts` (storage, validation, `useRegion`) and
+  `app/src/app/RegionProvider.tsx`. The plan named the provider file
+  `region.tsx`; it was renamed because `region.ts` + `region.tsx` collide
+  as one module name in the TypeScript project service. `App.tsx` wraps
+  the app in the provider.
+- `app/src/pages/SettingsPage.tsx`: the Region section (two labelled
+  selects, a live example, the no-conversion note) and the M3
+  receipt-reading line.
+- Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`
+  and `vitest run` (261 tests) pass.
 
 ## Next action
 
-Plan **M1 — Bill splitter (manual entry)** (`docs/ROADMAP.md`) with
-`/milestone-plan`. Its scope now includes the user-changeable Region
-setting (locale and currency, default `pt-PT` / `EUR`).
+`/milestone-implement` for M1-CP2 (split engine).
 
-Before planning, and after the user merges PR #1 (M0) into `master` (see
-CLAUDE.md, "Git and GitHub workflow"): run
-`git switch master && git pull && git switch -c feature/milestone-1`.
-After the first commit, open the M1 PR.
+Open review notes to handle during implementation (optional findings
+O-8 to O-10 / O-EXT-1 to O-EXT-3): the new-bill starting state, direct
+`computeSplit` tests for duplicate person ids, duplicate assignees and
+0 people or items, and a person-name length limit.
 
 ## Last completed: M0 — Project foundation
 
@@ -55,7 +83,8 @@ None.
 
 ## Active plan
 
-None. M0's plan is archived at `docs/milestones/completed/milestone-0-PLAN.md`.
+`docs/milestones/milestone-1-PLAN.md` (revision 3). M0's plan is archived
+at `docs/milestones/completed/milestone-0-PLAN.md`.
 
 ## Functional review checklist
 
