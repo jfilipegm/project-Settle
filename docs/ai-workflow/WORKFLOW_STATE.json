@@ -11,7 +11,7 @@
       "registry_path": "docs/ai-workflow/registry/milestone-0-registry.json",
       "mapping_path": "docs/ai-workflow/requirements/milestone-0-mapping.json",
       "governing_workflow_version": "2.1",
-      "phase": "AWAITING_EXTERNAL_IMPLEMENTATION_REVIEW",
+      "phase": "AWAITING_FUNCTIONAL_REVIEW",
       "plan_revision": 2,
       "implementation_revision": 1,
       "functional_review_round": null,
@@ -73,7 +73,325 @@
         "waived_guarantees": [],
         "recorded_at": "2026-09-27T00:23:58Z"
       },
-      "technical_approval": null,
+      "technical_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "f32388b1d0f19f48c63902204f45d65f9c9b1f393b8b1c62539e6f892816da03",
+        "approved_review_content_id": "cfe0152de23e00cd3e58c04367c79a9a205210f25d38f357ab01f397be638f89",
+        "review_content_manifest": [
+          {
+            "path": ".github/workflows/app-ci.yml",
+            "exists": true,
+            "mode": "100644",
+            "blob": "06c0f6c40451ad74338a705682269a78080304b6"
+          },
+          {
+            "path": "app/.gitignore",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7b56b81b4e10ee78dd3fdc16c11b667241258818"
+          },
+          {
+            "path": "app/.nvmrc",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a45fd52cc5891570d6299fab38643103c3955474"
+          },
+          {
+            "path": "app/.prettierignore",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f9527ee7de6826e8cfa270ad2e4175714cef6ee2"
+          },
+          {
+            "path": "app/.prettierrc.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b2095be81e4e40b736dfc9b3559d0250e4becd02"
+          },
+          {
+            "path": "app/README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4dfa18f45c6211c09db7cd6ddc30263794c714a6"
+          },
+          {
+            "path": "app/eslint.config.js",
+            "exists": true,
+            "mode": "100644",
+            "blob": "cfd94ae29d3df4f90dc78cd8eb28ea804c808f40"
+          },
+          {
+            "path": "app/index.html",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5be76929d9eabc6a6e97311e3e73b7b9ca5f15f8"
+          },
+          {
+            "path": "app/package-lock.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "820ff79ef441a6cb285b253c147d3c14546e5114"
+          },
+          {
+            "path": "app/package.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5ca4f0ab9f8bcc3b57a734355423dcac6f26749a"
+          },
+          {
+            "path": "app/public/icons/apple-touch-icon.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8a8748727af2b655647cb3d3a25a66f03703105e"
+          },
+          {
+            "path": "app/public/icons/icon-192.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1f663e17c33cb71350a53a2c85522f28e7d6e86c"
+          },
+          {
+            "path": "app/public/icons/icon-512.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "442ff6e371f73a0d5d88b14234ae6ed143803e13"
+          },
+          {
+            "path": "app/public/icons/icon-maskable-512.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d9cc47f849ccd7362ae54774f7dc768abc76f521"
+          },
+          {
+            "path": "app/public/icons/icon-maskable.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4788f454db8e3164efb102720bf9f5d4e339b9ca"
+          },
+          {
+            "path": "app/public/icons/icon.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5fc8608454f6771d20dbc57200ab8af5152f0f5b"
+          },
+          {
+            "path": "app/public/manifest.webmanifest",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a6d131e0d8859bee3c1498ec5b79bba65ac6c962"
+          },
+          {
+            "path": "app/public/theme-init.js",
+            "exists": true,
+            "mode": "100644",
+            "blob": "209b1f73884cdd47df78cf2884891fefccfc0cc1"
+          },
+          {
+            "path": "app/src/App.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5acc6d9ed34017f2519bd8d540e7f0b4c3c209ba"
+          },
+          {
+            "path": "app/src/App.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d25d865b11b864a394f7ef9ebffa320c4b9318aa"
+          },
+          {
+            "path": "app/src/app/Layout.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "cc8c06ece3635c7d9dae299cc17d89714155c732"
+          },
+          {
+            "path": "app/src/app/Layout.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1685b340a82d0f860ce22ce18086aaa65a58dac0"
+          },
+          {
+            "path": "app/src/app/ThemeToggle.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "20d75a4bc9e7fbf56592e93d344e74e2ddc220f0"
+          },
+          {
+            "path": "app/src/app/ThemeToggle.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "714aed6637070b31d9f76fc6545311581fe72333"
+          },
+          {
+            "path": "app/src/app/manifest.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2332b71b9d0aa0b236b121168c0ccb50c2abc7aa"
+          },
+          {
+            "path": "app/src/app/router.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ef4de3cb6346309d8a9ce0ca99f15a232f63b47d"
+          },
+          {
+            "path": "app/src/app/router.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "332b208e07f3bbc226786bd30830b55180184782"
+          },
+          {
+            "path": "app/src/app/theme-init.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "df626a75c6137325f1ec09b23e9ed709b838bb40"
+          },
+          {
+            "path": "app/src/app/theme.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ccb967ef31f4bdaf87a75e21aecb629bf2fab45a"
+          },
+          {
+            "path": "app/src/app/theme.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "808e5d51d4b8ee0e917ca710d6a9fae03a49929c"
+          },
+          {
+            "path": "app/src/lib/money.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2507e8970288a3356a064090d9119cb9cc6c44ef"
+          },
+          {
+            "path": "app/src/lib/money.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4498249fc3a25e263ee00f2f949ee761371e3b3a"
+          },
+          {
+            "path": "app/src/main.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ba01bfae2da5aa54bee380ac2c5f69463106b835"
+          },
+          {
+            "path": "app/src/pages/FinancesPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9500330c470ecb96a78d3e72ef48d7f0a113fdd6"
+          },
+          {
+            "path": "app/src/pages/HomePage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "65d15c57412439a11969ad5976d0bd4c26b2db6c"
+          },
+          {
+            "path": "app/src/pages/NotFoundPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "16c963ff5afe4526ad43d6b33e3e195ebdc38136"
+          },
+          {
+            "path": "app/src/pages/PlaceholderPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0235afa3bfe983dc1eea4dfadd7cd58050ddb3d8"
+          },
+          {
+            "path": "app/src/pages/SettingsPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4182a0da9cd09ec0cab2af49bc08d9f575507add"
+          },
+          {
+            "path": "app/src/pages/SplitPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "71278865648556d2f0a46e7e34ca6fc89c22713b"
+          },
+          {
+            "path": "app/src/styles/global.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f0ece9004439309eff82f0470bd41d550d95bf18"
+          },
+          {
+            "path": "app/src/styles/tokens.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b727327bb210a29c02c2ab6d0f2370c74c2ce8d9"
+          },
+          {
+            "path": "app/src/styles/tokens.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "80b7063fcfeec8be7d4343161ddfe11fa169afbd"
+          },
+          {
+            "path": "app/src/test/setup.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "70b938e3105e3cc7af8f365063ce1487595becd4"
+          },
+          {
+            "path": "app/src/test/themeDom.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f4c99851fb5aa16fde969c6c49366b92e158f634"
+          },
+          {
+            "path": "app/tsconfig.app.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bd28713a3d779c3c993ee4dfbaef2a41174760e6"
+          },
+          {
+            "path": "app/tsconfig.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1ffef600d959ec9e396d5a260bd3f5b927b2cef8"
+          },
+          {
+            "path": "app/tsconfig.node.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7e4d5c74fcc60164faf090a19bde98a6f78e2795"
+          },
+          {
+            "path": "app/vite.config.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2c5c1005d65d3f54a25e1447b3da3729220bb669"
+          },
+          {
+            "path": "app/vitest.config.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "753ece88354dfcac17d7687cb0c9c3c6174a050f"
+          },
+          {
+            "path": "docs/adr/0001-web-app-tech-stack.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "13bcc50829dd523a0702cb05545db6aadcfba818"
+          },
+          {
+            "path": "docs/ai-workflow/registry/milestone-0-artifacts.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c701ea7eb78b6382538654414ca938f22da807c0"
+          }
+        ],
+        "reviewed_content_commit": "99e9e8ecd32de4fd30e78586e03c2e352296ce70",
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-0 implementation",
+        "waived_guarantees": [],
+        "recorded_at": "2026-09-27T09:41:31Z"
+      },
       "technical_review_block_pins": [],
       "plan_review_stages": {
         "review_content_id": "4d4ed81cf6442eb213614d124e36c55190fcc17bd686241673c2fb3ed3740a2e",
@@ -92,8 +410,8 @@
       },
       "functional_acceptance_status": null,
       "blocking_decisions": [],
-      "state_revision": 19,
-      "last_transition": "2026-09-27T08:36:59Z"
+      "state_revision": 20,
+      "last_transition": "2026-09-27T09:41:31Z"
     }
   }
 }
