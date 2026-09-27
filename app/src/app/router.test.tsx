@@ -36,7 +36,6 @@ describe('routes', () => {
   })
 
   it.each([
-    ['/split', 'Split a bill', 'Coming in M1: Bill splitter.'],
     [
       '/finances',
       'Finances',
@@ -53,6 +52,17 @@ describe('routes', () => {
       expect(screen.getByText(milestone)).toBeInTheDocument()
     },
   )
+
+  it('renders the split page at /split', () => {
+    renderAt('/split')
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Split a bill' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Who owes what' }),
+    ).toBeInTheDocument()
+  })
 
   it('renders the settings page at /settings', () => {
     renderAt('/settings')

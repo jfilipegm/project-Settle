@@ -13,7 +13,7 @@
 | M1-CP1 | Money extensions + Region setting | Complete |
 | M1-CP2 | Split engine | Complete |
 | M1-CP3 | Bill state and local draft | Complete |
-| M1-CP4 | Split page UI | Not started |
+| M1-CP4 | Split page UI | Complete |
 | M1-CP5 | READMEs, home page and end-to-end test | Not started |
 
 ### M1-CP1 — verified state
@@ -88,9 +88,42 @@
 - Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`
   and `vitest run` (361 tests) pass.
 
+### M1-CP4 — verified state
+
+- `app/src/pages/SplitPage.tsx` with the sections in
+  `app/src/features/split/components/`:
+  - People: a count stepper (1–20), name inputs ("Person n"
+    placeholders), a Remove button per person, and the payer radio
+    group.
+  - Items: name, quantity and unit price per row, line total, Remove,
+    assignee chips (`aria-pressed`) and a "Shares" disclosure with
+    1–99 steppers. "Add item" focuses the new row's name.
+  - Tax, tip and discount: amount or percentage each, tax and tip
+    split by what each person had or equally, and D6's tax hint.
+  - "Who owes what": subtotal, adjustments, total, one card per person
+    with the breakdown disclosure and its rounding hint, settle-up, and
+    "Copy as text" with a `role="status"` message. Validation errors
+    replace the result, each linking to its field.
+  - "See result" link at the top; "New bill" with `window.confirm` and
+    the "saved on this device" note.
+- Inputs (`inputs.tsx`) keep the typed text while it's invalid and
+  only report valid, in-range values, so a typo never changes the
+  result. Each shows its typed error under the field (`aria-invalid`,
+  `aria-describedby`). A saved draft's out-of-range values show their
+  `validateBill` error under the field instead.
+- New `--color-error` token (light and both dark blocks).
+- Visually hidden label prefixes keep the separating space outside the
+  hidden span. Inside it, the accessible-name computation trims it
+  ("Item 1Unit price"), which the tests caught.
+- Checked by a headless Firefox screenshot of the production build at
+  360 px: one column, nothing clipped, clear of the tab bar.
+- Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`,
+  `vitest run` (376 tests) and `npm run build` pass.
+
 ## Next action
 
-`/milestone-implement` for M1-CP4 (Split page UI).
+`/milestone-implement` for M1-CP5 (READMEs, home page and end-to-end
+test).
 
 ## Last completed: M0 — Project foundation
 
