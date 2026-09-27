@@ -1,0 +1,28 @@
+# The web app's checks (app/). Separate from workflow-conformance.yml, which
+# covers the workflow tooling at the repository root.
+name: App CI
+
+on:
+  push:
+  pull_request:
+
+defaults:
+  run:
+    working-directory: app
+
+jobs:
+  app:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: app/.nvmrc
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm test
+      - run: npm run build
