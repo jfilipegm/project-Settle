@@ -11,7 +11,7 @@
 | id | name | status |
 |----|------|--------|
 | M1-CP1 | Money extensions + Region setting | Complete |
-| M1-CP2 | Split engine | Not started |
+| M1-CP2 | Split engine | Complete |
 | M1-CP3 | Bill state and local draft | Not started |
 | M1-CP4 | Split page UI | Not started |
 | M1-CP5 | READMEs, home page and end-to-end test | Not started |
@@ -35,14 +35,40 @@
 - Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`
   and `vitest run` (261 tests) pass.
 
+### M1-CP2 — verified state
+
+- `app/src/features/split/model.ts`: the `Bill` types, `LIMITS` (D14),
+  `isBillRatio`, `toBillRatio` (trailing zeros stripped;
+  `tooManyDecimals` past 3 significant decimals), `lineTotal`,
+  `adjustmentAmount`, `displayName`, and `validateBill`. Each error is
+  `{ code, field }`, and `field` names the person, item part, share,
+  adjustment or payer it belongs to, for CP4's inline errors.
+- `app/src/features/split/split.ts`: `computeSplit`, steps 1–7. Exact
+  shares are BigInt integers already scaled by `D = T′ · lcm(Wᵢ) · n`,
+  instead of the plan's internal `Fraction` type: same arithmetic, with
+  no division until the one `allocateExact` call.
+- `app/src/features/split/format.ts`: `resultAsText(result, region)`.
+  Person names come from the result (`PersonShare.name`).
+- Tests: a 1500-bill seeded property sweep against an independent
+  BigInt-rational reference (every total within 1 cent, every breakdown
+  line within 3 cents, the sums exact, deterministic). Deliberately
+  breaking the engine's proportional or item weights makes it fail. Also
+  the plan's hand-computed examples (fairness case lines included), 30
+  validation cases passed straight to `computeSplit`, `toBillRatio`,
+  settle-up and text export.
+- Optional review findings applied here: O-9/O-EXT-2 (direct tests for
+  a duplicate person id, a duplicate assignee, and 0 people or 0 items)
+  and O-10/O-EXT-3 (person names are limited to 60 characters, like item
+  names, under the same `limitExceeded` error).
+- Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`
+  and `vitest run` (318 tests) pass.
+
 ## Next action
 
-`/milestone-implement` for M1-CP2 (split engine).
+`/milestone-implement` for M1-CP3 (bill state and local draft).
 
-Open review notes to handle during implementation (optional findings
-O-8 to O-10 / O-EXT-1 to O-EXT-3): the new-bill starting state, direct
-`computeSplit` tests for duplicate person ids, duplicate assignees and
-0 people or items, and a person-name length limit.
+Open review note to handle in CP3/CP4 (O-8 / O-EXT-1): the new-bill
+starting state, so a fresh bill doesn't open on a validation error.
 
 ## Last completed: M0 — Project foundation
 
