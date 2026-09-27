@@ -47,6 +47,24 @@ Guiding principles:
 | M8 | Installable app (PWA / mobile polish)       | Not started |
 | M9 | Accounts and sync                           | Not started |
 
+### Every milestone
+
+From M1 on, every milestone ends by checking the root `README.md`,
+the page people see first on GitHub:
+
+- **Does it still make sense?** Read it as a new visitor would.
+- **Remove** anything outdated: features that changed, steps that no
+  longer work, "coming soon" notes that have shipped.
+- **Add** what the milestone delivered: new features, and changed setup
+  or usage.
+- **Update** the status, the screenshots (if any) and the links.
+
+Keep it simple and user-facing. Developer detail belongs in
+`app/README.md`, which gets the same check when the milestone changes
+setup, commands or project layout. If nothing needs changing, the
+milestone's PR says so in one line. The check is part of every
+milestone's "Done when".
+
 ---
 
 ## M0 — Project foundation
@@ -96,11 +114,17 @@ split math and the UI right before OCR adds uncertainty.
   (decided in M0). This is the Settings page's first real section.
   `parseAmount` accepts only `€` today, so its symbol set grows with the
   currencies offered; `formatAmount` already takes a locale and currency.
+- Project `README.md` (repository root): a good, simple README covering
+  what project-W is, what works today, how to open or run it (linking to
+  `app/README.md` for development), where the roadmap and releases are,
+  and the privacy stance (everything stays in the browser).
 
 **Done when**
 - Unit tests cover the split math, including rounding, shared items, tax,
   tip, and discounts. Per-person totals always equal the bill total.
 - A user can split a real 10+ item bill between 3 people end to end.
+- `README.md` exists at the repository root, is accurate for what M1
+  ships, and follows "Every milestone" above.
 
 ---
 
@@ -135,6 +159,9 @@ automatically, for free and entirely in the browser.
 - Any parsing failure falls back to the manual editor instead of blocking
   the user.
 - No receipt data leaves the browser.
+- `README.md` (and `app/README.md` if setup changed) reviewed and
+  updated for M2: outdated parts removed, new features added (see
+  "Every milestone").
 
 ---
 
@@ -174,6 +201,9 @@ the project's.
   reader is used.
 - Tests or inspection confirm the key never appears in any request except
   the one to the chosen provider.
+- `README.md` (and `app/README.md` if setup changed) reviewed and
+  updated for M3: outdated parts removed, new features added (see
+  "Every milestone").
 
 ---
 
@@ -201,6 +231,9 @@ type income/expense, category, account, notes, source), `Categories`,
 **Done when**
 - The template, the rules document, and the validator exist.
 - The validator has tests for valid files and for each class of error.
+- `README.md` (and `app/README.md` if setup changed) reviewed and
+  updated for M4: outdated parts removed, new features added (see
+  "Every milestone").
 
 ---
 
@@ -224,6 +257,9 @@ type income/expense, category, account, notes, source), `Categories`,
 **Done when**
 - The template file and a realistic 12-month sample file render correctly.
 - Dashboard numbers are checked against hand-calculated totals in tests.
+- `README.md` (and `app/README.md` if setup changed) reviewed and
+  updated for M5: outdated parts removed, new features added (see
+  "Every milestone").
 
 ---
 
@@ -246,6 +282,9 @@ type income/expense, category, account, notes, source), `Categories`,
 - Round trip passes: import, then export, then re-import gives identical
   data (tested).
 - The exported file passes the M4 validator.
+- `README.md` (and `app/README.md` if setup changed) reviewed and
+  updated for M6: outdated parts removed, new features added (see
+  "Every milestone").
 
 ---
 
@@ -269,6 +308,9 @@ type income/expense, category, account, notes, source), `Categories`,
 **Done when**
 - Splitting a receipt and confirming adds exactly my share to
   `Transactions`, and it appears in dashboards and in the exported file.
+- `README.md` (and `app/README.md` if setup changed) reviewed and
+  updated for M7: outdated parts removed, new features added (see
+  "Every milestone").
 
 ---
 
@@ -289,6 +331,9 @@ type income/expense, category, account, notes, source), `Categories`,
 - Installs and works offline on Android and iOS for the whole split flow and
   for a previously loaded finance file. (BYOK readers need a connection;
   the built-in reader does not.)
+- `README.md` (and `app/README.md` if setup changed) reviewed and
+  updated for M8: outdated parts removed, new features added (see
+  "Every milestone").
 
 ---
 
@@ -311,6 +356,9 @@ passing files around.
 **Done when**
 - A signed-in user sees the same data on two devices. Import and export
   still work.
+- `README.md` (and `app/README.md` if setup changed) reviewed and
+  updated for M9: outdated parts removed, new features added (see
+  "Every milestone").
 
 ---
 
