@@ -2,60 +2,52 @@
 
 ## Milestone
 
-M0 — Project foundation (work item `milestone-0`, product, governing
-workflow version `2.1`). Phase: `IMPLEMENTING`.
+None active. The last milestone, M0 — Project foundation (work item
+`milestone-0`), is `MILESTONE_COMPLETE`, accepted on 2026-09-27.
 
-## Goal
+## Next action
 
-An empty but deployable app skeleton with tooling in place, so M1 (bill
-splitter) can start straight on product code: the web app builds and runs
-locally and in CI and shows a placeholder home page; lint, format check,
-type check and unit tests run in CI and pass; money is handled as integer
-cents through one shared, tested module.
+Plan **M1 — Bill splitter (manual entry)** (`docs/ROADMAP.md`) with
+`/milestone-plan`. Its scope now includes the user-changeable Region
+setting (locale and currency, default `pt-PT` / `EUR`).
 
-## Current checkpoint
+Before planning, and after the user merges PR #1 (M0) into `master` (see
+CLAUDE.md, "Git and GitHub workflow"): run
+`git switch master && git pull && git switch -c feature/milestone-1`.
+After the first commit, open the M1 PR.
 
-None in progress. All five checkpoints are complete; next is the milestone self-review and the implementation review bundle.
+## Last completed: M0 — Project foundation
 
-| Checkpoint | Status | Verified state |
-|---|---|---|
-| M0-CP1 — Stack ADR + Vite/React/TS scaffold in `app/` | Complete | `npm ci && npm run build` pass from `app/` (Node 24.21.0, npm 12.1.0, TypeScript 6.0.3, Vite 8.3.1). `npm run dev` served the placeholder page. ADR at `docs/adr/0001-web-app-tech-stack.md`. |
-| M0-CP2 — Quality tooling | Complete | `npm run check` (typecheck, lint with `--max-warnings=0`, format:check, test) passes, both in the working tree and in a clean copy after `npm ci`; `npm run build` still passes. ESLint 10.11 + typescript-eslint 8.70, Prettier 3.9, Vitest 5.0 + jsdom 30 + Testing Library. |
-| M0-CP3 — Money module | Complete | `app/src/lib/money.ts` + `money.test.ts` (144 tests). `npm run check` passes (145 tests in total). Mutation spot checks: dropping the `-0` guard, reversing the tie-break, rounding half down, truncating sub-cent input, formatting `value / 100`, disabling the lone-separator reading, and computing `allocate` in floats (quotients only, or everything) each fail at least one test. |
-| M0-CP4 — App shell | Complete | React Router 8 routes (`/`, `/split`, `/finances`, `/settings`, not found) inside `Layout` (header + theme toggle, top bar ≥ 640 px, bottom tab bar with safe-area padding below it, skip link, `<main>`). `useTheme` + `public/theme-init.js` share key `project-w.theme` and the `theme-color` values. `npm run check` passes (186 tests), `npm run build` passes and copies `theme-init.js` to `dist/`. Mutation spot checks (a different colour or key or a miscased mode in `theme-init.js`, a changed `--color-surface`, a changed `index.html` meta, a wrong cycle order, a mode not stored) each fail at least one test. The manual 360/768/desktop check is deferred to the functional-review checklist, per the plan. |
-| M0-CP5 — CI workflow, web manifest, developer README | Complete | `.github/workflows/app-ci.yml` passes a PyYAML structural check (triggers, `working-directory: app`, `setup-node` from `.nvmrc` with the npm cache on the lockfile, the six steps in order); `actionlint`/`act` are still not installed. The same six steps pass locally, in order, from `npm ci` (197 tests). Headless Brave (CDP `Page.getAppManifest`, the parser DevTools uses) parses the manifest with no errors and no installability errors, and all four icons load (200). Icons rendered with `rsvg-convert`; `manifest.test.ts` checks colours against tokens, icon files and PNG sizes, and the `index.html` links. `workflow-conformance.yml` is unchanged. A look at DevTools → Application → Manifest by eye goes into the functional-review checklist. |
+An empty but deployable app skeleton, which M1 builds on:
 
-Implementation notes:
+- **CP1:** stack ADR (`docs/adr/0001-web-app-tech-stack.md`) and the
+  Vite + React + TypeScript scaffold in `app/`.
+- **CP2:** ESLint, Prettier, Vitest + Testing Library, and `npm run check`.
+- **CP3:** `app/src/lib/money.ts`. Integer cents, exact BigInt
+  allocation, `parseAmount`/`formatAmount` (pt-PT, en-GB, en-US).
+- **CP4:** app shell. Routes, a responsive layout (bottom tab bar under
+  640 px), and a light/dark/system theme with no flash on load.
+- **CP5:** `app-ci.yml`, the web manifest and icons, and `app/README.md`.
 
-- TypeScript is pinned to `~6.0.2`, not the current 7.x, because
-  `typescript-eslint` (CP2) supports only TypeScript `<6.1.0`. This is
-  recorded in the ADR's consequences.
-- ESLint's type-aware `recommendedTypeChecked` rules apply only to
-  `**/*.{ts,tsx}`; plain JS (`eslint.config.js`, CP4's `public/*.js`) gets
-  the untyped recommended rules. Checked with `eslint --print-config` and
-  throwaway files, not only by the clean run.
-- `theme.ts` reads a `theme-color` meta's scheme with
-  `getAttribute('media')`, not `meta.media`: that property is missing from
-  jsdom and from some older engines.
-- Vitest stubs every CSS import, `?raw` included, to an empty string, so
-  `tokens.test.ts` reads `tokens.css` from disk. `theme-init.test.ts` runs
-  the real `public/theme-init.js` (through `?raw`) and compares its result
-  with `theme.ts` for the same stored values.
-- The apple-touch icon is rendered from the maskable (full-bleed) SVG,
-  because iOS rounds the corners itself and fills transparency with black.
-- The app CI runs on every `push` and `pull_request`, as the plan says. It
-  has not run on GitHub yet: there is no remote (Open question 4).
-- Vitest globals are off, so `src/test/setup.ts` calls Testing Library's
-  `cleanup()` in `afterEach` itself.
-- `formatAmount`'s `locale` option has the same `MoneyLocale` type as
-  `parseAmount`'s, so the app can't format an amount in a locale it can't
-  parse back.
-- The plan's example large-weight `allocate` case happened to come out the
-  same in float arithmetic, so it could not tell an exact implementation
-  from a float one. It was replaced by two constructed cases where float
-  arithmetic gives the wrong answer: a share of `k − 1/W`, and two
-  remainders 1 apart that float sees as a tie. Their expected parts were
-  computed separately with Python integers.
+Verification:
+- `npm run check` (197 tests) and `npm run build` pass.
+- `app` and `workflow-conformance` are green on GitHub (PR #1), which
+  settled Open question 4.
+- Implementation review: APPROVE, technical approval `0dbeb45`
+  (implementation revision 1).
+- Functional review: all nine checklist items passed (checklist evidence
+  `9678a58`), and the user accepted the milestone.
+
+User decisions at acceptance (recorded in `docs/ROADMAP.md`):
+- default `pt-PT` / `EUR`, changeable by the user (added to M1);
+- keep npm;
+- keep path routes;
+- Node from the system package.
+
+Carried forward (optional review notes, not blockers):
+- a theme change in one tab reaches other tabs only on reload;
+- the manifest has a single light `theme_color` (revisit in M8);
+- `app-ci.yml` runs on every push as well as on PRs.
 
 ## Current blockers
 
@@ -63,7 +55,7 @@ None.
 
 ## Active plan
 
-`docs/milestones/milestone-0-PLAN.md` (plan revision 2, approved).
+None. M0's plan is archived at `docs/milestones/completed/milestone-0-PLAN.md`.
 
 ## Functional review checklist
 
