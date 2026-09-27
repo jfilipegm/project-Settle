@@ -357,6 +357,30 @@ describe('Split page', () => {
     ).toBeInTheDocument()
   })
 
+  it('resets the tax, tip and discount inputs on a new bill', () => {
+    renderSplit()
+    type('Item 1 Unit price', '20,00')
+    // Tax and discount stay "amount" across the new bill, so their inputs
+    // aren't remounted by a kind change: the path that kept stale text.
+    type('Tax amount', '10,00')
+    type('Discount amount', 'abc')
+    expect(textbox('Discount amount')).toHaveAccessibleDescription(
+      'Enter an amount, like 12,50',
+    )
+    const tip = screen.getByRole('group', { name: 'Tip' })
+    fireEvent.click(within(tip).getByRole('radio', { name: 'Percentage' }))
+    type('Tip percentage (%)', '10')
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+
+    fireEvent.click(screen.getByRole('button', { name: 'New bill' }))
+
+    expect(textbox('Tax amount')).toHaveValue('')
+    expect(textbox('Discount amount')).toHaveValue('')
+    expect(textbox('Discount amount')).not.toHaveAccessibleDescription()
+    expect(textbox('Tip amount')).toHaveValue('')
+    expect(totals()).toEqual(['Person 1 0,00 €', 'Person 2 0,00 €'])
+  })
+
   it('changes the number of people', () => {
     renderSplit()
 

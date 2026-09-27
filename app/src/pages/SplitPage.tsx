@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 import { useRegion } from '../app/region.ts'
 import { AdjustmentsSection } from '../features/split/components/AdjustmentsSection.tsx'
 import { ItemsSection } from '../features/split/components/ItemsSection.tsx'
@@ -14,6 +14,10 @@ export function SplitPage() {
   const outcome = useMemo(() => computeSplit(bill), [bill])
   const errors = outcome.ok ? [] : outcome.errors
   const sectionProps = { bill, dispatch, errors, region }
+  // Inputs keep their own text while it's invalid, and only read the bill
+  // when they mount. "New bill" replaces the bill from outside them, so it
+  // remounts the editor: no field can keep showing the old bill's text.
+  const [editorSession, setEditorSession] = useState(0)
 
   return (
     <div className={styles.page}>
@@ -22,9 +26,11 @@ export function SplitPage() {
         <a href="#result">See result</a>
       </p>
 
-      <PeopleSection {...sectionProps} />
-      <ItemsSection {...sectionProps} />
-      <AdjustmentsSection {...sectionProps} />
+      <Fragment key={editorSession}>
+        <PeopleSection {...sectionProps} />
+        <ItemsSection {...sectionProps} />
+        <AdjustmentsSection {...sectionProps} />
+      </Fragment>
       <ResultSection bill={bill} outcome={outcome} region={region} />
 
       <div className={styles.newBill}>
@@ -36,6 +42,7 @@ export function SplitPage() {
               window.confirm('Start a new bill? This clears the current one.')
             ) {
               dispatch({ type: 'newBill', ids: newBillIds() })
+              setEditorSession((session) => session + 1)
             }
           }}
         >
