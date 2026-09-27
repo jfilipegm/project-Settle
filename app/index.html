@@ -7,6 +7,20 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <title>project-W</title>
+    <!-- Each scheme's --color-surface (THEME_COLORS in src/app/theme.ts). -->
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#ffffff"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#1b1e25"
+    />
+    <!-- Blocking on purpose: applies the stored theme before first paint.
+         Keep it after any theme-color metas, which it updates. -->
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>
