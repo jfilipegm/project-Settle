@@ -15,14 +15,13 @@ cents through one shared, tested module.
 
 ## Current checkpoint
 
-None in progress. Next: `M0-CP3` (money module); `M0-CP4` (app shell) is
-also unblocked.
+None in progress. Next: `M0-CP4` (app shell); `M0-CP5` follows it.
 
 | Checkpoint | Status | Verified state |
 |---|---|---|
 | M0-CP1 — Stack ADR + Vite/React/TS scaffold in `app/` | Complete | `npm ci && npm run build` pass from `app/` (Node 24.21.0, npm 12.1.0, TypeScript 6.0.3, Vite 8.3.1). `npm run dev` served the placeholder page. ADR at `docs/adr/0001-web-app-tech-stack.md`. |
 | M0-CP2 — Quality tooling | Complete | `npm run check` (typecheck, lint with `--max-warnings=0`, format:check, test) passes, both in the working tree and in a clean copy after `npm ci`; `npm run build` still passes. ESLint 10.11 + typescript-eslint 8.70, Prettier 3.9, Vitest 5.0 + jsdom 30 + Testing Library. |
-| M0-CP3 — Money module | Not started | — |
+| M0-CP3 — Money module | Complete | `app/src/lib/money.ts` + `money.test.ts` (144 tests). `npm run check` passes (145 tests in total). Mutation spot checks: dropping the `-0` guard, reversing the tie-break, rounding half down, truncating sub-cent input, formatting `value / 100`, disabling the lone-separator reading, and computing `allocate` in floats (quotients only, or everything) each fail at least one test. |
 | M0-CP4 — App shell | Not started | — |
 | M0-CP5 — CI workflow, web manifest, developer README | Not started | — |
 
@@ -37,6 +36,15 @@ Implementation notes:
   throwaway files, not only by the clean run.
 - Vitest globals are off, so `src/test/setup.ts` calls Testing Library's
   `cleanup()` in `afterEach` itself.
+- `formatAmount`'s `locale` option has the same `MoneyLocale` type as
+  `parseAmount`'s, so the app can't format an amount in a locale it can't
+  parse back.
+- The plan's example large-weight `allocate` case happened to come out the
+  same in float arithmetic, so it could not tell an exact implementation
+  from a float one. It was replaced by two constructed cases where float
+  arithmetic gives the wrong answer: a share of `k − 1/W`, and two
+  remainders 1 apart that float sees as a tie. Their expected parts were
+  computed separately with Python integers.
 
 ## Current blockers
 
