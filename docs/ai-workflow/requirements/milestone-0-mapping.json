@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-0",
+  "requirements": {
+    "REQ-1": {
+      "description": "Record the tech-stack decision (TypeScript, React, Vite, npm, pinned Node LTS) as an ADR under docs/adr/.",
+      "checkpoint_ids": [
+        "M0-CP1"
+      ]
+    },
+    "REQ-2": {
+      "description": "A buildable Vite + React + strict TypeScript app lives entirely under app/, with a pinned Node version, a committed lockfile, and npm scripts for dev, build, preview, typecheck, lint, format, format:check and test.",
+      "checkpoint_ids": [
+        "M0-CP1",
+        "M0-CP2"
+      ]
+    },
+    "REQ-3": {
+      "description": "Formatter, linter, type checking and a unit test runner are configured and pass on the codebase; a smoke test renders the app.",
+      "checkpoint_ids": [
+        "M0-CP2"
+      ]
+    },
+    "REQ-4": {
+      "description": "Money handling rule: amounts are integer cents (never floats), with one shared module for parsing, formatting, arithmetic and deterministic rounding/allocation whose parts always sum exactly to the total; covered by unit tests.",
+      "checkpoint_ids": [
+        "M0-CP3"
+      ]
+    },
+    "REQ-5": {
+      "description": "App shell with client-side routing (Home placeholder plus Split, Finances, Settings placeholders and a not-found page), a responsive layout usable from 360px phone width to desktop, and a light/dark theme that follows the system with a manual override.",
+      "checkpoint_ids": [
+        "M0-CP4"
+      ]
+    },
+    "REQ-6": {
+      "description": "CI (GitHub Actions) runs install, typecheck, lint, format check, tests and production build for app/ on every push and pull request.",
+      "checkpoint_ids": [
+        "M0-CP5"
+      ]
+    },
+    "REQ-7": {
+      "description": "PWA-readiness groundwork: web app manifest, icons and viewport/theme-color meta; service worker explicitly deferred to M8. Developer README documents prerequisites and commands.",
+      "checkpoint_ids": [
+        "M0-CP5"
+      ]
+    }
+  }
+}

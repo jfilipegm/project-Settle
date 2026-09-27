@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-0",
+  "plan_revision": 2,
+  "checkpoints": [
+    {
+      "id": "M0-CP1",
+      "name": "Stack ADR + Vite/React/TS scaffold in app/",
+      "depends_on": [],
+      "complexity": 2,
+      "session_target": "1"
+    },
+    {
+      "id": "M0-CP2",
+      "name": "Quality tooling: ESLint, Prettier, Vitest + Testing Library",
+      "depends_on": [
+        "M0-CP1"
+      ],
+      "complexity": 2,
+      "session_target": "1"
+    },
+    {
+      "id": "M0-CP3",
+      "name": "Money module: integer cents, parse/format, deterministic allocation",
+      "depends_on": [
+        "M0-CP2"
+      ],
+      "complexity": 3,
+      "session_target": "2"
+    },
+    {
+      "id": "M0-CP4",
+      "name": "App shell: routing, responsive layout, light/dark theme",
+      "depends_on": [
+        "M0-CP2"
+      ],
+      "complexity": 3,
+      "session_target": "2"
+    },
+    {
+      "id": "M0-CP5",
+      "name": "CI workflow + web manifest + developer README",
+      "depends_on": [
+        "M0-CP3",
+        "M0-CP4"
+      ],
+      "complexity": 2,
+      "session_target": "3"
+    }
+  ]
+}

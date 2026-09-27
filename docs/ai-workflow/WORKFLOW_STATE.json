@@ -1,5 +1,78 @@
 {
   "schema_version": 1,
-  "active_work_item_id": null,
-  "work_items": {}
+  "active_work_item_id": "milestone-0",
+  "work_items": {
+    "milestone-0": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-0",
+      "parent_work_item_id": null,
+      "plan_path": "docs/milestones/milestone-0-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-0-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-0-mapping.json",
+      "governing_workflow_version": "2.1",
+      "phase": "IMPLEMENTING",
+      "plan_revision": 2,
+      "implementation_revision": null,
+      "functional_review_round": null,
+      "base_commit": "dcf1b3b0cc912fff554a1d59783afa9e771d3838",
+      "reviewed_implementation_head": null,
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": null,
+      "checkpoints": {},
+      "current_bundle_id": null,
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "USER_OVERRIDE",
+        "reviewed_bundle_id": "6249167d9d0f1faeecd3cc756f9ae0aca6f4da5ef6d0d3bbe94dde1ba6850884",
+        "approved_review_content_id": "4d4ed81cf6442eb213614d124e36c55190fcc17bd686241673c2fb3ed3740a2e",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-0-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c7c2204fef9aa1a4a3574ae0a0fa7fb81256e638"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-0-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "43a0c1c397ba527903f4576e5a98842aa9c0569e"
+          },
+          {
+            "path": "docs/milestones/milestone-0-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5f21529c596e55e48e8d6b5b116bafac013b02fa"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-0 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-09-27T00:23:58Z"
+      },
+      "technical_approval": null,
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "4d4ed81cf6442eb213614d124e36c55190fcc17bd686241673c2fb3ed3740a2e",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "6249167d9d0f1faeecd3cc756f9ae0aca6f4da5ef6d0d3bbe94dde1ba6850884",
+          "verdict": "APPROVE",
+          "round": 2,
+          "completed_at": "2026-09-27T00:01:44Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "6249167d9d0f1faeecd3cc756f9ae0aca6f4da5ef6d0d3bbe94dde1ba6850884",
+          "verdict": "APPROVE",
+          "round": 2,
+          "completed_at": "2026-09-27T01:19:07Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 8,
+      "last_transition": "2026-09-27T00:23:58Z"
+    }
+  }
 }
