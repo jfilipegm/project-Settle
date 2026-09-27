@@ -422,12 +422,12 @@
       "registry_path": "docs/ai-workflow/registry/milestone-1-registry.json",
       "mapping_path": "docs/ai-workflow/requirements/milestone-1-mapping.json",
       "governing_workflow_version": "2.1",
-      "phase": "SELF_REVIEWING_IMPLEMENTATION",
+      "phase": "AWAITING_EXTERNAL_IMPLEMENTATION_REVIEW",
       "plan_revision": 3,
-      "implementation_revision": null,
+      "implementation_revision": 1,
       "functional_review_round": null,
       "base_commit": "7728f52e8b3d393cff4d9f749ac50299392240d2",
-      "reviewed_implementation_head": null,
+      "reviewed_implementation_head": "554d14a9366011ea4ad09948cd622650efa53997",
       "current_checkpoint_id": null,
       "last_completed_checkpoint_id": "M1-CP5",
       "checkpoints": {
@@ -503,8 +503,8 @@
       },
       "functional_acceptance_status": null,
       "blocking_decisions": [],
-      "state_revision": 21,
-      "last_transition": "2026-09-27T11:59:11Z"
+      "state_revision": 22,
+      "last_transition": "2026-09-27T12:02:18Z"
     }
   }
 }
