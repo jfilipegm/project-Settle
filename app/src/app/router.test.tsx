@@ -1,13 +1,16 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { afterEach, describe, expect, it } from 'vitest'
+import { RegionProvider } from './RegionProvider.tsx'
 import { AppRoutes } from './router.tsx'
 
 function renderAt(path: string) {
   return render(
-    <MemoryRouter initialEntries={[path]}>
-      <AppRoutes />
-    </MemoryRouter>,
+    <RegionProvider>
+      <MemoryRouter initialEntries={[path]}>
+        <AppRoutes />
+      </MemoryRouter>
+    </RegionProvider>,
   )
 }
 
@@ -33,16 +36,10 @@ describe('routes', () => {
   })
 
   it.each([
-    ['/split', 'Split a bill', 'Coming in M1: Bill splitter.'],
     [
       '/finances',
       'Finances',
       'Coming in M5: Finance file import and dashboards.',
-    ],
-    [
-      '/settings',
-      'Settings',
-      'Coming in M3: Bring-your-own-key receipt reading.',
     ],
   ])(
     'renders the %s placeholder with its heading and milestone',
@@ -55,6 +52,42 @@ describe('routes', () => {
       expect(screen.getByText(milestone)).toBeInTheDocument()
     },
   )
+
+  it('links from the home page to the split page', () => {
+    renderAt('/')
+
+    fireEvent.click(
+      within(screen.getByRole('main')).getByRole('link', {
+        name: 'Split a bill',
+      }),
+    )
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Split a bill' }),
+    ).toBeInTheDocument()
+  })
+
+  it('renders the split page at /split', () => {
+    renderAt('/split')
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Split a bill' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Who owes what' }),
+    ).toBeInTheDocument()
+  })
+
+  it('renders the settings page at /settings', () => {
+    renderAt('/settings')
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Settings' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'Region' }),
+    ).toBeInTheDocument()
+  })
 
   it('renders not found for an unknown path, with a working link home', () => {
     renderAt('/no/such/page')

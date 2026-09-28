@@ -412,6 +412,321 @@
       "blocking_decisions": [],
       "state_revision": 21,
       "last_transition": "2026-09-27T09:55:16Z"
+    },
+    "milestone-1": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-1",
+      "parent_work_item_id": null,
+      "plan_path": "docs/milestones/milestone-1-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-1-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-1-mapping.json",
+      "governing_workflow_version": "2.1",
+      "phase": "MILESTONE_COMPLETE",
+      "plan_revision": 3,
+      "implementation_revision": 2,
+      "functional_review_round": null,
+      "base_commit": "7728f52e8b3d393cff4d9f749ac50299392240d2",
+      "reviewed_implementation_head": "67881eef817650804361bf679fe4cfcd1247669b",
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": "M1-CP5",
+      "checkpoints": {
+        "M1-CP1": {
+          "status": "COMPLETE",
+          "start_commit": "372079217c58dee34d411b530e172d09c985f165"
+        },
+        "M1-CP2": {
+          "status": "COMPLETE",
+          "start_commit": "feed62d93923fb89a1a9bb0c208ff2d063a20786"
+        },
+        "M1-CP3": {
+          "status": "COMPLETE",
+          "start_commit": "512882894976ca1c9df33cfd253175cd86b8aaef"
+        },
+        "M1-CP4": {
+          "status": "COMPLETE",
+          "start_commit": "bbc3e72405c9e0a4ebb22095f052a82986cdb4b3"
+        },
+        "M1-CP5": {
+          "status": "COMPLETE",
+          "start_commit": "a415656b2e90d57d4ae3a4d5248fedc9db1b4bbf"
+        }
+      },
+      "current_bundle_id": null,
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "7ff195755af3112f7dd8405c96aa6681dcd8836c4070d9c773c1710bfe0a4edf",
+        "approved_review_content_id": "511a9910acc435c1d4694f3e93cc8386938426c2797f1ddfe739ef14c0cca8c1",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-1-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c34c9ea6c09cabdb68d35ab764f4b03a75e753ab"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-1-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7e7ee9090629a81303c93a711e8c93f18eacd2fb"
+          },
+          {
+            "path": "docs/milestones/milestone-1-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b4243f6c305bd7dc7f163154e6e64928d13c5231"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "plan — I approve milestone-1 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-09-27T11:22:31Z"
+      },
+      "technical_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "fef5353f859fe536a1305162b6f0b4dc74a79541d889391692f46466f49cc907",
+        "approved_review_content_id": "c86679be4ca3ad0b52c0d8d1a52d7bb5c0d25fec393bfc86b042dbcb7dfd0c03",
+        "review_content_manifest": [
+          {
+            "path": "README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "af6efca3732d1618626c9f5afcea9901d1765adb"
+          },
+          {
+            "path": "app/README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "39a98c5a45bf261c9e66bfa2646ce12d6a914086"
+          },
+          {
+            "path": "app/src/App.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d27efce830d679674ff0eea544c133302abcd691"
+          },
+          {
+            "path": "app/src/app/RegionProvider.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d9d32bccd5d3eddfa04886a261ad6cd756780870"
+          },
+          {
+            "path": "app/src/app/region.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0ecbb42cebb5e585642070e905c9496792141e0d"
+          },
+          {
+            "path": "app/src/app/region.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "721f3b74b606ba950ac4416ee39cc023f059c57d"
+          },
+          {
+            "path": "app/src/app/router.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7616b0d2a3183eb421caf1c4dad3568cd54b9b12"
+          },
+          {
+            "path": "app/src/features/split/billReducer.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "76cb56f7479d6dd9569d2e518dd38df869cf188e"
+          },
+          {
+            "path": "app/src/features/split/billReducer.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8d6f2684dc1b375518c4ad092e91cbe4dec2a9bc"
+          },
+          {
+            "path": "app/src/features/split/components/AdjustmentsSection.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "66c60c16bad44ceb86897a1bc93207ead2b89ec1"
+          },
+          {
+            "path": "app/src/features/split/components/ItemsSection.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6810fa95825538d33a19d10c9378577e8968e436"
+          },
+          {
+            "path": "app/src/features/split/components/PeopleSection.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "86d757d4e835a57abd7c192381d6c8822bdf7661"
+          },
+          {
+            "path": "app/src/features/split/components/ResultSection.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7a6c9f833284bf37af951dbf3b4066182822b7a5"
+          },
+          {
+            "path": "app/src/features/split/components/fields.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3d98367833061a7595dbb087cfcf28977fc9c469"
+          },
+          {
+            "path": "app/src/features/split/components/inputs.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9286e93b019580d3eb23126e8a9acc5bc870632a"
+          },
+          {
+            "path": "app/src/features/split/components/split.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b79b49d1377cfab070b0d9f0395b6966605b644e"
+          },
+          {
+            "path": "app/src/features/split/draft.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "cf35c8fdb2329cf00d95cc772ce693c0b8c4a4b5"
+          },
+          {
+            "path": "app/src/features/split/draft.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ad544f15854ec245fdaa0221c8b22c850ea2cbec"
+          },
+          {
+            "path": "app/src/features/split/format.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "573dad4e361feb33221bf2f06110796e62142a88"
+          },
+          {
+            "path": "app/src/features/split/format.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7bc9c89aff85c67f55ae85652a3a46c71a4f6d71"
+          },
+          {
+            "path": "app/src/features/split/model.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "77c0198cd56d8e129920cea28b1379da322c57a6"
+          },
+          {
+            "path": "app/src/features/split/split.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ddf9c3c633f68df829246da527050a1dafc53a25"
+          },
+          {
+            "path": "app/src/features/split/split.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "197a45981099bb3e0aacbba8cd704237dde3d655"
+          },
+          {
+            "path": "app/src/features/split/useBill.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4f83f584a4fb51b734d3d414054e4b4d1dda4938"
+          },
+          {
+            "path": "app/src/lib/money.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7dec2cac82fef13d16f9217fbf9eca83a2295fcc"
+          },
+          {
+            "path": "app/src/lib/money.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "22c1f2b7977b0efc6b1f89e35348f7014cb1d1be"
+          },
+          {
+            "path": "app/src/pages/HomePage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "273ade77bf06ffdd48bd23ac4303686fa7487715"
+          },
+          {
+            "path": "app/src/pages/SettingsPage.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "eb26e7fab8db04a6a64ba03126089ed3b4257ad6"
+          },
+          {
+            "path": "app/src/pages/SettingsPage.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d45b83b4bacef8542cc8cd3d93977250e486e3d9"
+          },
+          {
+            "path": "app/src/pages/SettingsPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "e2610047899b640242cd618776b62cdd9bf8852c"
+          },
+          {
+            "path": "app/src/pages/SplitPage.e2e.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f7e18590f9e285d6763743c3c58fd857a27d2e5a"
+          },
+          {
+            "path": "app/src/pages/SplitPage.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9b8e57cc94aa9b0f95caa4f60f760f5e1ab6ae70"
+          },
+          {
+            "path": "app/src/pages/SplitPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1ea0a5382411a9b2020bdfd764bcb656d959d86e"
+          },
+          {
+            "path": "app/src/styles/tokens.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1fb2b57299911d9bf155b5283a708cc5a31db30c"
+          },
+          {
+            "path": "docs/ai-workflow/registry/milestone-1-artifacts.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "48d3ca6d676f93e041159a3fc9578bda98762724"
+          }
+        ],
+        "reviewed_content_commit": "67881eef817650804361bf679fe4cfcd1247669b",
+        "legacy_evidence": null,
+        "user_confirmation": "implementation — I approve milestone-1 implementation",
+        "waived_guarantees": [],
+        "recorded_at": "2026-09-27T22:07:38Z"
+      },
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "511a9910acc435c1d4694f3e93cc8386938426c2797f1ddfe739ef14c0cca8c1",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "7ff195755af3112f7dd8405c96aa6681dcd8836c4070d9c773c1710bfe0a4edf",
+          "verdict": "APPROVE",
+          "round": 3,
+          "completed_at": "2026-09-27T11:05:21Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "7ff195755af3112f7dd8405c96aa6681dcd8836c4070d9c773c1710bfe0a4edf",
+          "verdict": "APPROVE",
+          "round": 1,
+          "completed_at": "2026-09-27T11:18:05Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 26,
+      "last_transition": "2026-09-28T06:35:59Z"
     }
   }
 }

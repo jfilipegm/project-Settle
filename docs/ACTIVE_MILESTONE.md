@@ -2,52 +2,60 @@
 
 ## Milestone
 
-None active. The last milestone, M0 — Project foundation (work item
-`milestone-0`), is `MILESTONE_COMPLETE`, accepted on 2026-09-27.
+None active. The last milestone, M1 — Bill splitter (manual entry) (work
+item `milestone-1`), is `MILESTONE_COMPLETE`, accepted on 2026-09-28.
 
 ## Next action
 
-Plan **M1 — Bill splitter (manual entry)** (`docs/ROADMAP.md`) with
-`/milestone-plan`. Its scope now includes the user-changeable Region
-setting (locale and currency, default `pt-PT` / `EUR`).
+Plan **M2 — Receipt upload and built-in parsing** (`docs/ROADMAP.md`)
+with `/milestone-plan`: upload a photo or PDF of a receipt and get the M1
+item list filled in automatically, in the browser.
 
-Before planning, and after the user merges PR #1 (M0) into `master` (see
+Before planning, and after the user merges PR #4 (M1) into `master` (see
 CLAUDE.md, "Git and GitHub workflow"): run
-`git switch master && git pull && git switch -c feature/milestone-1`.
-After the first commit, open the M1 PR.
+`git switch master && git pull && git switch -c feature/milestone-2`.
+After the first commit, open the M2 PR.
 
-## Last completed: M0 — Project foundation
+## Last completed: M1 — Bill splitter (manual entry)
 
-An empty but deployable app skeleton, which M1 builds on:
+Split a bill correctly with items typed in by hand; M2's receipt parsing
+fills in this editor:
 
-- **CP1:** stack ADR (`docs/adr/0001-web-app-tech-stack.md`) and the
-  Vite + React + TypeScript scaffold in `app/`.
-- **CP2:** ESLint, Prettier, Vitest + Testing Library, and `npm run check`.
-- **CP3:** `app/src/lib/money.ts`. Integer cents, exact BigInt
-  allocation, `parseAmount`/`formatAmount` (pt-PT, en-GB, en-US).
-- **CP4:** app shell. Routes, a responsive layout (bottom tab bar under
-  640 px), and a light/dark/system theme with no flash on load.
-- **CP5:** `app-ci.yml`, the web manifest and icons, and `app/README.md`.
+- **CP1:** `money.ts` grows `allocateExact`, `percentOf` and a
+  multi-currency `parseAmount` (EUR, GBP, USD); the Region setting
+  (locale and currency, default `pt-PT` / `EUR`) on the Settings page.
+- **CP2:** the split engine (`app/src/features/split/`): `validateBill`,
+  `computeSplit` in exact BigInt rationals with three rounding points,
+  per-person totals that always add up to the bill total, and the text
+  export.
+- **CP3:** the bill reducer and the local draft (one saved bill per
+  device).
+- **CP4:** the Split page: people and payer, items with shared
+  assignees and custom shares, tax/tip/discount, "Who owes what" with
+  breakdowns, settle-up and "Copy as text", and inline validation.
+- **CP5:** the root `README.md`, the `app/README.md` updates, the home
+  page's "Split a bill" link, and an end-to-end test of a 12-item bill
+  for 3 people.
 
 Verification:
-- `npm run check` (197 tests) and `npm run build` pass.
-- `app` and `workflow-conformance` are green on GitHub (PR #1), which
-  settled Open question 4.
-- Implementation review: APPROVE, technical approval `0dbeb45`
-  (implementation revision 1).
-- Functional review: all nine checklist items passed (checklist evidence
-  `9678a58`), and the user accepted the milestone.
+- `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`,
+  `vitest run` (378 tests) and `npm run build` pass.
+- `app`, `workflow-conformance` and `pr-title` are green on GitHub
+  (PR #4).
+- Implementation review: round 1 REVISE (B-EXT-1, B-EXT-2 fixed), round
+  2 APPROVE; technical approval `163f344` (implementation revision 2).
+- Functional review: checklist evidence `5c00e07`; the user accepted the
+  milestone.
 
-User decisions at acceptance (recorded in `docs/ROADMAP.md`):
-- default `pt-PT` / `EUR`, changeable by the user (added to M1);
-- keep npm;
-- keep path routes;
-- Node from the system package.
-
-Carried forward (optional review notes, not blockers):
-- a theme change in one tab reaches other tabs only on reload;
-- the manifest has a single light `theme_color` (revisit in M8);
-- `app-ci.yml` runs on every push as well as on PRs.
+Carried forward (not blockers):
+- Plan Open questions 1 and 3 keep their defaults: the discount is
+  always split in proportion to what each person had, and percentages
+  are taken from the items subtotal.
+- Invalid text typed in a field is lost when the Region changes.
+- In a breakdown, one item's shares across people can differ from its
+  price by a cent or two; each person's total is exact.
+- Not in M1: receipt reading (M2/M3), multiple payers, negative line
+  items, currency conversion, image/PDF export, bill history.
 
 ## Current blockers
 
@@ -55,13 +63,13 @@ None.
 
 ## Active plan
 
-None. M0's plan is archived at `docs/milestones/completed/milestone-0-PLAN.md`.
+None. M1's plan is archived at
+`docs/milestones/completed/milestone-1-PLAN.md` (M0's at
+`docs/milestones/completed/milestone-0-PLAN.md`).
 
 ## Functional review checklist
 
-Empty. `/prepare-functional-review` writes the numbered checklist for the
-active work item into this section; `/apply-functional-review` and
-`/accept-milestone` read it back from here.
+None. M1's checklist (implementation revision 2) is in commit `5c00e07`.
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is

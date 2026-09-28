@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-1",
+  "requirements": {
+    "REQ-1": {
+      "description": "Create a bill by hand: add, edit and remove line items (name, quantity, unit price), with inline validation that never rounds typed money.",
+      "checkpoint_ids": [
+        "M1-CP3",
+        "M1-CP4"
+      ]
+    },
+    "REQ-2": {
+      "description": "Add people: choose how many (1-20) and optionally name them; removing a person drops their assignments.",
+      "checkpoint_ids": [
+        "M1-CP3",
+        "M1-CP4"
+      ]
+    },
+    "REQ-3": {
+      "description": "Assign each item to one or more people; shared items split equally by default, with custom integer shares.",
+      "checkpoint_ids": [
+        "M1-CP2",
+        "M1-CP3",
+        "M1-CP4"
+      ]
+    },
+    "REQ-4": {
+      "description": "Tax, tip/service and discount, each as an amount or a percentage of the items subtotal; tax and tip split proportionally to each person's subtotal or equally, discount proportionally.",
+      "checkpoint_ids": [
+        "M1-CP1",
+        "M1-CP2",
+        "M1-CP4"
+      ]
+    },
+    "REQ-5": {
+      "description": "Deterministic rounding: one documented rounding policy, a single exact allocation per bill, per-person totals always sum exactly to the bill total and each is within 1 cent of the exact share.",
+      "checkpoint_ids": [
+        "M1-CP1",
+        "M1-CP2"
+      ]
+    },
+    "REQ-6": {
+      "description": "'Who owes what' results: per-person total with an item breakdown that sums exactly, and who owes whom with one selectable payer.",
+      "checkpoint_ids": [
+        "M1-CP2",
+        "M1-CP4"
+      ]
+    },
+    "REQ-7": {
+      "description": "Export or share the result as plain text copied to the clipboard.",
+      "checkpoint_ids": [
+        "M1-CP4"
+      ]
+    },
+    "REQ-8": {
+      "description": "Region setting: the user can change the locale (pt-PT, en-GB, en-US) and the currency (EUR, GBP, USD) used to enter and show amounts; default pt-PT/EUR; stored locally.",
+      "checkpoint_ids": [
+        "M1-CP1"
+      ]
+    },
+    "REQ-9": {
+      "description": "A good, simple root README.md (what project-W is, what works today, how to open or run it, roadmap and releases, privacy stance); app/README.md updated for M1.",
+      "checkpoint_ids": [
+        "M1-CP5"
+      ]
+    },
+    "REQ-10": {
+      "description": "A real 10+ item bill can be split between 3 people end to end, proven by an automated UI test and the functional-review checklist.",
+      "checkpoint_ids": [
+        "M1-CP5"
+      ]
+    }
+  }
+}

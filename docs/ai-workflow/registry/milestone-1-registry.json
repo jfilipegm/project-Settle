@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-1",
+  "plan_revision": 3,
+  "checkpoints": [
+    {
+      "id": "M1-CP1",
+      "name": "Money extensions + Region setting (locale/currency, Settings page)",
+      "depends_on": [],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "M1-CP2",
+      "name": "Split engine: bill model, validation, exact per-bill allocation, settle-up",
+      "depends_on": [
+        "M1-CP1"
+      ],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "M1-CP3",
+      "name": "Bill state: reducer, actions and versioned local draft",
+      "depends_on": [
+        "M1-CP2"
+      ],
+      "complexity": 2,
+      "session_target": 2
+    },
+    {
+      "id": "M1-CP4",
+      "name": "Split page UI: people, items, assignments, adjustments, results, copy as text",
+      "depends_on": [
+        "M1-CP3"
+      ],
+      "complexity": 3,
+      "session_target": 2
+    },
+    {
+      "id": "M1-CP5",
+      "name": "Root README, app README/home updates, end-to-end 10-item/3-person test",
+      "depends_on": [
+        "M1-CP4"
+      ],
+      "complexity": 2,
+      "session_target": 3
+    }
+  ]
+}

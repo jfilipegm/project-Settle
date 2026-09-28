@@ -3,6 +3,7 @@ import {
   add,
   allocate,
   allocateEvenly,
+  allocateExact,
   cents,
   DEFAULT_CURRENCY,
   DEFAULT_LOCALE,
@@ -12,11 +13,16 @@ import {
   negate,
   parseAmount,
   parseRatio,
+  percentOf,
   subtract,
   sum,
+  SUPPORTED_CURRENCIES,
+  SUPPORTED_LOCALES,
   type Cents,
+  type MoneyCurrency,
   type MoneyLocale,
   type ParseAmountResult,
+  type Ratio,
 } from './money.ts'
 
 const MAX = Number.MAX_SAFE_INTEGER
@@ -284,6 +290,110 @@ describe('allocate', () => {
   })
 })
 
+// allocate's seeded sweep, as generated cases: total, weights.
+function sweepCases(): [number, number[]][] {
+  const random = seededRandom(20260927)
+  return Array.from({ length: 3000 }, () => [
+    randomInt(random, -10_000, 10_000),
+    Array.from({ length: randomInt(random, 1, 6) }, () =>
+      random() < 0.25 ? 0 : randomInt(random, 1, 1000),
+    ),
+  ])
+}
+
+describe('allocateExact', () => {
+  it('is exact for weights beyond 2^53', () => {
+    // Equal weights tie, so index 0 gets the leftover cent. With weights
+    // 2^60, 2^60, 2^60 + 1, the remainders of 100·wᵢ mod Σw are 2^60 − 33
+    // twice and 2^60 + 67, so index 2 gets it: a float sum would see a tie.
+    const big = 2n ** 60n
+    const weights = [big + 1n, big + 1n, big + 1n]
+    expect(allocateExact(cents(100), weights)).toEqual([34, 33, 33])
+    expect(allocateExact(cents(100), [big, big, big + 1n])).toEqual([
+      33, 33, 34,
+    ])
+    expect(allocateExact(cents(-100), [big, big, big + 1n])).toEqual([
+      -33, -33, -34,
+    ])
+  })
+
+  it('gives each weight its exact floor or ceiling far beyond 2^53', () => {
+    // Weights 10^30, 2·10^30, 3·10^30 split 1 000 001 as 1 : 2 : 3:
+    // exact shares 166 666.83, 333 333.67 and 500 000.5.
+    const unit = 10n ** 30n
+    expect(
+      allocateExact(cents(1_000_001), [unit, 2n * unit, 3n * unit]),
+    ).toEqual([166667, 333334, 500000])
+  })
+
+  it('returns zeros for a zero total over all-zero weights', () => {
+    const parts = allocateExact(cents(0), [0n, 0n, 0n])
+    expect(parts).toHaveLength(3)
+    parts.forEach(expectPositiveZero)
+  })
+
+  it('agrees with allocate on its seeded sweep', () => {
+    for (const [total, weights] of sweepCases()) {
+      if (weights.every((weight) => weight === 0) && total !== 0) {
+        continue
+      }
+      expect(
+        allocateExact(
+          cents(total),
+          weights.map((weight) => BigInt(weight)),
+        ),
+        `total ${total}, weights [${weights.join(', ')}]`,
+      ).toEqual(allocate(cents(total), weights))
+    }
+  })
+
+  it.each([
+    ['empty weights', []],
+    ['a negative weight', [1n, -1n]],
+    ['all-zero weights with a non-zero total', [0n, 0n, 0n]],
+  ])('throws on %s, like allocate', (_, weights) => {
+    expect(() => allocateExact(cents(100), weights)).toThrow(RangeError)
+  })
+})
+
+describe('percentOf', () => {
+  function ratio(input: string): Ratio {
+    const parsed = parseRatio(input)
+    if (!parsed.ok) {
+      throw new Error(`test ratio ${input} is invalid`)
+    }
+    return parsed
+  }
+
+  it('takes a decimal percentage of an amount', () => {
+    expect(percentOf(cents(1000), ratio('12,5'))).toBe(125)
+    expect(percentOf(cents(2000), ratio('10'))).toBe(200)
+    expect(percentOf(cents(1234), ratio('0'))).toBe(0)
+    expect(percentOf(cents(100), ratio('1000'))).toBe(1000)
+  })
+
+  it('rounds half away from zero, both signs', () => {
+    // 50 × 1 % = 0.5 cents; 150 × 1 % = 1.5; 149 × 1 % = 1.49.
+    expect(percentOf(cents(50), ratio('1'))).toBe(1)
+    expect(percentOf(cents(-50), ratio('1'))).toBe(-1)
+    expect(percentOf(cents(150), ratio('1'))).toBe(2)
+    expect(percentOf(cents(-150), ratio('1'))).toBe(-2)
+    expect(percentOf(cents(149), ratio('1'))).toBe(1)
+    expect(percentOf(cents(-149), ratio('1'))).toBe(-1)
+  })
+
+  it('is exact for the largest bill the split engine allows', () => {
+    // 10^14 cents × 1000 % = 10^15 cents, via a 10^20 BigInt product.
+    expect(percentOf(cents(1e14), ratio('1000,000'))).toBe(1e15)
+  })
+
+  it('throws RangeError when denominator × 100 is unsafe', () => {
+    expect(() =>
+      percentOf(cents(100), { numerator: 1, denominator: 2 ** 50 }),
+    ).toThrow(RangeError)
+  })
+})
+
 describe('allocateEvenly', () => {
   it('splits into n equal weights', () => {
     expect(allocateEvenly(cents(100), 3)).toEqual([34, 33, 33])
@@ -403,6 +513,58 @@ describe('parseAmount', () => {
       RangeError,
     )
   })
+
+  it('reads every M0 row unchanged with EUR passed explicitly', () => {
+    for (const [input, locale, expected] of rows) {
+      expect(parseAmount(input, locale, 'EUR'), input).toEqual(expected)
+    }
+  })
+
+  const currencyRows: [
+    string,
+    MoneyLocale,
+    MoneyCurrency,
+    ParseAmountResult,
+  ][] = [
+    // Each currency's own symbols.
+    ['£12.50', 'en-GB', 'GBP', ok(1250)],
+    ['-£12.50', 'en-GB', 'GBP', ok(-1250)],
+    ['12,50 £', 'pt-PT', 'GBP', ok(1250)],
+    ['$12.50', 'en-US', 'USD', ok(1250)],
+    ['-$3.20', 'en-US', 'USD', ok(-320)],
+    ['US$1,234.56', 'en-GB', 'USD', ok(123456)],
+    ['-US$3.20', 'en-GB', 'USD', ok(-320)],
+    ['1234,56 US$', 'pt-PT', 'USD', ok(123456)],
+    ['-3,20 US$', 'pt-PT', 'USD', ok(-320)],
+    ['12,50 $', 'pt-PT', 'USD', ok(1250)],
+    ['12.50', 'en-US', 'USD', ok(1250)],
+    // Another currency's symbol is invalid.
+    ['€12,50', 'en-GB', 'GBP', fail('invalid')],
+    ['12,50 €', 'pt-PT', 'USD', fail('invalid')],
+    ['US$12.50', 'pt-PT', 'EUR', fail('invalid')],
+    ['$12.50', 'en-US', 'EUR', fail('invalid')],
+    ['US$12.50', 'en-GB', 'GBP', fail('invalid')],
+    ['$12.50', 'en-GB', 'GBP', fail('invalid')],
+    ['£12.50', 'en-US', 'USD', fail('invalid')],
+    // One symbol at most, and one sign.
+    ['US$12.50$', 'en-US', 'USD', fail('invalid')],
+    ['$$12.50', 'en-US', 'USD', fail('invalid')],
+    ['-$-12.50', 'en-US', 'USD', fail('invalid')],
+    ['US12.50', 'en-US', 'USD', fail('invalid')],
+  ]
+
+  it.each(currencyRows)(
+    'reads %j under %s with %s',
+    (input, locale, currency, expected) => {
+      expect(parseAmount(input, locale, currency)).toEqual(expected)
+    },
+  )
+
+  it('throws RangeError for an unknown currency', () => {
+    expect(() => parseAmount('12', 'pt-PT', 'JPY' as MoneyCurrency)).toThrow(
+      RangeError,
+    )
+  })
 })
 
 describe('formatAmount', () => {
@@ -430,6 +592,13 @@ describe('formatAmount', () => {
   })
 })
 
+describe('supported regions', () => {
+  it('lists the three locales and three currencies', () => {
+    expect(SUPPORTED_LOCALES).toEqual(['pt-PT', 'en-GB', 'en-US'])
+    expect(SUPPORTED_CURRENCIES).toEqual(['EUR', 'GBP', 'USD'])
+  })
+})
+
 describe('format → parse round trip', () => {
   const fixed = [0, 1, 99, 100, 123_456, 1_000_000, MAX]
   const random = seededRandom(424242)
@@ -450,6 +619,27 @@ describe('format → parse round trip', () => {
         ? formatAmount(value, { locale })
         : formatAmount(value)
       expect(parseAmount(formatted, locale ?? 'pt-PT'), formatted).toEqual({
+        ok: true,
+        value,
+      })
+    }
+  })
+})
+
+describe('format → parse round trip in every region', () => {
+  const amounts = [0, 5, 320, 123_456, 123_456_789, 10 ** 14].flatMap((n) => [
+    n,
+    -n,
+  ])
+  const regions = SUPPORTED_LOCALES.flatMap((locale) =>
+    SUPPORTED_CURRENCIES.map((currency) => [locale, currency] as const),
+  )
+
+  it.each(regions)('round-trips under %s with %s', (locale, currency) => {
+    for (const amount of amounts) {
+      const value = cents(amount)
+      const formatted = formatAmount(value, { locale, currency })
+      expect(parseAmount(formatted, locale, currency), formatted).toEqual({
         ok: true,
         value,
       })
