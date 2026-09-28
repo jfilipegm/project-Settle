@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-2",
+  "plan_revision": 10,
+  "checkpoints": [
+    {
+      "id": "M2-CP1",
+      "name": "Receipt model, reader interface, rule-based parser, fiscal QR payload, reconciliation and bill conversion (pure)",
+      "depends_on": [],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "M2-CP2",
+      "name": "File intake and image pipeline: type sniffing, limits, raster/HEIC/PDF decoding, clean-up (grayscale, contrast, deskew), self-hosted assets, CSP, ADR 0002",
+      "depends_on": [],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "M2-CP3",
+      "name": "Built-in reader (Tesseract.js worker), QR scanning (zxing-wasm), import pipeline, sample receipt corpus with real-OCR tests",
+      "depends_on": [
+        "M2-CP1",
+        "M2-CP2"
+      ],
+      "complexity": 3,
+      "session_target": 2
+    },
+    {
+      "id": "M2-CP4",
+      "name": "Review step UI: scan section (picker, camera, drop), progress and cancel, receipt check panel, flagged items, saved summary, manual fallback",
+      "depends_on": [
+        "M2-CP3"
+      ],
+      "complexity": 3,
+      "session_target": 2
+    },
+    {
+      "id": "M2-CP5",
+      "name": "READMEs, Settings line, end-to-end scan-to-split test, final verification",
+      "depends_on": [
+        "M2-CP4"
+      ],
+      "complexity": 2,
+      "session_target": 3
+    }
+  ]
+}

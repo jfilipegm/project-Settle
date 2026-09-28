@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "active_work_item_id": null,
+  "active_work_item_id": "milestone-2",
   "work_items": {
     "milestone-0": {
       "work_item_type": "product",
@@ -727,6 +727,78 @@
       "blocking_decisions": [],
       "state_revision": 26,
       "last_transition": "2026-09-28T06:35:59Z"
+    },
+    "milestone-2": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-2",
+      "parent_work_item_id": null,
+      "plan_path": "docs/milestones/milestone-2-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-2-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-2-mapping.json",
+      "governing_workflow_version": "2.1",
+      "phase": "IMPLEMENTING",
+      "plan_revision": 10,
+      "implementation_revision": null,
+      "functional_review_round": null,
+      "base_commit": "74cf84a677f32362a07b9fc7b2cb43b990ef75e0",
+      "reviewed_implementation_head": null,
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": null,
+      "checkpoints": {},
+      "current_bundle_id": null,
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "1ce18fad74842fa6c9f561aefc3b3366454b38d04306db4466319a0e6d3d569f",
+        "approved_review_content_id": "f6623c43fa6d0ad06d98f090c3cefc37a158b93016301250be1810fa0df46f84",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-2-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f9c8337a4b7fce269cd9299b96395c25eeb56a2b"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-2-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a58962e96b4837d455964673bbcb6f33816d820c"
+          },
+          {
+            "path": "docs/milestones/milestone-2-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b7bce39380bd33a548a5a00d59b7ff7ba977c548"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-2 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-09-28T23:15:08Z"
+      },
+      "technical_approval": null,
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "f6623c43fa6d0ad06d98f090c3cefc37a158b93016301250be1810fa0df46f84",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "1ce18fad74842fa6c9f561aefc3b3366454b38d04306db4466319a0e6d3d569f",
+          "verdict": "APPROVE",
+          "round": 10,
+          "completed_at": "2026-09-28T23:05:26Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "1ce18fad74842fa6c9f561aefc3b3366454b38d04306db4466319a0e6d3d569f",
+          "verdict": "APPROVE",
+          "round": 3,
+          "completed_at": "2026-09-28T23:10:08Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 34,
+      "last_transition": "2026-09-28T23:15:08Z"
     }
   }
 }
