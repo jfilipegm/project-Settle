@@ -1,5 +1,5 @@
 /**
- * The split engine: "Split algorithm" in docs/milestones/milestone-1-PLAN.md,
+ * The split engine: "Split algorithm" in docs/milestones/completed/milestone-1-PLAN.md,
  * steps 1–7. Every exact share is a BigInt rational scaled to one common
  * denominator `D`, so the only roundings are the three the plan names: each
  * line total, each percentage adjustment, and one allocation of the bill

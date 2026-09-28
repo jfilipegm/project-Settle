@@ -80,7 +80,7 @@ there, with tests.
 The split engine (`src/features/split/split.ts`) rounds in exactly three
 places: each line total, each percentage adjustment, and one allocation of
 the bill total over everyone's exact share. Its algorithm is specified in
-[`docs/milestones/milestone-1-PLAN.md`](../docs/milestones/milestone-1-PLAN.md)
+[`docs/milestones/completed/milestone-1-PLAN.md`](../docs/milestones/completed/milestone-1-PLAN.md)
 ("Split algorithm").
 
 ## Browser storage
