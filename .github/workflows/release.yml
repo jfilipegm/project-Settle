@@ -82,8 +82,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
         run: |
-          (cd dist && zip -qr "../project-W-$TAG.zip" .)
-          gh release create "$TAG" "project-W-$TAG.zip" \
+          (cd dist && zip -qr "../settle-$TAG.zip" .)
+          gh release create "$TAG" "settle-$TAG.zip" \
             --target "$GITHUB_SHA" \
             --title "$TAG" \
             --generate-notes

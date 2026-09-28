@@ -18,7 +18,7 @@ export interface Region {
   currency: MoneyCurrency
 }
 
-export const REGION_STORAGE_KEY = 'project-w.region'
+export const REGION_STORAGE_KEY = 'settle.region'
 
 export const DEFAULT_REGION: Region = {
   locale: DEFAULT_LOCALE,

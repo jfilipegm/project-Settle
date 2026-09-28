@@ -1,7 +1,8 @@
-# project-W web app
+# Settle web app
 
-Split bills and keep track of your finances, all in your browser. A
-React + TypeScript single-page app built with Vite. The stack and the
+Split bills. Settle up. Stay private.
+
+A React + TypeScript single-page app built with Vite. The stack and the
 reasons for it are in
 [`docs/adr/0001-web-app-tech-stack.md`](../docs/adr/0001-web-app-tech-stack.md).
 
@@ -88,11 +89,11 @@ the bill total over everyone's exact share. Its algorithm is specified in
 Each key is validated when read, and anything unreadable falls back to a
 default:
 
-| Key                | Holds                                             |
-| ------------------ | ------------------------------------------------- |
-| `project-w.theme`  | The theme mode.                                   |
-| `project-w.region` | `{ locale, currency }`.                           |
-| `project-w.bill`   | The bill being edited, as `{ version: 1, bill }`. |
+| Key             | Holds                                             |
+| --------------- | ------------------------------------------------- |
+| `settle.theme`  | The theme mode.                                   |
+| `settle.region` | `{ locale, currency }`.                           |
+| `settle.bill`   | The bill being edited, as `{ version: 1, bill }`. |
 
 ## Hosting
 

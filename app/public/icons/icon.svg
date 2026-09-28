@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <!-- The project-W mark: a W stroke on an accent tile. -->
+  <!-- The Settle mark: an S stroke on an accent tile. -->
   <rect width="512" height="512" rx="112" fill="#2553c9"/>
-  <polyline points="128,160 192,352 256,208 320,352 384,160" fill="none"
+  <path d="M360,180 C344,154 304,144 256,144 C200,144 156,168 156,206 C156,246 200,256 256,256 C312,256 356,266 356,306 C356,344 312,368 256,368 C208,368 168,358 152,332" fill="none"
     stroke="#ffffff" stroke-width="48" stroke-linecap="round"
     stroke-linejoin="round"/>
 </svg>

@@ -6,13 +6,17 @@
 //
 // It mirrors readStoredThemeMode and applyThemeMode in src/app/theme.ts:
 // same key, same validation, same theme-color values. theme-init.test.ts
-// runs both against the same inputs.
+// runs both against the same inputs. It also falls back to the key from
+// before the rename to Settle, which src/app/legacyStorage.ts moves only
+// once the app starts, after this script has run.
 ;(function () {
   const colors = { light: '#ffffff', dark: '#1b1e25' }
 
   let mode = null
   try {
-    mode = window.localStorage.getItem('project-w.theme')
+    mode =
+      window.localStorage.getItem('settle.theme') ??
+      window.localStorage.getItem('project-w.theme')
   } catch {
     // Unreadable storage means system.
   }

@@ -64,6 +64,23 @@ describe('public/theme-init.js', () => {
     expect(document.documentElement.getAttribute('data-theme')).toBe(expected)
   })
 
+  it('falls back to the project-W key, which the app migrates later', () => {
+    localStorage.setItem('project-w.theme', 'dark')
+
+    runThemeInit()
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
+  })
+
+  it('prefers the Settle key over the project-W key', () => {
+    localStorage.setItem(THEME_STORAGE_KEY, 'light')
+    localStorage.setItem('project-w.theme', 'dark')
+
+    runThemeInit()
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light')
+  })
+
   it('leaves data-theme unset when getItem throws', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new DOMException('blocked', 'SecurityError')
