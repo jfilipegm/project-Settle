@@ -1,0 +1,8 @@
+Restaurante Solar
+NIF 505555557
+Arroz de Pato 14,50
+Vinho Verde 9,00
+Sobremesa 4,00
+Total 24,34
+IVA 13% 3,16
+Total a pagar 27,50

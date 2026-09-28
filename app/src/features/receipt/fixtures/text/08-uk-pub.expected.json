@@ -1,0 +1,32 @@
+{
+  "merchant": "THE RED LION",
+  "date": "2026-09-28",
+  "currencyHint": "GBP",
+  "items": [
+    {
+      "name": "Pint of Ale",
+      "quantity": "2",
+      "unitPrice": "4.80",
+      "lineTotal": "9.60",
+      "needsCheck": false
+    },
+    {
+      "name": "Fish and Chips",
+      "quantity": "1",
+      "unitPrice": "14.50",
+      "lineTotal": "14.50",
+      "needsCheck": false
+    },
+    {
+      "name": "Sticky Toffee Pudding",
+      "quantity": "1",
+      "unitPrice": "6.50",
+      "lineTotal": "6.50",
+      "needsCheck": false
+    }
+  ],
+  "tax": "5.74",
+  "tip": "3.83",
+  "total": "34.43",
+  "warnings": []
+}

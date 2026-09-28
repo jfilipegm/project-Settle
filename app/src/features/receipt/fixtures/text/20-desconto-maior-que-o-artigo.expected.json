@@ -1,0 +1,22 @@
+{
+  "merchant": "Frutaria Sol",
+  "items": [
+    {
+      "name": "Maçãs",
+      "quantity": "1",
+      "unitPrice": "1.20",
+      "lineTotal": "1.20",
+      "needsCheck": false
+    },
+    {
+      "name": "Peras",
+      "quantity": "1",
+      "unitPrice": "1.50",
+      "lineTotal": "1.50",
+      "needsCheck": false
+    }
+  ],
+  "discount": "1.50",
+  "total": "1.20",
+  "warnings": []
+}

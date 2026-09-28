@@ -1,0 +1,12 @@
+Pastelaria Aurora
+Av. da Liberdade 120
+1250-096 Lisboa
+Contribuinte: 501234560
+28/09/2026 09:12
+Galão 1,40 €
+Torrada 2,10 €
+Pastel de Nata 1,30 €
+Sumo de Laranja 2,80 €
+Total a pagar 7,60 €
+Numerário 10,00 €
+Troco 2,40 €

@@ -1,0 +1,31 @@
+{
+  "merchant": "Blue Plate Cafe",
+  "date": "2026-09-26",
+  "items": [
+    {
+      "name": "Club Sandwich",
+      "quantity": "1",
+      "unitPrice": "11.50",
+      "lineTotal": "11.50",
+      "needsCheck": false
+    },
+    {
+      "name": "Iced Tea",
+      "quantity": "1",
+      "unitPrice": "3.00",
+      "lineTotal": "3.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Soup of the Day",
+      "quantity": "1",
+      "unitPrice": "5.50",
+      "lineTotal": "5.50",
+      "needsCheck": false
+    }
+  ],
+  "subtotal": "20.00",
+  "tax": "1.60",
+  "total": "21.60",
+  "warnings": []
+}

@@ -1,0 +1,32 @@
+{
+  "merchant": "Oficina Auto Silva, Lda.",
+  "merchantTaxId": "246813571",
+  "date": "2026-09-20",
+  "items": [
+    {
+      "name": "Mudança de óleo",
+      "quantity": "1",
+      "unitPrice": "45.00",
+      "lineTotal": "45.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Filtro de óleo",
+      "quantity": "1",
+      "unitPrice": "12.50",
+      "lineTotal": "12.50",
+      "needsCheck": false
+    },
+    {
+      "name": "Mão de obra",
+      "quantity": "1",
+      "unitPrice": "30.00",
+      "lineTotal": "30.00",
+      "needsCheck": false
+    }
+  ],
+  "subtotal": "87.50",
+  "tax": "20.13",
+  "total": "107.63",
+  "warnings": []
+}

@@ -1,0 +1,53 @@
+{
+  "merchant": "Continente Modelo Odivelas",
+  "merchantTaxId": "500987653",
+  "date": "2026-09-28",
+  "currencyHint": "EUR",
+  "items": [
+    {
+      "name": "Leite Mimosa UHT",
+      "quantity": "1",
+      "unitPrice": "0.89",
+      "lineTotal": "0.89",
+      "needsCheck": false
+    },
+    {
+      "name": "Iogurte Grego 4x120g",
+      "quantity": "1",
+      "unitPrice": "1.59",
+      "lineTotal": "1.59",
+      "needsCheck": false
+    },
+    {
+      "name": "Bananas",
+      "quantity": "0.532",
+      "unitPrice": "1.29",
+      "lineTotal": "0.69",
+      "needsCheck": false
+    },
+    {
+      "name": "Azeite Gallo 750ml",
+      "quantity": "1",
+      "unitPrice": "5.49",
+      "lineTotal": "5.49",
+      "needsCheck": false
+    },
+    {
+      "name": "Vinho Tinto Monte Velho",
+      "quantity": "1",
+      "unitPrice": "4.99",
+      "lineTotal": "4.99",
+      "needsCheck": false
+    },
+    {
+      "name": "Pão de Forma",
+      "quantity": "1",
+      "unitPrice": "1.49",
+      "lineTotal": "1.49",
+      "needsCheck": false
+    }
+  ],
+  "tax": "2.22",
+  "total": "15.14",
+  "warnings": []
+}

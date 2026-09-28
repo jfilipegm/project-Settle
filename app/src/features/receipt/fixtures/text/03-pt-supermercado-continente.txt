@@ -1,0 +1,22 @@
+Continente Modelo Odivelas
+Modelo Continente Hipermercados, S.A.
+Capital social 50.000.000,00 €
+NIF 500987653
+Fatura Simplificada FS 1234/567890
+Data 28.09.2026 18.42
+Leite Mimosa UHT 0,89 C
+Iogurte Grego 4x120g 1,99 C
+Desc. Cartão Continente -0,40
+Bananas
+0,532 kg x 1,29 €/kg 0,69 C
+Azeite Gallo 750ml 6,49 D
+Poupança Cartão Poupa Mais -1,00
+Vinho Tinto Monte Velho 4,99 D
+Pão de Forma 1,49 C
+TOTAL 15,14
+Total poupança 1,40
+Cartão de Débito 15,14
+Taxa Base IVA
+C 6% 4,40 0,26
+D 23% 8,52 1,96
+Total IVA 2,22

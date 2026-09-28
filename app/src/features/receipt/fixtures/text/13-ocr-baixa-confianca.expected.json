@@ -1,0 +1,28 @@
+{
+  "merchant": "Tasca da Maria",
+  "items": [
+    {
+      "name": "Caldo Verde",
+      "quantity": "1",
+      "unitPrice": "2.50",
+      "lineTotal": "2.50",
+      "needsCheck": true
+    },
+    {
+      "name": "Sardinhas Assadas",
+      "quantity": "1",
+      "unitPrice": "12.00",
+      "lineTotal": "12.00",
+      "needsCheck": true
+    },
+    {
+      "name": "Vinho da Casa",
+      "quantity": "1",
+      "unitPrice": "6.00",
+      "lineTotal": "6.00",
+      "needsCheck": false
+    }
+  ],
+  "total": "20.50",
+  "warnings": ["lowConfidence"]
+}

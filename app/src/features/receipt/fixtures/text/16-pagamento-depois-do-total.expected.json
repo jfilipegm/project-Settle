@@ -1,0 +1,28 @@
+{
+  "merchant": "Tasquinha do Bairro",
+  "items": [
+    {
+      "name": "Caracóis",
+      "quantity": "1",
+      "unitPrice": "6.50",
+      "lineTotal": "6.50",
+      "needsCheck": false
+    },
+    {
+      "name": "Imperial",
+      "quantity": "1",
+      "unitPrice": "1.60",
+      "lineTotal": "1.60",
+      "needsCheck": false
+    },
+    {
+      "name": "Imperial",
+      "quantity": "1",
+      "unitPrice": "1.60",
+      "lineTotal": "1.60",
+      "needsCheck": false
+    }
+  ],
+  "total": "9.70",
+  "warnings": []
+}

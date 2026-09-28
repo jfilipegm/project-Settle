@@ -1,0 +1,10 @@
+Oficina Auto Silva, Lda.
+NIF 246813571
+Fatura FT A/345
+Data de emissão 2026-09-20
+Mudança de óleo 45,00
+Filtro de óleo 12,50
+Mão de obra 30,00
+Total s/ IVA 87,50
+IVA 23% 20,13
+Total c/ IVA 107,63

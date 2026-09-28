@@ -1,0 +1,31 @@
+{
+  "merchant": "Joe's Pizza",
+  "items": [
+    {
+      "name": "Large Pepperoni",
+      "quantity": "1",
+      "unitPrice": "18.00",
+      "lineTotal": "18.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Garlic Knots",
+      "quantity": "1",
+      "unitPrice": "5.00",
+      "lineTotal": "5.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Soda",
+      "quantity": "1",
+      "unitPrice": "2.50",
+      "lineTotal": "2.50",
+      "needsCheck": false
+    }
+  ],
+  "subtotal": "25.50",
+  "tax": "2.23",
+  "tip": "5.50",
+  "total": "33.23",
+  "warnings": []
+}

@@ -1,0 +1,37 @@
+{
+  "merchant": "Minipreço",
+  "merchantTaxId": "543210987",
+  "items": [
+    {
+      "name": "Leite Meio Gordo",
+      "quantity": "1",
+      "unitPrice": "0.79",
+      "lineTotal": "0.79",
+      "needsCheck": false
+    },
+    {
+      "name": "Pão Rústico",
+      "quantity": "1",
+      "unitPrice": "1.20",
+      "lineTotal": "1.20",
+      "needsCheck": false
+    },
+    {
+      "name": "Detergente Roupa",
+      "quantity": "1",
+      "unitPrice": "7.99",
+      "lineTotal": "7.99",
+      "needsCheck": false
+    },
+    {
+      "name": "Cerveja Sagres 6x33cl",
+      "quantity": "1",
+      "unitPrice": "4.99",
+      "lineTotal": "4.99",
+      "needsCheck": false
+    }
+  ],
+  "tax": "2.54",
+  "total": "14.97",
+  "warnings": []
+}

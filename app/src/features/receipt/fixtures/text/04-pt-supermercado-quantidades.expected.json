@@ -1,0 +1,38 @@
+{
+  "merchant": "Pingo Doce",
+  "merchantTaxId": "512345678",
+  "date": "2026-09-27",
+  "items": [
+    {
+      "name": "Água Luso 1,5L",
+      "quantity": "6",
+      "unitPrice": "0.45",
+      "lineTotal": "2.70",
+      "needsCheck": false
+    },
+    {
+      "name": "Arroz Agulha 1kg",
+      "quantity": "1",
+      "unitPrice": "1.15",
+      "lineTotal": "1.15",
+      "needsCheck": false
+    },
+    {
+      "name": "Massa Esparguete",
+      "quantity": "1",
+      "unitPrice": "0.79",
+      "lineTotal": "0.79",
+      "needsCheck": false
+    },
+    {
+      "name": "Tomate",
+      "quantity": "1.25",
+      "unitPrice": "1.99",
+      "lineTotal": "2.49",
+      "needsCheck": false
+    }
+  ],
+  "subtotal": "7.13",
+  "total": "7.13",
+  "warnings": []
+}

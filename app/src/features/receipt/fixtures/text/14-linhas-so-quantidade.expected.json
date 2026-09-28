@@ -1,0 +1,29 @@
+{
+  "merchant": "Lidl",
+  "merchantTaxId": "987654322",
+  "items": [
+    {
+      "name": "Sumo Laranja 1L",
+      "quantity": "3",
+      "unitPrice": "1.29",
+      "lineTotal": "3.87",
+      "needsCheck": false
+    },
+    {
+      "name": "Iogurte Natural 4x125g",
+      "quantity": "1",
+      "unitPrice": "1.09",
+      "lineTotal": "1.09",
+      "needsCheck": false
+    },
+    {
+      "name": "Queijo Flamengo",
+      "quantity": "2",
+      "unitPrice": "2.49",
+      "lineTotal": "4.98",
+      "needsCheck": false
+    }
+  ],
+  "total": "9.94",
+  "warnings": []
+}

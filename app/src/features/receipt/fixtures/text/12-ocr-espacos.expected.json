@@ -1,0 +1,28 @@
+{
+  "merchant": "Café Imperial",
+  "items": [
+    {
+      "name": "Torrada",
+      "quantity": "1",
+      "unitPrice": "1.90",
+      "lineTotal": "1.90",
+      "needsCheck": false
+    },
+    {
+      "name": "Galão",
+      "quantity": "1",
+      "unitPrice": "1.20",
+      "lineTotal": "1.20",
+      "needsCheck": false
+    },
+    {
+      "name": "Bolo de arroz",
+      "quantity": "1",
+      "unitPrice": "1.10",
+      "lineTotal": "1.10",
+      "needsCheck": false
+    }
+  ],
+  "total": "4.20",
+  "warnings": []
+}

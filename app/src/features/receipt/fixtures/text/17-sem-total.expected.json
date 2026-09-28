@@ -1,0 +1,27 @@
+{
+  "merchant": "Bar Oceano",
+  "items": [
+    {
+      "name": "Mojito",
+      "quantity": "1",
+      "unitPrice": "7.00",
+      "lineTotal": "7.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Caipirinha",
+      "quantity": "1",
+      "unitPrice": "7.00",
+      "lineTotal": "7.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Tremoços",
+      "quantity": "1",
+      "unitPrice": "1.50",
+      "lineTotal": "1.50",
+      "needsCheck": false
+    }
+  ],
+  "warnings": ["noTotal"]
+}

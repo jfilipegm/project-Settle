@@ -1,0 +1,38 @@
+{
+  "merchant": "Pastelaria Aurora",
+  "merchantTaxId": "501234560",
+  "date": "2026-09-28",
+  "currencyHint": "EUR",
+  "items": [
+    {
+      "name": "Galão",
+      "quantity": "1",
+      "unitPrice": "1.40",
+      "lineTotal": "1.40",
+      "needsCheck": false
+    },
+    {
+      "name": "Torrada",
+      "quantity": "1",
+      "unitPrice": "2.10",
+      "lineTotal": "2.10",
+      "needsCheck": false
+    },
+    {
+      "name": "Pastel de Nata",
+      "quantity": "1",
+      "unitPrice": "1.30",
+      "lineTotal": "1.30",
+      "needsCheck": false
+    },
+    {
+      "name": "Sumo de Laranja",
+      "quantity": "1",
+      "unitPrice": "2.80",
+      "lineTotal": "2.80",
+      "needsCheck": false
+    }
+  ],
+  "total": "7.60",
+  "warnings": []
+}

@@ -1,0 +1,15 @@
+Blue Plate Cafe
+2026-09-26 12:30
+Club Sandwich 11.50
+Iced Tea 3.00
+Soup of the Day 5.50
+Subtotal 20.00
+Tax 1.60
+Total 21.60
+Tip ________
+Total ________
+Suggested gratuity:
+15% 3.24
+18% 3.89
+20% 4.32
+Thank you!
