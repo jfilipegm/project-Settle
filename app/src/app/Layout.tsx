@@ -24,7 +24,7 @@ export function Layout() {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link className={styles.brand} to="/">
-            project-W
+            Settle
           </Link>
           <nav className={styles.nav} aria-label="Main">
             <ul className={styles.navList}>

@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 export type ThemeMode = 'system' | 'light' | 'dark'
 
 /** public/theme-init.js reads the same key before first paint. */
-export const THEME_STORAGE_KEY = 'project-w.theme'
+export const THEME_STORAGE_KEY = 'settle.theme'
 
 /**
  * Each palette's `theme-color`: its `--color-surface` token, the colour of

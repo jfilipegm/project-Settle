@@ -1,6 +1,6 @@
 # Roadmap
 
-Product milestone ordering for project-W. `/milestone-plan` picks the first
+Product milestone ordering for Settle (repository `project-Settle`). `/milestone-plan` picks the first
 milestone whose status is not **Complete**; `/accept-milestone` marks it
 complete here. Each milestone should ship something usable on its own.
 
@@ -116,7 +116,7 @@ split math and the UI right before OCR adds uncertainty.
   `parseAmount` accepts only `€` today, so its symbol set grows with the
   currencies offered; `formatAmount` already takes a locale and currency.
 - Project `README.md` (repository root): a good, simple README covering
-  what project-W is, what works today, how to open or run it (linking to
+  what Settle is, what works today, how to open or run it (linking to
   `app/README.md` for development), where the roadmap and releases are,
   and the privacy stance (everything stays in the browser).
 

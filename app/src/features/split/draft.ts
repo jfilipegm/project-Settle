@@ -14,7 +14,7 @@ import {
   type SplitMode,
 } from './model.ts'
 
-export const DRAFT_STORAGE_KEY = 'project-w.bill'
+export const DRAFT_STORAGE_KEY = 'settle.bill'
 export const DRAFT_VERSION = 1
 
 type Json = unknown

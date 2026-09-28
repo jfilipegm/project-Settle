@@ -6,8 +6,9 @@
 
 ## Context
 
-project-W is a bill splitter that grows into a personal finance helper
-(`docs/ROADMAP.md`). The roadmap's guiding principles constrain the stack:
+Settle (formerly project-W) is a bill splitter that grows into a personal
+finance helper (`docs/ROADMAP.md`). The roadmap's guiding principles
+constrain the stack:
 
 - **No server early.** There are no accounts and no database until M9.
   Receipt reading, finance-file parsing and dashboards run in the browser,
@@ -71,7 +72,7 @@ Other consequences:
 ## Alternatives considered
 
 - **Next.js.** It is strong for server rendering, API routes and
-  full-stack apps, but project-W has no server until M9. Its static export
+  full-stack apps, but Settle has no server until M9. Its static export
   gives up much of what makes it attractive and adds framework
   conventions and a larger dependency tree. Plain React on Vite gives the
   same component model with less machinery. If M9 needs a server, it can

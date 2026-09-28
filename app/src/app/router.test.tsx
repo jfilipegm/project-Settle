@@ -31,7 +31,7 @@ describe('routes', () => {
     renderAt('/')
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'project-W' }),
+      screen.getByRole('heading', { level: 1, name: 'Settle' }),
     ).toBeInTheDocument()
   })
 
@@ -99,7 +99,7 @@ describe('routes', () => {
     fireEvent.click(screen.getByRole('link', { name: 'Go to the home page' }))
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'project-W' }),
+      screen.getByRole('heading', { level: 1, name: 'Settle' }),
     ).toBeInTheDocument()
   })
 

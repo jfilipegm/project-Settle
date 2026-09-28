@@ -1,7 +1,9 @@
-# project-W
+# Settle
+
+**Split bills. Settle up. Stay private.**
 
 Split bills fairly, and later keep track of your own finances, all in your
-browser. You type in a bill's items, say who had what, and project-W shows
+browser. You type in a bill's items, say who had what, and Settle shows
 who owes what, down to the cent. There are no accounts and no server:
 everything stays on your device.
 
@@ -48,6 +50,6 @@ sent anywhere.
 
 - The plan, milestone by milestone: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 - Every change merged into `master` is published as a
-  [GitHub Release](https://github.com/jfilipegm/project-W/releases). The
+  [GitHub Release](https://github.com/jfilipegm/project-Settle/releases). The
   version number follows the kind of change: a new feature raises the
   minor version, and any other change raises the patch version.
