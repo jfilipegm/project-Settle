@@ -1,0 +1,26 @@
+[c=93] Restaurante A Tasquinha
+[c=96] Rua dos Remedios 34
+[c=95] 1100-441 Lisboa
+[c=94] NIF: 507342186
+[c=94] Fatura Simplificada FS A2026/318
+[c=96] Data: 28-09-2026 Hora: 13:42
+[c=94] Qtd Descrição P.Unit Total
+[c=96] 2 Imperial 1,60 3,20
+[c=93] 1 Bitoque 9,50 9,50
+[c=95] 1 Salada Mista 4,20 4,20
+[c=95] 2 Café 0,80 1,60
+[c=95] 1 Água das Pedras 1,50 1,50
+[c=94] TOTAL 20,00 €
+[c=96] Multibanco 20,00
+[c=96] Taxa Base IVA
+[c=94] 13% 17,70 2,30
+[c=88] ATCUD: JFJ7K2LM-318
+[c=96] Processado por programa certificado
+[c=92] n.º 1234/AT
+[c=16] [a] Saca
+[c=23] ai e
+[c=25] To rio:
+[c=28] nek
+[c=11] i
+[c=58] [=] dE
+[c=96] Obrigado pela visita

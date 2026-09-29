@@ -89,7 +89,19 @@ export function SettingsPage() {
 
       <section className={styles.section} aria-labelledby="receipts-heading">
         <h2 id="receipts-heading">Receipt reading</h2>
-        <p>Coming in M3: Bring-your-own-key receipt reading.</p>
+        <p>Built-in: read on this device.</p>
+      </section>
+
+      <section className={styles.section} aria-labelledby="about-heading">
+        <h2 id="about-heading">About</h2>
+        <p>
+          <a href={`${import.meta.env.BASE_URL}THIRD_PARTY_NOTICES.md`}>
+            Third-party licences
+          </a>
+        </p>
+        <p className={styles.hint}>
+          The open-source libraries that read receipts, and their licences.
+        </p>
       </section>
     </>
   )

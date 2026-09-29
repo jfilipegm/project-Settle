@@ -14,7 +14,7 @@ Branch `feature/milestone-2`, PR #6.
 | M2-CP2 | File intake, image pipeline, assets and CSP | Complete |
 | M2-CP3 | Built-in reader, QR scanning, import pipeline, sample corpus | Complete |
 | M2-CP4 | Review step UI | Complete |
-| M2-CP5 | READMEs, Settings, end-to-end, verification | Not started |
+| M2-CP5 | READMEs, Settings, end-to-end, verification | Complete |
 
 ### M2-CP1 — verified state
 
@@ -306,6 +306,48 @@ cookie (the profile is fresh and the app sets none).
 
 Verified: `npm run check` (`tsc -b`, `eslint . --max-warnings=0`,
 `prettier --check .`, `vitest run`: 733 tests) and `npm run build` pass.
+
+### M2-CP5 — verified state
+
+- `README.md`: "What works today" gains **Scan a receipt** (the formats,
+  the fiscal QR code, the receipt check, read on the device, the manual
+  fallback), and the M2 "on the roadmap" wording is gone. The privacy
+  section says receipts are read on the device and never uploaded, that
+  the image is never saved, and that the first scan downloads the reader,
+  **about 9 MB** (measured: Tesseract core 3.9 MB + `por`/`eng` models
+  4.3 MB + zxing 0.95 MB + the worker and chunks; the plan estimated about
+  8 MB), from Settle itself. A new "Third-party licences" section names the
+  libraries, the LGPL-3.0 `heic-to` shipped as its own unmodified file,
+  and links to `app/public/THIRD_PARTY_NOTICES.md`.
+- `app/README.md`: the `features/receipt/` layout, the self-hosted reader
+  files and `vendor-assets.mjs` (D8), the CSP, the static-only lint rule
+  and `check-requests.mjs` (D9), regenerating the sample receipts, the
+  `settle.receipt` key and Tesseract's IndexedDB cache.
+- `SettingsPage.tsx`: "Receipt reading" says "Built-in: read on this
+  device." with no milestone promised, and a new "About" section links
+  "Third-party licences" to `/THIRD_PARTY_NOTICES.md`. The M3 test is
+  replaced by tests of both.
+- `SplitPage.e2e.test.tsx`, a new scan-to-split test: `importReceipt` with
+  fake decoding and QR scanning (sample 1's QR payload) but the real
+  reader, parser and bill conversion, fed sample 1's **real OCR
+  transcript** (`fixtures/receipts/01-pt-restaurante-qr.ocr.txt`, from
+  Tesseract.js after the clean-up, QR-code noise lines included). It
+  uploads a file, checks the 5 items and "Matches" (20,00 € from the QR
+  code), splits them between Ana, Rui and Maria, and checks the hand-
+  computed totals (3,27 €, 11,97 €, 4,76 €: equal remainders, so the 2
+  leftover cents go to the first people) and the settle-up.
+
+Milestone "Done when":
+- `npm run check` (735 tests) and `npm run build` pass. On the PR, `app`
+  and `pr-title` passed for the CP4 push; the CP5 push's checks are
+  reported at the self-review.
+- The sample corpus matches or is flagged (CP3's corpus test); every
+  failure falls back to the manual editor (CP3 and CP4 tests); no receipt
+  data leaves the browser (the D9 CSP and static-only rule, CP2's page-load
+  log and CP4's four real-scan logs, with the limit recorded under CP4);
+  the READMEs are updated.
+- Still to come: the user's functional review with real receipts on a
+  phone and a desktop.
 
 ## Current blockers
 
