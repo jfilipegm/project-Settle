@@ -3,7 +3,7 @@
 ## Milestone
 
 **M2 — Receipt upload and built-in parsing** (work item `milestone-2`),
-phase `SELF_REVIEWING_IMPLEMENTATION`. Plan revision 10, approved in commit `3af0e18`.
+phase `APPLYING_REVIEW_FEEDBACK`. Plan revision 10, approved in commit `3af0e18`.
 Branch `feature/milestone-2`, PR #6.
 
 ## Checkpoints
@@ -366,6 +366,32 @@ object URLs). One fix:
 Verified after the fix: `npm run check` twice (37 files, 735 tests,
 both passing) and `npm run build`. On PR #6 the CP5 push's `app`,
 `pr-title` and `workflow-conformance` checks passed.
+
+### External implementation review, round 1 (REVISE)
+
+- **B-EXT-1** (CI on the reviewed head): no change needed. The required
+  checks had finished green on the reviewed head `8075476` (`app` on push
+  and on the PR, `workflow-conformance`, `pr-title`) and on `9a09273`.
+- **I-EXT-1** (worker header evidence), `15197e5`: `check-requests.mjs`
+  serves the app through a logging proxy in front of `vite preview`, so
+  every request that reaches the origin is recorded with its headers as
+  received and gets the same checks. Each one must also be in the
+  protocol's log. For the Tesseract model request in sample 1's scan,
+  the protocol reported 2 headers and the proxy received 11, all standard,
+  none with a receipt value. The logs keep every header value, the value
+  set and the proxy log, and `check-requests.mjs audit --log <file>`
+  re-checks one offline (a copy with a receipt value or a custom header
+  added fails). All six evidence logs were regenerated with the same
+  arguments: all pass (the CSP probe fails as it must), with the same app
+  reads as before, and all pass the audit.
+- **O-EXT-2** (QR scan after a reader failure), `4171976`: the QR scan
+  gets its own signal, aborted with the caller's and whenever the import
+  ends; four new tests.
+- **O-EXT-1** (summary not bound to the bill): not applied. It needs a
+  change to D15's saved format, for a recovery case that ordinary use
+  doesn't reach (the reviewer marked it as future hardening).
+
+Verified: `npm run check` (37 files, 739 tests) and `npm run build`.
 
 ## Current blockers
 
