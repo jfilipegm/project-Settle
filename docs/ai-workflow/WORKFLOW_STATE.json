@@ -1828,6 +1828,34 @@
       "blocking_decisions": [],
       "state_revision": 48,
       "last_transition": "2026-09-29T10:54:27Z"
+    },
+    "milestone-2-remediation-1": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-2-remediation-1",
+      "parent_work_item_id": "milestone-2",
+      "plan_path": "docs/milestones/milestone-2-remediation-1-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-2-remediation-1-registry.json",
+      "mapping_path": null,
+      "governing_workflow_version": "2.1",
+      "phase": "PLANNING",
+      "plan_revision": 1,
+      "implementation_revision": null,
+      "functional_review_round": null,
+      "base_commit": "4b75b092804be374ae7ebd0e0d1d9e8ef4efb3af",
+      "reviewed_implementation_head": null,
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": null,
+      "checkpoints": {},
+      "current_bundle_id": null,
+      "plan_approval": null,
+      "technical_approval": null,
+      "technical_review_block_pins": [],
+      "plan_review_stages": null,
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 1,
+      "last_transition": "2026-09-29T11:10:03Z"
     }
   }
 }

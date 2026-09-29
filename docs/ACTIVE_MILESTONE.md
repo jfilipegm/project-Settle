@@ -401,7 +401,9 @@ verification above.
 
 ## Current blockers
 
-None.
+M2 can't be accepted until its remediation child,
+`milestone-2-remediation-1`, is accepted (functional review round 1,
+below). That child starts at `/milestone-plan milestone-2-remediation-1`.
 
 ## Active plan
 
@@ -415,6 +417,56 @@ M2 functional review, implementation revision 2. Report findings in
 did, what you saw, and what you expected. For a receipt that reads badly,
 note the device, whether it was a photo or a file, and, if you can, attach
 or describe the receipt (blur out anything private).
+
+### Functional review, round 1: findings and routing
+
+You tested five real receipts (three Lidl app receipts, 223-261 px wide
+screenshots, and WhatsApp photos of a Continente and a Tiffosi receipt).
+Reproduced offline with the real Tesseract.js, parser and zxing-wasm:
+
+- **Lidl ×3** (F-I-1): OCR reads almost nothing (line confidences mostly
+  0-50). The screenshots are 223-261 px wide, so the text is about
+  5 px tall. D10's scaling doesn't enlarge them: doubling the short side
+  would take the long side (1600 px) past the 2400 px cap. Result: no
+  items, `noItems`.
+- **Tiffosi** (F-I-2): the photo's grey table and paper texture become
+  noise lines. The item rows (barcode, then a two-line description and
+  price) are unreadable or don't match D11's item layouts. Result: no
+  items.
+- **Continente** (F-I-3): most item lines are read, but only 5 items
+  (8,71 €) are kept. The parser drops items whose quantity and price are
+  on the next line (`2 X 4,04 8,08`), items followed by OCR noise after
+  the amount (`2,69 D'`), and everything after a garbled line. `TOTAL A
+  PAGAR 51,25` was read as `51,0`, so no printed total was found.
+- **The fiscal QR code decodes correctly on all five** (totals 75,68,
+  76,77, 7,76, 51,25 and 76,11 €), so in the app Continente shows a
+  mismatch against 51,25 €, and the others fall back to typing.
+
+Classification:
+
+| Finding | Class | Routing |
+|---------|-------|---------|
+| F-I-1 Lidl screenshots, no items | defect | broad → `milestone-2-remediation-1` |
+| F-I-2 Tiffosi photo, no items | defect | broad → `milestone-2-remediation-1` |
+| F-I-3 Continente under-read (and an incomplete import that can be split without further steps) | defect + usability issue | broad → `milestone-2-remediation-1` |
+| F-I-4 the corpus doesn't represent real receipts | missing requirement (test coverage) | broad → `milestone-2-remediation-1` |
+
+**Why broad, not a bounded fix:** it needs work in three areas that
+depend on each other. Image clean-up: scale by text size rather than page
+size, and handle photo backgrounds, which touches cropping, out of M2's
+scope. The parser: multi-line items, category headers, `POUPANCA` and
+`DESCONTO DIRETO` lines, noise after amounts, barcode-column layouts. The
+review step: make a large gap from the QR total impossible to miss before
+splitting. How much of this is needed to pass the acceptance criteria is
+genuinely uncertain, so it gets its own plan and review instead of an
+inline fix. **Open question for that plan:** the five receipts contain
+personal data (a customer NIF, card digits, a loyalty-card number). Before
+any of them becomes a committed fixture, it has to be redacted or
+re-created, or you decide it can stay as is.
+
+No code changed in M2 for this round, and M2's technical approval stays
+current. **To re-test after the child is accepted:** items 2, 7, 8, 9 and
+11 below, and your five receipts.
 
 **Setup**
 
