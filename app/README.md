@@ -126,6 +126,27 @@ and the dependencies are recorded in
   `browserImport.ts` gives it the real ones and is loaded on the first
   scan, so none of the reader code is in the main bundle.
 
+The remediation of M2's functional review
+([`docs/milestones/milestone-2-remediation-1-PLAN.md`](../docs/milestones/milestone-2-remediation-1-PLAN.md))
+added, for real receipts:
+
+- Clean-up by text size (`preprocess.ts`, `strips.ts`): a page is
+  scaled so its characters are about 32 px tall, flattened when its
+  background is uneven (a photo on a table), and read in overlapping
+  strips when it's over 6 MP.
+- Parser rules for Portuguese app and shop layouts, and
+  `reconcileWithTrustedTotal` in `toBill.ts`, which makes every decision
+  that needs the fiscal QR code's total in one stage.
+- The review step (`review.ts`, the check panel and the result section):
+  the gap in the result and the copied text, "Add the difference", an
+  incomplete read called out, and lines left out by a cut shown until
+  confirmed.
+
+Reading time, on the development machine (Node, one core): about 6 s for
+a 12-MP photo read in strips and for a small screenshot enlarged ×4. A
+phone is slower; its measurement is part of M2's functional re-test, and
+this section is corrected after it.
+
 ### Self-hosted reader files
 
 Tesseract.js, zxing-wasm and pdf.js load workers, wasm and data from a CDN

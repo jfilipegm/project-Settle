@@ -10,7 +10,10 @@ import { useRegion } from '../app/region.ts'
 import { ReceiptCheck } from '../features/receipt/components/ReceiptCheck.tsx'
 import { ScanReceipt } from '../features/receipt/components/ScanReceipt.tsx'
 import { revokeImageUrl } from '../features/receipt/importUi.ts'
-import type { ReceiptSummary } from '../features/receipt/model.ts'
+import { NOT_READ_ITEM_NAME } from '../features/receipt/messages.ts'
+import type { ReceiptSummary, RemovedLine } from '../features/receipt/model.ts'
+import { checkReceipt } from '../features/receipt/reconcile.ts'
+import { receiptNotices } from '../features/receipt/review.ts'
 import {
   loadReceiptSummary,
   saveReceiptSummary,
@@ -20,6 +23,7 @@ import { ItemsSection } from '../features/split/components/ItemsSection.tsx'
 import { PeopleSection } from '../features/split/components/PeopleSection.tsx'
 import { ResultSection } from '../features/split/components/ResultSection.tsx'
 import styles from '../features/split/components/split.module.css'
+import { newId } from '../features/split/billReducer.ts'
 import { computeSplit } from '../features/split/split.ts'
 import { newBillIds, useBill } from '../features/split/useBill.ts'
 
@@ -65,6 +69,41 @@ export function SplitPage() {
     () => new Set(summary?.flaggedItemIds ?? []),
     [summary],
   )
+  // R12 and R24: what the result section says about the receipt.
+  const notices = useMemo(
+    () =>
+      summary === null
+        ? []
+        : receiptNotices(checkReceipt(bill, summary), summary, region),
+    [bill, summary, region],
+  )
+
+  /** Adds items, flagged "Check", and records their flags (R13, R24). */
+  const addFlaggedItems = (
+    current: ReceiptSummary,
+    items: readonly RemovedLine[],
+    changes: Partial<ReceiptSummary> = {},
+  ) => {
+    const added = items.map((item) => ({
+      id: newId(),
+      name: item.name,
+      unitPrice: item.amount,
+    }))
+    dispatch({ type: 'addItems', items: added })
+    updateSummary({
+      ...current,
+      ...changes,
+      flaggedItemIds: [
+        ...current.flaggedItemIds,
+        ...added.map((item) => item.id),
+      ],
+    })
+  }
+  const withoutRemovedLines = (current: ReceiptSummary): ReceiptSummary => {
+    const rest = { ...current }
+    delete rest.removedLines
+    return rest
+  }
 
   return (
     <div className={styles.page}>
@@ -97,6 +136,15 @@ export function SplitPage() {
             updateSummary(null)
             setImageUrl(undefined)
           }}
+          onAddDifference={(amount) => {
+            addFlaggedItems(summary, [{ name: NOT_READ_ITEM_NAME, amount }])
+          }}
+          onConfirmRemoved={() => {
+            updateSummary(withoutRemovedLines(summary))
+          }}
+          onPutBack={(lines) => {
+            addFlaggedItems(withoutRemovedLines(summary), lines)
+          }}
         />
       )}
 
@@ -121,7 +169,13 @@ export function SplitPage() {
           <AdjustmentsSection {...sectionProps} />
         </Fragment>
       </div>
-      <ResultSection bill={bill} outcome={outcome} region={region} />
+      <ResultSection
+        bill={bill}
+        outcome={outcome}
+        region={region}
+        notices={notices}
+        noticeTarget="receipt-check-heading"
+      />
 
       <div className={styles.newBill}>
         <button

@@ -4,10 +4,15 @@ import type { SplitResult } from './split.ts'
 
 /**
  * The result as plain text for "Copy as text" (D12): the bill total, each
- * person's total, and who owes whom, in the region's format. For people to
- * read, not a data format.
+ * person's total, and who owes whom, in the region's format, then any
+ * notices about a scanned receipt (M2 remediation, R12 and R24). For
+ * people to read, not a data format.
  */
-export function resultAsText(result: SplitResult, region: Region): string {
+export function resultAsText(
+  result: SplitResult,
+  region: Region,
+  notices: readonly string[] = [],
+): string {
   const money = (value: Parameters<typeof formatAmount>[0]) =>
     formatAmount(value, region)
   const names = new Map(
@@ -25,6 +30,9 @@ export function resultAsText(result: SplitResult, region: Region): string {
         `${names.get(fromId) ?? ''} owes ${names.get(toId) ?? ''} ${money(amount)}`,
       )
     }
+  }
+  if (notices.length > 0) {
+    lines.push('', ...notices)
   }
   return lines.join('\n')
 }

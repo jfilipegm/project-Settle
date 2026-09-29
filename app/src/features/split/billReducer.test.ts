@@ -298,3 +298,47 @@ describe('newId', () => {
     }
   })
 })
+
+describe('addItems (R13, R24)', () => {
+  const bill = createBill(['alice', 'bob', 'first'])
+
+  it('adds named, priced items shared by everyone', () => {
+    const next = billReducer(bill, {
+      type: 'addItems',
+      items: [
+        { id: 'gap', name: 'Not read from the receipt', unitPrice: cents(250) },
+        { id: 'back', name: 'Vinho', unitPrice: cents(2000) },
+      ],
+    })
+    expect(next.items.slice(1)).toEqual([
+      {
+        id: 'gap',
+        name: 'Not read from the receipt',
+        quantity: { numerator: 1, denominator: 1 },
+        unitPrice: 250,
+        assignees: [
+          { personId: 'alice', weight: 1 },
+          { personId: 'bob', weight: 1 },
+        ],
+      },
+      expect.objectContaining({ id: 'back', name: 'Vinho', unitPrice: 2000 }),
+    ])
+    expect(validateBill(next)).toEqual([])
+  })
+
+  it('adds nothing when they wouldn’t all fit under the item limit', () => {
+    let full = bill
+    for (let i = 1; i < 99; i++) {
+      full = billReducer(full, { type: 'addItem', id: `i${i}` })
+    }
+    expect(full.items).toHaveLength(99)
+    const two = [
+      { id: 'a', name: 'A', unitPrice: cents(100) },
+      { id: 'b', name: 'B', unitPrice: cents(100) },
+    ]
+    expect(billReducer(full, { type: 'addItems', items: two })).toBe(full)
+    expect(
+      billReducer(full, { type: 'addItems', items: two.slice(0, 1) }).items,
+    ).toHaveLength(100)
+  })
+})

@@ -25,6 +25,27 @@ everything stays on your device.
   compares the items with the receipt's total as you edit them, and marks
   the lines it wasn't sure about. You review and fix the items, then split
   the bill as usual. If a receipt can't be read, you type the items in.
+
+  It reads screenshots from receipt apps (it enlarges small text first)
+  and phone photos of a receipt on a table (it evens out the background
+  and shading). When the items don't add up to the receipt's total, you
+  can't miss it: the result says so, and so does the copied text, and one
+  click adds the missing difference as an item. If only part of a
+  receipt was read, the check says how much. When no item could be read
+  but the receipt has a fiscal QR code, its total comes in as one item to
+  split as it is. And if the import left out lines at the bottom of the
+  receipt to match its total, it lists them until you confirm they
+  aren't items, or put them back.
+
+  **Known limits:**
+  - Very small screenshots read poorly: text a few pixels tall (a
+    receipt app's whole receipt shrunk to fit one screenshot) loses digits.
+    A screenshot taken **zoomed in**, so the text is larger, reads much
+    better.
+  - Reading takes a few seconds: about 6 seconds for a photo or a
+    screenshot on a desktop, and longer on a phone.
+  - Lines on a fold of the paper, or blurred, may be misread; the check
+    shows the gap.
 - **Region.** In Settings, choose how amounts are typed and shown:
   Portuguese, UK or US number format, and euros, pounds or US dollars. The
   default is Portuguese format in euros. Changing the currency only

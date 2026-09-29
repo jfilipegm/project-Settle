@@ -410,7 +410,7 @@ approved in `5a42485` (basis `EXTERNAL_APPROVE`). Lands on
 | M2R1-CP1 | Image clean-up: text-size scaling, flattening, one channel, strips | Complete |
 | M2R1-CP2 | Parser and bill-conversion rules for real layouts | Complete |
 | M2R1-CP3 | Synthetic real-layout corpus and local real-receipt fixtures | Complete |
-| M2R1-CP4 | Review step: gaps, add-the-difference, READMEs, verification | Not started |
+| M2R1-CP4 | Review step: gaps, add-the-difference, READMEs, verification | Complete |
 
 ### M2R1-CP1 — verified state
 
@@ -655,11 +655,62 @@ Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`
 and `vitest run` pass with the local folder filled in (896 tests, 1
 skipped: the "absent" note). CI will skip the local receipts.
 
+CI after CP3 (run 36633905463, `e05ea8f`): the checkout used
+`fetch-depth: 0`, the six R17 guard tests passed against the full
+history, and the local real-receipt test was skipped.
+
+### M2R1-CP4 — verified state
+
+Built:
+- `review.ts` (pure): R15's in-app coverage (`readShare`, the "Not read
+  from the receipt" item left out), R13's offer (`differenceOffer`: a
+  button when the items add up to less, a sentence with a percentage tax
+  or tip, nothing at 100 items), R14's case (`isUnreadImport`), and the
+  result section's notices (`receiptNotices`, R12 then R24).
+- The check panel (`ReceiptCheck.tsx`): R24's "Matches after leaving out
+  N lines…" instead of a plain match; after an edit, the live status and
+  then "N lines were left out…"; the left-out lines with "They aren't
+  items" and "Put them back" (hidden when they wouldn't fit); R14's and
+  R15's status lines; R13's button or sentence.
+- The result section (`ResultSection.tsx`, `format.ts`): the notices as
+  text above the totals, with a link to the check panel, and appended by
+  "Copy as text". Optional props: without a receipt it's M1's section.
+- The Split page: the notices from the live check, and the three actions
+  through a new reducer action, `addItems` (named, priced items shared by
+  everyone; all or none under the 100-item limit), with their flags in
+  the saved summary.
+- `README.md` and `app/README.md`: what works now, the known limits
+  (small screenshots; a zoomed-in screenshot reads better), and the
+  reading time on the development machine (about 6 s). The phone
+  measurement moved to the functional re-test (CP1), so the READMEs say a
+  phone is slower and are corrected after it.
+
+Tests: `SplitPage.review.test.tsx` (16, fake import with the real bill
+conversion): every plan item for R12–R15 and R24, including revision 12's
+edits after a cut (the live mismatch, the list and both notices in order;
+R13's button beside the list; `billInvalid` with the list; the "Matches
+after…" wording back on restore), and accessibility (labelled buttons,
+the notices as text inside the result region). Plus `addItems` in
+`billReducer.test.ts`.
+
+Verification:
+- `npm run check` (913 tests, 1 skipped) and `npm run build` pass.
+- `check-requests.mjs scan` on the preview build, each file in its own
+  fresh headless Brave profile (logs in
+  `docs/milestones/milestone-2-remediation-1-evidence/`): **both pass**,
+  with the planted leak caught by the value search and the header rule in
+  both logs, no failure at the proxy (15 requests received), no CSP
+  violation, and the Tesseract worker present. `sample-1.jpg`: 5 items,
+  20,00 from the QR code. `sample-12.jpg`: 7 items (the corpus PNG reads
+  6), 16,50 from the QR code; the browser's JPEG read differs slightly
+  from Node's, which the check panel would show as a gap.
+
 ## Current blockers
 
 M2 can't be accepted until its remediation child,
 `milestone-2-remediation-1`, is accepted (functional review round 1,
-below). The child is implementing; M2R1-CP1 to M2R1-CP3 are complete.
+below). All four of its checkpoints are complete; it goes to its
+implementation review next.
 
 ## Active plan
 

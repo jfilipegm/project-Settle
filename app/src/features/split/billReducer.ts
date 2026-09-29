@@ -16,6 +16,15 @@ import {
 
 export type BillAction =
   | { type: 'addItem'; id: string }
+  /**
+   * Items with a name and a price, quantity 1, shared by everyone: the
+   * receipt's missing difference (R13) or the lines put back (R24). All
+   * or none: nothing is added if they wouldn't all fit.
+   */
+  | {
+      type: 'addItems'
+      items: readonly { id: string; name: string; unitPrice: Cents }[]
+    }
   | {
       type: 'updateItem'
       itemId: string
@@ -128,6 +137,22 @@ export function billReducer(bill: Bill, action: BillAction): Bill {
       return {
         ...bill,
         items: [...bill.items, emptyItem(action.id, bill.people)],
+      }
+
+    case 'addItems':
+      if (bill.items.length + action.items.length > LIMITS.maxItems) {
+        return bill
+      }
+      return {
+        ...bill,
+        items: [
+          ...bill.items,
+          ...action.items.map(({ id, name, unitPrice }) => ({
+            ...emptyItem(id, bill.people),
+            name,
+            unitPrice,
+          })),
+        ],
       }
 
     case 'updateItem':
