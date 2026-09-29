@@ -516,6 +516,8 @@ describe('preprocessPage (R1, R2, R20)', () => {
     expect(Math.abs(estimateSkew(prepared.plane))).toBeLessThanOrEqual(0.5)
   })
 
+  // Flattens the whole scaled page as the reference, then every strip:
+  // seconds of work, so more than the default 5 s on a busy CI runner.
   it('gives each strip exactly the rows of the whole page flattened', async () => {
     const page = onTable(glyphPage(10, { width: 700, height: 1000 }))
     const prepared = await preparePage(page)
@@ -542,7 +544,7 @@ describe('preprocessPage (R1, R2, R20)', () => {
       }
       expect(maxDifference(clean.data, stretchContrast(core).data)).toBe(0)
     }
-  })
+  }, 30_000)
 
   it('shrinks and grays in one pass, never at the source’s size', async () => {
     const page = glyphPage(120, { width: 2000, height: 3000 })
