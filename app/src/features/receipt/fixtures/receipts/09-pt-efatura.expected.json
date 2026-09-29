@@ -1,0 +1,42 @@
+{
+  "merchant": "Oficina Auto Ribeiro, Lda.",
+  "merchantTaxId": "510293840",
+  "date": "2026-09-25",
+  "currencyHint": "EUR",
+  "subtotal": "140.50",
+  "tax": "32.32",
+  "total": "172.82",
+  "items": [
+    {
+      "name": "Mudança de óleo",
+      "quantity": "1",
+      "unitPrice": "45.00",
+      "lineTotal": "45.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Filtro de óleo",
+      "quantity": "1",
+      "unitPrice": "12.50",
+      "lineTotal": "12.50",
+      "needsCheck": false
+    },
+    {
+      "name": "Pastilhas de travão",
+      "quantity": "2",
+      "unitPrice": "24.00",
+      "lineTotal": "48.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Mão de obra",
+      "quantity": "1",
+      "unitPrice": "35.00",
+      "lineTotal": "35.00",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "qr": "A:510293840*B:999999990*C:PT*D:FT*E:N*F:20260925*G:FT 2026/412*H:PL8N2X4Q-412*I1:PT*I7:140.50*I8:32.32*N:32.32*O:172.82*Q:t7Rm*R:1357",
+  "check": "match"
+}

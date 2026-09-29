@@ -12,7 +12,7 @@ Branch `feature/milestone-2`, PR #6.
 |----|------|--------|
 | M2-CP1 | Pure receipt logic | Complete |
 | M2-CP2 | File intake, image pipeline, assets and CSP | Complete |
-| M2-CP3 | Built-in reader, QR scanning, import pipeline, sample corpus | Not started |
+| M2-CP3 | Built-in reader, QR scanning, import pipeline, sample corpus | Complete |
 | M2-CP4 | Review step UI | Not started |
 | M2-CP5 | READMEs, Settings, end-to-end, verification | Not started |
 
@@ -151,6 +151,84 @@ exact policy.
 
 Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`,
 `vitest run` (648 tests) and `npm run build` pass.
+
+### M2-CP3 — verified state
+
+- `app/src/features/receipt/`:
+  - `builtInReader.ts`: `createBuiltInReader({ assets, encodePage })`. A
+    text layer is parsed directly; otherwise each page goes through
+    `preprocessPage` (D10) and the injected encoder (D2) to a Tesseract.js
+    worker (`por` + `eng`, LSTM only), created per read and terminated
+    after it, on success, failure or abort, including a worker that
+    finishes loading after the abort. Tesseract's statuses map to D17's
+    phases, and the reading progress runs across the pages. A worker that
+    can't load is `assetsUnavailable`; a failed recognition is `ocrFailed`.
+  - `qrScanner.ts`: `scanFiscalQr(pages)` with zxing-wasm's reader, its
+    wasm through `assets.ts` (D8). Each page is tried whole, then its bottom
+    half scaled 2× (D5), capped at 12 MP so a large photo's crop stays
+    small. The first payload `parseFiscalQr` accepts wins.
+  - `importReceipt.ts`: `importReceipt(file, deps, options)`: decode, then
+    the reader and the QR scan side by side, then `receiptToBill`. `deps`
+    are `decode`, `reader`, `scanQr`, and an optional `previewUrl` for the
+    check panel's image (D14). It never touches the current bill. A read
+    receipt with no items is `noItems` (for every reader, so it lives
+    here). A decoder or reader that throws becomes `decodeFailed` or
+    `ocrFailed`; a QR scan that fails only means there's no QR code. Abort
+    is checked after every step.
+  - `encodePage.node.ts` (test support): the pngjs encoder, and a PNG
+    decoder for the tests. `src/test/pngjs.d.ts` declares the part of
+    pngjs they use (no `@types/pngjs`).
+- The sample corpus, `receipt/fixtures/receipts/`: the plan's 10 samples,
+  each defined once in `app/scripts/make-sample-receipts.mjs` (its lines,
+  what the receipt really says, its fiscal QR payload, its photo effects),
+  which writes the SVG source, the PNG (or, for sample 9, the text-layer
+  PDF, through cairo) and `.expected.json`. The fiscal QR codes are drawn
+  with zxing-wasm's own writer, which is already installed. The outputs
+  are reproducible byte for byte (fixed seeds, `SOURCE_DATE_EPOCH` and
+  pinned PDF dates).
+- The browser-check files, `receipt/fixtures/browser/`: `sample-1.jpg`,
+  `sample-3.heic` (an 8-bit 4:2:0 `heic` from `heif-enc`, libheif 1.23.5
+  with x265, installed by the user for this checkpoint), `sample-6-scanned.pdf`
+  (image only) and `sample-9.pdf`, each with its `.expected.json`.
+
+Real-OCR corpus test (`receipts.ocr.test.ts`, Node, offline): every sample
+behaves as the plan requires. Samples 1–4, 6, 7 and 9 match, with the
+right item count and trusted total. The fiscal QR code gives the trusted
+total on samples 1, 2 and 3, including the rotated, noisy photo. Sample 5
+(faded) matches too. Sample 8 is caught as a mismatch (the smudged salad
+line is lost, 2,50 short). Sample 10 is `noItems`. The whole file takes
+about 8 s. In Node, the PDF's pages aren't rendered (no canvas), so sample
+9's QR code isn't scanned there; its printed total is the trusted one. The
+browser renders it (CP4).
+
+`fetch` is stubbed to fail on any http(s) URL. It reaches zxing-wasm and
+pdf.js, which run on the test's own thread. Node's Tesseract.js runs in a
+worker thread the stub doesn't reach: its only download is the models, from
+`langPath`, which the test sets to a local directory, so it reads them from
+disk.
+
+**Fixed in CP2's code:** in pdf.js 6, `PDFDocumentProxy` has no `destroy()`
+(the loading task has it). `decode.ts` called `pdf.destroy()` in a
+`finally`, which threw, so **every PDF would have failed as
+`decodeFailed`** in the browser. The CP2 fake had a `destroy`, so its tests
+passed. `decode.ts` now destroys the loading task, the fake follows the
+real shape, and a Node test checks the real pdf.js's shape. Also found:
+pdf.js 6 dropped the `isEvalSupported` option (it no longer evaluates code
+at all). `decode.ts` still passes it, harmlessly, and D9's CSP forbids eval
+regardless.
+
+Other choices, covered by tests:
+- Each `.expected.json` carries, beside the receipt's values, its QR
+  payload (`qr`) and what the corpus test requires (`check`: `match`,
+  `matchOrFlagged` for sample 5, `flagged` for sample 8, `noItems` for
+  sample 10).
+- The corpus test also checks that the four browser-check files pass
+  intake: the right type, and the pixel size from the header (the HEIC's
+  from its `ispe` box).
+
+Verified: `npm run check` (`tsc -b`, `eslint . --max-warnings=0`,
+`prettier --check .`, `vitest run`: 698 tests, 50 of them new) and
+`npm run build` pass.
 
 ## Current blockers
 

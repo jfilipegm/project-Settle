@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="598" height="518" font-family="DejaVu Sans Mono" font-size="22" fill="#111">
+<defs><filter id="smudge"><feGaussianBlur stdDeviation="3"/></filter></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="34" y="56" xml:space="preserve">              Café Central</text>
+<text x="34" y="88" xml:space="preserve">          Praça da Liberdade 7</text>
+<text x="34" y="120" xml:space="preserve">             4000-322 Porto</text>
+<text x="34" y="152" xml:space="preserve">        Contribuinte: 505612348</text>
+<text x="34" y="184" xml:space="preserve">            29/09/2026 09:12</text>
+<text x="34" y="216" xml:space="preserve"></text>
+<text x="34" y="248" xml:space="preserve">Galão                             1,40 €</text>
+<text x="34" y="280" xml:space="preserve">Tosta Mista                       3,20 €</text>
+<text x="34" y="312" xml:space="preserve">Pastel de Nata                    1,30 €</text>
+<text x="34" y="344" xml:space="preserve">Meia de Leite                     1,20 €</text>
+<text x="34" y="376" xml:space="preserve"></text>
+<text x="34" y="408" xml:space="preserve">Total a pagar                     7,10 €</text>
+<text x="34" y="440" xml:space="preserve">Numerário                        10,00 €</text>
+<text x="34" y="472" xml:space="preserve">Troco                             2,90 €</text>
+</svg>

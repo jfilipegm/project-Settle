@@ -30,13 +30,18 @@ export interface PdfjsModule {
     isEvalSupported: boolean
     wasmUrl: string
     standardFontDataUrl: string
-  }): { promise: Promise<PdfDocument> }
+  }): PdfLoadingTask
+}
+
+/** pdf.js 6 destroys a document through its loading task. */
+interface PdfLoadingTask {
+  promise: Promise<PdfDocument>
+  destroy(): Promise<void>
 }
 
 interface PdfDocument {
   numPages: number
   getPage(pageNumber: number): Promise<PdfPage>
-  destroy(): Promise<void>
 }
 
 interface PdfPage {
@@ -219,10 +224,12 @@ async function decodePdf(
   }
   pdfjs.GlobalWorkerOptions.workerSrc = ASSETS.pdfWorker
   const data = new Uint8Array(await file.arrayBuffer())
+  const task = pdfjs.getDocument({ data, ...pdfDocumentOptions() })
   let pdf: PdfDocument
   try {
-    pdf = await pdfjs.getDocument({ data, ...pdfDocumentOptions() }).promise
+    pdf = await task.promise
   } catch {
+    await task.destroy().catch(() => undefined)
     fail('decodeFailed') // not a PDF, damaged, or password-protected
   }
   try {
@@ -258,7 +265,7 @@ async function decodePdf(
     }
     fail('decodeFailed')
   } finally {
-    await pdf.destroy()
+    await task.destroy().catch(() => undefined)
   }
 }
 

@@ -162,7 +162,11 @@ describe('decodeReceipt', () => {
   function fakePdfjs(
     pages: { text: string[]; width?: number; height?: number }[],
   ) {
-    const captured: { params?: unknown; workerSrc?: string } = {}
+    const captured: {
+      params?: unknown
+      workerSrc?: string
+      destroyed?: boolean
+    } = {}
     const module: PdfjsModule = {
       GlobalWorkerOptions: {
         set workerSrc(value: string) {
@@ -175,9 +179,13 @@ describe('decodeReceipt', () => {
       getDocument(params) {
         captured.params = params
         return {
+          // pdf.js 6: the loading task, not the document, is destroyed.
+          destroy: () => {
+            captured.destroyed = true
+            return Promise.resolve()
+          },
           promise: Promise.resolve({
             numPages: pages.length,
-            destroy: () => Promise.resolve(),
             getPage: (n: number) => {
               const page = pages[n - 1] ?? { text: [] }
               return Promise.resolve({
@@ -228,7 +236,7 @@ describe('decodeReceipt', () => {
 
   it('reads a PDF’s text layer and renders at most 3 pages at 2×', async () => {
     const long = 'Restaurante O Cantinho, Lisboa'
-    const { module } = fakePdfjs([
+    const { module, captured } = fakePdfjs([
       { text: [long, 'TOTAL 23,40'] },
       { text: [long] },
       { text: [long] },
@@ -238,6 +246,7 @@ describe('decodeReceipt', () => {
       deps: deps({ loadPdfjs: () => Promise.resolve(module) }),
     })
     if (!result.ok) throw new Error(result.error.code)
+    expect(captured.destroyed).toBe(true)
     expect(result.source.pages).toHaveLength(3)
     expect(result.source.pages[0]).toMatchObject({ width: 600, height: 800 })
     expect(result.source.textLayer?.map((line) => line.text)).toEqual([
@@ -264,6 +273,7 @@ describe('decodeReceipt', () => {
       GlobalWorkerOptions: { workerSrc: '' },
       getDocument: () => ({
         promise: Promise.reject(new Error('Invalid PDF')),
+        destroy: () => Promise.resolve(),
       }),
     }
     expect(
