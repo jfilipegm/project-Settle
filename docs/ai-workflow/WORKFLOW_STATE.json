@@ -737,7 +737,7 @@
       "registry_path": "docs/ai-workflow/registry/milestone-2-registry.json",
       "mapping_path": "docs/ai-workflow/requirements/milestone-2-mapping.json",
       "governing_workflow_version": "2.1",
-      "phase": "AWAITING_EXTERNAL_IMPLEMENTATION_REVIEW",
+      "phase": "APPLYING_REVIEW_FEEDBACK",
       "plan_revision": 10,
       "implementation_revision": 1,
       "functional_review_round": null,
@@ -818,8 +818,8 @@
       },
       "functional_acceptance_status": null,
       "blocking_decisions": [],
-      "state_revision": 45,
-      "last_transition": "2026-09-29T10:02:20Z"
+      "state_revision": 46,
+      "last_transition": "2026-09-29T10:29:04Z"
     }
   }
 }
