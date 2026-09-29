@@ -217,6 +217,64 @@ describe('importReceipt', () => {
     expect(seen).toBe(controller.signal)
   })
 
+  it.each<[string, ImportDeps['reader'], ReadErrorCode]>([
+    [
+      'fails',
+      reader(() =>
+        Promise.resolve({ ok: false, error: { code: 'ocrFailed' } }),
+      ),
+      'ocrFailed',
+    ],
+    [
+      'throws',
+      reader(() => Promise.reject(new Error('worker crashed'))),
+      'ocrFailed',
+    ],
+    [
+      'finds no items',
+      reader(() =>
+        Promise.resolve({ ok: true, receipt: { ...RECEIPT, items: [] } }),
+      ),
+      'noItems',
+    ],
+  ])('stops the QR scan when the reader %s', async (_, failing, code) => {
+    let qrSignal: AbortSignal | undefined
+    const result = await importReceipt(
+      file(),
+      deps({
+        reader: failing,
+        scanQr: (_pages, { signal }) => {
+          qrSignal = signal
+          return new Promise(() => undefined)
+        },
+      }),
+      options(),
+    )
+    expect(result).toEqual({ ok: false, error: { code } })
+    expect(qrSignal?.aborted).toBe(true)
+  })
+
+  it("stops the QR scan when the caller's signal aborts", async () => {
+    const controller = new AbortController()
+    let qrSignal: AbortSignal | undefined
+    const pending = importReceipt(
+      file(),
+      deps({
+        reader: reader(() => new Promise(() => undefined)),
+        scanQr: (_pages, { signal }) => {
+          qrSignal = signal
+          return new Promise(() => undefined)
+        },
+      }),
+      { ...options(), signal: controller.signal },
+    )
+    await vi.waitFor(() => expect(qrSignal).toBeDefined())
+    expect(qrSignal?.aborted).toBe(false)
+    controller.abort()
+    expect(qrSignal?.aborted).toBe(true)
+    void pending
+  })
+
   it('runs the reader and the QR scan side by side', async () => {
     let finishRead: (result: ReadResult) => void = () => undefined
     const scanQr = vi.fn(() => Promise.resolve(undefined))
@@ -233,7 +291,11 @@ describe('importReceipt', () => {
       }),
       options(),
     )
-    await vi.waitFor(() => expect(scanQr).toHaveBeenCalledWith([PAGE], {}))
+    await vi.waitFor(() =>
+      expect(scanQr).toHaveBeenCalledWith([PAGE], {
+        signal: expect.any(AbortSignal) as AbortSignal,
+      }),
+    )
     finishRead({ ok: true, receipt: RECEIPT })
     expect((await pending).ok).toBe(true)
   })

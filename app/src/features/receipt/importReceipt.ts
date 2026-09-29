@@ -12,6 +12,7 @@ import type { Bill } from '../split/model.ts'
 import type { DecodeResult } from './decode.ts'
 import type { FiscalQr } from './fiscalQr.ts'
 import type {
+  ParsedReceipt,
   ReadError,
   ReadProgress,
   ReadResult,
@@ -81,34 +82,51 @@ export async function importReceipt(
     return decoded
   }
   const { source } = decoded
+  let receipt: ParsedReceipt
 
   // The reader and the QR scan run side by side (CP3). A QR scan that
-  // fails only means there's no QR code to use.
-  const qrScan = deps.scanQr(source.pages, { signal }).catch(() => undefined)
-  let read: ReadResult
+  // fails only means there's no QR code to use. The scan has its own
+  // signal, aborted with the caller's, and also as soon as the import ends
+  // another way, so a failed read doesn't leave it running.
+  const qrController = new AbortController()
+  const stopQr = () => {
+    qrController.abort()
+  }
+  signal?.addEventListener('abort', stopQr, { once: true })
+  let qr: FiscalQr | undefined
   try {
-    read = await deps.reader.read(source, { signal, onProgress })
-  } catch {
-    read = { ok: false, error: { code: 'ocrFailed' } }
-  }
-  if (cancelled()) {
-    return failure('cancelled')
-  }
-  if (!read.ok) {
-    return read
-  }
-  if (read.receipt.items.length === 0) {
-    return failure('noItems')
-  }
+    const qrScan = deps
+      .scanQr(source.pages, { signal: qrController.signal })
+      .catch(() => undefined)
+    let read: ReadResult
+    try {
+      read = await deps.reader.read(source, { signal, onProgress })
+    } catch {
+      read = { ok: false, error: { code: 'ocrFailed' } }
+    }
+    if (cancelled()) {
+      return failure('cancelled')
+    }
+    if (!read.ok) {
+      return read
+    }
+    if (read.receipt.items.length === 0) {
+      return failure('noItems')
+    }
 
-  onProgress?.({ phase: 'checkingQr' })
-  const qr = await qrScan
-  if (cancelled()) {
-    return failure('cancelled')
+    onProgress?.({ phase: 'checkingQr' })
+    qr = await qrScan
+    if (cancelled()) {
+      return failure('cancelled')
+    }
+    receipt = read.receipt
+  } finally {
+    signal?.removeEventListener('abort', stopQr)
+    stopQr()
   }
 
   const { bill, summary } = receiptToBill(
-    read.receipt,
+    receipt,
     qr,
     currentBill,
     nextId,
