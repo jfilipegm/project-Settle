@@ -4,6 +4,7 @@ import {
   classifyLine,
   joinPages,
   parseReceiptText,
+  trimEdgeNoise,
   type LineGroup,
 } from './parseReceiptText.ts'
 
@@ -602,6 +603,10 @@ describe('parseReceiptText: real layouts (remediation R3–R7, R10, R11)', () =>
       parse('Padaria:', 'Pão 1,00', 'TOTAL 1,00').items.map((i) => i.name),
     ).toEqual(['Pão'])
     expect(parse('Padaria:', '2 X 1,00 2,00', 'TOTAL 2,00').items).toEqual([])
+    // A lone colon after a name is a photo's noise, not a header.
+    expect(
+      parse('(B) Box Veggie :', '2 X 6,50 13,00', 'TOTAL 13,00').items,
+    ).toEqual([expect.objectContaining(item('Box Veggie :', '2', 650, 1300))])
   })
 
   it('leaves tax codes and barcodes out of the name (R5)', () => {
@@ -749,5 +754,73 @@ describe('parseReceiptText: structural evidence on item lines (R22)', () => {
   it('leaves lines that never reach the list as they were', () => {
     expect(group('IVA 23% 2,30')).toBe('tax')
     expect(group('A 23% 10,00 2,30 12,30')).toBe('text')
+  })
+})
+
+describe('trimEdgeNoise (CP3: a photo’s background at the line ends)', () => {
+  it.each([
+    ['é. POUPANCA 0,60', 'POUPANCA 0,60'],
+    ['| Queijo Fatias 3,69 ;', 'Queijo Fatias 3,69'],
+    ['Baguete 0,89 aE', 'Baguete 0,89'],
+    ['T-shirt Basica 9,99 3', 'T-shirt Basica 9,99'],
+    ['Iogurte 2,39 A É', 'Iogurte 2,39 A'],
+    ['Iogurte 2,39 E ;', 'Iogurte 2,39 E'],
+    ['E 1 X 0,89 0,89 Sa', '1 X 0,89 0,89'],
+    ['EL 2 X 2,50 5,00 |', '2 X 2,50 5,00'],
+  ])('trims “%s”', (line, trimmed) => {
+    expect(trimEdgeNoise(line)).toBe(trimmed)
+  })
+
+  it.each([
+    // A bare leading capital may be an article or a code (R5).
+    'A Vaca Que Ri 2,49',
+    'NS Taras 0,10',
+    'TV Box 29,99',
+    // Tax codes and currency marks after the amount.
+    'Queijo 2,49 B',
+    'Pão 1,00 €',
+    // A name is never cut short: the line doesn't end in an amount.
+    'Pão de Forma de',
+    // Separator rows.
+    '..... ......',
+    '==========',
+    // Quantities stay, and a unit after the price.
+    '2 X 6,50 13,00',
+    '1 Bitoque 9,50',
+    '0,532 kg x 1,29 €/kg',
+    'Pão 1,00 un',
+  ])('leaves “%s” alone', (line) => {
+    expect(trimEdgeNoise(line)).toBe(line)
+  })
+
+  it('drops up to two at the start, three before a quantity, four after the amount', () => {
+    expect(trimEdgeNoise('| ; Queijo 3,69 ; |')).toBe('Queijo 3,69')
+    expect(trimEdgeNoise('(C) Amendoim 200G 1,15 : : Gi,')).toBe(
+      '(C) Amendoim 200G 1,15',
+    )
+    expect(trimEdgeNoise('; z z 1 X 0,89 0,89 : :')).toBe('1 X 0,89 0,89')
+    expect(trimEdgeNoise('5 - 2 X 6,50 13,00 :')).toBe('2 X 6,50 13,00')
+    // Five after the amount, or a long one, isn't background.
+    expect(trimEdgeNoise('Queijo 3,69 a ; | e i')).toBe('Queijo 3,69 a ; | e i')
+    expect(trimEdgeNoise('Queijo 3,69 Serra')).toBe('Queijo 3,69 Serra')
+  })
+
+  it('reads the items of a noisy photo transcript', () => {
+    const receipt = parse(
+      'é Mercearia Doce:',
+      '| (C) Bolacha Digestive 1,74 §',
+      'a POUPANCA 1,75 ;',
+      '(A) Baguete Rustica 250G',
+      'E 1 X 0,89 0,89 Sa',
+      'TOTAL A PAGAR 2,63 i',
+    )
+    expect(receipt.items).toEqual([
+      expect.objectContaining({
+        ...item('Bolacha Digestive', '1', 174, 174),
+        savingsCandidate: 175,
+      }),
+      expect.objectContaining(item('Baguete Rustica 250G', '1', 89, 89)),
+    ])
+    expect(receipt.total).toBe(263)
   })
 })

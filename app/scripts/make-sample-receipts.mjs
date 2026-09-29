@@ -6,11 +6,15 @@
  * really says (`expected`, written to `.expected.json`), its fiscal QR
  * payload if it has one, and the photo effects. The script writes the SVG
  * source, renders it with `rsvg-convert`, and applies the effects with
- * `magick`. The browser-check files need `magick` and `heif-enc` (libheif,
+ * `magick` (fonts: DejaVu Sans Mono, and Liberation Mono for 11–13). The
+ * browser-check files need `magick` and `heif-enc` (libheif,
  * with its HEVC encoder). None of these tools is a CI or project
  * dependency: the outputs are committed.
  *
- *   node scripts/make-sample-receipts.mjs [--corpus-only]
+ *   node scripts/make-sample-receipts.mjs [--corpus-only] [--only=11,12]
+ *
+ * `--only` rewrites just the samples whose names start with the given
+ * prefixes (and their browser-check files), leaving the rest untouched.
  */
 import { execFileSync } from 'node:child_process'
 import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
@@ -493,7 +497,253 @@ const SAMPLES = [
     expected: { items: [] },
     check: 'noItems',
   },
+  ...REAL_LAYOUTS(),
 ]
+
+// ---------------------------------------------------------------------------
+// Real layouts (remediation plan, R16): invented receipts in the three
+// layouts of the user's real receipts, which stay local (R17).
+
+function REAL_LAYOUTS() {
+  const qr = (issuer, fields) =>
+    [`A:${issuer}`, 'B:999999990', 'C:PT', 'D:FS', 'E:N', ...fields].join('*')
+
+  // 11: a narrow, low-resolution app receipt (Lidl-like): price-first
+  // quantities, negative promotions, a deposit, a separator, the payment
+  // line and an IVA table, rendered about 230 px wide, as JPEG.
+  const appNif = nif('50287461')
+  const app = {
+    name: '11-pt-app-estreito',
+    lines: [
+      center('Mercado Brisa, Lda', 34),
+      center('Av. do Mar 12 - Setubal', 34),
+      center(`NIF:${appNif}`, 34),
+      '',
+      'FATURA SIMPLIFICADA',
+      row('Original', '2026-09-20', 34),
+      'NIF...: CONSUMIDOR FINAL',
+      '',
+      row('', 'EUR', 34),
+      row('Agua Mineral 1,5L', '0,39 A', 34),
+      row('Refrigerante 1,35 x 6', '8,10 A', 34),
+      row('Promocao', '-1,20', 34),
+      row('Deposito 0,10 x 6', '0,60 F', 34),
+      row('Queijo Fatiado', '2,49 B', 34),
+      row('Iogurte 0,55 x 4', '2,20 B', 34),
+      row('Promocao', '-0,30', 34),
+      row('Bolachas Maria', '1,15 A', 34),
+      row('', '==========', 34),
+      row('MULTIBANCO', '13,43', 34),
+      '',
+      'Taxa  Base Inc.  Val.Total  IVA',
+      'A 23%   6,86     8,44      1,58',
+      'B  6%   4,14     4,39      0,25',
+      'F  0%   0,60     0,60      0,00',
+    ],
+    qr: qr(appNif, [
+      'F:20260920',
+      'G:FS 0420/0831',
+      'H:JB7K2Q9M-0831',
+      'I1:PT',
+      'I3:4.14',
+      'I4:0.25',
+      'I7:6.86',
+      'I8:1.58',
+      'N:1.83',
+      'O:13.43',
+      'Q:Lm4t',
+      'R:1050',
+    ]),
+    scale: 0.6,
+    jpegQuality: 70,
+    expected: {
+      merchant: 'Mercado Brisa, Lda',
+      merchantTaxId: appNif,
+      date: '2026-09-20',
+      items: [
+        ['Agua Mineral 1,5L', '1', '0.39', '0.39'],
+        ['Refrigerante', '1', '6.90', '6.90'],
+        ['Deposito', '6', '0.10', '0.60'],
+        ['Queijo Fatiado', '1', '2.49', '2.49'],
+        ['Iogurte', '1', '1.90', '1.90'],
+        ['Bolachas Maria', '1', '1.15', '1.15'],
+      ],
+      total: '13.43',
+    },
+    check: 'match',
+  }
+
+  // 12: a supermarket receipt photographed on a table (Continente-like):
+  // category headers, `(A)` codes, name-then-quantity lines, and unsigned
+  // savings lines already in the prices (R8 drops them).
+  const hyperNif = nif('50390112')
+  const hyper = {
+    name: '12-pt-hiper-foto',
+    lines: [
+      center('HIPERMERCADO LARGO'),
+      center('Largo Retalho Alimentar, S.A.'),
+      center(`NIF: PT${hyperNif}`),
+      'Fatura Simplificada Original',
+      'Nro:FS ARQ204/200411 28/09/2026 12:25',
+      '',
+      row('IVA DESCRICAO', 'VALOR'),
+      'Mercearia Doce:',
+      row('(C) BOLACHA DIGESTIVE 400G', '1,74'),
+      row('    POUPANCA', '1,75'),
+      'Laticinios:',
+      row('(A) IOGURTE GREGO NATURAL', '2,39'),
+      row('    POUPANCA', '0,60'),
+      row('(C) QUEIJO FLAMENGO FATIAS', '3,69'),
+      'Padaria:',
+      '(A) BAGUETE RUSTICA 250G',
+      row('    1 X 0,89', '0,89'),
+      'Take Away:',
+      '(B) SOPA DE LEGUMES 800',
+      row('    2 X 2,50', '5,00'),
+      row('(B) SALADA MISTA 250G', '2,79'),
+      row('    DESCONTO DIRETO', '0,50'),
+      '',
+      row('TOTAL A PAGAR', '16,50'),
+      row('Cartao Credito', '16,50'),
+      '',
+      row('Total de descontos e poupancas', '2,85'),
+    ],
+    qr: qr(hyperNif, [
+      'F:20260928',
+      'G:FS ARQ204/200411',
+      'H:JJVZWTKP-200411',
+      'I1:PT',
+      'I3:3.09',
+      'I4:0.19',
+      'I5:6.89',
+      'I6:0.90',
+      'I7:4.41',
+      'I8:1.02',
+      'N:2.11',
+      'O:16.50',
+      'Q:Xr8w',
+      'R:1356',
+    ]),
+    photo: { tilt: 2, seed: 12 },
+    expected: {
+      merchant: 'HIPERMERCADO LARGO',
+      merchantTaxId: hyperNif,
+      date: '2026-09-28',
+      items: [
+        ['BOLACHA DIGESTIVE 400G', '1', '1.74', '1.74'],
+        ['IOGURTE GREGO NATURAL', '1', '2.39', '2.39'],
+        ['QUEIJO FLAMENGO FATIAS', '1', '3.69', '3.69'],
+        ['BAGUETE RUSTICA 250G', '1', '0.89', '0.89'],
+        ['SOPA DE LEGUMES 800', '2', '2.50', '5.00'],
+        ['SALADA MISTA 250G', '1', '2.79', '2.79'],
+      ],
+      total: '16.50',
+    },
+    check: 'match',
+  }
+
+  // 13: a clothes-shop receipt photographed on a table (Tiffosi-like):
+  // barcode and name columns, code-and-size lines, an informational
+  // promotion, and `Total (Euro):` with its amount on the next line.
+  const shopNif = nif('50613298')
+  const shop = {
+    name: '13-pt-loja-roupa-foto',
+    lines: [
+      center('VENTO NORTE'),
+      center('Vento Norte Moda, S.A.'),
+      center('Rua do Carmo 41, Braga'),
+      center(`Nif: ${shopNif}`),
+      'Fatura Recibo No: FR VN1202/0412',
+      row('Talao  Data', 'Loja Vendedor'),
+      row('0412  2026-08-22 18:44', '198 Admin'),
+      'Cliente: Consumidor Final',
+      '',
+      row('Cod.Bar.  Info. Artigo', 'Preco'),
+      row('5601234567890 Calcas Ganga', '24,99'),
+      '71014475 C38 M',
+      'Promocao (29.99-5.00)',
+      row('5601234567906 T-shirt Basica', '9,99'),
+      '10069483 101 M',
+      row('5601234567913 Meias Algodao', '3,99'),
+      '10065688 832 M',
+      '',
+      row('Total Iliquido', '43,97'),
+      row('Total Descontos Artigos', '-5,00'),
+      row('Total IVA', '7,29'),
+      'Total (Euro):',
+      row('', '38,97'),
+      '',
+      row('Pagamento', 'Valor'),
+      row('Multibanco', '38,97'),
+    ],
+    qr: qr(shopNif, [
+      'F:20260822',
+      'G:FR VN1202/0412',
+      'H:J6SHZSRZ-0412',
+      'I1:PT',
+      'I7:31.68',
+      'I8:7.29',
+      'N:7.29',
+      'O:38.97',
+      'Q:Vn2k',
+      'R:0755',
+    ]),
+    photo: { tilt: -1.5, seed: 13 },
+    expected: {
+      merchant: 'VENTO NORTE',
+      merchantTaxId: shopNif,
+      date: '2026-08-22',
+      items: [
+        ['Calcas Ganga', '1', '24.99', '24.99'],
+        ['T-shirt Basica', '1', '9.99', '9.99'],
+        ['Meias Algodao', '1', '3.99', '3.99'],
+      ],
+      total: '38.97',
+    },
+    check: 'match',
+  }
+
+  return [app, hyper, shop].map((sample) => ({
+    ...sample,
+    font: 'Liberation Mono',
+    removedLines: [],
+  }))
+}
+
+/**
+ * A phone photo of a paper receipt on a table (R16): a gray textured
+ * table, a shading gradient across the whole picture, a small tilt, some
+ * blur and noise, then JPEG. The paper keeps its own white.
+ */
+function photoEffects({ tilt, seed }) {
+  return [
+    '-bordercolor',
+    '#8f8d88',
+    '-border',
+    '90',
+    '-background',
+    '#8f8d88',
+    '-rotate',
+    String(tilt),
+    '(',
+    '+clone',
+    '-sparse-color',
+    'Barycentric',
+    '0,0 #ffffff %w,%h #9c9c9c',
+    ')',
+    '-compose',
+    'multiply',
+    '-composite',
+    '-blur',
+    '0x0.4',
+    '-seed',
+    String(seed),
+    '-attenuate',
+    '0.25',
+    '+noise',
+    'Gaussian',
+  ]
+}
 
 // ---------------------------------------------------------------------------
 // Rendering
@@ -559,7 +809,11 @@ async function receiptSvg(sample) {
     y += LINE_HEIGHT
   }
   const height = y - LINE_HEIGHT + MARGIN + 12
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" font-family="DejaVu Sans Mono" font-size="${FONT_SIZE}" fill="#111">
+  // DejaVu Sans Mono dots its zeros, which small text turns into 8s and
+  // 6s; the real-layout samples use Liberation Mono's plain zero, as a
+  // receipt printer prints it.
+  const font = sample.font ?? 'DejaVu Sans Mono'
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" font-family="${font}" font-size="${FONT_SIZE}" fill="#111">
 <defs><filter id="smudge"><feGaussianBlur stdDeviation="3"/></filter></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 ${parts.join('\n')}
@@ -582,6 +836,10 @@ function expectedJson(sample) {
   }
   if (sample.qr) expected.qr = sample.qr
   expected.check = sample.check
+  // R24: the lines a cut leaves out on the way to "Matches" (none: []).
+  if (sample.removedLines !== undefined) {
+    expected.removedLines = sample.removedLines
+  }
   return `${JSON.stringify(expected, null, 2)}\n`
 }
 
@@ -606,9 +864,17 @@ function run(tool, args) {
   }
 }
 
+/** `--only=11,12` limits a run to the samples whose names start so. */
+const ONLY = process.argv
+  .find((arg) => arg.startsWith('--only='))
+  ?.slice('--only='.length)
+  .split(',')
+const selected = (name) =>
+  ONLY === undefined || ONLY.some((prefix) => name.startsWith(prefix))
+
 async function makeCorpus() {
   await mkdir(CORPUS, { recursive: true })
-  for (const sample of SAMPLES) {
+  for (const sample of SAMPLES.filter((entry) => selected(entry.name))) {
     const base = path.join(CORPUS, sample.name)
     await writeFile(`${base}.expected.json`, expectedJson(sample))
     if (sample.source !== undefined) {
@@ -628,17 +894,27 @@ async function makeCorpus() {
       continue
     }
     run('rsvg-convert', [`${base}.svg`, '-o', `${base}.png`])
-    if (sample.effects !== undefined) {
-      run('magick', [`${base}.png`, ...sample.effects, '-strip', `${base}.png`])
-    } else {
-      run('magick', [`${base}.png`, '-strip', `${base}.png`])
+    const effects = [
+      ...(sample.effects ?? []),
+      ...(sample.photo !== undefined ? photoEffects(sample.photo) : []),
+      // A small screenshot: the text a few pixels tall (R16).
+      ...(sample.scale !== undefined
+        ? ['-filter', 'Triangle', '-resize', `${sample.scale * 100}%`]
+        : []),
+    ]
+    run('magick', [`${base}.png`, ...effects, '-strip', `${base}.png`])
+    // Shared as JPEG: the corpus keeps the decoded pixels as PNG, which is
+    // all the Node tests decode.
+    const quality = sample.jpegQuality ?? (sample.photo ? 88 : undefined)
+    if (quality !== undefined) {
+      run('magick', [`${base}.png`, '-quality', String(quality), `${base}.jpg`])
+      run('magick', [`${base}.jpg`, '-strip', `${base}.png`])
+      await rm(`${base}.jpg`)
     }
   }
 }
 
 async function makeBrowserFiles() {
-  await rm(BROWSER, { recursive: true, force: true })
-  await mkdir(BROWSER, { recursive: true })
   const corpus = (name) => path.join(CORPUS, name)
   const browser = (name) => path.join(BROWSER, name)
   const withExpected = async (file, sample) => {
@@ -646,6 +922,25 @@ async function makeBrowserFiles() {
       corpus(`${sample}.expected.json`),
       browser(file.replace(/\.[a-z]+$/, '.expected.json')),
     )
+  }
+
+  if (ONLY === undefined) {
+    await rm(BROWSER, { recursive: true, force: true })
+  }
+  await mkdir(BROWSER, { recursive: true })
+  // R16: receipt 12 as the JPEG a phone shares, for CP4's real-browser
+  // scan (with --only, the only browser file rewritten).
+  if (selected('12-pt-hiper-foto')) {
+    run('magick', [
+      corpus('12-pt-hiper-foto.png'),
+      '-quality',
+      '85',
+      browser('sample-12.jpg'),
+    ])
+    await withExpected('sample-12.jpg', '12-pt-hiper-foto')
+  }
+  if (ONLY !== undefined) {
+    return
   }
 
   run('magick', [

@@ -409,7 +409,7 @@ approved in `5a42485` (basis `EXTERNAL_APPROVE`). Lands on
 |----|------|--------|
 | M2R1-CP1 | Image clean-up: text-size scaling, flattening, one channel, strips | Complete |
 | M2R1-CP2 | Parser and bill-conversion rules for real layouts | Complete |
-| M2R1-CP3 | Synthetic real-layout corpus and local real-receipt fixtures | Not started |
+| M2R1-CP3 | Synthetic real-layout corpus and local real-receipt fixtures | Complete |
 | M2R1-CP4 | Review step: gaps, add-the-difference, READMEs, verification | Not started |
 
 ### M2R1-CP1 — verified state
@@ -580,11 +580,86 @@ and `vitest run` (854 tests, 73 more than before CP2) pass, the corpus test (sam
 the code: disabling R23's cut fails 4 tests, and reversing R8's order
 fails the test added for it.
 
+### M2R1-CP3 — verified state
+
+Built:
+- `scripts/make-sample-receipts.mjs`: corpus receipts 11 (a narrow app
+  receipt, Lidl-like), 12 (a supermarket photo on a table, Continente-like)
+  and 13 (a clothes-shop photo, Tiffosi-like), invented, with valid QR
+  payloads (customer NIF `999999990`), plus `fixtures/browser/sample-12.jpg`
+  for CP4's browser scan. `--only=` regenerates just the named samples;
+  01–10 and the other browser files are untouched. Each new sample's
+  `.expected.json` records `removedLines: []` (no cut); the corpus test
+  now checks it.
+- R17: `app/.gitignore` ignores `src/features/receipt/fixtures/local/`;
+  `localFixtures.node.ts` and `localFixtures.test.ts` check that the
+  folder is ignored, that nothing under it is tracked or staged, and that
+  no commit in the whole history touches it (refusing to pass on a shallow
+  clone). Each check is shown able to fail on a throwaway repository:
+  `git add -f`, a commit then a deletion, and a `--depth 1` clone.
+  `app-ci.yml` checks out with `fetch-depth: 0`.
+- `matchedCoverage.ts` (R19's local coverage) and
+  `receipts.local.ocr.test.ts`, which reads the local receipts with the
+  real OCR and is skipped where the folder is empty, as in CI. The offline
+  Node setup it shares with the corpus test moved to `importDeps.node.ts`.
+- `app/README.md`: "Local real-receipt fixtures", including what to do if
+  a guard ever fires (the user's decision; no automatic rewrite).
+
+Deviations, recorded for review:
+- **Edge-noise rule** (the user's decision, 2026-09-29; `trimEdgeNoise`
+  in the parser). A photo's table and paper edges leave stray characters
+  around lines (`é. POUPANCA 0,60`, `AMENDOIM 1,15 : : Gi,`, `5 - 2 X 6,50
+  13,00`), and a line that doesn't end in an amount isn't an item. The
+  plan named this as a cause of Continente's under-reading without a
+  rule. Now: up to two noise tokens are dropped at a line's start, up to
+  three before a quantity, and up to four short ones after its last
+  amount (keeping a tax code), and a name line never loses its end. A
+  lone colon (`BOX VEGGIE :`) no longer makes a line a category header.
+- **Gentler synthetic degradation** than the plan's wording: sample 11 is
+  about 360 px wide (not 230; at 230 px Tesseract confuses 0 with 9 and
+  B with 8, the limit the real Lidl receipts hit) and 11–13 use Liberation
+  Mono, whose zero is plain (DejaVu Sans Mono's dotted zero reads as 8 or
+  6 at small sizes). The photos keep the table, shading, tilt, noise and
+  JPEG, at lighter noise.
+
+Measured on the five real receipts (numbers only; R19's local coverage):
+
+| receipt | items | sum | local coverage | unmatched | in-app | check |
+|---|---|---|---|---|---|---|
+| Tiffosi | 5 | 76,11 | 100 % | 0,00 | 100 % | match |
+| Continente | 13 | 38,81 | 56 % | 10,06 | 76 % | mismatch |
+| lidl1 | 19 | 65,12 | 11 % | 56,94 | 86 % | mismatch |
+| lidl2 | 23 | 67,45 | 21 % | 51,07 | 88 % | mismatch |
+| lidl3 | 3 | 12,20 | 22 % | 10,46 | 100 % | mismatch |
+
+- No receipt's unmatched sum falsely closes its gap (no items' sum equals
+  its QR total). On all three Lidl receipts the junk pushes the in-app
+  coverage over 80 % while local coverage is under it, so R15's
+  "Only X of Z was read" wording won't show there; the mismatch does.
+- Lidl: no cut (R23, R9 or R18) fired, no line was dropped, and no
+  bill-level discount was read. lidl3 keeps one footer line near its QR
+  total: R23 finds it but the items above don't close, too few being read.
+- Photos: neither photo's items were ended early by a separator (a total
+  ended both).
+- **Targets:** Tiffosi's is met. Continente's 75 % is missed (56 %): three
+  lines the OCR misreads (one on a paper fold, one garbled, one price a
+  digit off), and, because the list then doesn't close, R8's fallback
+  applies two informational savings lines. The Lidl 60 % targets are
+  missed, as measured in CP1, and lidl3's leftover footer line is a stop
+  condition. The user accepted the measured results (2026-09-29): the
+  local targets are the measured floors (0.55; 0.10, 0.20, 0.20), each
+  noting the plan's target, to be raised back by the PaddleOCR
+  remediation child.
+
+Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`
+and `vitest run` pass with the local folder filled in (896 tests, 1
+skipped: the "absent" note). CI will skip the local receipts.
+
 ## Current blockers
 
 M2 can't be accepted until its remediation child,
 `milestone-2-remediation-1`, is accepted (functional review round 1,
-below). The child is implementing; M2R1-CP1 and M2R1-CP2 are complete.
+below). The child is implementing; M2R1-CP1 to M2R1-CP3 are complete.
 
 ## Active plan
 

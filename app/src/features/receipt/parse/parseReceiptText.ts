@@ -99,6 +99,104 @@ const MARKER = /^(?:\d+(?:[.,]\d+)?x|x|un|und|unid|uni|kg|kgs)$/
  */
 const GARBLED_QUANTITY = /^\d{1,2}[x×]\d+(?:[.,]\d*)?$/i
 
+/** At most this many noise tokens are dropped from each end of a line. */
+const MAX_EDGE_NOISE = 2
+const PUNCTUATION = /^[^\p{L}\p{N}]+$/u
+const CURRENCY_MARK = /^(?:€|£|\$|US\$)$/
+/** Short tokens that are never noise: codes, markers, currencies. */
+const SHORT_WORDS = /^(?:NS|UN|KG|X|EUR|GBP|USD)$/i
+
+/** A token a photo's background left at the start of a line (`é.`, `|`). */
+function isLeadingNoise(token: string): boolean {
+  if (CURRENCY_MARK.test(token)) return false
+  // A longer run (`.....`) is a separator row's, never noise.
+  if (PUNCTUATION.test(token)) return token.length <= 2
+  const letters = token.replace(/[^\p{L}]/gu, '')
+  return (
+    !/\d/.test(token) &&
+    !SHORT_WORDS.test(token) &&
+    letters.length > 0 &&
+    letters.length <= 2 &&
+    (/\P{ASCII}/u.test(letters) || letters === letters.toLowerCase())
+  )
+}
+
+/** At most this many tokens before a quantity are dropped as noise. */
+const MAX_QUANTITY_NOISE = 3
+/** At most this many tokens after a line's last amount are dropped. */
+const MAX_TAIL_NOISE = 4
+
+/**
+ * Where a quantity starts (`1 X 0,89 0,89`, `1X0,8 0,89`) after up to
+ * three short noise tokens (`; z z 1 X …`, `5 - 2 X …`), or -1. A quantity
+ * line starts with its quantity, so short tokens before it are noise.
+ */
+function quantityStart(tokens: readonly string[]): number {
+  for (let at = 0; at <= MAX_QUANTITY_NOISE && at < tokens.length; at++) {
+    const here = tokens[at] ?? ''
+    const next = tokens[at + 1] ?? ''
+    if (
+      at > 0 &&
+      ((/^\d{1,2}$/.test(here) && /^[x×]$/i.test(next)) ||
+        GARBLED_QUANTITY.test(here))
+    ) {
+      return at
+    }
+    if (here.length > 2) return -1
+  }
+  return -1
+}
+
+/**
+ * A token a photo's background left after a line's last amount (`;`,
+ * `aE`, `Gi,`, a lone `3`): short, and no digits but a lone one. A
+ * receipt line never goes on after its price.
+ */
+function isTailNoise(token: string): boolean {
+  if (CURRENCY_MARK.test(token) || SHORT_WORDS.test(token)) return false
+  return /^\d$/.test(token) || (!/\d/.test(token) && token.length <= 3)
+}
+
+/**
+ * CP3 (user-approved addition): drops the stray characters a photo's
+ * table or paper edge adds around a line: up to two at the start
+ * (`é. POUPANCA 0,60`), up to three before a quantity (`; z z 1 X 0,89
+ * 0,89`), and up to four after the last amount (`AMENDOIM 1,15 : : Gi,`),
+ * keeping a tax code right after the amount. A line that doesn't end in
+ * an amount keeps its end, so a name is never cut short.
+ */
+export function trimEdgeNoise(text: string): string {
+  let tokens = text.trim().split(/\s+/)
+  const quantity = quantityStart(tokens)
+  if (quantity > 0) {
+    tokens = tokens.slice(quantity)
+  } else {
+    let start = 0
+    while (
+      start < MAX_EDGE_NOISE &&
+      start < tokens.length - 1 &&
+      isLeadingNoise(tokens[start] ?? '')
+    ) {
+      start += 1
+    }
+    tokens = tokens.slice(start)
+  }
+  const kinds = tokens.map((token) => tokenizeLine(token)[0]?.kind)
+  const lastAmount = kinds.lastIndexOf('amount')
+  const tail = tokens.slice(lastAmount + 1)
+  if (
+    lastAmount === -1 ||
+    tail.length === 0 ||
+    tail.length > MAX_TAIL_NOISE ||
+    !tail.every(isTailNoise)
+  ) {
+    return tokens.join(' ')
+  }
+  // A single capital right after the amount is its tax code (`2,39 A`).
+  const keep = /^[A-Z]$/.test(tail[0] ?? '') ? 1 : 0
+  return tokens.slice(0, lastAmount + 1 + keep).join(' ')
+}
+
 function splitWords(text: string): string[] {
   return fold(text)
     .split(/[^a-z0-9]+/)
@@ -178,9 +276,12 @@ function isQuantityOnly(line: Line): boolean {
   )
 }
 
-/** R4: a category header, `Padaria:`, is never an item's name. */
+/**
+ * R4: a category header, `Padaria:`, is never an item's name. Its colon
+ * is on the word; a lone one (`BOX VEGGIE :`) is a photo's noise.
+ */
 function isCategoryHeader(line: Line): boolean {
-  return line.amounts.length === 0 && /:\s*$/.test(line.text)
+  return line.amounts.length === 0 && /[\p{L}\p{N})]:\s*$/u.test(line.text)
 }
 
 /**
@@ -879,7 +980,7 @@ function parse(input: readonly TextLine[]): ParsedReceipt {
   const lines = mergeTotalLines(
     mergeQuantityLines(
       input
-        .map((entry) => analyse(entry.text, entry.confidence))
+        .map((entry) => analyse(trimEdgeNoise(entry.text), entry.confidence))
         .filter((line) => line.tokens.length > 0),
     ),
   )
