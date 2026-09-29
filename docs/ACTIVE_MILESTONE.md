@@ -459,10 +459,13 @@ scope. The parser: multi-line items, category headers, `POUPANCA` and
 review step: make a large gap from the QR total impossible to miss before
 splitting. How much of this is needed to pass the acceptance criteria is
 genuinely uncertain, so it gets its own plan and review instead of an
-inline fix. **Open question for that plan:** the five receipts contain
-personal data (a customer NIF, card digits, a loyalty-card number). Before
-any of them becomes a committed fixture, it has to be redacted or
-re-created, or you decide it can stay as is.
+inline fix. **Decided (user, 2026-09-29):** the five receipts contain
+personal data (a customer NIF, card digits, a loyalty-card number). They
+can be used as test fixtures **locally only** and must never be
+committed. They stay under the git-ignored `.ai-review/` (or another
+git-ignored path), and any test that reads them skips when they're absent,
+as they will be in CI. Committed fixtures that cover the same layouts
+must be re-created with no real personal data.
 
 No code changed in M2 for this round, and M2's technical approval stays
 current. **To re-test after the child is accepted:** items 2, 7, 8, 9 and
