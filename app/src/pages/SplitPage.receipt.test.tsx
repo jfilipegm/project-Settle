@@ -29,6 +29,13 @@ import { createBill } from '../features/split/billReducer.ts'
 import { DRAFT_STORAGE_KEY, saveDraft } from '../features/split/draft.ts'
 import { SplitPage } from './SplitPage.tsx'
 
+/**
+ * The waits' limit: the fake import is instant, but when the real-OCR
+ * tests load the machine in the same run, a render can take over the
+ * default 1 s.
+ */
+const LOADED = { timeout: 10_000 }
+
 afterEach(() => {
   vi.restoreAllMocks()
   localStorage.clear()
@@ -118,7 +125,7 @@ describe('Scanning a receipt on the Split page', () => {
 
     choose()
 
-    await waitFor(() => expect(queryPanel()).toBeInTheDocument())
+    await waitFor(() => expect(queryPanel()).toBeInTheDocument(), LOADED)
     expect(itemNames()).toEqual(['Bitoque', 'Imperial'])
     expect(
       within(panel()).getByRole('heading', { name: 'Receipt check' }),
@@ -184,7 +191,7 @@ describe('Scanning a receipt on the Split page', () => {
 
     // A fresh bill has no content: no question.
     choose()
-    await waitFor(() => expect(queryPanel()).toBeInTheDocument())
+    await waitFor(() => expect(queryPanel()).toBeInTheDocument(), LOADED)
     expect(confirm).not.toHaveBeenCalled()
 
     // Now it has items: the question, and declining keeps everything.
@@ -197,7 +204,7 @@ describe('Scanning a receipt on the Split page', () => {
 
     confirm.mockReturnValue(true)
     choose()
-    await waitFor(() => expect(importReceipt).toHaveBeenCalledTimes(2))
+    await waitFor(() => expect(importReceipt).toHaveBeenCalledTimes(2), LOADED)
     // Let that import finish inside this test.
     await act(async () => {
       await importReceipt.mock.results[1]?.value
@@ -252,7 +259,7 @@ describe('Scanning a receipt on the Split page', () => {
   it('marks flagged items until they are edited, and keeps a cleared flag', async () => {
     const view = renderPage(importing())
     choose()
-    await waitFor(() => expect(queryPanel()).toBeInTheDocument())
+    await waitFor(() => expect(queryPanel()).toBeInTheDocument(), LOADED)
 
     expect(screen.getByText('Item 2: check this line')).toBeInTheDocument()
     expect(
@@ -287,7 +294,7 @@ describe('Scanning a receipt on the Split page', () => {
     URL.revokeObjectURL = revoke
     const view = renderPage(importing(RECEIPT, 'blob:receipt-1'))
     choose()
-    await waitFor(() => expect(queryPanel()).toBeInTheDocument())
+    await waitFor(() => expect(queryPanel()).toBeInTheDocument(), LOADED)
 
     // The image, in memory only.
     fireEvent.click(screen.getByText('Show receipt image'))
@@ -309,7 +316,7 @@ describe('Scanning a receipt on the Split page', () => {
 
     vi.spyOn(window, 'confirm').mockReturnValue(true)
     choose()
-    await waitFor(() => expect(queryPanel()).toBeInTheDocument())
+    await waitFor(() => expect(queryPanel()).toBeInTheDocument(), LOADED)
     fireEvent.click(screen.getByRole('button', { name: 'New bill' }))
     expect(queryPanel()).not.toBeInTheDocument()
     expect(localStorage.getItem(RECEIPT_STORAGE_KEY)).toBeNull()
@@ -350,7 +357,7 @@ describe('Scanning a receipt on the Split page', () => {
     fireEvent.drop(section, { dataTransfer })
 
     expect(section).toHaveAttribute('data-dragging', 'false')
-    await waitFor(() => expect(queryPanel()).toBeInTheDocument())
+    await waitFor(() => expect(queryPanel()).toBeInTheDocument(), LOADED)
     expect(importReceipt.mock.calls[0]?.[0]).toBe(file)
   })
 
@@ -380,7 +387,7 @@ describe('Scanning a receipt on the Split page', () => {
       }),
     )
     choose()
-    await waitFor(() => expect(signal).toBeDefined())
+    await waitFor(() => expect(signal).toBeDefined(), LOADED)
 
     act(() => {
       view.unmount()
