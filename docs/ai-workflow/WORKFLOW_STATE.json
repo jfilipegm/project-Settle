@@ -1838,12 +1838,12 @@
       "registry_path": "docs/ai-workflow/registry/milestone-2-remediation-1-registry.json",
       "mapping_path": "docs/ai-workflow/requirements/milestone-2-remediation-1-mapping.json",
       "governing_workflow_version": "2.1",
-      "phase": "APPLYING_REVIEW_FEEDBACK",
+      "phase": "AWAITING_EXTERNAL_IMPLEMENTATION_REVIEW",
       "plan_revision": 12,
-      "implementation_revision": 1,
+      "implementation_revision": 2,
       "functional_review_round": null,
       "base_commit": "4b75b092804be374ae7ebd0e0d1d9e8ef4efb3af",
-      "reviewed_implementation_head": "3eac12c9d5dac8b34c6e3b8a163e8ba48dd6a4d1",
+      "reviewed_implementation_head": "184a44aeabe4db5d2c9c8e29d560a4c4b025f880",
       "current_checkpoint_id": null,
       "last_completed_checkpoint_id": "M2R1-CP4",
       "checkpoints": {
@@ -1915,8 +1915,8 @@
       },
       "functional_acceptance_status": null,
       "blocking_decisions": [],
-      "state_revision": 50,
-      "last_transition": "2026-09-29T22:36:00Z"
+      "state_revision": 51,
+      "last_transition": "2026-09-29T22:37:00Z"
     }
   }
 }
