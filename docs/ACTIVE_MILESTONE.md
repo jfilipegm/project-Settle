@@ -498,8 +498,13 @@ Measurements (this machine, Node 24, Tesseract.js 7):
   0 on both.
 - The phone measurement (R21): not taken. The user ran the preview build
   on their phone (2026-09-29) but didn't time it, judging the reading
-  quality the priority. Per R21 the measurement, with the same 60-s and
-  20-s thresholds, moves to M2's functional re-test.
+  quality the priority. (Corrected after the external implementation
+  review's B-EXT-1: R21 moves the measurement to the re-test only when the
+  phone can't reach the build, and it could, so this wasn't R21's
+  fallback.) **The user waived it** (2026-09-29, in answer to B-EXT-1):
+  the Tesseract reader it would time is being replaced by PaddleOCR in the
+  next remediation child, so the phone timing, with R21's 60-s and 20-s
+  thresholds, is taken on that child's reader instead.
 - Continente's 75 % target is not met at CP1 (71 %). CP3 checks it end to
   end, after CP2's parser rules.
 

@@ -144,8 +144,8 @@ added, for real receipts:
 
 Reading time, on the development machine (Node, one core): about 6 s for
 a 12-MP photo read in strips and for a small screenshot enlarged ×4. A
-phone is slower; its measurement is part of M2's functional re-test, and
-this section is corrected after it.
+phone is slower. The phone timing is taken with the PaddleOCR reader that
+replaces Tesseract next, and this section is corrected then.
 
 ### Self-hosted reader files
 
