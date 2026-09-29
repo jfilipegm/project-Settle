@@ -1,4 +1,11 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useRegion } from '../app/region.ts'
 import { ReceiptCheck } from '../features/receipt/components/ReceiptCheck.tsx'
 import { ScanReceipt } from '../features/receipt/components/ScanReceipt.tsx'
@@ -45,8 +52,9 @@ export function SplitPage() {
   // A replaced image, or one still held when leaving the page, is freed.
   useEffect(() => () => revokeImageUrl(imageUrl), [imageUrl])
 
-  // After an import, focus moves to the check panel's heading.
-  useEffect(() => {
+  // After an import, focus moves to the check panel's heading, in the
+  // same commit that shows the panel.
+  useLayoutEffect(() => {
     if (focusCheck.current) {
       focusCheck.current = false
       checkHeading.current?.focus()

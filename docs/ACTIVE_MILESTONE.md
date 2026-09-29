@@ -3,7 +3,7 @@
 ## Milestone
 
 **M2 — Receipt upload and built-in parsing** (work item `milestone-2`),
-phase `IMPLEMENTING`. Plan revision 10, approved in commit `3af0e18`.
+phase `SELF_REVIEWING_IMPLEMENTATION`. Plan revision 10, approved in commit `3af0e18`.
 Branch `feature/milestone-2`, PR #6.
 
 ## Checkpoints
@@ -340,7 +340,7 @@ Verified: `npm run check` (`tsc -b`, `eslint . --max-warnings=0`,
 Milestone "Done when":
 - `npm run check` (735 tests) and `npm run build` pass. On the PR, `app`
   and `pr-title` passed for the CP4 push; the CP5 push's checks are
-  reported at the self-review.
+  reported at the self-review below.
 - The sample corpus matches or is flagged (CP3's corpus test); every
   failure falls back to the manual editor (CP3 and CP4 tests); no receipt
   data leaves the browser (the D9 CSP and static-only rule, CP2's page-load
@@ -348,6 +348,24 @@ Milestone "Done when":
   the READMEs are updated.
 - Still to come: the user's functional review with real receipts on a
   phone and a desktop.
+
+### Self-review (whole milestone)
+
+Reviewed the milestone diff against `74cf84a`: the import pipeline,
+bill conversion, receipt check, saved summary, the Split page wiring,
+cancellation and resource clean-up (workers, pdf.js documents, bitmaps,
+object URLs). One fix:
+
+- `SplitPage.tsx`: after an import, focus moves to the check panel's
+  heading in a layout effect, in the same commit that shows the panel.
+  As a passive effect it could run after the panel was already on
+  screen, and the full `npm run check` failed once on
+  `SplitPage.receipt.test.tsx`'s focus assertion under load (it passed
+  when that file ran alone).
+
+Verified after the fix: `npm run check` twice (37 files, 735 tests,
+both passing) and `npm run build`. On PR #6 the CP5 push's `app`,
+`pr-title` and `workflow-conformance` checks passed.
 
 ## Current blockers
 
