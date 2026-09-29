@@ -399,11 +399,156 @@ Implementation revision 2 approved in `24e8227` (basis
 `EXTERNAL_APPROVE`, bundle `986c118407bd`). No code has changed since the
 verification above.
 
+## Remediation child: `milestone-2-remediation-1`
+
+Plan revision 12 (`docs/milestones/milestone-2-remediation-1-PLAN.md`),
+approved in `5a42485` (basis `EXTERNAL_APPROVE`). Lands on
+`feature/milestone-2`, PR #6.
+
+| id | name | status |
+|----|------|--------|
+| M2R1-CP1 | Image clean-up: text-size scaling, flattening, one channel, strips | Complete |
+| M2R1-CP2 | Parser and bill-conversion rules for real layouts | Not started |
+| M2R1-CP3 | Synthetic real-layout corpus and local real-receipt fixtures | Not started |
+| M2R1-CP4 | Review step: gaps, add-the-difference, READMEs, verification | Not started |
+
+### M2R1-CP1 — verified state
+
+Built:
+- `preprocess.ts`: R1's working copy and text-height estimate
+  (`workingCopy`, `characterHeight`, `estimateTextHeight`), R1's
+  `scaleFactor`/`fitSize` (D10's rule kept as the no-estimate fallback),
+  R2's `blur`/`flatten` (three box passes by running sums, rounded after
+  each pass, so a strip with a 3r margin gives exactly the whole page's
+  pixels), and the chain rebuilt around one 8-bit channel (`GrayPage`):
+  `grayPlane` (one-pass shrink and grayscale when the factor is under 1),
+  `rotate`, `resizeRows` (a strip scaled on the page's grid),
+  `stretchContrast`. `preprocessPage` is an async generator of cleaned
+  strips that yields to the event loop between steps and stops there on
+  abort.
+- `strips.ts`: `planStrips` (R20: overlap max(200, 8t), margin 3r, cores
+  spread evenly, own-zone boundaries in the middle of each overlap) and
+  `ownLines`.
+- `builtInReader.ts`: the strip loop, `linesOf` keeping each line's box,
+  progress `(page + (strip + p) / strips) / pages`, cancel during the
+  clean-up.
+- `encodePage.ts`/`encodePage.node.ts`: accept the one-channel page (the
+  browser expands it to RGBA; Node writes a grayscale PNG).
+
+Decided during CP1 (plan deviations, recorded for review):
+- **Flattening only on uneven pages** (the user's decision, 2026-09-29).
+  R2 flattened every page, but that broke sample 02 in CI: its dotted
+  zeros read as 6 with flattening (0 of 5 item amounts right at ×1 and at
+  ×2.34), and all 5 right without it. It also lowered the Lidl
+  screenshots' reading. A page is now flattened only when the median of
+  its coarse blur (on R1's working copy) is under 200
+  (`UNEVEN_BACKGROUND`): the two real photos measure 157 and 173, every
+  screenshot and corpus sample 219 or more. R1's estimate and the skew
+  still read the coarsely flattened copy.
+- **R1's working copy is bounded by area** (at most 800 × 800 px), not by
+  an 800-px long side. A long-side bound halves a 223 × 1600 screenshot,
+  and its 4–5-px text would fall under the 3-px component minimum: the
+  case the plan's own wording says the copy must protect.
+- R1's thresholds are unchanged (24 / 64 px, 14 MP).
+
+Measurements (this machine, Node 24, Tesseract.js 7):
+- R1 on the real receipts: the three screenshots' text is 4.0–5.0 px
+  (×4, 5.7–6.7 MP; lidl3 is read in 4 strips); the photos' 15.5 and
+  11.1 px (×2.06 to 13.4 MP, and ×2.11 limited by 14 MP). The largest
+  strip planned for any corpus or real receipt is 5.78 MP.
+- Page-level steps: R1's estimate on a 40-MP source 235 ms (14 MP:
+  125 ms); the one-pass shrink and grayscale 40 → 14 MP 214 ms; grayscale
+  of 14 MP 45 ms; the full-page `rotate` of 14 MP 100 ms.
+- A 6-MP strip: scaling 26 ms, flattening 217 ms, contrast 57 ms, about
+  18 MB of buffers besides the page plane. No step is over 300 ms, so
+  none is split into chunks, and the strip budget stays 6 MP.
+- Whole reads (worker start-up included): the Tiffosi-sized photo
+  (14 MP, 4 strips) 6.3 s, a 12-MP camera-sized page 6.3 s, lidl1 6.4 s,
+  within the 15-s engineering budget.
+- The five real receipts (item amounts read exactly, one to one, before
+  CP2's parser rules; coverage as R19's local coverage):
+
+  | receipt | item amounts read | coverage | total's amount read | target |
+  |---|---|---|---|---|
+  | Tiffosi | 5 of 5 | 100 % | yes (next line) | "Matches": on track |
+  | Continente | 12 of 14 | 71 % | yes | 75 %: not met yet |
+  | lidl1 | 5 of 25 | 11 % | no | 60 %: accepted as measured |
+  | lidl2 | 8 of 29 | 21 % | one digit off | 60 %: accepted as measured |
+  | lidl3 | 1 of 5 | 22 % | yes (label garbled) | 60 %: accepted as measured |
+
+  Continente's two lost lines are the one on a paper fold (as in the
+  spike) and one whose amount flips between right and one digit off with
+  a few pixels' change in scale. **The Lidl target is not reachable with
+  Tesseract** at this resolution: the best of every variant tried
+  (ImageMagick ×3/×4/×6, Lanczos, with and without flattening, and the
+  spike's own ×4 with the 5.5.3 CLI) read 8 of 25 amounts on lidl1; the
+  spike's "amounts mostly right" doesn't hold under exact amounts. The
+  user accepted the measured result (2026-09-29): the gap stays visible
+  (R12) and closes in one click (R13/R14).
+- Per Lidl receipt (R23's anchor, counts only): the tax-table header was
+  read with at least two of R18's column words on all three, so each has
+  an anchor. The `MULTIBANCO` line was read as a recognised payment
+  phrase on lidl3 only (garbled on lidl1 and lidl2). No separator row was
+  read on any. Footer lines between the items and the anchor with an
+  amount near the QR total (R23's "near"): 0 on lidl1, 1 on lidl2 (one
+  digit off), 1 on lidl3 (equal). Negative lines read with their sign
+  (candidates for the bill discount): 0 on all three; every `Promoção`
+  line lost its sign or its amount.
+- Per photo: separator-shaped lines above the last expected item line:
+  0 on both.
+- The phone measurement (R21): not taken. The user ran the preview build
+  on their phone (2026-09-29) but didn't time it, judging the reading
+  quality the priority. Per R21 the measurement, with the same 60-s and
+  20-s thresholds, moves to M2's functional re-test.
+- Continente's 75 % target is not met at CP1 (71 %). CP3 checks it end to
+  end, after CP2's parser rules.
+
+Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`
+and `vitest run` (779 tests) pass; the corpus test (samples 01–10) keeps
+every result.
+
+Found and fixed during CP1, outside its scope: `/split` was blank when the
+app was opened over plain HTTP from another device (a phone on the local
+network), because `newId()` used `crypto.randomUUID`, which only exists in
+a secure context. Fixed in `9d4348d` (a fallback on
+`crypto.getRandomValues`).
+
+### Engine comparison (PaddleOCR), for the next remediation child
+
+After CP1 the user asked whether a better reader exists. A local spike
+(branch `spike/paddleocr` in a separate worktree, not pushed, not part of
+this plan) ran PaddleOCR (`ppu-paddle-ocr` with ONNX Runtime Web, the
+PP-OCRv5 mobile detection and Latin recognition models, about 13 MB, MIT
+and Apache-2.0, in the browser) on the five real receipts, with the same
+scoring as above:
+
+| receipt | Tesseract (CP1) | PaddleOCR | target |
+|---|---|---|---|
+| lidl1 | 11 % | 44 % | 60 % |
+| lidl2 | 21 % | 73 % | 60 % |
+| lidl3 | 22 % | all 5 items | 60 % |
+| Continente | 71 % | 94 % | 75 % |
+| Tiffosi | 100 % | 100 % | "Matches" |
+
+Item names came out much cleaner, and a read took 0.5–2 s on this
+machine. In the app, with M2's parser, the Tiffosi photo reached
+"Matches". The user confirmed the improvement on their phone.
+
+Switching engines needs a plan amendment, and the amendment tooling
+refuses this plan: `request_plan_amendment` accepts only checkpoint ids
+of the shape `CP<digits>[A-Z]?`, so `M2R1-CP1`…`M2R1-CP4` can never be
+amended (a workflow defect, present in workflow 2.6.0 too). The user
+decided (2026-09-29) to finish this child as planned, on Tesseract, and
+to switch to PaddleOCR in a new remediation child afterwards. The same
+session collected two requests for later: a row-by-row review of what
+the reader found (the receipt image with each line's role, and adding a
+missed line), and remembering the user's corrections on the device.
+
 ## Current blockers
 
 M2 can't be accepted until its remediation child,
 `milestone-2-remediation-1`, is accepted (functional review round 1,
-below). That child starts at `/milestone-plan milestone-2-remediation-1`.
+below). The child is implementing; M2R1-CP1 is complete.
 
 ## Active plan
 

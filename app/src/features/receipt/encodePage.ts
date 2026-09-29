@@ -1,16 +1,32 @@
 /**
- * D2's page encoder, browser version: a decoded page as a PNG `Blob`,
- * which Tesseract.js (and any later reader) accepts where raw RGBA isn't.
- * It sits outside the reader and is injected into it.
+ * D2's page encoder, browser version: a decoded page, or a cleaned-up
+ * one-channel strip (R2), as a PNG `Blob`, which Tesseract.js (and any
+ * later reader) accepts where raw pixels aren't. It sits outside the reader
+ * and is injected into it.
  */
 import type { ReceiptPage } from './model.ts'
+import type { GrayPage } from './preprocess.ts'
 
-export async function encodePage(page: ReceiptPage): Promise<Blob> {
-  const image = new ImageData(
-    new Uint8ClampedArray(page.data),
-    page.width,
-    page.height,
-  )
+/** A page's pixels as RGBA; a one-channel page is expanded only here. */
+export function rgbaOf(
+  page: ReceiptPage | GrayPage,
+): Uint8ClampedArray<ArrayBuffer> {
+  if (!('channels' in page)) {
+    return new Uint8ClampedArray(page.data)
+  }
+  const rgba = new Uint8ClampedArray(page.width * page.height * 4)
+  for (let i = 0, o = 0; i < page.data.length; i++, o += 4) {
+    const v = page.data[i] ?? 0
+    rgba[o] = v
+    rgba[o + 1] = v
+    rgba[o + 2] = v
+    rgba[o + 3] = 255
+  }
+  return rgba
+}
+
+export async function encodePage(page: ReceiptPage | GrayPage): Promise<Blob> {
+  const image = new ImageData(rgbaOf(page), page.width, page.height)
   if (typeof OffscreenCanvas !== 'undefined') {
     const canvas = new OffscreenCanvas(page.width, page.height)
     const context = canvas.getContext('2d')
