@@ -3,7 +3,7 @@
 ## Milestone
 
 **M2 — Receipt upload and built-in parsing** (work item `milestone-2`),
-phase `APPLYING_REVIEW_FEEDBACK`. Plan revision 10, approved in commit `3af0e18`.
+phase `AWAITING_FUNCTIONAL_REVIEW`. Plan revision 10, approved in commit `3af0e18`.
 Branch `feature/milestone-2`, PR #6.
 
 ## Checkpoints
@@ -393,6 +393,12 @@ both passing) and `npm run build`. On PR #6 the CP5 push's `app`,
 
 Verified: `npm run check` (37 files, 739 tests) and `npm run build`.
 
+### Technical approval
+
+Implementation revision 2 approved in `24e8227` (basis
+`EXTERNAL_APPROVE`, bundle `986c118407bd`). No code has changed since the
+verification above.
+
 ## Current blockers
 
 None.
@@ -404,8 +410,162 @@ archived at `docs/milestones/completed/milestone-1-PLAN.md`.
 
 ## Functional review checklist
 
-None yet for M2. M1's checklist (implementation revision 2) is in commit
-`5c00e07`.
+M2 functional review, implementation revision 2. Report findings in
+`.ai-review/feedback/FUNCTIONAL_REVIEW.md`: the item number, what you
+did, what you saw, and what you expected. For a receipt that reads badly,
+note the device, whether it was a photo or a file, and, if you can, attach
+or describe the receipt (blur out anything private).
+
+**Setup**
+
+- From `app/`: `npm ci`, then `npm run build && npm run preview -- --host`.
+  Open the "Local" address (http://localhost:4173) on the desktop, and
+  the "Network" address (http://<your-computer's-IP>:4173) on a phone on
+  the same Wi-Fi. Use the preview build, not `npm run dev`: only the
+  build has the Content-Security-Policy.
+- Desktop: a Chromium browser, with DevTools open to the Network and
+  Console tabs for items 2 and 12. Phone: its normal browser (Safari on
+  iPhone, Chrome on Android).
+- Start clean: in DevTools → Application, delete the `settle.bill` and
+  `settle.receipt` local-storage keys, and the IndexedDB databases
+  (Tesseract's model cache), or use a private window. On the phone, use a
+  private tab for the first scan.
+- The sample files are in `app/src/features/receipt/fixtures/`:
+  `browser/sample-1.jpg`, `browser/sample-3.heic`,
+  `browser/sample-6-scanned.pdf`, `browser/sample-9.pdf`,
+  `receipts/08-pt-linha-borrada.png` and `receipts/10-nao-e-recibo.png`.
+- Settings → Region should be Portuguese / Euro unless an item says
+  otherwise.
+
+**Checklist**
+
+1. **The scan section.** Open Split.
+   *Expected:* a "Scan a receipt" section at the top, with "Read on this
+   device. The receipt never leaves your browser.", "Choose file", "Take
+   photo" and "Or drop a JPEG, PNG, HEIC or PDF file here." Settings → "Receipt
+   reading" says "Built-in: read on this device.", and its About section
+   links "Third-party licences", which opens the notices page.
+2. **First scan, a JPEG with a fiscal QR code** (desktop, clean profile).
+   Choose file → `sample-1.jpg`.
+   *Expected:*
+   - The status line shows "Opening the file…", then "Loading the reader
+     (first time only)…", then "Reading the text…" with a percentage, then
+     "Checking the QR code…". A Cancel button shows while it reads, and
+     the bill below can’t be edited until it ends.
+   - Five items, each shared by everyone: Imperial 2 × 1,60 (3,20 €),
+     Bitoque 9,50 €, Salada Mista 4,20 €, Café 2 × 0,80 (1,60 €), Água das
+     Pedras 1,50 €. No tax, tip or discount.
+   - Focus moves to a "Receipt check" panel: Merchant "Restaurante A
+     Tasquinha", Date 28/09/2026, NIF 507342186, Receipt total 20,00 €
+     from the fiscal QR code, IVA included 2,30 €, and "✓ Matches the
+     receipt total."
+   - "Show receipt image" opens the photo.
+   - In DevTools: every request goes to the preview's own address (the
+     reader's files under `/vendor/`, about 9 MB in all). Nothing goes to
+     another site, and the Console has no CSP errors.
+3. **The live check.** Change Bitoque's price to `10,00`.
+   *Expected:* the panel changes at once to "⚠ Items add up to 20,50 €,
+   0,50 € more than the receipt." Set it back to `9,50` and it says
+   "Matches" again.
+4. **Split the scanned receipt.** Add people until there are 3 (Ana, Rui,
+   Maria; Ana paid). Give Bitoque to Rui only and Salada Mista to Maria
+   only, and leave the other items shared.
+   *Expected:* the per-person totals add up to 20,00 €, the settle-up
+   says Rui and Maria owe Ana, and "Matches" stays.
+5. **Kept after a reload, cleared by New bill.** Reload the page (F5).
+   *Expected:* the bill and the Receipt check panel are both still there
+   (the image is not: it's never saved). Then "Dismiss" the panel: the
+   bill stays and the panel goes. Scan `sample-1.jpg` again, then "New
+   bill" → OK: the bill and the panel are both cleared.
+6. **Replacing a bill asks first.** Type an item by hand, then scan
+   `sample-1.jpg`.
+   *Expected:* "Replace the current items with the receipt's? People stay
+   as they are." Cancel keeps your item unchanged. OK replaces the items
+   and keeps the people and payer.
+7. **Second scan, other file types.** Scan each of these in turn (OK the
+   replace prompt each time).
+   *Expected:*
+   - The reader isn't downloaded again (no "Loading the reader" pause, and
+     no model files in the Network tab).
+   - `sample-3.heic` (a supermarket receipt): 6 items, from Leite Meio
+     Gordo to Vinho Tinto Reserva, "Supermercado Pomar", total 13,50 €
+     from the QR code, "Matches". (Chrome can't decode HEIC itself, so
+     this also tests the fallback decoder.)
+   - `sample-6-scanned.pdf` (a UK pub bill, scanned with no text in the
+     PDF): Pint of Bitter, Steak and Ale Pie, Sticky Toffee Pudding, a
+     service charge of 3,93 as the tip, total 35,38 read from the receipt,
+     "Matches", and a warning that the receipt is in pounds (GBP), not
+     your region's currency.
+   - `sample-9.pdf` (a Portuguese e-fatura with a text layer): 4 items
+     (Mudança de óleo … Mão de obra), "Oficina Auto Ribeiro, Lda.", total
+     172,82 € from the QR code, "Matches". This one reads almost at once:
+     there's no OCR.
+8. **Doubtful lines are marked.** Scan `08-pt-linha-borrada.png` (a
+   receipt with a smudged line).
+   *Expected:* at least one item shows "⚠ Check" (or the panel shows a
+   mismatch or a warning). Editing that item's name, quantity or price
+   removes its marker. Changing who shares it doesn't. After a reload, a
+   cleared marker stays cleared.
+9. **Failures fall back to typing.** Starting from a bill with a typed
+   item, try each of these.
+   *Expected:* each shows its message ending "You can type the items in
+   below.", and the typed bill is unchanged:
+   - `10-nao-e-recibo.png` (not a receipt): "No items were found on this
+     receipt."
+   - A file that isn't an image or PDF (a `.txt` or `.docx`, chosen with
+     the file dialog's "All files"): "This file type can't be read. Use a
+     JPEG, PNG, HEIC or PDF."
+   - Start a scan of `sample-6-scanned.pdf` and press Cancel while it
+     reads: "Reading was cancelled.", and the bill becomes editable again.
+   - In a fresh private window, DevTools → Network → Offline, then a
+     scan: "The receipt reader couldn't load. Check your connection: the
+     first scan downloads it."
+10. **Drag and drop** (desktop). Drag `sample-1.jpg` from the file manager
+    onto the scan section.
+    *Expected:* an outline shows while dragging over it, and dropping
+    starts the scan exactly as in item 2.
+11. **Your own receipts, on a phone and on the desktop** (the milestone's
+    "Done when"). On the phone, use "Take photo" on at least 3 real
+    receipts: one with a Portuguese fiscal QR code (a supermarket or
+    restaurant fatura), one without, and one long or crumpled. On the
+    desktop, "Choose file" with a photo from your phone's gallery (HEIC on
+    an iPhone) and, if you have one, a PDF invoice.
+    *Expected:* each either fills the items and shows "Matches", or shows
+    clearly what doesn't add up (a mismatch, "⚠ Check" markers or a
+    warning), so you know what to fix before splitting. Nothing freezes or
+    crashes, and the camera opens straight from "Take photo". Note which
+    receipts read badly: the milestone accepts some misreads as long as
+    they're flagged.
+12. **Nothing leaves the browser.** During any real-receipt scan on the
+    desktop, watch the Network tab.
+    *Expected:* only `GET`s to the app's own address. No request's URL
+    contains a merchant, an amount or item text from the receipt.
+13. **Phone layout, dark mode and keyboard.** On the phone (or DevTools at
+    360 px), and with the theme on Dark.
+    *Expected:* the scan section, status line, Cancel and check panel fit
+    with no horizontal scrolling, and stay readable in dark mode. With
+    Tab only, you can reach "Choose file", "Take photo", Cancel, "Show
+    receipt image" and "Dismiss", and each shows a focus ring.
+
+**Known limitations (not findings)**
+
+- No perspective correction or cropping: a photo taken at a steep angle,
+  or sideways with no rotation data, reads badly and is flagged ("This
+  photo was hard to read").
+- Portuguese and English receipts only. No handwriting, and one receipt
+  per image.
+- Amounts are never converted between currencies; a receipt in another
+  currency only gets a warning.
+- The receipt image is never saved: after a reload, "Show receipt image"
+  is gone.
+- The first scan needs a connection to the app (about 9 MB). Offline
+  caching comes with M6.
+- Photos over 40 megapixels and files over 20 MB are refused on purpose,
+  to avoid running a phone out of memory.
+- Items come in shared by everyone; you assign them yourself, as in M1.
+- `npm run dev` has no Content-Security-Policy; only the build does.
+
+M1's checklist (implementation revision 2) is in commit `5c00e07`.
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is
