@@ -110,9 +110,16 @@ anything, and M2 makes that a checked rule:
    dedicated worker, with its URL, method, request headers and body. Each
    must be a same-origin `GET` with no body and no query string, for a
    file in the build output, with only standard browser header names, and
-   no value from the scanned receipt may appear anywhere in it. It runs on
-   page load in CP2, and with real scans in CP4. It's not part of
-   `npm run check`, because CI has no browser.
+   no value from the scanned receipt may appear anywhere in it. The app is
+   served through a small logging proxy, which records every request that
+   reaches the origin with its headers exactly as received. The same checks
+   run over that log, and every request in it must also be in the
+   protocol's log. Chromium sends no `requestWillBeSentExtraInfo` for
+   worker requests, so for those the proxy is the only record of the
+   headers as sent. The saved logs keep every header value and the value
+   set, and `check-requests.mjs audit --log <file>` re-checks them
+   offline. It runs on page load in CP2, and with real scans in CP4. It's
+   not part of `npm run check`, because CI has no browser.
 
 Any later feature that sends data (the M7 endpoint, M9 accounts) is a new
 decision.

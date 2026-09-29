@@ -151,9 +151,14 @@ over the DevTools protocol, no dependency): after `npm run build`, it
 records every request from the page and its workers while loading the
 page or scanning a receipt, and fails on anything but a same-origin `GET`
 of a build file, a non-standard header, a receipt value anywhere in a
-request, or a CSP violation. Its logs are in
-`docs/milestones/milestone-2-evidence/`. It isn't part of `npm run check`,
-because CI has no browser.
+request, or a CSP violation. The app is served through a logging proxy
+in front of `vite preview`, so the same checks also run over every
+request as the server received it: worker requests' full headers
+included, which the DevTools protocol doesn't report. Its logs are in
+`docs/milestones/milestone-2-evidence/`, with every header value and the
+value set, and `node scripts/check-requests.mjs audit --log <file>`
+re-checks a saved log without a browser. It isn't part of
+`npm run check`, because CI has no browser.
 
 ```sh
 npm run build

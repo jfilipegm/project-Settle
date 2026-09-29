@@ -5,7 +5,13 @@
  * built-in WebSocket (no dependency). It records every request, from the
  * document and from each dedicated worker (auto-attached, paused until its
  * Network domain is on), with its URL, method, headers as sent and body,
- * and every CSP violation. Then it checks:
+ * and every CSP violation. The app is served through a small logging
+ * proxy in front of `vite preview`, which records every request that
+ * reaches the origin with its headers exactly as received (raw, in order)
+ * and its body. That is the ground truth for what left the browser, and it
+ * covers worker requests too, for which Chromium sends no
+ * `requestWillBeSentExtraInfo` (so the protocol log only has the headers
+ * `requestWillBeSent` reports). Then it checks:
  *
  * - structure: each request is a same-origin GET with no body and no query
  *   string, for a file in the build output (`blob:`/`data:` are local and
@@ -14,13 +20,27 @@
  *   case-insensitively;
  * - values: no value from the receipt (VALUE SET below) appears in any
  *   request's URL, method, headers or body;
- * - no CSP violation in the console.
+ * - no CSP violation in the console;
+ * - the same header-name, method, body and value checks over every request
+ *   the proxy received, and that each one was also seen in the protocol log
+ *   (a request the protocol missed fails the run).
  *
  * Every run first proves the check can fail: it has the page send one
  * tagged same-origin GET carrying a receipt value in a custom header. That
- * planted request is checked on its own and must fail both the value search
- * and the header-name rule; it is left out of the clean log, and every
+ * planted request is checked on its own, in the protocol log and as the
+ * proxy received it, and must fail both the value search and the
+ * header-name rule in each; it is left out of the clean log, and every
  * other request is the clean log, which must pass.
+ *
+ * The saved log (--out) keeps every header value, the value set searched,
+ * and the proxy's log, so the result can be re-checked offline:
+ *   node scripts/check-requests.mjs audit --log <log.json>
+ * re-runs the header-name rule and the value search over the saved
+ * requests and exits 1 on a failure or any difference from the saved
+ * verdict on the requests (the CSP and worker expectations aren't
+ * re-checked: they're in the log as recorded). (The
+ * browser profile is a fresh temporary one, so its headers hold nothing
+ * private: no cookie is ever set.)
  *
  * Modes:
  *   node scripts/check-requests.mjs page-load [--values <expected.json>]
@@ -30,10 +50,12 @@
  *       [--wait <selector>]
  * Common: [--out <log.json>] [--brave <path>] [--path <route>] [--port <n>]
  *   [--probe-csp yes] (triggers one CSP violation, so the run must fail)
+ *   (the proxy listens on --port, default 4179; vite preview on the next)
  *
  * Run `npm run build` first. Exit code 0 is a pass, 1 a failure.
  */
 import { spawn } from 'node:child_process'
+import http from 'node:http'
 import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -210,6 +232,35 @@ function headerFailures(request) {
     .map((name) => `header ${name}`)
 }
 
+/**
+ * A request as the proxy received it, in the shape the checks read:
+ * `rawHeaders` (name/value pairs, repeats kept) folded into `headers`.
+ */
+export function receivedAsRequest(received) {
+  const headers = {}
+  for (const [name, value] of received.rawHeaders) {
+    headers[name] =
+      headers[name] === undefined ? value : `${headers[name]}\n${value}`
+  }
+  return {
+    url: received.url,
+    method: received.method,
+    headers,
+    body: received.body || undefined,
+    hasBody: received.bodyBytes > 0,
+  }
+}
+
+/** The checks that need no build or browser: header names and values. */
+export function contentFailures(request, values) {
+  return [
+    ...headerFailures(request),
+    ...findValues(requestText(request), values).map(
+      (value) => `receipt value ${JSON.stringify(value)}`,
+    ),
+  ]
+}
+
 // --- DevTools protocol -------------------------------------------------
 
 class Cdp {
@@ -292,6 +343,56 @@ async function startPreview(port) {
   return { child, origin }
 }
 
+/**
+ * The logging proxy: every request that reaches the origin, with its
+ * method, path, raw headers and body, is recorded before it's passed on
+ * to `vite preview` unchanged.
+ */
+async function startProxy(port, target) {
+  const received = []
+  const server = http.createServer((request, response) => {
+    const chunks = []
+    request.on('data', (chunk) => chunks.push(chunk))
+    request.on('end', () => {
+      const body = Buffer.concat(chunks)
+      const rawHeaders = []
+      for (let i = 0; i < request.rawHeaders.length; i += 2) {
+        rawHeaders.push([request.rawHeaders[i], request.rawHeaders[i + 1]])
+      }
+      received.push({
+        method: request.method,
+        path: request.url,
+        rawHeaders,
+        bodyBytes: body.length,
+        body: body.length > 0 ? body.toString('utf8') : '',
+      })
+      const upstream = http.request(
+        {
+          host: '127.0.0.1',
+          port: target,
+          method: request.method,
+          path: request.url,
+          headers: request.headers,
+        },
+        (reply) => {
+          response.writeHead(reply.statusCode ?? 502, reply.headers)
+          reply.pipe(response)
+        },
+      )
+      upstream.on('error', () => {
+        response.writeHead(502)
+        response.end()
+      })
+      upstream.end(body)
+    })
+  })
+  await new Promise((resolve, reject) => {
+    server.once('error', reject)
+    server.listen(port, '127.0.0.1', resolve)
+  })
+  return { server, received, origin: `http://127.0.0.1:${port}` }
+}
+
 async function startBrave(bravePath) {
   const profile = await mkdtemp(path.join(tmpdir(), 'settle-brave-'))
   const child = spawn(
@@ -352,7 +453,12 @@ export async function run(options) {
     : {}
   const pagePath = options.path ?? '/split'
 
-  const preview = await startPreview(Number(options.port ?? 4179))
+  const port = Number(options.port ?? 4179)
+  const preview = await startPreview(port + 1)
+  const proxy = await startProxy(port, port + 1)
+  // Before the browser starts, so it only holds the browser's requests.
+  proxy.received.length = 0
+  const origin = proxy.origin
   const brave = await startBrave(options.brave ?? '/usr/bin/brave')
   const cdp = await Cdp.connect(brave.ws)
   const sessions = new Map() // sessionId → { kind, url }
@@ -453,6 +559,8 @@ export async function run(options) {
       // already closed
     }
     brave.child.kill('SIGKILL')
+    proxy.server.closeAllConnections()
+    proxy.server.close()
     preview.child.kill('SIGTERM')
     await sleep(300)
     await rm(brave.profile, { recursive: true, force: true }).catch(
@@ -485,7 +593,7 @@ export async function run(options) {
       page,
     )
 
-    const url = `${preview.origin}${pagePath}`
+    const url = `${origin}${pagePath}`
     await cdp.send('Page.navigate', { url }, page)
     const idle = async (ms) =>
       waitFor(
@@ -590,7 +698,7 @@ export async function run(options) {
       (entry) => entry.url !== undefined,
     )
     const planted = all.filter(
-      (entry) => new URL(entry.url, preview.origin).pathname === PLANTED_PATH,
+      (entry) => new URL(entry.url, origin).pathname === PLANTED_PATH,
     )
     const network = all.filter(
       (entry) => !/^(blob|data):/.test(entry.url) && !planted.includes(entry),
@@ -611,15 +719,50 @@ export async function run(options) {
     const failures = []
     for (const entry of network) {
       const problems = [
-        ...(await structuralFailures(entry, preview.origin, pagePath)),
-        ...headerFailures(entry),
-        ...findValues(requestText(entry), values).map(
-          (value) => `receipt value ${JSON.stringify(value)}`,
-        ),
+        ...(await structuralFailures(entry, origin, pagePath)),
+        ...contentFailures(entry, values),
       ]
       if (problems.length > 0)
         failures.push({ url: entry.url, session: entry.session, problems })
     }
+    // What reached the origin, as the proxy received it.
+    const receivedPlanted = proxy.received.filter(
+      (entry) => entry.path === PLANTED_PATH,
+    )
+    const receivedClean = proxy.received.filter(
+      (entry) => entry.path !== PLANTED_PATH,
+    )
+    plantedCheck.receivedByProxy = receivedPlanted.length === 1
+    plantedCheck.proxyValueSearchFails = receivedPlanted.some(
+      (entry) =>
+        findValues(requestText(receivedAsRequest(entry)), [plantedValue])
+          .length > 0,
+    )
+    plantedCheck.proxyHeaderRuleFails = receivedPlanted.some(
+      (entry) => headerFailures(receivedAsRequest(entry)).length > 0,
+    )
+    // Each request the protocol log saw for this origin, by method and path.
+    const seen = network
+      .filter((entry) => new URL(entry.url).origin === origin)
+      .map((entry) => {
+        const url = new URL(entry.url)
+        return `${entry.method} ${url.pathname}${url.search}`
+      })
+    const proxyFailures = []
+    for (const entry of receivedClean) {
+      const request = receivedAsRequest(entry)
+      const problems = [
+        ...(entry.method !== 'GET' ? [`method ${entry.method}`] : []),
+        ...(entry.bodyBytes > 0 ? ['has a body'] : []),
+        ...contentFailures(request, values),
+      ]
+      const index = seen.indexOf(`${entry.method} ${entry.path}`)
+      if (index === -1) problems.push('not in the protocol log')
+      else seen.splice(index, 1)
+      if (problems.length > 0)
+        proxyFailures.push({ path: entry.path, problems })
+    }
+
     const expectations = options.expect.map((part) => ({
       part,
       found: network
@@ -631,7 +774,11 @@ export async function run(options) {
       plantedCheck.found &&
       plantedCheck.valueSearchFails &&
       plantedCheck.headerRuleFails &&
+      plantedCheck.receivedByProxy &&
+      plantedCheck.proxyValueSearchFails &&
+      plantedCheck.proxyHeaderRuleFails &&
       failures.length === 0 &&
+      proxyFailures.length === 0 &&
       csp.length === 0 &&
       expectations.every((expectation) => expectation.found.length > 0)
 
@@ -643,9 +790,13 @@ export async function run(options) {
       plantedLeak: { value: plantedValue, ...plantedCheck },
       cleanRequests: network.length,
       failures,
+      receivedByProxy: receivedClean.length,
+      proxyFailures,
       cspViolations: csp,
       workerExpectations: expectations,
       valueSetSize: values.length,
+      // The exact values searched for, so `audit` can repeat the search.
+      valueSet: values,
       // What the scan put in the bill (scan mode): evidence it really ran.
       appRead:
         mode === 'scan'
@@ -663,8 +814,12 @@ export async function run(options) {
         url: entry.url,
         headerNames: Object.keys(entry.headers).sort(),
         headersAsSent: Boolean(entry.extraInfo),
+        headers: entry.headers,
         body: entry.body ?? null,
       })),
+      // Every request that reached the origin, headers as received.
+      proxyReceived: receivedClean,
+      plantedReceived: receivedPlanted,
       local,
       console: console_,
     }
@@ -676,13 +831,66 @@ export async function run(options) {
   }
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+/**
+ * Re-checks a saved log offline: the header-name rule and the value search
+ * over every saved request (protocol log and proxy log), with the saved
+ * value set, and the planted leak's two failures. Needs no build or
+ * browser. The result must agree with the saved verdict on the requests.
+ */
+export function audit(report) {
+  const values = report.valueSet ?? []
+  const problems = []
+  if (!Array.isArray(report.valueSet) || !Array.isArray(report.proxyReceived))
+    problems.push('the log has no value set or proxy log (an older log)')
+  for (const entry of report.requests ?? []) {
+    if (entry.headers === undefined) {
+      problems.push(`${entry.url}: no saved header values`)
+      continue
+    }
+    for (const failure of contentFailures(entry, values))
+      problems.push(`${entry.url}: ${failure}`)
+  }
+  for (const entry of report.proxyReceived ?? []) {
+    const request = receivedAsRequest(entry)
+    for (const failure of contentFailures(request, values))
+      problems.push(`received ${entry.path}: ${failure}`)
+    if (entry.method !== 'GET' || entry.bodyBytes > 0)
+      problems.push(`received ${entry.path}: not a GET without a body`)
+  }
+  const planted = (report.plantedReceived ?? []).map(receivedAsRequest)
+  const plantedValue = report.plantedLeak?.value
+  const plantedCaught =
+    planted.length === 1 &&
+    headerFailures(planted[0]).length > 0 &&
+    findValues(requestText(planted[0]), [plantedValue]).length > 0
+  if (!plantedCaught) problems.push('the planted leak is not caught')
+  const pass = problems.length === 0
+  // The saved verdict on the requests alone: the CSP and the worker
+  // expectations are read from the log as they are, not re-checked here.
+  const savedPass =
+    (report.failures ?? []).length === 0 &&
+    (report.proxyFailures ?? []).length === 0
+  return { pass, agrees: pass === savedPass, problems }
+}
+
+if (
+  process.argv[1] === fileURLToPath(import.meta.url) &&
+  process.argv[2] === 'audit'
+) {
+  const options = parseArgs(process.argv.slice(2))
+  if (!options.log) throw new Error('audit needs --log <log.json>')
+  const result = audit(JSON.parse(await readFile(options.log, 'utf8')))
+  console.log(JSON.stringify(result, null, 2))
+  process.exit(result.pass && result.agrees ? 0 : 1)
+} else if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const report = await run(parseArgs(process.argv.slice(2)))
   const summary = {
     pass: report.pass,
     plantedLeak: report.plantedLeak,
     cleanRequests: report.cleanRequests,
     failures: report.failures,
+    receivedByProxy: report.receivedByProxy,
+    proxyFailures: report.proxyFailures,
     cspViolations: report.cspViolations,
     workerExpectations: report.workerExpectations,
     sessions: report.sessions,

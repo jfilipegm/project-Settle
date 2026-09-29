@@ -1,16 +1,21 @@
 {
   "mode": "scan",
   "url": "http://127.0.0.1:4179/split",
-  "when": "2026-09-29T09:30:42.129Z",
+  "when": "2026-09-29T10:31:34.123Z",
   "pass": true,
   "plantedLeak": {
     "value": "THE BLACK SWAN",
     "found": true,
     "valueSearchFails": true,
-    "headerRuleFails": true
+    "headerRuleFails": true,
+    "receivedByProxy": true,
+    "proxyValueSearchFails": true,
+    "proxyHeaderRuleFails": true
   },
   "cleanRequests": 17,
   "failures": [],
+  "receivedByProxy": 17,
+  "proxyFailures": [],
   "cspViolations": [],
   "workerExpectations": [
     {
@@ -45,6 +50,32 @@
     }
   ],
   "valueSetSize": 24,
+  "valueSet": [
+    "THE BLACK SWAN",
+    "2026-09-29",
+    "20260929",
+    "29-09-2026",
+    "29/09/2026",
+    "29.09.2026",
+    "29.09.26",
+    "Pint of Bitter",
+    "4.60",
+    "4,60",
+    "9.20",
+    "9,20",
+    "Steak and Ale Pie",
+    "15.50",
+    "15,50",
+    "Sticky Toffee Pudding",
+    "6.75",
+    "6,75",
+    "5.90",
+    "5,90",
+    "3.93",
+    "3,93",
+    "35.38",
+    "35,38"
+  ],
   "appRead": {
     "items": 3,
     "total": 3538,
@@ -79,6 +110,23 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+        "Sec-GPC": "1",
+        "Upgrade-Insecure-Requests": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
@@ -103,6 +151,22 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "script",
+        "Sec-Fetch-Mode": "no-cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
@@ -127,13 +191,29 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "manifest",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
       "session": "page",
       "method": "GET",
       "type": "Script",
-      "url": "http://127.0.0.1:4179/assets/index-m7LjmSyF.js",
+      "url": "http://127.0.0.1:4179/assets/index-BM0p-RSr.js",
       "headerNames": [
         "Accept",
         "Accept-Encoding",
@@ -152,6 +232,23 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Origin": "http://127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "script",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
@@ -177,6 +274,23 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "text/css,*/*;q=0.1",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Origin": "http://127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "style",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
@@ -201,6 +315,22 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "image",
+        "Sec-Fetch-Mode": "no-cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
@@ -227,13 +357,31 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "If-Modified-Since": "Tue, 29 Sep 2026 10:30:54 GMT",
+        "If-None-Match": "W/\"463-1790677854698\"",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "image",
+        "Sec-Fetch-Mode": "no-cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
       "session": "page",
       "method": "GET",
       "type": "Script",
-      "url": "http://127.0.0.1:4179/assets/browserImport-D2PnbadO.js",
+      "url": "http://127.0.0.1:4179/assets/browserImport-BfSckpkr.js",
       "headerNames": [
         "Accept",
         "Accept-Encoding",
@@ -252,13 +400,30 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Origin": "http://127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/assets/index-BM0p-RSr.js",
+        "Sec-Fetch-Dest": "script",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
       "session": "page",
       "method": "GET",
       "type": "Script",
-      "url": "http://127.0.0.1:4179/assets/pdf-BlxAyZD8.js",
+      "url": "http://127.0.0.1:4179/assets/pdf-CTkfs0kg.js",
       "headerNames": [
         "Accept",
         "Accept-Encoding",
@@ -277,6 +442,23 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Origin": "http://127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "script",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
@@ -298,13 +480,26 @@
         "User-Agent"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "worker",
+        "Sec-Fetch-Mode": "same-origin",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+      },
       "body": null
     },
     {
       "session": "page",
       "method": "GET",
       "type": "Script",
-      "url": "http://127.0.0.1:4179/assets/src-Csivy6Ub.js",
+      "url": "http://127.0.0.1:4179/assets/src-ZN2uwNvq.js",
       "headerNames": [
         "Accept",
         "Accept-Encoding",
@@ -323,6 +518,23 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Origin": "http://127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "script",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
@@ -348,6 +560,23 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Origin": "http://127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/assets/browserImport-BfSckpkr.js",
+        "Sec-Fetch-Dest": "script",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
@@ -369,6 +598,19 @@
         "User-Agent"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "worker",
+        "Sec-Fetch-Mode": "same-origin",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+      },
       "body": null
     },
     {
@@ -393,6 +635,22 @@
         "sec-ch-ua-platform"
       ],
       "headersAsSent": true,
+      "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br, zstd",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Host": "127.0.0.1:4179",
+        "Referer": "http://127.0.0.1:4179/split",
+        "Sec-Fetch-Dest": "empty",
+        "Sec-Fetch-Mode": "cors",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-GPC": "1",
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "sec-ch-ua": "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Linux\""
+      },
       "body": null
     },
     {
@@ -405,6 +663,10 @@
         "User-Agent"
       ],
       "headersAsSent": false,
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "Referer": "http://127.0.0.1:4179/vendor/tesseract/worker.min.js"
+      },
       "body": null
     },
     {
@@ -417,6 +679,10 @@
         "User-Agent"
       ],
       "headersAsSent": false,
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "Referer": "http://127.0.0.1:4179/vendor/tesseract/worker.min.js"
+      },
       "body": null
     },
     {
@@ -429,11 +695,1151 @@
         "User-Agent"
       ],
       "headersAsSent": false,
+      "headers": {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+        "Referer": "http://127.0.0.1:4179/vendor/tesseract/worker.min.js"
+      },
       "body": null
     }
   ],
+  "proxyReceived": [
+    {
+      "method": "GET",
+      "path": "/split",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "Upgrade-Insecure-Requests",
+          "1"
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "Accept",
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "none"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "navigate"
+        ],
+        [
+          "Sec-Fetch-User",
+          "?1"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "document"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/theme-init.js",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "no-cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "script"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/manifest.webmanifest",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "manifest"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/assets/index-BM0p-RSr.js",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "Origin",
+          "http://127.0.0.1:4179"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "script"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/assets/index-DdaIla7v.css",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "Origin",
+          "http://127.0.0.1:4179"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "text/css,*/*;q=0.1"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "style"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/icons/icon.svg",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "no-cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "image"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/icons/icon.svg",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "no-cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "image"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ],
+        [
+          "If-None-Match",
+          "W/\"463-1790677854698\""
+        ],
+        [
+          "If-Modified-Since",
+          "Tue, 29 Sep 2026 10:30:54 GMT"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/assets/browserImport-BfSckpkr.js",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "Origin",
+          "http://127.0.0.1:4179"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "script"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/assets/index-BM0p-RSr.js"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/assets/pdf-CTkfs0kg.js",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "Origin",
+          "http://127.0.0.1:4179"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "script"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/vendor/pdfjs/pdf.worker.min.mjs",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "worker"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/assets/src-ZN2uwNvq.js",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "Origin",
+          "http://127.0.0.1:4179"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "script"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/assets/reader-Cx5cFgjW.js",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "Origin",
+          "http://127.0.0.1:4179"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "script"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/assets/browserImport-BfSckpkr.js"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/vendor/tesseract/worker.min.js",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "worker"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/vendor/zxing/zxing_reader.wasm",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "empty"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/vendor/tesseract/core/tesseract-core-relaxedsimd-lstm.wasm.js",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "no-cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "script"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/vendor/tesseract/worker.min.js"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/vendor/tesseract/lang/por.traineddata.gz",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "empty"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/vendor/tesseract/worker.min.js"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    },
+    {
+      "method": "GET",
+      "path": "/vendor/tesseract/lang/eng.traineddata.gz",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "empty"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/vendor/tesseract/worker.min.js"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    }
+  ],
+  "plantedReceived": [
+    {
+      "method": "GET",
+      "path": "/__settle_planted_leak__",
+      "rawHeaders": [
+        [
+          "Host",
+          "127.0.0.1:4179"
+        ],
+        [
+          "Connection",
+          "keep-alive"
+        ],
+        [
+          "sec-ch-ua-platform",
+          "\"Linux\""
+        ],
+        [
+          "X-Settle-Probe",
+          "THE BLACK SWAN"
+        ],
+        [
+          "User-Agent",
+          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36"
+        ],
+        [
+          "sec-ch-ua",
+          "\"Chromium\";v=\"154\", \"Brave\";v=\"154\", \"Not A(Brand\";v=\"99\""
+        ],
+        [
+          "sec-ch-ua-mobile",
+          "?0"
+        ],
+        [
+          "Accept",
+          "*/*"
+        ],
+        [
+          "Sec-GPC",
+          "1"
+        ],
+        [
+          "Sec-Fetch-Site",
+          "same-origin"
+        ],
+        [
+          "Sec-Fetch-Mode",
+          "cors"
+        ],
+        [
+          "Sec-Fetch-Dest",
+          "empty"
+        ],
+        [
+          "Referer",
+          "http://127.0.0.1:4179/split"
+        ],
+        [
+          "Accept-Encoding",
+          "gzip, deflate, br, zstd"
+        ],
+        [
+          "Accept-Language",
+          "en-US,en;q=0.5"
+        ]
+      ],
+      "bodyBytes": 0,
+      "body": ""
+    }
+  ],
   "local": [
-    "blob:http://127.0.0.1:4179/2efe466d-5a55-4515-8bf0-720c6a974c4f"
+    "blob:http://127.0.0.1:4179/5f5a9583-8033-460f-b7b8-ba93ce901fce"
   ],
   "console": []
 }
