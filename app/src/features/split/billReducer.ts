@@ -36,9 +36,22 @@ export type BillAction =
   /** A whole bill from elsewhere: a scanned receipt's (M2, D13). */
   | { type: 'replaceBill'; bill: Bill }
 
-/** A new, unique id for a person or item. */
+/**
+ * A new, unique id for a person or item: a random (v4) UUID.
+ * `crypto.randomUUID` exists only in a secure context (HTTPS or
+ * localhost); over plain HTTP, such as a build previewed on the local
+ * network, the UUID is built from `crypto.getRandomValues`, which exists
+ * everywhere.
+ */
 export function newId(): string {
-  return crypto.randomUUID()
+  if (typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  const bytes = crypto.getRandomValues(new Uint8Array(16))
+  bytes[6] = ((bytes[6] ?? 0) & 0x0f) | 0x40 // version 4
+  bytes[8] = ((bytes[8] ?? 0) & 0x3f) | 0x80 // RFC 4122 variant
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
 }
 
 const NO_ADJUSTMENT: Adjustment = { kind: 'amount', value: cents(0) }
