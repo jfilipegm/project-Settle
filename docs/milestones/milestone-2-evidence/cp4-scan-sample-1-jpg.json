@@ -1,0 +1,392 @@
+{
+  "mode": "scan",
+  "url": "http://127.0.0.1:4179/split",
+  "when": "2026-09-29T09:30:26.653Z",
+  "pass": true,
+  "plantedLeak": {
+    "value": "Restaurante A Tasquinha",
+    "found": true,
+    "valueSearchFails": true,
+    "headerRuleFails": true
+  },
+  "cleanRequests": 15,
+  "failures": [],
+  "cspViolations": [],
+  "workerExpectations": [
+    {
+      "part": "tesseract/worker.min.js",
+      "found": [
+        "page"
+      ]
+    },
+    {
+      "part": "tesseract/core/",
+      "found": [
+        "worker:http://127.0.0.1:4179/vendor/tesseract/worker.min.js"
+      ]
+    },
+    {
+      "part": "por.traineddata.gz",
+      "found": [
+        "worker:http://127.0.0.1:4179/vendor/tesseract/worker.min.js"
+      ]
+    },
+    {
+      "part": "eng.traineddata.gz",
+      "found": [
+        "worker:http://127.0.0.1:4179/vendor/tesseract/worker.min.js"
+      ]
+    },
+    {
+      "part": "zxing/zxing_reader.wasm",
+      "found": [
+        "page"
+      ]
+    }
+  ],
+  "valueSetSize": 32,
+  "appRead": {
+    "items": 5,
+    "total": 2000,
+    "totalSource": "qr"
+  },
+  "sessions": [
+    "page",
+    "worker:http://127.0.0.1:4179/vendor/tesseract/worker.min.js"
+  ],
+  "requests": [
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Document",
+      "url": "http://127.0.0.1:4179/split",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-Fetch-User",
+        "Sec-GPC",
+        "Upgrade-Insecure-Requests",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/theme-init.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Manifest",
+      "url": "http://127.0.0.1:4179/manifest.webmanifest",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/assets/index-m7LjmSyF.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Origin",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Stylesheet",
+      "url": "http://127.0.0.1:4179/assets/index-DdaIla7v.css",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Origin",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Other",
+      "url": "http://127.0.0.1:4179/icons/icon.svg",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Other",
+      "url": "http://127.0.0.1:4179/icons/icon.svg",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "If-Modified-Since",
+        "If-None-Match",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/assets/browserImport-D2PnbadO.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Origin",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/assets/src-Csivy6Ub.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Origin",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/assets/reader-Cx5cFgjW.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Origin",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/vendor/tesseract/worker.min.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Fetch",
+      "url": "http://127.0.0.1:4179/vendor/zxing/zxing_reader.wasm",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "worker:http://127.0.0.1:4179/vendor/tesseract/worker.min.js",
+      "method": "GET",
+      "type": "Other",
+      "url": "http://127.0.0.1:4179/vendor/tesseract/core/tesseract-core-relaxedsimd-lstm.wasm.js",
+      "headerNames": [
+        "Referer",
+        "User-Agent"
+      ],
+      "headersAsSent": false,
+      "body": null
+    },
+    {
+      "session": "worker:http://127.0.0.1:4179/vendor/tesseract/worker.min.js",
+      "method": "GET",
+      "type": "Fetch",
+      "url": "http://127.0.0.1:4179/vendor/tesseract/lang/por.traineddata.gz",
+      "headerNames": [
+        "Referer",
+        "User-Agent"
+      ],
+      "headersAsSent": false,
+      "body": null
+    },
+    {
+      "session": "worker:http://127.0.0.1:4179/vendor/tesseract/worker.min.js",
+      "method": "GET",
+      "type": "Fetch",
+      "url": "http://127.0.0.1:4179/vendor/tesseract/lang/eng.traineddata.gz",
+      "headerNames": [
+        "Referer",
+        "User-Agent"
+      ],
+      "headersAsSent": false,
+      "body": null
+    }
+  ],
+  "local": [
+    "blob:http://127.0.0.1:4179/faf0127e-f70e-4886-98a6-13e7f999afe8"
+  ],
+  "console": []
+}

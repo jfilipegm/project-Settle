@@ -1,0 +1,338 @@
+{
+  "mode": "scan",
+  "url": "http://127.0.0.1:4179/split",
+  "when": "2026-09-29T09:30:48.776Z",
+  "pass": true,
+  "plantedLeak": {
+    "value": "Oficina Auto Ribeiro, Lda.",
+    "found": true,
+    "valueSearchFails": true,
+    "headerRuleFails": true
+  },
+  "cleanRequests": 12,
+  "failures": [],
+  "cspViolations": [],
+  "workerExpectations": [
+    {
+      "part": "pdfjs/pdf.worker.min.mjs",
+      "found": [
+        "page"
+      ]
+    },
+    {
+      "part": "zxing/zxing_reader.wasm",
+      "found": [
+        "page"
+      ]
+    }
+  ],
+  "valueSetSize": 30,
+  "appRead": {
+    "items": 4,
+    "total": 17282,
+    "totalSource": "qr"
+  },
+  "sessions": [
+    "page",
+    "worker:http://127.0.0.1:4179/vendor/pdfjs/pdf.worker.min.mjs"
+  ],
+  "requests": [
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Document",
+      "url": "http://127.0.0.1:4179/split",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-Fetch-User",
+        "Sec-GPC",
+        "Upgrade-Insecure-Requests",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/theme-init.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Manifest",
+      "url": "http://127.0.0.1:4179/manifest.webmanifest",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/assets/index-m7LjmSyF.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Origin",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Stylesheet",
+      "url": "http://127.0.0.1:4179/assets/index-DdaIla7v.css",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Origin",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Other",
+      "url": "http://127.0.0.1:4179/icons/icon.svg",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Other",
+      "url": "http://127.0.0.1:4179/icons/icon.svg",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "If-Modified-Since",
+        "If-None-Match",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/assets/browserImport-D2PnbadO.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Origin",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/assets/pdf-BlxAyZD8.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Origin",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/vendor/pdfjs/pdf.worker.min.mjs",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Script",
+      "url": "http://127.0.0.1:4179/assets/reader-Cx5cFgjW.js",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Origin",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    },
+    {
+      "session": "page",
+      "method": "GET",
+      "type": "Fetch",
+      "url": "http://127.0.0.1:4179/vendor/zxing/zxing_reader.wasm",
+      "headerNames": [
+        "Accept",
+        "Accept-Encoding",
+        "Accept-Language",
+        "Connection",
+        "Host",
+        "Referer",
+        "Sec-Fetch-Dest",
+        "Sec-Fetch-Mode",
+        "Sec-Fetch-Site",
+        "Sec-GPC",
+        "User-Agent",
+        "sec-ch-ua",
+        "sec-ch-ua-mobile",
+        "sec-ch-ua-platform"
+      ],
+      "headersAsSent": true,
+      "body": null
+    }
+  ],
+  "local": [
+    "blob:http://127.0.0.1:4179/ef684a19-0dd7-4a35-9f1a-e2e2f60a6d85"
+  ],
+  "console": []
+}

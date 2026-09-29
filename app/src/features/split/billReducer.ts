@@ -33,6 +33,8 @@ export type BillAction =
   | { type: 'setPayer'; personId: string }
   /** A fresh bill: `ids` supplies the new people's and item's ids. */
   | { type: 'newBill'; ids: readonly string[] }
+  /** A whole bill from elsewhere: a scanned receipt's (M2, D13). */
+  | { type: 'replaceBill'; bill: Bill }
 
 /** A new, unique id for a person or item. */
 export function newId(): string {
@@ -208,5 +210,8 @@ export function billReducer(bill: Bill, action: BillAction): Bill {
 
     case 'newBill':
       return createBill(action.ids)
+
+    case 'replaceBill':
+      return action.bill
   }
 }

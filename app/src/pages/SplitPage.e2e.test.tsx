@@ -12,6 +12,7 @@ import {
 } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { RegionProvider } from '../app/RegionProvider.tsx'
+import { ReceiptImportProvider } from '../features/receipt/ReceiptImportProvider.tsx'
 import { SplitPage } from './SplitPage.tsx'
 
 afterEach(() => {
@@ -75,7 +76,9 @@ describe('Split page, end to end', () => {
       })
       render(
         <RegionProvider>
-          <SplitPage />
+          <ReceiptImportProvider>
+            <SplitPage />
+          </ReceiptImportProvider>
         </RegionProvider>,
       )
 

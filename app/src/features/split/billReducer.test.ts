@@ -262,4 +262,10 @@ describe('bill-level actions', () => {
 
     expect(bill).toEqual(createBill(['q1', 'q2', 'j1']))
   })
+
+  it('replaceBill puts a whole bill in place', () => {
+    const imported = { ...createBill(['a', 'b', 'c']), payerId: 'b' }
+
+    expect(run(fresh(), { type: 'replaceBill', bill: imported })).toBe(imported)
+  })
 })

@@ -13,7 +13,7 @@ Branch `feature/milestone-2`, PR #6.
 | M2-CP1 | Pure receipt logic | Complete |
 | M2-CP2 | File intake, image pipeline, assets and CSP | Complete |
 | M2-CP3 | Built-in reader, QR scanning, import pipeline, sample corpus | Complete |
-| M2-CP4 | Review step UI | Not started |
+| M2-CP4 | Review step UI | Complete |
 | M2-CP5 | READMEs, Settings, end-to-end, verification | Not started |
 
 ### M2-CP1 — verified state
@@ -229,6 +229,83 @@ Other choices, covered by tests:
 Verified: `npm run check` (`tsc -b`, `eslint . --max-warnings=0`,
 `prettier --check .`, `vitest run`: 698 tests, 50 of them new) and
 `npm run build` pass.
+
+### M2-CP4 — verified state
+
+- `app/src/features/receipt/components/`:
+  - `ScanReceipt.tsx`: "Scan a receipt" at the top of the Split page:
+    "Choose file" (JPEG, PNG, HEIC/HEIF, PDF), "Take photo"
+    (`accept="image/*" capture="environment"`), a drop zone over the
+    section with an outline while dragging, and "Read on this device. The
+    receipt never leaves your browser." It asks the plan's
+    `window.confirm` question first when the bill has content. While
+    reading: the `role="status"` phase line (opening, loading the reader
+    (first time only), reading with a percentage, checking the QR code),
+    Cancel, and the file buttons disabled. A failure shows D16's message
+    (`role="alert"`) and changes nothing. Leaving the page aborts a scan.
+  - `ReceiptCheck.tsx` (D14, `data-receipt-check`): merchant, date, NIF,
+    the trusted total and its source, IVA included; the live comparison
+    as text with a decorative ✓/⚠ ("Matches the receipt total." or "Items
+    add up to X, Y less/more than the receipt."), the warnings list
+    (`messages.ts` has a message for each), "Show receipt image" and
+    Dismiss.
+  - `receipt.module.css` (tokens only).
+- `receipt/receiptStore.ts` (D15: `settle.receipt`, `{ version: 1,
+  receipt }`, rebuilt from known fields, anything bad dropped),
+  `receiptImport.ts` (the context and `useReceiptImport`),
+  `ReceiptImportProvider.tsx` (the real importer, in `App.tsx`), and
+  `browserImport.ts`, which the provider loads on the first scan, so the
+  parser, reader, QR scanner, pdf.js, Tesseract.js and zxing stay out of
+  the main bundle (they build as their own chunks); the main bundle grows
+  by the UI only, 294 → 306 kB. `importUi.ts`: `billHasContent` and
+  `revokeImageUrl`.
+- M1 changes: `ItemsSection.tsx` shows a "⚠ Check" marker on flagged rows
+  (read as "Item 3: check this line"), cleared by any change in that row's
+  name, quantity or unit price field (a change listener on the field group,
+  so even text that doesn't parse yet counts), never by assignment or
+  shares; `split.module.css` has its style. `billReducer` gains
+  `replaceBill`. `SplitPage.tsx` puts it together: after an import it
+  replaces the bill, remounts the editor and focuses the panel's heading;
+  the editor is `inert` and `aria-busy` while scanning; New bill and
+  Dismiss clear the summary and the image; the image's object URL is
+  revoked when replaced or when leaving the page. The M1 page and router
+  tests render inside `ReceiptImportProvider`.
+- `scripts/check-requests.mjs`: `--qr` defaults to the `.expected.json`'s
+  `qr`, and scan mode records what the app read (`appRead`: item count,
+  trusted total and its source).
+
+Tests (fake import, `SplitPage.receipt.test.tsx`, 17): every plan item.
+Picking a file uses `fireEvent.change`, not `user.upload`:
+`@testing-library/user-event` isn't installed, and adding it would be a new
+dependency (a stop condition). Plus `receiptStore.test.ts` and
+`importUi.test.ts`.
+
+**Real-browser scans** (headless Brave, `npm run build`, then
+`check-requests.mjs scan` per file, each its own Brave process with a fresh
+profile), logs in `docs/milestones/milestone-2-evidence/cp4-scan-*.json`.
+**All four pass**: the planted leak caught by both rules, no failures, no
+CSP violation, and every expected worker request present.
+
+| file | the app read | worker requests (session) |
+|------|--------------|---------------------------|
+| `sample-1.jpg` | 5 items, 20,00 from the QR code | Tesseract core and `por`/`eng` models (Tesseract worker); zxing wasm (page) |
+| `sample-3.heic` | 6 items, 13,50 from the QR code | heic-to (page) and its `blob:` decoder worker (attached, no requests); Tesseract as above |
+| `sample-6-scanned.pdf` | 3 items, 35,38 printed | pdf.js worker (attached; script fetched by the page); Tesseract as above |
+| `sample-9.pdf` | 4 items, 172,82 from the QR code | pdf.js worker (attached); zxing wasm (page) |
+
+Every request is a same-origin `GET` of a build file. The pdf.js worker
+made no requests of its own: these PDFs embed their fonts and need none of
+its wasm decoders ("where the file needs them"). Sample 9's QR code, read
+from the page pdf.js rendered, also confirms CP3's `destroy` fix in a real
+browser. **A limit, recorded:** for requests from worker sessions, Chromium
+sent no `requestWillBeSentExtraInfo`, so their logged headers are the ones
+`requestWillBeSent` reports (`headersAsSent: false` in the log), without
+browser-added headers such as `Cookie`. Their names and values still pass
+the checks, and the page session's requests, logged as sent, carry no
+cookie (the profile is fresh and the app sets none).
+
+Verified: `npm run check` (`tsc -b`, `eslint . --max-warnings=0`,
+`prettier --check .`, `vitest run`: 733 tests) and `npm run build` pass.
 
 ## Current blockers
 

@@ -26,6 +26,7 @@
  *   node scripts/check-requests.mjs page-load [--values <expected.json>]
  *   node scripts/check-requests.mjs scan --file <receipt> --values <expected.json>
  *       [--qr <payload>] [--expect <url part>]... [--input <selector>]
+ *       (--qr defaults to the `.expected.json`'s own `qr`)
  *       [--wait <selector>]
  * Common: [--out <log.json>] [--brave <path>] [--path <route>] [--port <n>]
  *   [--probe-csp yes] (triggers one CSP violation, so the run must fail)
@@ -556,7 +557,8 @@ export async function run(options) {
       await idle(500)
     }
 
-    const values = valueSet({ expected, qr: options.qr, read })
+    // The QR payload: --qr, or the sample's `.expected.json` (CP3).
+    const values = valueSet({ expected, qr: options.qr ?? expected.qr, read })
     // The planted leak: one tagged same-origin GET with a receipt value in
     // a custom header, sent through Runtime.evaluate, not app code.
     const plantedValue = values[0] ?? 'Restaurante O Cantinho'
@@ -644,6 +646,15 @@ export async function run(options) {
       cspViolations: csp,
       workerExpectations: expectations,
       valueSetSize: values.length,
+      // What the scan put in the bill (scan mode): evidence it really ran.
+      appRead:
+        mode === 'scan'
+          ? {
+              items: (read.bill?.bill?.items ?? []).length,
+              total: read.receipt?.receipt?.total ?? null,
+              totalSource: read.receipt?.receipt?.totalSource ?? null,
+            }
+          : undefined,
       sessions: [...sessions.values()].map((session) => session.label),
       requests: network.map((entry) => ({
         session: entry.session,
@@ -675,6 +686,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     cspViolations: report.cspViolations,
     workerExpectations: report.workerExpectations,
     sessions: report.sessions,
+    appRead: report.appRead,
   }
   console.log(JSON.stringify(summary, null, 2))
   process.exit(report.pass ? 0 : 1)

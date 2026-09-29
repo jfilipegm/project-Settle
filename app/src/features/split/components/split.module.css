@@ -195,6 +195,18 @@
   margin: 0;
 }
 
+/* An item read from a receipt that needs checking (M2, D14). */
+.checkMarker {
+  display: inline-block;
+  margin: 0 0 var(--space-2);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-sm);
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;

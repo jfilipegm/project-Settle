@@ -8,6 +8,7 @@ import {
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { REGION_STORAGE_KEY, type Region } from '../app/region.ts'
 import { RegionProvider } from '../app/RegionProvider.tsx'
+import { ReceiptImportProvider } from '../features/receipt/ReceiptImportProvider.tsx'
 import { createBill } from '../features/split/billReducer.ts'
 import { DRAFT_STORAGE_KEY, saveDraft } from '../features/split/draft.ts'
 import { SplitPage } from './SplitPage.tsx'
@@ -32,7 +33,9 @@ function renderSplit(region?: Region) {
   }
   return render(
     <RegionProvider>
-      <SplitPage />
+      <ReceiptImportProvider>
+        <SplitPage />
+      </ReceiptImportProvider>
     </RegionProvider>,
   )
 }

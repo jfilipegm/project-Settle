@@ -1,15 +1,18 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { afterEach, describe, expect, it } from 'vitest'
+import { ReceiptImportProvider } from '../features/receipt/ReceiptImportProvider.tsx'
 import { RegionProvider } from './RegionProvider.tsx'
 import { AppRoutes } from './router.tsx'
 
 function renderAt(path: string) {
   return render(
     <RegionProvider>
-      <MemoryRouter initialEntries={[path]}>
-        <AppRoutes />
-      </MemoryRouter>
+      <ReceiptImportProvider>
+        <MemoryRouter initialEntries={[path]}>
+          <AppRoutes />
+        </MemoryRouter>
+      </ReceiptImportProvider>
     </RegionProvider>,
   )
 }
