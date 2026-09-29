@@ -17,6 +17,7 @@ import {
 import { toBillRatio } from '../../split/model.ts'
 import { isValidNif } from '../fiscalQr.ts'
 import type {
+  ItemsEnd,
   ParsedItem,
   ParsedReceipt,
   ReceiptWarning,
@@ -38,6 +39,7 @@ import {
   SUBTOTAL,
   SUGGESTED,
   TAX,
+  TAX_COLUMN_WORDS,
   TAX_SUMMARY,
   TAX_TABLE_WORDS,
   TIP,
@@ -91,6 +93,12 @@ interface Line {
 
 const MARKER = /^(?:\d+(?:[.,]\d+)?x|x|un|und|unid|uni|kg|kgs)$/
 
+/**
+ * R4: a quantity and a unit price run together and misread, `1X0,8`: the
+ * quantity line still completes its item, as 1 × its line total.
+ */
+const GARBLED_QUANTITY = /^\d{1,2}[x×]\d+(?:[.,]\d*)?$/i
+
 function splitWords(text: string): string[] {
   return fold(text)
     .split(/[^a-z0-9]+/)
@@ -105,7 +113,7 @@ function analyse(text: string, confidence: number): Line {
     if (token.kind === 'word' || token.kind === 'currency') {
       const parts = splitWords(token.text)
       words.push(...parts)
-      if (token.kind === 'word') {
+      if (token.kind === 'word' && !GARBLED_QUANTITY.test(token.text)) {
         desc.push(...parts.filter((part) => !MARKER.test(part)))
       }
     }
@@ -157,18 +165,27 @@ function isXMarker(token: LineToken | undefined): boolean {
   )
 }
 
+function isGarbledQuantity(token: LineToken | undefined): boolean {
+  return token?.kind === 'word' && GARBLED_QUANTITY.test(token.text)
+}
+
 /** A line with no description, just a quantity and amounts (rule 6). */
 function isQuantityOnly(line: Line): boolean {
   return (
     line.letters === 0 &&
     line.amounts.length > 0 &&
-    line.tokens.some((token) => isXMarker(token))
+    line.tokens.some((token) => isXMarker(token) || isGarbledQuantity(token))
   )
 }
 
+/** R4: a category header, `Padaria:`, is never an item's name. */
+function isCategoryHeader(line: Line): boolean {
+  return line.amounts.length === 0 && /:\s*$/.test(line.text)
+}
+
 /**
- * Rule 6's last form: a quantity-only line completes the item line just
- * before it, or the name-only line that holds its description.
+ * Rule 6's last form, and R4: a quantity-only line completes the item line
+ * just before it, or the name-only line that holds its description.
  */
 function mergeQuantityLines(lines: readonly Line[]): Line[] {
   const merged: Line[] = []
@@ -179,6 +196,7 @@ function mergeQuantityLines(lines: readonly Line[]): Line[] {
       isQuantityOnly(line) &&
       previous.letters >= 2 &&
       !previous.negative &&
+      !isCategoryHeader(previous) &&
       !hasAnyKeyword(previous)
     ) {
       const name = previous.tokens
@@ -200,6 +218,173 @@ function mergeQuantityLines(lines: readonly Line[]): Line[] {
     }
   }
   return merged
+}
+
+/** A line that is only an amount, with maybe a currency mark (R6). */
+function isAmountOnly(line: Line): boolean {
+  return (
+    line.amounts.length === 1 &&
+    line.tokens.every(
+      (token) => token.kind === 'amount' || token.kind === 'currency',
+    )
+  )
+}
+
+/**
+ * R6: a total, subtotal or tax-summary line with no amount, followed by a
+ * line that is only an amount, takes that amount (`Total (Euro):` /
+ * `76,11`).
+ */
+function mergeTotalLines(lines: readonly Line[]): Line[] {
+  const merged: Line[] = []
+  for (const line of lines) {
+    const previous = merged.at(-1)
+    if (
+      previous !== undefined &&
+      previous.amounts.length === 0 &&
+      isAmountOnly(line) &&
+      (hasPhrase(previous.words, TOTAL) ||
+        hasPhrase(previous.words, SUBTOTAL) ||
+        hasPhrase(previous.words, TAX_SUMMARY))
+    ) {
+      merged[merged.length - 1] = analyse(
+        `${previous.text} ${line.text}`,
+        Math.min(previous.confidence, line.confidence),
+      )
+    } else {
+      merged.push(line)
+    }
+  }
+  return merged
+}
+
+/**
+ * R5: a line that is only an article code and a size (`71014475 C10 M`),
+ * printed under a clothes-shop item. Ignored, and it doesn't separate the
+ * item from the discount lines under it.
+ */
+function isCodeAndSize(line: Line): boolean {
+  const [first, ...rest] = line.tokens
+  return (
+    first?.kind === 'number' &&
+    /^\d{6,14}$/.test(first.text) &&
+    rest.length >= 1 &&
+    rest.length <= 2 &&
+    rest.every(
+      (token) =>
+        (token.kind === 'word' || token.kind === 'number') &&
+        token.text.length <= 4,
+    )
+  )
+}
+
+const BRACKETED = /\([^)]*\)|\[[^\]]*\]/g
+const FORMULA = /\d+[.,]\d{1,2}\s*[-+x×*]\s*\d+[.,]\d{1,2}/
+const FORMULAS = new RegExp(FORMULA.source, 'g')
+
+/**
+ * R7: an informational promotion line, whose amounts are all inside
+ * brackets or form a formula (`Promoção (25.99-6.00)`): never an item or a
+ * discount, and, like R5's code line, transparent to the discount run.
+ */
+function isInformational(line: Line): boolean {
+  const bracketed = (line.text.match(BRACKETED) ?? []).join(' ')
+  if (!/\d+[.,]\d{1,2}/.test(bracketed) && !FORMULA.test(line.text)) {
+    return false
+  }
+  const rest = line.text.replace(BRACKETED, ' ').replace(FORMULAS, ' ')
+  return tokenizeLine(rest).every((token) => token.kind !== 'amount')
+}
+
+/**
+ * R18's separator row: only `=`, `-`, `_`, `*` or `.`, and spaces between
+ * them, at least 8 of those characters (spaces not counted).
+ */
+function isSeparator(line: Line): boolean {
+  const marks = line.text.replace(/ /g, '')
+  return marks.length >= 8 && /^[=\-_*.]+$/.test(marks)
+}
+
+/** The distinct R18 column words on a line. */
+function columnWords(line: Line): number {
+  return new Set(
+    line.words.filter((word) =>
+      (TAX_COLUMN_WORDS as readonly string[]).includes(word),
+    ),
+  ).size
+}
+
+/**
+ * R18's tax-table header: a line with no amount and at least two of the
+ * column titles. It ends the items only after one (a receipt's own column
+ * header above the items, `IVA DESCRICAO VALOR`, matches too).
+ */
+function isTaxTableHeader(line: Line): boolean {
+  return line.amounts.length === 0 && columnWords(line) >= 2
+}
+
+/** Letters that differ between two words of the same length. */
+function substitutions(word: string, target: string): number {
+  if (word.length !== target.length) {
+    return Number.POSITIVE_INFINITY
+  }
+  let different = 0
+  for (let i = 0; i < word.length; i++) {
+    if (word[i] !== target[i]) different += 1
+  }
+  return different
+}
+
+/**
+ * The line's label, when it is one word (`lozal`, `T0TAL`) and nothing
+ * else but amounts, rates, tax codes and currency marks.
+ */
+function soleLabel(line: Line): string | undefined {
+  const words = line.tokens.filter((token) => token.kind === 'word')
+  const others = line.tokens.every(
+    (token) =>
+      token.kind === 'word' ||
+      token.kind === 'amount' ||
+      token.kind === 'rate' ||
+      token.kind === 'taxCode' ||
+      token.kind === 'currency',
+  )
+  const parts = words.length === 1 ? splitWords(words[0]?.text ?? '') : []
+  return others && parts.length === 1 ? parts[0] : undefined
+}
+
+/**
+ * R11: a label within one OCR substitution of `total` (`t0tal`, `tota1`,
+ * `lotal`), with an amount, in or after the items. Two (`lozal`) aren't:
+ * those are left to R9 and R22.
+ */
+function isFuzzyTotal(line: Line): boolean {
+  const label = soleLabel(line)
+  return (
+    line.last !== undefined &&
+    !line.negative &&
+    label !== undefined &&
+    substitutions(label, 'total') === 1
+  )
+}
+
+/**
+ * R22's structural evidence on an item line: a one-word label within two
+ * substitutions of `total` (`totalLike`), or a rate or two of R18's column
+ * words (`taxTable`).
+ */
+function endEvidenceOf(line: Line): ParsedItem['endEvidence'] {
+  const label = soleLabel(line)
+  if (label !== undefined && substitutions(label, 'total') <= 2) {
+    return 'totalLike'
+  }
+  if (
+    line.tokens.some((token) => token.kind === 'rate') ||
+    columnWords(line) >= 2
+  ) {
+    return 'taxTable'
+  }
+  return undefined
 }
 
 function isItemShape(line: Line): boolean {
@@ -249,6 +434,9 @@ function classify(line: Line, region: Region): LineClass {
     region !== 'after' && isItemShape(line) && !startsWithPhrase(desc, table)
   const as = (group: LineGroup): LineClass => ({ group, payment: false })
 
+  if (isInformational(line) || isCodeAndSize(line)) {
+    return as('ignore')
+  }
   const payment =
     !totalLike &&
     !line.negative &&
@@ -274,6 +462,9 @@ function classify(line: Line, region: Region): LineClass {
   }
   if (hasPhrase(words, TOTAL)) {
     return as(line.negative ? 'savings' : 'total')
+  }
+  if (region !== 'header' && isFuzzyTotal(line)) {
+    return as('total')
   }
   if (hasPhrase(words, TIP)) {
     return as(staysItem(TIP) ? 'item' : 'tip')
@@ -321,6 +512,49 @@ interface Quantity {
   used: number[]
 }
 
+/** R3: the `x` of a price-first quantity, and its usual OCR misreads. */
+const PRICE_FIRST_X = /^[x×*as]$/i
+const PRICE_FIRST_JOINED = /^[x×*](\d{1,2})$/i
+
+/**
+ * R3's price-first form, `Name P x Q L` (`Monster 1,74 x 7 12,16`), also
+ * `P xQ L`: taken only when `round(P × Q) = L`, so a stray letter never
+ * makes a quantity.
+ */
+function readPriceFirst(line: Line, lastAt: number): Quantity | undefined {
+  const { tokens } = line
+  const total = line.last ?? cents(0)
+  for (let at = 0; at < lastAt; at++) {
+    const price = tokens[at]
+    if (price?.kind !== 'amount' || price.value <= 0) continue
+    const next = tokens[at + 1]
+    const joined = PRICE_FIRST_JOINED.exec(next?.text ?? '')
+    let quantity: number | undefined
+    let used: number[]
+    if (joined !== null && at + 1 < lastAt) {
+      quantity = Number(joined[1])
+      used = [at, at + 1]
+    } else if (PRICE_FIRST_X.test(next?.text ?? '') && at + 2 < lastAt) {
+      quantity = wholeQuantity(tokens[at + 2])
+      used = [at, at + 1, at + 2]
+    } else {
+      continue
+    }
+    if (
+      quantity !== undefined &&
+      quantity >= 1 &&
+      multiplyRatio(price.value, quantity, 1) === total
+    ) {
+      return {
+        quantity: { numerator: quantity, denominator: 1 },
+        unitPrice: price.value,
+        used,
+      }
+    }
+  }
+  return undefined
+}
+
 /** Rule 6's quantity forms, given the line total's index. */
 function readQuantity(
   line: Line,
@@ -332,6 +566,11 @@ function readQuantity(
     .map((token, i) => (token.kind === 'amount' ? i : -1))
     .filter((i) => i !== -1)
   const total = line.last ?? cents(0)
+
+  const priceFirst = readPriceFirst(line, lastAt)
+  if (priceFirst !== undefined) {
+    return priceFirst
+  }
 
   // `N x Name P L`, `N x P`, `N un x P` and `Q kg x P €/kg`.
   const x = tokens.findIndex((token) => isXMarker(token))
@@ -441,7 +680,7 @@ function readItem(line: Line, hasQuantityColumn: boolean): ParsedItem {
   // A recognised quantity leaves the name even when its arithmetic doesn't
   // close (only the `x` form is recognised without closing).
   const used = new Set(found?.used ?? [])
-  const name = tokens
+  const nameTokens = tokens
     .filter(
       (token, i) =>
         !used.has(i) &&
@@ -450,20 +689,37 @@ function readItem(line: Line, hasQuantityColumn: boolean): ParsedItem {
         token.kind !== 'taxCode' &&
         token.kind !== 'currency' &&
         !isXMarker(token) &&
+        !isGarbledQuantity(token) &&
         !(found !== undefined && UNIT.test(token.text)) &&
         !PER_UNIT.test(token.text),
     )
     .map((token) => token.text)
-    .join(' ')
-    .trim()
+  // R5: a leading tax code (`(A)`, `NS`) or an 8–14-digit barcode or
+  // article code isn't part of the name.
+  while (
+    nameTokens.length > 1 &&
+    /^(?:\([A-Z]\)|NS|\d{8,14})$/.test(nameTokens[0] ?? '')
+  ) {
+    nameTokens.shift()
+  }
+  const name = nameTokens.join(' ').trim()
 
-  return {
+  const item: ParsedItem = {
     name,
     quantity: kept?.quantity ?? { numerator: 1, denominator: 1 },
     unitPrice: kept?.unitPrice ?? lineTotal,
     lineTotal,
-    needsCheck: line.confidence < 60 || line.fixed,
+    // R4: a quantity line whose unit price was unreadable is checked.
+    needsCheck:
+      line.confidence < 60 ||
+      line.fixed ||
+      tokens.some((token) => isGarbledQuantity(token)),
   }
+  const evidence = endEvidenceOf(line)
+  if (evidence !== undefined) {
+    item.endEvidence = evidence
+  }
+  return item
 }
 
 function rateOf(line: Line): Ratio | undefined {
@@ -574,13 +830,22 @@ function findDate(lines: readonly Line[]): string | undefined {
   return undefined
 }
 
+/**
+ * D18 with R10: a currency symbol or code counts only when it's attached to
+ * an amount, in the same token (`£3.20`) or the next or previous one
+ * (`12,50 €`, `Total USD 4.50`). A lone `$` read from noise never does.
+ */
 function findCurrency(lines: readonly Line[]): MoneyCurrency | undefined {
   for (const line of lines) {
-    for (const token of line.tokens) {
-      if (token.kind === 'currency') {
+    for (const [i, token] of line.tokens.entries()) {
+      if (token.kind === 'amount' && token.currency !== undefined) {
         return token.currency
       }
-      if (token.kind === 'amount' && token.currency !== undefined) {
+      if (
+        token.kind === 'currency' &&
+        (line.tokens[i - 1]?.kind === 'amount' ||
+          line.tokens[i + 1]?.kind === 'amount')
+      ) {
         return token.currency
       }
     }
@@ -611,16 +876,27 @@ export function parseReceiptText(input: readonly TextLine[]): ParsedReceipt {
 }
 
 function parse(input: readonly TextLine[]): ParsedReceipt {
-  const lines = mergeQuantityLines(
-    input
-      .map((entry) => analyse(entry.text, entry.confidence))
-      .filter((line) => line.tokens.length > 0),
+  const lines = mergeTotalLines(
+    mergeQuantityLines(
+      input
+        .map((entry) => analyse(entry.text, entry.confidence))
+        .filter((line) => line.tokens.length > 0),
+    ),
   )
 
-  // Rules 3 and 4: classify each line in its region.
+  // Rules 3 and 4: classify each line in its region. R18: after an item, a
+  // tax-table header or a separator row ends the items too; R23 records
+  // which footer line ended them.
   const classified: Classified[] = []
   let region: Region = 'header'
+  let itemsEndedBy: ItemsEnd | undefined
   for (const line of lines) {
+    if (region === 'items' && (isTaxTableHeader(line) || isSeparator(line))) {
+      region = 'after'
+      itemsEndedBy = isSeparator(line) ? 'separator' : 'taxTableHeader'
+      classified.push({ group: 'text', payment: false, line, region })
+      continue
+    }
     const found = classify(line, region)
     if (region === 'header') {
       if (found.group === 'item') {
@@ -638,6 +914,9 @@ function parse(input: readonly TextLine[]): ParsedReceipt {
         found.payment
       ) {
         region = 'after'
+        if (found.payment) {
+          itemsEndedBy = 'payment'
+        }
       }
     }
     classified.push({ ...found, line, region })
@@ -665,19 +944,30 @@ function parse(input: readonly TextLine[]): ParsedReceipt {
 
   // Rules 6 and 7: items, and the discounts right after them. A run of
   // discount lines under one item (a card discount, then an instant
-  // saving) all reduce that item.
+  // saving) all belong to that item. R8: a negative one reduces it; an
+  // unsigned one is only recorded as a candidate, for the bill conversion
+  // to decide with the trusted total. R5's code lines and R7's
+  // informational lines don't break the run.
   const items: ParsedItem[] = []
   const billDiscounts: Cents[] = []
   let discountable: number | undefined
   for (const entry of classified) {
     const { line } = entry
+    if (isCodeAndSize(line) || isInformational(line)) {
+      continue
+    }
     if (entry.group === 'item' && entry.region === 'items') {
       items.push(readItem(line, hasQuantityColumn))
       discountable = items.length - 1
     } else if (entry.group === 'discount' && line.last !== undefined) {
       const discount = magnitude(line.last)
       const item = discountable === undefined ? undefined : items[discountable]
-      if (entry.region === 'items' && item !== undefined) {
+      if (entry.region === 'items' && item !== undefined && !line.negative) {
+        items[discountable ?? 0] = {
+          ...item,
+          savingsCandidate: cents((item.savingsCandidate ?? 0) + discount),
+        }
+      } else if (entry.region === 'items' && item !== undefined) {
         const reduced = item.lineTotal - discount
         if (reduced >= 0) {
           items[discountable ?? 0] = {
@@ -781,5 +1071,6 @@ function parse(input: readonly TextLine[]): ParsedReceipt {
   if (tips.length > 0) receipt.tip = sum(tips)
   if (billDiscounts.length > 0) receipt.discount = sum(billDiscounts)
   if (total !== undefined) receipt.total = total
+  if (itemsEndedBy !== undefined) receipt.itemsEndedBy = itemsEndedBy
   return receipt
 }

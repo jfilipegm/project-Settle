@@ -7,6 +7,12 @@ import type { ReadErrorCode, ReceiptWarning } from './model.ts'
 
 const FALLBACK = 'You can type the items in below.'
 
+/**
+ * The name of an item that stands for what the reader couldn't read: the
+ * whole receipt when no item was read (R14), or the difference (R13).
+ */
+export const NOT_READ_ITEM_NAME = 'Not read from the receipt'
+
 const MESSAGES: Record<ReadErrorCode, string> = {
   unsupportedType:
     'This file type can’t be read. Use a JPEG, PNG, HEIC or PDF.',

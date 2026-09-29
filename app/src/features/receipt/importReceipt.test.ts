@@ -153,7 +153,20 @@ describe('importReceipt', () => {
     },
   )
 
-  it('gives noItems when the receipt has no items, even with a QR code', async () => {
+  it('gives noItems when no item and no QR total were read (R14)', async () => {
+    const result = await importReceipt(
+      file(),
+      deps({
+        reader: reader(() =>
+          Promise.resolve({ ok: true, receipt: { items: [], warnings: [] } }),
+        ),
+      }),
+      options(),
+    )
+    expect(result).toEqual({ ok: false, error: { code: 'noItems' } })
+  })
+
+  it('imports the QR total as one flagged item when no item was read (R14)', async () => {
     const result = await importReceipt(
       file(),
       deps({
@@ -162,12 +175,25 @@ describe('importReceipt', () => {
         ),
         scanQr: () =>
           Promise.resolve(
-            qrOf('A:123456789*B:999999990*C:PT*D:FS*F:20260928*O:12.70'),
+            qrOf('A:123456789*B:999999990*C:PT*D:FS*F:20260928*I1:PT*O:12.70'),
           ),
       }),
       options(),
     )
-    expect(result).toEqual({ ok: false, error: { code: 'noItems' } })
+    if (!result.ok) throw new Error(result.error.code)
+    expect(result.bill.items).toEqual([
+      expect.objectContaining({
+        name: 'Not read from the receipt',
+        quantity: { numerator: 1, denominator: 1 },
+        unitPrice: 1270,
+        assignees: [
+          { personId: 'alice', weight: 1 },
+          { personId: 'bob', weight: 1 },
+        ],
+      }),
+    ])
+    expect(result.summary.flaggedItemIds).toEqual([result.bill.items[0]?.id])
+    expect(result.summary).toMatchObject({ total: 1270, totalSource: 'qr' })
   })
 
   it('turns a decoder or reader that throws into a typed error', async () => {
@@ -229,13 +255,6 @@ describe('importReceipt', () => {
       'throws',
       reader(() => Promise.reject(new Error('worker crashed'))),
       'ocrFailed',
-    ],
-    [
-      'finds no items',
-      reader(() =>
-        Promise.resolve({ ok: true, receipt: { ...RECEIPT, items: [] } }),
-      ),
-      'noItems',
     ],
   ])('stops the QR scan when the reader %s', async (_, failing, code) => {
     let qrSignal: AbortSignal | undefined

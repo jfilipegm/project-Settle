@@ -82,6 +82,27 @@ function readSummary(value: Json): ReceiptSummary | null {
   if ((summary.total === undefined) !== (summary.totalSource === undefined)) {
     return null
   }
+  // R24: the lines a cut left out. The app never writes an empty list; a
+  // stored one reads as absent, so "0 lines" can never be shown.
+  if (value.removedLines !== undefined) {
+    if (!Array.isArray(value.removedLines)) {
+      return null
+    }
+    const lines: { name: string; amount: Cents }[] = []
+    for (const line of value.removedLines as Json[]) {
+      if (
+        !isObject(line) ||
+        typeof line.name !== 'string' ||
+        !isCents(line.amount)
+      ) {
+        return null
+      }
+      lines.push({ name: line.name, amount: line.amount })
+    }
+    if (lines.length > 0) {
+      summary.removedLines = lines
+    }
+  }
   return summary
 }
 

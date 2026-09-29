@@ -173,6 +173,22 @@ export const TAX_TABLE_WORDS = [
   'base',
 ] as const
 
+/**
+ * R18: a tax table's column titles (`Taxa Base Inc. Val.Total Val. IVA`,
+ * `%IVA Total Liq. IVA Total`). Two of them on a line with no amount,
+ * after an item, is the table's header, and it ends the items.
+ */
+export const TAX_COLUMN_WORDS = [
+  'taxa',
+  'base',
+  'inc',
+  'iva',
+  'liq',
+  'valor',
+  'val',
+  'total',
+] as const
+
 export const DISCOUNT = [
   'descontos',
   'desconto',

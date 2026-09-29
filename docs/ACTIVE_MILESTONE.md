@@ -408,7 +408,7 @@ approved in `5a42485` (basis `EXTERNAL_APPROVE`). Lands on
 | id | name | status |
 |----|------|--------|
 | M2R1-CP1 | Image clean-up: text-size scaling, flattening, one channel, strips | Complete |
-| M2R1-CP2 | Parser and bill-conversion rules for real layouts | Not started |
+| M2R1-CP2 | Parser and bill-conversion rules for real layouts | Complete |
 | M2R1-CP3 | Synthetic real-layout corpus and local real-receipt fixtures | Not started |
 | M2R1-CP4 | Review step: gaps, add-the-difference, READMEs, verification | Not started |
 
@@ -544,11 +544,47 @@ session collected two requests for later: a row-by-row review of what
 the reader found (the receipt image with each line's role, and adding a
 missed line), and remembering the user's corrections on the device.
 
+### M2R1-CP2 — verified state
+
+Built:
+- The parser (`parse/parseReceiptText.ts`, `parse/keywords.ts`): R3's
+  price-first quantities (`Name P x Q L`, also `a`, `s`, `*` and `xQ`,
+  only when `round(P × Q) = L`); R4's name line joined with the quantity
+  line under it, a garbled quantity line (`1X0,8`) as 1 × the total,
+  flagged, and category headers (`Padaria:`) never a name; R5's leading
+  tax codes and barcodes left out of names, and code-and-size lines
+  ignored; R6's total on the next line; R7's informational promotion
+  lines ignored; R8's unsigned savings lines recorded on their item as
+  `savingsCandidate` (negative lines still reduce it); R10's currency
+  marks counted only next to an amount; R11's fuzzy total (one
+  substitution); R18's tax-table header and separator row ending the
+  items after an item; R22's `endEvidence` on item lines; R23's
+  `itemsEndedBy`.
+- The bill conversion (`toBill.ts`): `reconcileWithTrustedTotal` (R22),
+  holding R8's decision (applied, then dropped) and the three cuts, R23,
+  R9 and R18, each closing with no adjustment but the read bill-level
+  discount; R24's `removedLines` in the summary; R10's euros from any
+  Portuguese QR code; R14's single "Not read from the receipt" item.
+- `receiptStore.ts` reads and checks `removedLines` (an empty list reads
+  as absent); `importReceipt.ts` awaits the QR scan before giving up on a
+  read with no items (R14).
+
+Changed tests, as the plan says: rule 7's unsigned-discount tests now
+state R8 (a candidate on the item; applied by the bill conversion with no
+total); text fixture 20 records its candidate instead of a bill discount;
+the import's "noItems even with a QR code" test is now R14's two cases.
+
+Verified: `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`
+and `vitest run` (854 tests, 73 more than before CP2) pass, the corpus test (samples
+01–10) included. Two rules were checked against a deliberate break of
+the code: disabling R23's cut fails 4 tests, and reversing R8's order
+fails the test added for it.
+
 ## Current blockers
 
 M2 can't be accepted until its remediation child,
 `milestone-2-remediation-1`, is accepted (functional review round 1,
-below). The child is implementing; M2R1-CP1 is complete.
+below). The child is implementing; M2R1-CP1 and M2R1-CP2 are complete.
 
 ## Active plan
 

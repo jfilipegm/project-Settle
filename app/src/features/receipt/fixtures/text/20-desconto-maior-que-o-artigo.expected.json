@@ -6,7 +6,8 @@
       "quantity": "1",
       "unitPrice": "1.20",
       "lineTotal": "1.20",
-      "needsCheck": false
+      "needsCheck": false,
+      "savingsCandidate": "1.50"
     },
     {
       "name": "Peras",
@@ -16,7 +17,6 @@
       "needsCheck": false
     }
   ],
-  "discount": "1.50",
   "total": "1.20",
   "warnings": []
 }

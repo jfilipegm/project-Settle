@@ -20,7 +20,22 @@ export interface ParsedItem {
   lineTotal: Cents
   /** Low OCR confidence, or an amount that needed a character fix. */
   needsCheck: boolean
+  /**
+   * R8: the unsigned savings lines printed under the item, summed. They may
+   * already be in the price (Continente's `POUPANCA 0,60`) or not; the bill
+   * conversion decides with the trusted total. Negative lines are applied
+   * to `lineTotal` by the parser, as rule 7 always did.
+   */
+  savingsCandidate?: Cents
+  /**
+   * R22's structural evidence that the line isn't an item: a total whose
+   * label was garbled (`totalLike`), or a tax-table row (`taxTable`).
+   */
+  endEvidence?: 'totalLike' | 'taxTable'
 }
+
+/** R23: how the items region ended, when a footer line ended it. */
+export type ItemsEnd = 'taxTableHeader' | 'separator' | 'payment'
 
 /** A typed warning; the UI owns the user-facing message for each code. */
 export type ReceiptWarning =
@@ -48,11 +63,22 @@ export interface ParsedReceipt {
   subtotal?: Cents
   tax?: Cents
   tip?: Cents
-  /** The bill-level discount, as a positive amount. */
+  /**
+   * The bill-level discount, as a positive amount: negative lines only (an
+   * orphaned one, or one larger than its item), never an R8 candidate.
+   */
   discount?: Cents
   /** The printed total (parsing rule 8). */
   total?: Cents
+  /** R23: the footer line that ended the items region, if one did. */
+  itemsEndedBy?: ItemsEnd
   warnings: ReceiptWarning[]
+}
+
+/** R24: a line the import left out to match the receipt's total. */
+export interface RemovedLine {
+  name: string
+  amount: Cents
 }
 
 /** One decoded page, as RGBA pixels. */
@@ -132,4 +158,10 @@ export interface ReceiptSummary {
   warnings: ReceiptWarning[]
   /** Items whose "Check" marker is still showing. */
   flaggedItemIds: string[]
+  /**
+   * R24: the lines a cut left out to match the trusted total, in receipt
+   * order, until the user confirms them. Absent when nothing was cut; never
+   * an empty list.
+   */
+  removedLines?: RemovedLine[]
 }

@@ -14,6 +14,8 @@ export interface ExpectedItem {
   unitPrice: string
   lineTotal: string
   needsCheck: boolean
+  /** R8: the unsigned savings lines under the item, when there are any. */
+  savingsCandidate?: string
 }
 
 export interface ExpectedReceipt {
@@ -91,13 +93,19 @@ export function ratioDecimal({ numerator, denominator }: Ratio): string {
 /** A parsed receipt in the fixtures' shape, for a whole-object comparison. */
 export function toExpectedShape(receipt: ParsedReceipt): ExpectedReceipt {
   const shape: ExpectedReceipt = {
-    items: receipt.items.map((item) => ({
-      name: item.name,
-      quantity: ratioDecimal(item.quantity),
-      unitPrice: decimal(item.unitPrice),
-      lineTotal: decimal(item.lineTotal),
-      needsCheck: item.needsCheck,
-    })),
+    items: receipt.items.map((item) => {
+      const shaped: ExpectedItem = {
+        name: item.name,
+        quantity: ratioDecimal(item.quantity),
+        unitPrice: decimal(item.unitPrice),
+        lineTotal: decimal(item.lineTotal),
+        needsCheck: item.needsCheck,
+      }
+      if (item.savingsCandidate !== undefined) {
+        shaped.savingsCandidate = decimal(item.savingsCandidate)
+      }
+      return shaped
+    }),
     warnings: receipt.warnings,
   }
   if (receipt.merchant !== undefined) shape.merchant = receipt.merchant

@@ -443,8 +443,8 @@ describe('parseReceiptText: totals (rule 8)', () => {
   })
 })
 
-describe('parseReceiptText: discounts (rule 7)', () => {
-  it('reduces the item above with a loyalty-card discount, and keeps the items after it (R5-I-1)', () => {
+describe('parseReceiptText: discounts (rule 7, R8)', () => {
+  it('reduces the item above with a negative loyalty-card discount, records an unsigned one as a candidate, and keeps the items after it (R5-I-1)', () => {
     const receipt = parse(
       'Iogurte Grego 1,99',
       'Desc. Cartão Continente -0,40',
@@ -459,9 +459,15 @@ describe('parseReceiptText: discounts (rule 7)', () => {
     expect(receipt.items).toEqual([
       expect.objectContaining(item('Iogurte Grego', '1', 159, 159)),
       expect.objectContaining(item('Queijo', '1', 319, 319)),
-      expect.objectContaining(item('Fiambre', '1', 150, 150)),
+      // R8: unsigned, so it may already be in the price; the bill
+      // conversion decides (toBill.test.ts applies it with no total).
+      expect.objectContaining({
+        ...item('Fiambre', '1', 200, 200),
+        savingsCandidate: 50,
+      }),
       expect.objectContaining(item('Pão', '1', 120, 120)),
     ])
+    expect(receipt.items[3]?.savingsCandidate).toBeUndefined()
     expect(receipt.discount).toBeUndefined()
     expect(receipt.total).toBe(748)
   })
@@ -475,11 +481,14 @@ describe('parseReceiptText: discounts (rule 7)', () => {
     )
     expect(receipt.items).toEqual([
       expect.objectContaining(item('Menu Promoção', '1', 750, 750)),
-      expect.objectContaining(item('Gift card', '1', 950, 950)),
+      expect.objectContaining({
+        ...item('Gift card', '1', 1000, 1000),
+        savingsCandidate: 50,
+      }),
     ])
   })
 
-  it('sends a discount larger than its item to the bill discount', () => {
+  it('keeps an unsigned discount larger than its item on the item, never in the bill discount (R8)', () => {
     const receipt = parse(
       'Pão 1,00',
       'Leite 0,50',
@@ -487,7 +496,33 @@ describe('parseReceiptText: discounts (rule 7)', () => {
       'TOTAL 0,70',
     )
     expect(receipt.items.map((entry) => entry.lineTotal)).toEqual([100, 50])
+    expect(receipt.items[1]?.savingsCandidate).toBe(80)
+    expect(receipt.discount).toBeUndefined()
+  })
+
+  it('sends a negative discount larger than its item to the bill discount', () => {
+    const receipt = parse(
+      'Pão 1,00',
+      'Leite 0,50',
+      'Desconto -0,80',
+      'TOTAL 0,70',
+    )
+    expect(receipt.items.map((entry) => entry.lineTotal)).toEqual([100, 50])
     expect(receipt.discount).toBe(80)
+  })
+
+  it('sums several unsigned lines under one item, and measures them after its negative lines (R8, revision 11)', () => {
+    for (const order of [
+      ['Promoção -0,40', 'POUPANCA 0,30', 'POUPANCA 0,20'],
+      ['POUPANCA 0,30', 'Promoção -0,40', 'POUPANCA 0,20'],
+    ]) {
+      const receipt = parse('Queijo 3,00', ...order, 'Pão 1,00', 'TOTAL 3,10')
+      expect(receipt.items[0]).toMatchObject({
+        lineTotal: 260,
+        savingsCandidate: 50,
+      })
+      expect(receipt.discount).toBeUndefined()
+    }
   })
 })
 
@@ -521,5 +556,198 @@ describe('parseReceiptText: warnings and robustness', () => {
         'TOTAL 90071992547409,91',
       ),
     ).not.toThrow()
+  })
+})
+
+describe('parseReceiptText: real layouts (remediation R3–R7, R10, R11)', () => {
+  it('reads a price-first quantity when the arithmetic holds (R3)', () => {
+    for (const line of [
+      'Refrigerante Zero 1,35 x 6 8,10 A',
+      'Refrigerante Zero 1,35 a 6 8,10 A',
+      'Refrigerante Zero 1,35 x6 8,10 A',
+      'Refrigerante Zero 1,35 X 6 8,10',
+    ]) {
+      expect(parse(line, 'TOTAL 8,10').items, line).toEqual([
+        expect.objectContaining(item('Refrigerante Zero', '6', 135, 810)),
+      ])
+    }
+  })
+
+  it('takes no quantity when a price-first line doesn’t close (R3)', () => {
+    for (const line of [
+      'Refrigerante Zero 1,35 x 6 8,20',
+      'Massa 1,00 s 2 7,00',
+    ]) {
+      const [read] = parse(line, 'TOTAL 1,00').items
+      expect(read?.quantity, line).toEqual({ numerator: 1, denominator: 1 })
+      expect(read?.lineTotal, line).toBe(read?.unitPrice)
+    }
+  })
+
+  it('joins a name line and the quantity line under it (R4)', () => {
+    expect(
+      parse('Take Away:', '(B) Box Veggie', '2 X 6,50 13,00', 'TOTAL 13,00')
+        .items,
+    ).toEqual([expect.objectContaining(item('Box Veggie', '2', 650, 1300))])
+  })
+
+  it('completes a name line with a garbled quantity line as 1 × the total, flagged (R4)', () => {
+    expect(parse('Baguete 250G', '1X0,8 0,89', 'TOTAL 0,89').items).toEqual([
+      { ...item('Baguete 250G', '1', 89, 89), needsCheck: true },
+    ])
+  })
+
+  it('never takes a category header as an item or a name (R4)', () => {
+    expect(
+      parse('Padaria:', 'Pão 1,00', 'TOTAL 1,00').items.map((i) => i.name),
+    ).toEqual(['Pão'])
+    expect(parse('Padaria:', '2 X 1,00 2,00', 'TOTAL 2,00').items).toEqual([])
+  })
+
+  it('leaves tax codes and barcodes out of the name (R5)', () => {
+    const names = (line: string) =>
+      parse(line, 'TOTAL 1,00').items.map((i) => i.name)
+    expect(names('(C) Bolachas Maria 1,15')).toEqual(['Bolachas Maria'])
+    expect(names('NS Taras 0,10')).toEqual(['Taras'])
+    expect(names('5601234567890 Polo S/S 17,99')).toEqual(['Polo S/S'])
+    // A bare leading letter may be an article: it stays.
+    expect(names('A Vaca Que Ri 2,49')).toEqual(['A Vaca Que Ri'])
+  })
+
+  it('ignores a code-and-size line and an informational promotion under an item (R5, R7)', () => {
+    const receipt = parse(
+      '5601234567890 Polo S/S 17,99',
+      '71014475 C10 M',
+      'Promoção (25.99-8.00)',
+      'Calças 20,00',
+      'Promoção (6,00)',
+      'TOTAL 37,99',
+    )
+    expect(receipt.items).toEqual([
+      expect.objectContaining(item('Polo S/S', '1', 1799, 1799)),
+      expect.objectContaining(item('Calças', '1', 2000, 2000)),
+    ])
+    expect(receipt.items.map((i) => i.savingsCandidate)).toEqual([
+      undefined,
+      undefined,
+    ])
+    expect(receipt.discount).toBeUndefined()
+    expect(group('Promoção (25.99-6.00)')).toBe('ignore')
+    expect(group('71014475 C10 M')).toBe('ignore')
+  })
+
+  it('takes a total whose amount is on the next line (R6)', () => {
+    expect(parse('Polo 17,99', 'Total (Euro):', '17,99').total).toBe(1799)
+    expect(parse('Polo 17,99', 'Subtotal', '17,99').subtotal).toBe(1799)
+  })
+
+  it('never takes a lone amount after an item as a total (R6)', () => {
+    const receipt = parse('Pão 1,00', '2,00')
+    expect(receipt.total).toBeUndefined()
+    expect(receipt.items.map((i) => i.lineTotal)).toEqual([100])
+  })
+
+  it('counts a currency mark only when it’s attached to an amount (R10)', () => {
+    expect(parse('Loja $ Centro', 'Pão 1,00', 'TOTAL 1,00').currencyHint).toBe(
+      undefined,
+    )
+    expect(parse('Ale £3.20', 'Total 3.20').currencyHint).toBe('GBP')
+    expect(parse('Pão 1,00 €', 'TOTAL 1,00').currencyHint).toBe('EUR')
+  })
+
+  it('reads a total label one OCR substitution away as a total, not two (R11)', () => {
+    expect(group('T0TAL 12,50')).toBe('total')
+    expect(group('tota1 12,50')).toBe('total')
+    expect(group('lotal 12,50')).toBe('total')
+    expect(group('Lozal 12,50')).toBe('item')
+    expect(parse('Pão 12,50', 'T0TAL 12,50').total).toBe(1250)
+  })
+})
+
+describe('parseReceiptText: where the items end (R18, R23)', () => {
+  it.each(['Taxa Base Inc. Val.Total Val. IVA', '%IVA Total Liq. IVA Total'])(
+    'ends the items at a tax-table header, %s',
+    (header) => {
+      const receipt = parse(
+        'Pão 1,00',
+        header,
+        'A 23% 0,81 0,19 1,00',
+        'Queijo 2,00',
+      )
+      expect(receipt.items.map((i) => i.name)).toEqual(['Pão'])
+      expect(receipt.itemsEndedBy).toBe('taxTableHeader')
+    },
+  )
+
+  it('never ends anything at a column header above the items', () => {
+    const receipt = parse(
+      'IVA DESCRICAO VALOR',
+      'Pão 1,00',
+      'Leite 0,80',
+      'TOTAL 1,80',
+    )
+    expect(receipt.items.map((i) => i.name)).toEqual(['Pão', 'Leite'])
+    expect(receipt.itemsEndedBy).toBeUndefined()
+  })
+
+  it('ends the items at a separator row after an item, not before one', () => {
+    const receipt = parse('==========', 'Pão 1,00', '----------', 'Leite 0,80')
+    expect(receipt.items.map((i) => i.name)).toEqual(['Pão'])
+    expect(receipt.itemsEndedBy).toBe('separator')
+  })
+
+  it.each([
+    ['..... ......', true],
+    ['.... ....', true],
+    ['======', false],
+  ])('counts “%s” as a separator row: %s', (row, ends) => {
+    const receipt = parse('Pão 1,00', row, 'Leite 0,80')
+    expect(receipt.items.length).toBe(ends ? 1 : 2)
+  })
+
+  it('records the payment line that ended the items, unchanged as a payment (R23)', () => {
+    for (const payment of ['Multibanco 12,40', 'Pago com cartao 12,40']) {
+      expect(classifyLine(payment)).toEqual({ group: 'ignore', payment: true })
+      const receipt = parse('Pão 1,00', payment, 'Queijo 2,00')
+      expect(receipt.items.map((i) => i.name)).toEqual(['Pão'])
+      expect(receipt.itemsEndedBy).toBe('payment')
+    }
+  })
+
+  it('records nothing when a total or the end of the text ends the items (R23)', () => {
+    expect(parse('Pão 1,00', 'TOTAL 1,00').itemsEndedBy).toBeUndefined()
+    expect(parse('Pão 1,00', 'Leite 0,80').itemsEndedBy).toBeUndefined()
+  })
+})
+
+describe('parseReceiptText: structural evidence on item lines (R22)', () => {
+  function evidence(line: string) {
+    const items = parse('Pão 1,00', line).items
+    const read = items.at(-1)
+    // The line must reach the item list for its flag to mean anything.
+    expect(items, line).toHaveLength(2)
+    return read?.endEvidence
+  }
+
+  it('marks a one-word label two substitutions from “total” as totalLike', () => {
+    expect(evidence('lozal 12,40')).toBe('totalLike')
+    expect(evidence('Tazal 12,40')).toBe('totalLike')
+    // R22's stated residual, pinned so a change shows.
+    expect(evidence('Natal 10,00')).toBe('totalLike')
+    expect(evidence('Salada 12,40')).toBeUndefined()
+    expect(evidence('Bolo lozal 12,40')).toBeUndefined()
+  })
+
+  it('marks a rate or two column words as taxTable', () => {
+    expect(evidence('lVA 23% 10,00 2,30 12,30')).toBe('taxTable')
+    expect(evidence('Taxa Base 10,00')).toBe('taxTable')
+    // The residual again.
+    expect(evidence('Iogurte 0% 1,20')).toBe('taxTable')
+    expect(evidence('Queijo 2,00')).toBeUndefined()
+  })
+
+  it('leaves lines that never reach the list as they were', () => {
+    expect(group('IVA 23% 2,30')).toBe('tax')
+    expect(group('A 23% 10,00 2,30 12,30')).toBe('text')
   })
 })

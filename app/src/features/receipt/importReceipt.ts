@@ -110,14 +110,16 @@ export async function importReceipt(
     if (!read.ok) {
       return read
     }
-    if (read.receipt.items.length === 0) {
-      return failure('noItems')
-    }
 
     onProgress?.({ phase: 'checkingQr' })
     qr = await qrScan
     if (cancelled()) {
       return failure('cancelled')
+    }
+    // R14: with no items read, a QR total still gives a bill (its total as
+    // one flagged item); without one there's nothing to import.
+    if (read.receipt.items.length === 0 && qr === undefined) {
+      return failure('noItems')
     }
     receipt = read.receipt
   } finally {

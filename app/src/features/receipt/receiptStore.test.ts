@@ -68,6 +68,38 @@ describe('receiptStore (D15)', () => {
     expect(loadReceiptSummary()).toBeNull()
   })
 
+  it('keeps the lines a cut left out across a reload (R24)', () => {
+    const withCut: ReceiptSummary = {
+      ...SUMMARY,
+      removedLines: [
+        { name: 'Tazal', amount: cents(1877) },
+        { name: 'MULT IBANCO', amount: cents(1677) },
+      ],
+    }
+    saveReceiptSummary(withCut)
+    expect(loadReceiptSummary()).toEqual(withCut)
+    // Saved without them (before R24, or no cut): loads without them.
+    saveReceiptSummary(SUMMARY)
+    expect(loadReceiptSummary()).not.toHaveProperty('removedLines')
+  })
+
+  it('reads a stored empty list of removed lines as absent (R24)', () => {
+    store({ ...SUMMARY, removedLines: [] })
+    const loaded = loadReceiptSummary()
+    expect(loaded).toEqual(SUMMARY)
+    expect(loaded).not.toHaveProperty('removedLines')
+  })
+
+  it.each([
+    ['not a list', 'Tazal'],
+    ['a line with no name', [{ amount: 1877 }]],
+    ['a fractional amount', [{ name: 'Tazal', amount: 18.77 }]],
+    ['a line that is not an object', [['Tazal', 1877]]],
+  ])('drops a summary whose removed lines are %s (R24)', (_name, lines) => {
+    store({ ...SUMMARY, removedLines: lines })
+    expect(loadReceiptSummary()).toBeNull()
+  })
+
   it('drops unparseable JSON, and survives storage that throws', () => {
     localStorage.setItem(RECEIPT_STORAGE_KEY, '{')
     expect(loadReceiptSummary()).toBeNull()
