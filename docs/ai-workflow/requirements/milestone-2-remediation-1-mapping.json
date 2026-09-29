@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-2-remediation-1",
+  "requirements": {
+    "REQ-1": {
+      "description": "Small, low-resolution receipt screenshots (receipt apps) are enlarged by text size before OCR (F-I-1).",
+      "checkpoint_ids": [
+        "M2R1-CP1"
+      ]
+    },
+    "REQ-2": {
+      "description": "Phone photos of receipts on a table are read despite the background, shading and paper texture (F-I-2, F-I-3).",
+      "checkpoint_ids": [
+        "M2R1-CP1"
+      ]
+    },
+    "REQ-3": {
+      "description": "The parser reads the Portuguese supermarket and shop layouts seen in the real receipts: price-first quantities, name-then-quantity lines, codes in names, totals on the next line, informational promotion lines, unsigned savings lines (F-I-1 to F-I-3).",
+      "checkpoint_ids": [
+        "M2R1-CP2"
+      ]
+    },
+    "REQ-4": {
+      "description": "The item list ends reliably when the printed total is garbled (the fiscal QR code's total, a running sum equal to it, a tax-table header, a separator row), a PT fiscal QR code fixes the currency, and a receipt with a QR total but no readable items still imports (F-I-1, F-I-2).",
+      "checkpoint_ids": [
+        "M2R1-CP2"
+      ]
+    },
+    "REQ-5": {
+      "description": "Regression coverage for real layouts: synthetic committed receipts in CI, and the five real receipts as local-only fixtures that are never tracked and never in the repository's history, checked by committed tests (F-I-4, the user's decision).",
+      "checkpoint_ids": [
+        "M2R1-CP3"
+      ]
+    },
+    "REQ-6": {
+      "description": "An incomplete import can't silently become a normal split: the gap shows in the result and the copied text, an incomplete read is called out, one click adds the difference, and lines the import left out to match the total are shown until the user confirms them or puts them back (F-I-3, the manual external review's M-I-7).",
+      "checkpoint_ids": [
+        "M2R1-CP2",
+        "M2R1-CP4"
+      ]
+    },
+    "REQ-7": {
+      "description": "READMEs updated, and the no-data-leaves-the-browser checks re-run with the new clean-up.",
+      "checkpoint_ids": [
+        "M2R1-CP4"
+      ]
+    }
+  }
+}
