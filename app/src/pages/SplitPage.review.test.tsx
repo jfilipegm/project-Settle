@@ -30,6 +30,13 @@ import { RECEIPT_STORAGE_KEY } from '../features/receipt/receiptStore.ts'
 import { receiptToBill } from '../features/receipt/toBill.ts'
 import { SplitPage } from './SplitPage.tsx'
 
+/**
+ * The waits' limit: the fake import is instant, but when the real-OCR
+ * tests load the machine in the same run, a render can take over the
+ * default 1 s.
+ */
+const LOADED = { timeout: 10_000 }
+
 let copied = ''
 beforeEach(() => {
   copied = ''
@@ -110,7 +117,7 @@ async function scan(importReceipt: ImportReceiptFn) {
   fireEvent.change(screen.getByLabelText('Choose file'), {
     target: { files: [new File(['r'], 'r.jpg', { type: 'image/jpeg' })] },
   })
-  await waitFor(() => expect(queryPanel()).toBeInTheDocument())
+  await waitFor(() => expect(queryPanel()).toBeInTheDocument(), LOADED)
   return view
 }
 
@@ -142,7 +149,7 @@ const copy = async () => {
   fireEvent.click(
     within(result()).getByRole('button', { name: 'Copy as text' }),
   )
-  await waitFor(() => expect(copied).not.toBe(''))
+  await waitFor(() => expect(copied).not.toBe(''), LOADED)
   return copied
 }
 
@@ -413,7 +420,7 @@ describe('R24: lines left out by a cut', () => {
     fireEvent.change(screen.getByLabelText('Choose file'), {
       target: { files: [new File(['r'], 'r.jpg', { type: 'image/jpeg' })] },
     })
-    await waitFor(() => expect(prices()).toEqual(['5,00', '2,60']))
+    await waitFor(() => expect(prices()).toEqual(['5,00', '2,60']), LOADED)
     expect(status()).toBe('Matches the receipt total.')
     expect(plain(result().textContent)).not.toContain('⚠')
   })
