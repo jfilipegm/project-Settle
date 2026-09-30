@@ -36,6 +36,12 @@ import { SplitPage } from './SplitPage.tsx'
  */
 const LOADED = { timeout: 10_000 }
 
+/**
+ * Each test's limit, above the waits': vitest's default 5 s would cut a
+ * test off while one of its waits still had time left.
+ */
+vi.setConfig({ testTimeout: 30_000 })
+
 afterEach(() => {
   vi.restoreAllMocks()
   localStorage.clear()
