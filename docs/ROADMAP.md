@@ -9,15 +9,16 @@ This is a living document. Milestones after the current one are a
 direction, not a commitment. They get re-ordered, merged or dropped as we
 learn.
 
-Last updated: 2026-09-30 (M2 complete; restructured around the
-free-first product strategy on 2026-09-28, see
-[Roadmap strategy](#roadmap-strategy))
+Last updated: 2026-09-30 (M2 complete; M2.5 added for receipt-reading
+accuracy; restructured around the free-first product strategy on
+2026-09-28, see [Roadmap strategy](#roadmap-strategy))
 
 ## Current goal
 
 > **Phase 1: finish the free, local-first core.** The next milestone is
-> **M3 — Households, members and the expense ledger**, the start of the
-> shared-household core: households, an expense ledger, balances and
+> **M2.5 — Accurate receipt reading**: real receipts read right 94–100 %
+> of the time, still for free and entirely in the browser. After it comes
+> the shared-household core: households, an expense ledger, balances and
 > settling up (M3–M4).
 
 Nothing in Phases 3–8 is being built yet.
@@ -109,6 +110,7 @@ scope. Anything not listed as must-have is negotiable there.
 | M0  | Project foundation                                 | 1 · Free local-first core        | Complete    |
 | M1  | Bill splitter (manual entry)                       | 1 · Free local-first core        | Complete    |
 | M2  | Receipt upload and built-in parsing                | 1 · Free local-first core        | Complete    |
+| M2.5| Accurate receipt reading                           | 1 · Free local-first core        | Not started |
 | M3  | Households, members and the expense ledger         | 1 · Free local-first core        | Not started |
 | M4  | Balances and settling up                           | 1 · Free local-first core        | Not started |
 | M5  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
@@ -141,6 +143,10 @@ plans):
   autosaves (M3).
 - The old *M8 Installable app* is now M6, earlier, because real users need
   it deployed and installable.
+- *M2.5 Accurate receipt reading* was added on 2026-09-30, after M2's
+  functional review showed real receipts reading far below what a
+  product needs. Its work item id is `milestone-2-5` (work item ids can't
+  contain a dot).
 - The old *M9 Accounts and sync* is now M13, a paid-layer candidate.
 
 ### Every milestone
@@ -249,10 +255,10 @@ split math and the UI right before OCR adds uncertainty.
 child for real receipts (`milestone-2-remediation-1`). Plans archived at
 `docs/milestones/completed/milestone-2-PLAN.md` and
 `docs/milestones/completed/milestone-2-remediation-1-PLAN.md`.
-Carried forward: switching the built-in reader from Tesseract.js to
-PaddleOCR (the user's decision, 2026-09-29) to raise the accepted
+Carried forward to M2.5: switching the built-in reader from Tesseract.js
+to PaddleOCR (the user's decision, 2026-09-29) to raise the accepted
 read-rate floors on real receipts, and the phone reading-time
-measurement that was waived for it. Neither has a milestone yet.
+measurement that was waived for it.
 
 **Goal:** Upload a photo or PDF of a receipt and get the item list filled in
 automatically, for free and entirely in the browser.
@@ -285,6 +291,92 @@ automatically, for free and entirely in the browser.
 - `README.md` (and `app/README.md` if setup changed) reviewed and
   updated for M2: outdated parts removed, new features added (see
   "Every milestone").
+
+---
+
+## M2.5 — Accurate receipt reading
+
+**Status:** Not started (work item `milestone-2-5`, branch
+`feature/milestone-2.5`)
+
+**Objective:** Real receipts are read right almost every time: the goal
+is **94–100 %**, not M2's accepted floors (Continente 56 %, the Lidl app
+screenshots 11–22 % of items). Still €0, and nothing leaves the browser.
+
+**Why it matters:** if people still have to type in or check the items
+on a large share of their receipts, receipt reading doesn't work as a
+product. It's also what M3's itemised expenses are fed by.
+
+**Where it starts:** a local spike (branch `spike/paddleocr`, not pushed)
+ran PaddleOCR (`ppu-paddle-ocr` on ONNX Runtime Web, the PP-OCRv5 mobile
+models, about 13 MB, MIT and Apache-2.0) on the five real receipts with
+M2's scoring: lidl1 44 %, lidl2 73 %, lidl3 all 5 items, Continente 94 %,
+Tiffosi 100 %, with cleaner names and 0.5–2 s per read on the desktop.
+The chosen route is local: **PaddleOCR + our parser + the fiscal QR
+total check**.
+
+**Must-have**
+- **A larger local test set**: at least 30 real receipts (the user is
+  gathering more), across supermarkets, restaurants, cafés, shops, app
+  screenshots and phone photos. Like M2's five, they hold personal data:
+  **local only, never committed**, git-ignored and guarded, with tests
+  that skip without them. Each has an expected file (items as printed,
+  and the total).
+- **One accuracy measure**, run on that set and reported per receipt:
+  - **receipt accuracy**: the share of receipts read with **no edit
+    needed** (every item's name recognisable, every price right, and the
+    items adding up to the receipt's total);
+  - **item accuracy**: the share of the printed items read with the
+    right price.
+- **The PaddleOCR reader** behind M2's `ReceiptReader` interface, in a
+  worker, with its models served from the app's own address under the
+  existing Content-Security-Policy. Whether Tesseract stays as a fallback
+  or is removed is decided in the plan. A new ADR records the change (ADR
+  0002 chose Tesseract), and the licence notices are updated.
+- **Image clean-up and parser retuned** for PaddleOCR's text detection
+  and lines, and parser rules for the layouts the larger set shows.
+- **Honest flags**: a receipt that isn't fully read never shows
+  "Matches"; the gap and the "⚠ Check" markers show what to fix.
+- **Phone reading time**, waived in M2: on the user's phone, a 12.6-MP
+  photo within 60 s and a small screenshot within 20 s (the plan may
+  tighten these).
+- The committed synthetic corpus keeps passing in CI.
+
+**Useful**
+- A **row-by-row review** of what the reader found: the receipt image
+  with each line's role (item, total, discount, ignored), and adding a
+  line it missed.
+- **Help with the input**: when the text is too small to read (a
+  low-resolution screenshot), say so and suggest a full-resolution or
+  zoomed-in one.
+- Cropping and perspective correction, if the test set shows angled
+  photos failing.
+- A time-boxed test of an image-to-JSON model (e.g. Donut) as a second
+  opinion, measured on the same set. Note that
+  `AdamCodd/donut-receipts-extract` v2 is CC-BY-NC (non-commercial), and
+  it's about 0.2B parameters.
+
+**Future / validation-dependent**
+- Remembering the user's corrections on the device.
+- If the local route stops short of the goal on the test set: an opt-in
+  "enhanced reading" with the user's own AI key (the
+  [BYOK backlog item](#validation-dependent-backlog)), which sends the
+  image to their provider. That changes a guiding principle, so it's the
+  user's decision, not this milestone's.
+
+**Completion criteria**
+- On the local test set (at least 30 receipts, including M2's five):
+  receipt accuracy of at least **94 %**, aiming for 100 %, and every
+  receipt that isn't fully read is flagged (no false "Matches"). If the
+  local route plateaus below this, the plan stops and reports the numbers
+  and causes; the target is never lowered silently.
+- The phone reading times above, measured on the user's phone.
+- No receipt data leaves the browser (M2's request checks still pass).
+- `README.md` and `app/README.md` reviewed and updated (see "Every
+  milestone").
+
+**Not yet:** cloud or BYOK readers, a hosted reader, storing receipt
+images (M3's "Useful"), households (M3).
 
 ---
 
@@ -870,8 +962,8 @@ willingness to pay) supports it.
 
 - **Bring-your-own-key receipt reading** (the old M3). The user's own AI
   or receipt-service key, called straight from the browser. It's €0 for
-  the project and much more accurate. Revisit after M9's receipt-reading
-  report. The design notes are kept under
+  the project and much more accurate. Revisit if M2.5's local reader
+  stops short of its goal, or after M9's receipt-reading report. The design notes are kept under
   [Bring your own key (BYOK)](#bring-your-own-key-byok).
 - **Personal finance** (the old M4–M7): a personal "key" file, dashboards
   of income and expenses, and your share of household expenses feeding
@@ -897,7 +989,8 @@ Decision: tiers behind one shared reader interface (M2's `ReceiptReader`).
 
 | Tier | Cost to project | Privacy | Accuracy | Status |
 |------|-----------------|---------|----------|--------|
-| Built-in (M2): Tesseract.js + rule parser + fiscal QR | None | Nothing leaves the browser | Fine on clean receipts, weaker on crumpled or thermal paper | Phase 1 |
+| Built-in (M2): Tesseract.js + rule parser + fiscal QR | None | Nothing leaves the browser | Fine on clean receipts, weak on real photos and app screenshots (M2's floors: 11–100 % of items) | Phase 1, replaced in M2.5 |
+| Built-in (M2.5): PaddleOCR + rule parser + fiscal QR | None | Nothing leaves the browser | Goal: 94–100 % of receipts with no edit needed | Phase 1 (M2.5) |
 | BYOK: the user's AI model or receipt-service key | None (the user pays their provider) | Image sent to the user's chosen provider | Much better, returns items directly | Backlog, after M9 |
 | Hosted AI/OCR | Per receipt, so it needs a paid plan | Image sent to Settle's provider | Much better | Paid candidate (M12) |
 

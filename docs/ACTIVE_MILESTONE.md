@@ -9,14 +9,14 @@ parsing (work item `milestone-2`), is `MILESTONE_COMPLETE`, accepted on
 
 ## Next action
 
-Plan **M3 — Households, members and the expense ledger**
-(`docs/ROADMAP.md`) with `/milestone-plan`: turn one-off bills into a
-household's running expense history.
+Plan **M2.5 — Accurate receipt reading** (`docs/ROADMAP.md`, work item
+`milestone-2-5`) with `/milestone-plan`: move the built-in reader to
+PaddleOCR and reach 94–100 % of real receipts read with no edit needed,
+measured on a local test set of at least 30 real receipts (the user is
+gathering them; local only, never committed).
 
-Before planning, and after the user merges PR #6 (M2) into `master` (see
-CLAUDE.md, "Git and GitHub workflow"): run
-`git switch master && git pull && git switch -c feature/milestone-3`.
-After the first commit, open the M3 PR.
+PR #6 (M2) is merged, and the branch `feature/milestone-2.5` is cut from
+`master` (the 2026-09-30 roadmap change is its first commit).
 
 ## Last completed: M2 — Receipt upload and built-in parsing
 
@@ -66,8 +66,8 @@ Verification:
 
 Carried forward (not blockers):
 - **Switch the built-in reader to PaddleOCR** (the user's decision,
-  2026-09-29). It was meant to be M2's next remediation child; it has no
-  milestone yet. A local spike (branch `spike/paddleocr`, not pushed:
+  2026-09-29). It was meant to be M2's next remediation child; it's now
+  M2.5. A local spike (branch `spike/paddleocr`, not pushed:
   `ppu-paddle-ocr` with ONNX Runtime Web, PP-OCRv5 mobile models, about
   13 MB, MIT and Apache-2.0) scored lidl1 44 %, lidl2 73 %, lidl3 all 5
   items, Continente 94 % and Tiffosi 100 %, against Tesseract's accepted
