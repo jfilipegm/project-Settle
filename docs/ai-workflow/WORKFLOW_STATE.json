@@ -1838,7 +1838,7 @@
       "registry_path": "docs/ai-workflow/registry/milestone-2-remediation-1-registry.json",
       "mapping_path": "docs/ai-workflow/requirements/milestone-2-remediation-1-mapping.json",
       "governing_workflow_version": "2.1",
-      "phase": "AWAITING_EXTERNAL_IMPLEMENTATION_REVIEW",
+      "phase": "AWAITING_FUNCTIONAL_REVIEW",
       "plan_revision": 12,
       "implementation_revision": 2,
       "functional_review_round": null,
@@ -1896,7 +1896,361 @@
         "waived_guarantees": [],
         "recorded_at": "2026-09-29T15:26:21Z"
       },
-      "technical_approval": null,
+      "technical_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "c868b42c63617389beb9fecc0c6071e5062306445fcf696fdb1c751b1108952c",
+        "approved_review_content_id": "a04e7823c57d7559015ec5e0ba19ab13bca7ffed517341b53745f05be0796053",
+        "review_content_manifest": [
+          {
+            "path": ".github/workflows/app-ci.yml",
+            "exists": true,
+            "mode": "100644",
+            "blob": "54c8a9ccdd03dc58d53bb11063ac14cf9baa0eee"
+          },
+          {
+            "path": "README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "16cb96ae6bd4856a71df95ad104029ab6f25bf8c"
+          },
+          {
+            "path": "app/.gitignore",
+            "exists": true,
+            "mode": "100644",
+            "blob": "e1a426c4c5320a4aebbbc014eaa3eb1189e33916"
+          },
+          {
+            "path": "app/README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ebf0e2266c6672f1548d853844ce6fff184537ef"
+          },
+          {
+            "path": "app/scripts/make-sample-receipts.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0f8e2af0765f3f88fc17b1b00ee93256c3b4ff68"
+          },
+          {
+            "path": "app/src/features/receipt/builtInReader.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "83961ac28f4b8bd1fa6068cbd2f5ad62c54d1930"
+          },
+          {
+            "path": "app/src/features/receipt/builtInReader.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f5a874973005ddc6c6de9284de3c1cb09ef30a1f"
+          },
+          {
+            "path": "app/src/features/receipt/components/ReceiptCheck.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bd67b29b4f6acbe57c744993097a6346c8ca3a05"
+          },
+          {
+            "path": "app/src/features/receipt/components/receipt.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4f7043385a2db494750c81391c767e2aaf8a3f54"
+          },
+          {
+            "path": "app/src/features/receipt/encodePage.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "35b8ed8003c1be60ee1c75c5f984bf2979f0e4d6"
+          },
+          {
+            "path": "app/src/features/receipt/encodePage.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "828b1593c5599b9fc122eb5f039a7685afd0b66a"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-12.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "db1f6c002b2151017951205c4180295936609535"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-12.jpg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2a97ca796b257c7edf308ee7d9a92ad621e0d958"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/11-pt-app-estreito.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ac28023dbbbafb5b24210487ac53d5d745903cdf"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/11-pt-app-estreito.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a5d749d91ce0f7e60d43009d5bc7b1810e26a31a"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/11-pt-app-estreito.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1726c9c5c0847c84d01269d13993bd6a3867f2fa"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/12-pt-hiper-foto.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "db1f6c002b2151017951205c4180295936609535"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/12-pt-hiper-foto.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3187fe6e92aa2cf442c64dcafb3694337d91dc59"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/12-pt-hiper-foto.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "62060d68a98b1554a8dd2c6d2e06e75a74ddc93e"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/13-pt-loja-roupa-foto.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "72001ed62952920f4d8f3b7ca7556a49f0dec8b8"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/13-pt-loja-roupa-foto.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a90730ad03b4a84bd08de4016a62204931b3eda5"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/13-pt-loja-roupa-foto.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3ab55c52a908daa228c410e9e5f8aa7c6e819c2b"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/20-desconto-maior-que-o-artigo.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4b7b7d848f5b212589ca3aab8c7857ef7fa0eb43"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/textFixtures.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6d25c52ad4092f02f07fc930a1dc3179776483c0"
+          },
+          {
+            "path": "app/src/features/receipt/importDeps.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "60c67f34cc0b8eac512de6a2342f18b08eda93f9"
+          },
+          {
+            "path": "app/src/features/receipt/importReceipt.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f5f5d17161639818ca75e255cd43e66e90febcfa"
+          },
+          {
+            "path": "app/src/features/receipt/importReceipt.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "66f147ecca45da7ba022524049fc42962953196f"
+          },
+          {
+            "path": "app/src/features/receipt/localFixtures.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a77f566359f2d9e44a46806f2e575d2999dcaff0"
+          },
+          {
+            "path": "app/src/features/receipt/localFixtures.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d5beaf4d7000d09b5a1fae5e786a983459632b17"
+          },
+          {
+            "path": "app/src/features/receipt/matchedCoverage.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "67284aaf962d7a82c732b4efe7bb714c768eb18d"
+          },
+          {
+            "path": "app/src/features/receipt/matchedCoverage.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2b760bab9c812589590a4cc3e033a646a08457c5"
+          },
+          {
+            "path": "app/src/features/receipt/messages.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d6972c3aff7eca6d31398cb5a5ea377ecadcebe8"
+          },
+          {
+            "path": "app/src/features/receipt/model.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "31f49dae101d2ab6fe7e6a319e18e94658f3a32d"
+          },
+          {
+            "path": "app/src/features/receipt/parse/keywords.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2d00b8d98f5a45796ce74739e1ad734513df9080"
+          },
+          {
+            "path": "app/src/features/receipt/parse/parseReceiptText.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "db6531fb03ab4e532c3c682db2c448a2648fe880"
+          },
+          {
+            "path": "app/src/features/receipt/parse/parseReceiptText.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f2b7ef12af7857045ce5883614ce374854d08567"
+          },
+          {
+            "path": "app/src/features/receipt/preprocess.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "cd1339fc038b5f1b8ae331dd0491380da8db5960"
+          },
+          {
+            "path": "app/src/features/receipt/preprocess.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b5fc24f90f69d356f982750242f64b8fd3607dec"
+          },
+          {
+            "path": "app/src/features/receipt/receiptStore.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8de68d411c4e7bd84a437eb5fd87ba3d3b713944"
+          },
+          {
+            "path": "app/src/features/receipt/receiptStore.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5a798ddc9e80d665bd5be109a4a41dcda078439d"
+          },
+          {
+            "path": "app/src/features/receipt/receipts.local.ocr.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ef913df4dc1111fcf38ffb3f2847251b019009c1"
+          },
+          {
+            "path": "app/src/features/receipt/receipts.ocr.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "79ed971b4a6089d0d8ff73e5a5d787ed6fae6541"
+          },
+          {
+            "path": "app/src/features/receipt/review.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6fe9e2999e12b541c609a825fe8cb8987ae6cea4"
+          },
+          {
+            "path": "app/src/features/receipt/strips.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "029e72669aa813e183212c29698cc4b6c3f5b5a6"
+          },
+          {
+            "path": "app/src/features/receipt/strips.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d1770d668511a5da4bfd4d77a630a264bc4b6c1e"
+          },
+          {
+            "path": "app/src/features/receipt/toBill.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3fc177c96a2cd5f5af3ebecdc44f5dd1b6a6b326"
+          },
+          {
+            "path": "app/src/features/receipt/toBill.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ceb80825ffc7d1bcbe84e1c4d20205033eef7d17"
+          },
+          {
+            "path": "app/src/features/split/billReducer.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d79368dc86ea989b0c6c64dbd842a081f0fc9706"
+          },
+          {
+            "path": "app/src/features/split/billReducer.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "223b39ee53002ee8187b5bfb557be984c0348e54"
+          },
+          {
+            "path": "app/src/features/split/components/ResultSection.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "86de627b5ef0be393c72511b4e6ac0e5c9975c09"
+          },
+          {
+            "path": "app/src/features/split/components/split.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "879970a0c0a121dcbe2af17dddc4e548d9498410"
+          },
+          {
+            "path": "app/src/features/split/format.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d9fafb4dbc19a8edae79db064a017c0a3192270f"
+          },
+          {
+            "path": "app/src/pages/SplitPage.receipt.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "66347e59dc3168c4a2ed6d37989a52546a4e3c90"
+          },
+          {
+            "path": "app/src/pages/SplitPage.review.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6c4989aa95763497653e5aff34c0edae91a435aa"
+          },
+          {
+            "path": "app/src/pages/SplitPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c0922787f4680affe4a592d83b87c1600cd99770"
+          },
+          {
+            "path": "app/src/test/pngjs.d.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ee6d97d820ba49deaf3f8a5885185fac11a04513"
+          },
+          {
+            "path": "docs/ai-workflow/registry/milestone-2-remediation-1-artifacts.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f04ec5b37bc6c17e274dcff91aadf9515584ceb6"
+          }
+        ],
+        "reviewed_content_commit": "184a44aeabe4db5d2c9c8e29d560a4c4b025f880",
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-2-remediation-1 implementation",
+        "waived_guarantees": [],
+        "recorded_at": "2026-09-30T18:01:48Z"
+      },
       "technical_review_block_pins": [],
       "plan_review_stages": {
         "review_content_id": "632379e1b686ec1266b1126720f60addc4fc648449354daa3cc7a4c8526a4a8b",
@@ -1915,8 +2269,8 @@
       },
       "functional_acceptance_status": null,
       "blocking_decisions": [],
-      "state_revision": 53,
-      "last_transition": "2026-09-29T23:51:15Z"
+      "state_revision": 54,
+      "last_transition": "2026-09-30T18:01:48Z"
     }
   }
 }
