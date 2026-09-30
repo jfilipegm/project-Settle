@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "active_work_item_id": "milestone-2",
+  "active_work_item_id": null,
   "work_items": {
     "milestone-0": {
       "work_item_type": "product",
@@ -737,7 +737,7 @@
       "registry_path": "docs/ai-workflow/registry/milestone-2-registry.json",
       "mapping_path": "docs/ai-workflow/requirements/milestone-2-mapping.json",
       "governing_workflow_version": "2.1",
-      "phase": "AWAITING_FUNCTIONAL_REVIEW",
+      "phase": "MILESTONE_COMPLETE",
       "plan_revision": 10,
       "implementation_revision": 2,
       "functional_review_round": null,
@@ -1826,8 +1826,8 @@
       },
       "functional_acceptance_status": null,
       "blocking_decisions": [],
-      "state_revision": 48,
-      "last_transition": "2026-09-29T10:54:27Z"
+      "state_revision": 49,
+      "last_transition": "2026-09-30T18:14:36Z"
     },
     "milestone-2-remediation-1": {
       "work_item_type": "product",

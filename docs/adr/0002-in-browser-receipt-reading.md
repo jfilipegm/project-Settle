@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-09-29
 - **Milestone:** M2 — Receipt upload and built-in parsing
-  (`docs/milestones/milestone-2-PLAN.md`, decisions D4–D9)
+  (`docs/milestones/completed/milestone-2-PLAN.md`, decisions D4–D9)
 
 ## Context
 

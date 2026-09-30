@@ -9,15 +9,16 @@ This is a living document. Milestones after the current one are a
 direction, not a commitment. They get re-ordered, merged or dropped as we
 learn.
 
-Last updated: 2026-09-28 (restructured around the free-first product
-strategy; see [Roadmap strategy](#roadmap-strategy))
+Last updated: 2026-09-30 (M2 complete; restructured around the
+free-first product strategy on 2026-09-28, see
+[Roadmap strategy](#roadmap-strategy))
 
 ## Current goal
 
 > **Phase 1: finish the free, local-first core.** The next milestone is
-> **M2 — Receipt upload and built-in parsing** (planned, in plan review).
-> After it comes the shared-household core: households, an expense
-> ledger, balances and settling up (M3–M4).
+> **M3 — Households, members and the expense ledger**, the start of the
+> shared-household core: households, an expense ledger, balances and
+> settling up (M3–M4).
 
 Nothing in Phases 3–8 is being built yet.
 
@@ -107,7 +108,7 @@ scope. Anything not listed as must-have is negotiable there.
 |-----|----------------------------------------------------|----------------------------------|-------------|
 | M0  | Project foundation                                 | 1 · Free local-first core        | Complete    |
 | M1  | Bill splitter (manual entry)                       | 1 · Free local-first core        | Complete    |
-| M2  | Receipt upload and built-in parsing                | 1 · Free local-first core        | Not started |
+| M2  | Receipt upload and built-in parsing                | 1 · Free local-first core        | Complete    |
 | M3  | Households, members and the expense ledger         | 1 · Free local-first core        | Not started |
 | M4  | Balances and settling up                           | 1 · Free local-first core        | Not started |
 | M5  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
@@ -244,8 +245,14 @@ split math and the UI right before OCR adds uncertainty.
 
 ## M2 — Receipt upload and built-in parsing
 
-**Status:** Not started (plan revision 1 in plan review:
-`docs/milestones/milestone-2-PLAN.md`)
+**Status:** Complete (accepted 2026-09-30; PR #6), with one remediation
+child for real receipts (`milestone-2-remediation-1`). Plans archived at
+`docs/milestones/completed/milestone-2-PLAN.md` and
+`docs/milestones/completed/milestone-2-remediation-1-PLAN.md`.
+Carried forward: switching the built-in reader from Tesseract.js to
+PaddleOCR (the user's decision, 2026-09-29) to raise the accepted
+read-rate floors on real receipts, and the phone reading-time
+measurement that was waived for it. Neither has a milestone yet.
 
 **Goal:** Upload a photo or PDF of a receipt and get the item list filled in
 automatically, for free and entirely in the browser.

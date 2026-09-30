@@ -112,7 +112,7 @@ don't download them again. They're public data, not personal data.
 
 `src/features/receipt/` turns a file into an M1 bill, entirely in the
 browser. The plan and its decisions (D1–D18) are in
-[`docs/milestones/milestone-2-PLAN.md`](../docs/milestones/milestone-2-PLAN.md),
+[`docs/milestones/completed/milestone-2-PLAN.md`](../docs/milestones/completed/milestone-2-PLAN.md),
 and the dependencies are recorded in
 [`docs/adr/0002-in-browser-receipt-reading.md`](../docs/adr/0002-in-browser-receipt-reading.md).
 
@@ -127,7 +127,7 @@ and the dependencies are recorded in
   scan, so none of the reader code is in the main bundle.
 
 The remediation of M2's functional review
-([`docs/milestones/milestone-2-remediation-1-PLAN.md`](../docs/milestones/milestone-2-remediation-1-PLAN.md))
+([`docs/milestones/completed/milestone-2-remediation-1-PLAN.md`](../docs/milestones/completed/milestone-2-remediation-1-PLAN.md))
 added, for real receipts:
 
 - Clean-up by text size (`preprocess.ts`, `strips.ts`): a page is
