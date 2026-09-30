@@ -1,0 +1,10 @@
+Minipreço
+Dia Portugal Supermercados, S.A.
+NIF 543210987
+Leite Meio Gordo 0,79 A
+Pão Rústico 1,20 (A)
+Detergente Roupa 7,99 C
+Cerveja Sagres 6x33cl 4,99 C
+TOTAL 14,97
+A 6% 1,88 0,11
+C 23% 10,55 2,43

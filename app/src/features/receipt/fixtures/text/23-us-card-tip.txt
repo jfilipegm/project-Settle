@@ -1,0 +1,11 @@
+Joe's Pizza
+Large Pepperoni 18.00
+Garlic Knots 5.00
+Soda 2.50
+Subtotal 25.50
+Tax 2.23
+Total 27.73
+Tip 5.50
+Total 33.23
+Customer Copy
+Mastercard XXXX1234

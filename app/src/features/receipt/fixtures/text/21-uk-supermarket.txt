@@ -1,0 +1,15 @@
+TESCO
+Tesco Stores Ltd
+VAT Reg No 220 4302 31
+Milk 2 Pints £1.45
+Bread Wholemeal £1.30
+Clubcard Price Saving -£0.30
+Bananas Loose
+0.850 kg x £0.95/kg £0.81
+Cheddar 400g £3.75
+Savings -£0.50
+SUBTOTAL £6.51
+Total savings £0.80
+BALANCE DUE £6.51
+Visa Debit £6.51
+Change £0.00

@@ -1,0 +1,14 @@
+Marisqueira do Porto
+Rua do Ouro 12, Porto
+NIF: 505555557
+Mesa 7 Pessoas 4
+Data: 26/09/2026
+Qtd Descrição Valor
+1 Arroz de Marisco 38,00
+4 Imperial 8,00
+1 Pão e Manteiga 3,50
+Taxa de serviço 4,95
+Total s/ IVA 44,11
+Total c/ IVA 54,45
+Pago com cartão 54,45
+Processado por programa certificado n.º 1234/AT

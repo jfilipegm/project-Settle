@@ -1,0 +1,7 @@
+Mercearia Lopes
+Artigo Qtd Preço Total
+Batatas 2 0,95 1,90
+Cebolas 0,750 1,20 0,90
+Alho 3 0,35 1,05
+Azeitonas 1 2,40 2,40
+Total 6,25

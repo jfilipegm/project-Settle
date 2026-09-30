@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="598" height="646" font-family="DejaVu Sans Mono" font-size="22" fill="#111">
+<defs><filter id="smudge"><feGaussianBlur stdDeviation="3"/></filter></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="34" y="56" xml:space="preserve">             Rosie's Diner</text>
+<text x="34" y="88" xml:space="preserve">            410 Main Street</text>
+<text x="34" y="120" xml:space="preserve">         Springfield, IL 62701</text>
+<text x="34" y="152" xml:space="preserve">09/29/2026                      12:31 PM</text>
+<text x="34" y="184" xml:space="preserve"></text>
+<text x="34" y="216" xml:space="preserve">Cheeseburger Deluxe                12.95</text>
+<text x="34" y="248" xml:space="preserve">Chicken Caesar Salad               11.50</text>
+<text x="34" y="280" xml:space="preserve">French Fries                        4.25</text>
+<text x="34" y="312" xml:space="preserve">2 x Coffee 2.50                     5.00</text>
+<text x="34" y="344" xml:space="preserve"></text>
+<text x="34" y="376" xml:space="preserve">Subtotal                           33.70</text>
+<text x="34" y="408" xml:space="preserve">Sales Tax 8.25%                     2.78</text>
+<text x="34" y="440" xml:space="preserve">Total                              36.48</text>
+<text x="34" y="472" xml:space="preserve">Tip                                 6.50</text>
+<text x="34" y="504" xml:space="preserve">Total                              42.98</text>
+<text x="34" y="536" xml:space="preserve"></text>
+<text x="34" y="568" xml:space="preserve">VISA XXXX4821</text>
+<text x="34" y="600" xml:space="preserve">               Thank you!</text>
+</svg>

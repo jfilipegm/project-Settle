@@ -1,0 +1,33 @@
+{
+  "merchant": "THE BLACK SWAN",
+  "date": "2026-09-29",
+  "currencyHint": "GBP",
+  "tax": "5.90",
+  "tip": "3.93",
+  "total": "35.38",
+  "items": [
+    {
+      "name": "Pint of Bitter",
+      "quantity": "2",
+      "unitPrice": "4.60",
+      "lineTotal": "9.20",
+      "needsCheck": false
+    },
+    {
+      "name": "Steak and Ale Pie",
+      "quantity": "1",
+      "unitPrice": "15.50",
+      "lineTotal": "15.50",
+      "needsCheck": false
+    },
+    {
+      "name": "Sticky Toffee Pudding",
+      "quantity": "1",
+      "unitPrice": "6.75",
+      "lineTotal": "6.75",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "check": "match"
+}

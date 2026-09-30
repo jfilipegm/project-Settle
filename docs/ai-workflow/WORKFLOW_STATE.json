@@ -727,6 +727,1550 @@
       "blocking_decisions": [],
       "state_revision": 26,
       "last_transition": "2026-09-28T06:35:59Z"
+    },
+    "milestone-2": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-2",
+      "parent_work_item_id": null,
+      "plan_path": "docs/milestones/milestone-2-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-2-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-2-mapping.json",
+      "governing_workflow_version": "2.1",
+      "phase": "MILESTONE_COMPLETE",
+      "plan_revision": 10,
+      "implementation_revision": 2,
+      "functional_review_round": null,
+      "base_commit": "74cf84a677f32362a07b9fc7b2cb43b990ef75e0",
+      "reviewed_implementation_head": "bada19297c562d904c98b0adfcc72d7c1cc43963",
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": "M2-CP5",
+      "checkpoints": {
+        "M2-CP1": {
+          "status": "COMPLETE",
+          "start_commit": "3af0e1817fe772c27a9e9e20d03ec8fa7930f71e"
+        },
+        "M2-CP2": {
+          "status": "COMPLETE",
+          "start_commit": "a9eb9990161ffca1f5d6f3ee5da85e6c4cd06aa6"
+        },
+        "M2-CP3": {
+          "status": "COMPLETE",
+          "start_commit": "317b395302d652ab5bb4237c11213f64a6bc7a97"
+        },
+        "M2-CP4": {
+          "status": "COMPLETE",
+          "start_commit": "33dc7d5ccc4904fb560d1764c95ee5100433190e"
+        },
+        "M2-CP5": {
+          "status": "COMPLETE",
+          "start_commit": "0ef64540c2f4ad44c14baf0fcc458f2894a239c8"
+        }
+      },
+      "current_bundle_id": null,
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "1ce18fad74842fa6c9f561aefc3b3366454b38d04306db4466319a0e6d3d569f",
+        "approved_review_content_id": "f6623c43fa6d0ad06d98f090c3cefc37a158b93016301250be1810fa0df46f84",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-2-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f9c8337a4b7fce269cd9299b96395c25eeb56a2b"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-2-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a58962e96b4837d455964673bbcb6f33816d820c"
+          },
+          {
+            "path": "docs/milestones/milestone-2-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b7bce39380bd33a548a5a00d59b7ff7ba977c548"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-2 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-09-28T23:15:08Z"
+      },
+      "technical_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "986c118407bdecf0dcaee1ff282272c64dc5b57c8881cc92d99f50c4f45773da",
+        "approved_review_content_id": "9a2e29331d55076f090678cea8d7f11d68d8e93edbb4e4957908a9345dc422c2",
+        "review_content_manifest": [
+          {
+            "path": "README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "e3cd45f07d3038991ef0cf4d5b0e117abc801be1"
+          },
+          {
+            "path": "app/.gitignore",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1ba53dab5755aeed98c8bead8d991102471d881c"
+          },
+          {
+            "path": "app/.prettierignore",
+            "exists": true,
+            "mode": "100644",
+            "blob": "074dd55eb8f7db4d9f38efc7273f27029a584d7a"
+          },
+          {
+            "path": "app/README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "96661f4cdf31b72c65937625ac448f5682e0907b"
+          },
+          {
+            "path": "app/cspMeta.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bcc8963a31bfd01f07af79cb14a5ebaac15976be"
+          },
+          {
+            "path": "app/eslint.config.js",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ec4291536339b701abb01682574f671b6db37476"
+          },
+          {
+            "path": "app/package-lock.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ed7636233c49b0d02d5ec2fa884008cceef09b03"
+          },
+          {
+            "path": "app/package.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9f9366eee9220c4e0260195e7ae59dd254bc9181"
+          },
+          {
+            "path": "app/public/THIRD_PARTY_NOTICES.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "78c42349889123c55112c253a46db62187f2b8dc"
+          },
+          {
+            "path": "app/scripts/check-requests.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "77a3124911d14c7a27b08bea121366ae49487486"
+          },
+          {
+            "path": "app/scripts/make-sample-receipts.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1188b22d4b2a302ff31617f9b17337dbfaa6ce88"
+          },
+          {
+            "path": "app/scripts/vendor-assets.d.mts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3fef0b50d4ffa8e1b48958f5855af7071b44842b"
+          },
+          {
+            "path": "app/scripts/vendor-assets.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b3ee3add631b17f2393756e29a672c87ada4fffc"
+          },
+          {
+            "path": "app/src/App.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d6976c17ae9c29088565aca7892bef088be15d39"
+          },
+          {
+            "path": "app/src/app/cspMeta.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "fbcb3f8181e31878f5eaed06279280241cb5fa57"
+          },
+          {
+            "path": "app/src/app/router.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "919e04a1a197767b47626ea3816001072498b7dc"
+          },
+          {
+            "path": "app/src/app/staticOnly.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "fa9b9cd9a591139377ea97fd48e0d5238ebef1ee"
+          },
+          {
+            "path": "app/src/features/receipt/ReceiptImportProvider.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bf860e2fd94dac537a14f0a7c8e728081b51a61c"
+          },
+          {
+            "path": "app/src/features/receipt/assets.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1af63eafb417b488e226e98238ab4f2de2363fc2"
+          },
+          {
+            "path": "app/src/features/receipt/assets.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "829ce94b244781888f8cd6133906a1165d46ee22"
+          },
+          {
+            "path": "app/src/features/receipt/browserImport.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "793dc6222a491df95f8d77e89e3695f5341d4f27"
+          },
+          {
+            "path": "app/src/features/receipt/builtInReader.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4012204f64c3c4782f1dfdafda72f94988841932"
+          },
+          {
+            "path": "app/src/features/receipt/builtInReader.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "15d403d7557c4de945acc9db46b3df5af71198e7"
+          },
+          {
+            "path": "app/src/features/receipt/components/ReceiptCheck.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6780f1da712756d1ce74c63e6b7d05be328ddba0"
+          },
+          {
+            "path": "app/src/features/receipt/components/ScanReceipt.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f76b7c72c6f8f0cccab16e426e56afe374a76b6b"
+          },
+          {
+            "path": "app/src/features/receipt/components/receipt.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2216da0f76cc8893f9b7ef68e1f694609c8ecc05"
+          },
+          {
+            "path": "app/src/features/receipt/decode.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bc365be599307300c590a701558d0e3f5751ee6a"
+          },
+          {
+            "path": "app/src/features/receipt/decode.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9baed6df58defdd5c14b52a8f7f87e73485553e8"
+          },
+          {
+            "path": "app/src/features/receipt/encodePage.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "90933113ab73ed27a2b79ad89d7afffcbaa58982"
+          },
+          {
+            "path": "app/src/features/receipt/encodePage.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d0f3c3e4c5ee97830fbd57d1301f15d09c0f42c0"
+          },
+          {
+            "path": "app/src/features/receipt/fiscalQr.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c34fca0d0113b0a85b178cbde261ad8ee8dee9d5"
+          },
+          {
+            "path": "app/src/features/receipt/fiscalQr.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "54a2651546ed27063cf17dd95e349dade9174b05"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-1.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c240cff6f4ae87f3a774f7e23da5b36439580d24"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-1.jpg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "633394def23260ea2a9f6ad061c969276bbb3d20"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-3.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3414f28e26e133f21ec73be8df21324c659794d4"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-3.heic",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bd0bce9c33c9d5503debcf796aedd85d0b4c1f32"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-6-scanned.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "96aa13b1d0ed75a8bea29dcab5b76da33b5eb51d"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-6-scanned.pdf",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0c86d97dfa94a1cadef9cc46132e07be850e938c"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-9.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "990751506ac382e2b488a75472abb35b0d70a622"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-9.pdf",
+            "exists": true,
+            "mode": "100644",
+            "blob": "44a4f247629fe54e334810a74ca0d173211edf13"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/01-pt-restaurante-qr.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c240cff6f4ae87f3a774f7e23da5b36439580d24"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/01-pt-restaurante-qr.ocr.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4b65a83ebdfa2f6ee968bd86793dafe853c5cab4"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/01-pt-restaurante-qr.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "79cdbabf951e5e7d444beb1dceff90def574156a"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/01-pt-restaurante-qr.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1e26947c0c4e11ec6c7e011cf3fa5bd62b2edee9"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/02-pt-restaurante-qr-foto.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c240cff6f4ae87f3a774f7e23da5b36439580d24"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/02-pt-restaurante-qr-foto.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "75edc9e0333bca9fa8039b2dc6e2743824edfee4"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/03-pt-supermercado-qr.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3414f28e26e133f21ec73be8df21324c659794d4"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/03-pt-supermercado-qr.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3e8c24a50c164e63ec1d21c96972fac56fe8e6a5"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/03-pt-supermercado-qr.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0c6d661bb976aa11a26fb6c13cdd99148ec065f4"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/04-pt-cafe.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "cbe1a786554a75c8bc6cd31a01cbc5e6c74ce56a"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/04-pt-cafe.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ca47c27a2aec94173226d172927bba500a0663e6"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/04-pt-cafe.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5ef44f8df767cce6c6ecc5a665f0826b33781e78"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/05-pt-talao-desbotado.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "55dc4f1222db0ab2102aec9d82ee1ef0eac27c07"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/05-pt-talao-desbotado.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "58089ec85ebdc991a4b75ad27aeb9a6cf27190a0"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/05-pt-talao-desbotado.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "13654f205cc98301ea7714608cfd247cb493fe75"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/06-uk-pub.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "96aa13b1d0ed75a8bea29dcab5b76da33b5eb51d"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/06-uk-pub.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "157093e62eeae0483ec1919c333eebfc79080ea8"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/06-uk-pub.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7147911682ea9a35bc9e8e013bf36e0e07375e55"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/07-us-diner.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a7007b305937ca998338e9cf5790e8ace086fbb6"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/07-us-diner.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c17b0b2abc5961652fcf021f721e0f46afd4833c"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/07-us-diner.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ca672321be8920cabcf6ae3eb217552516cadb99"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/08-pt-linha-borrada.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "68b2b6ebe9c594e4570a360b947e6dcab264c6bc"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/08-pt-linha-borrada.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "16b875bdfb3c71eaa49727b04771715470165444"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/08-pt-linha-borrada.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4ee73b99d16004ac03195ef006ae4a399c0cc7c8"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/09-pt-efatura.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "990751506ac382e2b488a75472abb35b0d70a622"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/09-pt-efatura.pdf",
+            "exists": true,
+            "mode": "100644",
+            "blob": "44a4f247629fe54e334810a74ca0d173211edf13"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/09-pt-efatura.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "00749cf26d27f386410a01b0f520c10ba22b52ad"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/10-nao-e-recibo.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "de665e1b4e1a08b58a713819860aa21323affd6a"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/10-nao-e-recibo.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "220766402b91ea4e5341949de8859bb391fe0715"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/10-nao-e-recibo.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7981edbd8c0d0804dd14006a335f8050fed04147"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/01-pt-restaurante-qtd.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5b68d2e2a2e94f6161bf6e7d8de2be1edcb59158"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/01-pt-restaurante-qtd.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bf0998496e897aa6dd8dd6aca9b6c5f0f89684f6"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/02-pt-cafe.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "25fdf3e4cc2cff064e5e14225fc51f63329e1b65"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/02-pt-cafe.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "cdb53cdc1cb7330b57fb12c0a64db4f32097c90f"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/03-pt-supermercado-continente.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ec63e622cc66d78dfaeebfa2006ee1d9b47298bf"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/03-pt-supermercado-continente.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "19208cc18d0637a355584a6000a08d112add98d2"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/04-pt-supermercado-quantidades.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "74fb780a02b9dd0dc851b7577ccf8ac12e0e5ed0"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/04-pt-supermercado-quantidades.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "83534899518ad6c9048bb37f1208c7c4554efcf9"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/05-pt-restaurante-servico.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "e4a7f4a35954fcffdc7033479a6bf20af115adcb"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/05-pt-restaurante-servico.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c1d1fd5f9f8cd9c4de19dd886d0a01258e001180"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/06-pt-restaurante-taxa-por-linha.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b9efdc3f59a68ddd89b1666eeeec68dde6310c57"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/06-pt-restaurante-taxa-por-linha.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9932f9c46f191192aa3904ae5be187474bff62a5"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/07-pt-fatura-oficina.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "312f51355399e18a146c55746f5f75793cfae8c1"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/07-pt-fatura-oficina.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "877a6cd53c5987559899b1f5f7477cd792bad891"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/08-uk-pub.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "da03deddcc465d9667ef3e6b3d37f5aae80d00fb"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/08-uk-pub.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f25150fbe8dbe7800914ad562b3def8b44823a4c"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/09-us-diner.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "212c0ecb9988b7fb06dcf84c0d87c985080bd829"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/09-us-diner.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d54a5de6c04009e1eb8c5562b0fcb9cf96199348"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/10-us-suggested-tips.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "42c7214056053db072fc1752ab268cf9d31f6f6f"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/10-us-suggested-tips.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2f67f55f2d4524d63d6cd3a15148e3fc12da1467"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/11-ocr-letras-por-digitos.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "abff1a98db3c9860da2747be0e94211190028a96"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/11-ocr-letras-por-digitos.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ffa6406738a6c9f36d2b4c671cf92e6fbddda653"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/12-ocr-espacos.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "80a5e821dc569f3c24423af4ce10694cb63e0b63"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/12-ocr-espacos.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c7ee5ab3f04d0e159caca1a2fd593376b46b7f98"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/13-ocr-baixa-confianca.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "dd4c5f855b801d28a76e1252a43b541ac240f9b1"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/13-ocr-baixa-confianca.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1aa348b75a688c3257ce756ae0b46f43d707c60d"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/14-linhas-so-quantidade.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "160132d407eebe714764d3933d0af449ed0e1e97"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/14-linhas-so-quantidade.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d1f4f418c8f8946ca59fc7b8d8d95005b9305fbf"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/15-colunas.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "077eea4d9368488ada5fb8de4c5c70f7a62669f0"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/15-colunas.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "164617fda6a9b81e80fe06b77b6fd33ae03b7780"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/16-pagamento-depois-do-total.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1ffd20a81f6b77a70ef11b52000d517bc70a7843"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/16-pagamento-depois-do-total.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b10650eebe70594d2e66052e3a002933c4d52cb0"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/17-sem-total.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "73f26c6315eb8b76364b347ccdb712ef6c278500"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/17-sem-total.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d8d59e47b744a1a8a102382d499f567dab0b3995"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/18-sem-artigos.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "51c94822f8a6036ec08c54655d024009dcbd3725"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/18-sem-artigos.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3023217ca3edea4ada56545f69703d7bab434c3a"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/19-pt-codigos-de-taxa.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f1dcbcb8b325e21cfdbc3730e665b910490461da"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/19-pt-codigos-de-taxa.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7c81fa0c1156462294386d6c3c5b7076b7629288"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/20-desconto-maior-que-o-artigo.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "40580440ea0f86ad9d22c9efce45855b8c1803b1"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/20-desconto-maior-que-o-artigo.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b4d629490c0a83a17eee25054a87c66f2d21bd7e"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/21-uk-supermarket.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "abae9585d48916855e9378d25f40dbb3801fc8b1"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/21-uk-supermarket.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9e76d880288bacf2195a234147d0da3a69e1caa8"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/22-pt-total-mais-especifico.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1bd43b3a7aad86d33c04370b4e80fb52ec2d9c42"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/22-pt-total-mais-especifico.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a63b0a25e24eba6b02c02aa51b63513dd187079c"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/23-us-card-tip.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2ba18378f9865249ba0d3f650da3c0efdb565775"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/23-us-card-tip.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "e43ca2549222ca40957cdb23345b7de8017e8611"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/24-pt-cabecalho-datas-e-capital.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "aef819f2e38bf2c8383496aea41dd4dd7c95b768"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/24-pt-cabecalho-datas-e-capital.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0ed74e6fcd0a4ebc83dc731ee73d05e2a8dffd0c"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/25-pt-supermercado-tabela-iva.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3841694ba87f1132054ceafcd260ffe6f1eeab6c"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/25-pt-supermercado-tabela-iva.txt",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b7951f04e0af4b16ae960ac04ac39d7289a53818"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/textFixtures.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "451d6f4ef61ab38850b76d3b89fd8941803eda07"
+          },
+          {
+            "path": "app/src/features/receipt/importReceipt.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "88842c591507c424178b2d264c182fc4f35331bd"
+          },
+          {
+            "path": "app/src/features/receipt/importReceipt.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "663a160520721aeb734d6e183160d918d9846947"
+          },
+          {
+            "path": "app/src/features/receipt/importUi.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bc6804ab5d42d6d31ce95d2c0c579141cdd367a3"
+          },
+          {
+            "path": "app/src/features/receipt/importUi.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4dd49e71c937dd68e19646d6af724d92300fca9d"
+          },
+          {
+            "path": "app/src/features/receipt/intake.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a817eb3917b40ce7d00cc5ea6ee7ea2fbb3cd1ea"
+          },
+          {
+            "path": "app/src/features/receipt/intake.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9e304ccdaee5c79b2fbe7cce7e8bddfd5359bbdf"
+          },
+          {
+            "path": "app/src/features/receipt/messages.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b0a24bfbbfb7103948c9164b66f794076c242ac1"
+          },
+          {
+            "path": "app/src/features/receipt/model.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "714b34b88da9431fa75c5809adaa8281e2f02e21"
+          },
+          {
+            "path": "app/src/features/receipt/parse/amounts.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "094357eeb380a5520e0f6f62e326653a01f479f3"
+          },
+          {
+            "path": "app/src/features/receipt/parse/amounts.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "03642690f5913fa74b0e66fdc70487c4a16ab6af"
+          },
+          {
+            "path": "app/src/features/receipt/parse/keywords.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9ad2b397f529e8b53d52d99f71b84f731a9bd4b4"
+          },
+          {
+            "path": "app/src/features/receipt/parse/parseReceiptText.fixtures.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0fb188b3451d059862bdc8f0e8a1ef888f96efe0"
+          },
+          {
+            "path": "app/src/features/receipt/parse/parseReceiptText.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "677bae19738c054ebca8274ffa6ba3dd603c5c74"
+          },
+          {
+            "path": "app/src/features/receipt/parse/parseReceiptText.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a91d697909ea2ba922d13623f632d651645ce97f"
+          },
+          {
+            "path": "app/src/features/receipt/pdfTextLines.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3fb7aafb3a2ef979e5fe9110605f409aca1556aa"
+          },
+          {
+            "path": "app/src/features/receipt/pdfTextLines.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "30c17400a6755515cfe1f786cb09dd718ae7331d"
+          },
+          {
+            "path": "app/src/features/receipt/preprocess.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3c5b199594252d6d43d78befcdacca6cd26efb9d"
+          },
+          {
+            "path": "app/src/features/receipt/preprocess.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "226d45d581f0cb374b3a9f867a13230c096eec18"
+          },
+          {
+            "path": "app/src/features/receipt/qrScanner.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "425de3574475d9db8419fbffc9c10c5d8587e49d"
+          },
+          {
+            "path": "app/src/features/receipt/qrScanner.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7bffa29c36a1aaafc5d12bd592cc5e98e493e159"
+          },
+          {
+            "path": "app/src/features/receipt/receiptImport.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ea9dd58731171fed5c78ef905c72b1c1bcbb617d"
+          },
+          {
+            "path": "app/src/features/receipt/receiptStore.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f0fa85224603658d7e98d6b572634e838c3ca55c"
+          },
+          {
+            "path": "app/src/features/receipt/receiptStore.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2a3f4cce560a518295a3ae281b2952c92de90662"
+          },
+          {
+            "path": "app/src/features/receipt/receipts.ocr.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "35632ef013ac0e89ebe8e6f4fafd093dae975134"
+          },
+          {
+            "path": "app/src/features/receipt/reconcile.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "23236f0c71e6aed1c1fba6665fa13cba667fbeba"
+          },
+          {
+            "path": "app/src/features/receipt/reconcile.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c8c0ff8dfe4ef19a68b1f2bf430d078ba1306d7b"
+          },
+          {
+            "path": "app/src/features/receipt/toBill.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5be1ec8f8c03353da3a0331029c3e1a8139e917d"
+          },
+          {
+            "path": "app/src/features/receipt/toBill.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9fea46b21312028abb79eafd018a296a1333a624"
+          },
+          {
+            "path": "app/src/features/receipt/vendor.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "269ed7c930cd61e38548aca33b398bff5796ecdd"
+          },
+          {
+            "path": "app/src/features/split/billReducer.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4b2cac0cd019bf9af01a15f438638e389b888c62"
+          },
+          {
+            "path": "app/src/features/split/billReducer.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ba7ae23f52e7fbbd035400f215792c4f9d724adb"
+          },
+          {
+            "path": "app/src/features/split/components/ItemsSection.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b1f7da5f1d1969123c1f7878c90afb26daf86f0a"
+          },
+          {
+            "path": "app/src/features/split/components/split.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d4b8da80d8a07b294d9a4c2b58968d4bd779dcd3"
+          },
+          {
+            "path": "app/src/pages/SettingsPage.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "13ef82479a3e9e584e4178b3f0f0290f8c333134"
+          },
+          {
+            "path": "app/src/pages/SettingsPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "fa09230ffbbe1c4bc2b9dbd648a3fd29fc8ae76e"
+          },
+          {
+            "path": "app/src/pages/SplitPage.e2e.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f0bcb4a11d8f416c78c27a86d9e732683e008938"
+          },
+          {
+            "path": "app/src/pages/SplitPage.receipt.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "116ca0f1268c05dd9b10caef7468f02e98189fa6"
+          },
+          {
+            "path": "app/src/pages/SplitPage.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "971f51b3f04c0215a5334760f9f95dee954b43a9"
+          },
+          {
+            "path": "app/src/pages/SplitPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "56af91e46bb9bb92afcdaca6565df4494f2c1326"
+          },
+          {
+            "path": "app/src/test/pngjs.d.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b9dfaee8302f7c126ccdd70b2c9c77ea24fc1a06"
+          },
+          {
+            "path": "app/src/test/setup.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d66bc54b5891d75f12ecc541e4690b650d3784d5"
+          },
+          {
+            "path": "app/tsconfig.node.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b79394f153eaa3bbaa90fd8a9c8a9c71026d8ec9"
+          },
+          {
+            "path": "app/vite.config.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8a0d2b5a2ce2dc5bf4d3c1bec41f4998f376f310"
+          },
+          {
+            "path": "docs/adr/0002-in-browser-receipt-reading.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c395b370584bcaaf6029764c0aae133af8b7ef56"
+          },
+          {
+            "path": "docs/ai-workflow/registry/milestone-2-artifacts.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c3f81e3c3152e7f255876d571bb9df855248f875"
+          }
+        ],
+        "reviewed_content_commit": "bada19297c562d904c98b0adfcc72d7c1cc43963",
+        "legacy_evidence": null,
+        "user_confirmation": "implementation — I approve milestone-2 implementation",
+        "waived_guarantees": [],
+        "recorded_at": "2026-09-29T10:54:27Z"
+      },
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "f6623c43fa6d0ad06d98f090c3cefc37a158b93016301250be1810fa0df46f84",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "1ce18fad74842fa6c9f561aefc3b3366454b38d04306db4466319a0e6d3d569f",
+          "verdict": "APPROVE",
+          "round": 10,
+          "completed_at": "2026-09-28T23:05:26Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "1ce18fad74842fa6c9f561aefc3b3366454b38d04306db4466319a0e6d3d569f",
+          "verdict": "APPROVE",
+          "round": 3,
+          "completed_at": "2026-09-28T23:10:08Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 49,
+      "last_transition": "2026-09-30T18:14:36Z"
+    },
+    "milestone-2-remediation-1": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-2-remediation-1",
+      "parent_work_item_id": "milestone-2",
+      "plan_path": "docs/milestones/milestone-2-remediation-1-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-2-remediation-1-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-2-remediation-1-mapping.json",
+      "governing_workflow_version": "2.1",
+      "phase": "MILESTONE_COMPLETE",
+      "plan_revision": 12,
+      "implementation_revision": 2,
+      "functional_review_round": null,
+      "base_commit": "4b75b092804be374ae7ebd0e0d1d9e8ef4efb3af",
+      "reviewed_implementation_head": "184a44aeabe4db5d2c9c8e29d560a4c4b025f880",
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": "M2R1-CP4",
+      "checkpoints": {
+        "M2R1-CP1": {
+          "status": "COMPLETE",
+          "start_commit": "5a424857c1749cb7eed1e05d9caed5638ba063ab"
+        },
+        "M2R1-CP2": {
+          "status": "COMPLETE",
+          "start_commit": "480d45fb4885afb4cc3a3d470e645147a7e7c5da"
+        },
+        "M2R1-CP3": {
+          "status": "COMPLETE",
+          "start_commit": "8c6089b9aeaae910adeb7817ce4861f68463e2eb"
+        },
+        "M2R1-CP4": {
+          "status": "COMPLETE",
+          "start_commit": "e05ea8f453f36fecdd1f5ffe793258e1e53d5815"
+        }
+      },
+      "current_bundle_id": null,
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "65672659cbd8d2630067e90337d6f8a3ba82087904596b8f11a0f987703f863e",
+        "approved_review_content_id": "632379e1b686ec1266b1126720f60addc4fc648449354daa3cc7a4c8526a4a8b",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-2-remediation-1-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5a341c39fabd77629f8a365616b4916ae0433750"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-2-remediation-1-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "365a871a33100b79ce8984dcd2010fe797d31a7e"
+          },
+          {
+            "path": "docs/milestones/milestone-2-remediation-1-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b02c3d4399346c51e9161969aa98ca053f47b3a9"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-2-remediation-1 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-09-29T15:26:21Z"
+      },
+      "technical_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "c868b42c63617389beb9fecc0c6071e5062306445fcf696fdb1c751b1108952c",
+        "approved_review_content_id": "a04e7823c57d7559015ec5e0ba19ab13bca7ffed517341b53745f05be0796053",
+        "review_content_manifest": [
+          {
+            "path": ".github/workflows/app-ci.yml",
+            "exists": true,
+            "mode": "100644",
+            "blob": "54c8a9ccdd03dc58d53bb11063ac14cf9baa0eee"
+          },
+          {
+            "path": "README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "16cb96ae6bd4856a71df95ad104029ab6f25bf8c"
+          },
+          {
+            "path": "app/.gitignore",
+            "exists": true,
+            "mode": "100644",
+            "blob": "e1a426c4c5320a4aebbbc014eaa3eb1189e33916"
+          },
+          {
+            "path": "app/README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ebf0e2266c6672f1548d853844ce6fff184537ef"
+          },
+          {
+            "path": "app/scripts/make-sample-receipts.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0f8e2af0765f3f88fc17b1b00ee93256c3b4ff68"
+          },
+          {
+            "path": "app/src/features/receipt/builtInReader.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "83961ac28f4b8bd1fa6068cbd2f5ad62c54d1930"
+          },
+          {
+            "path": "app/src/features/receipt/builtInReader.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f5a874973005ddc6c6de9284de3c1cb09ef30a1f"
+          },
+          {
+            "path": "app/src/features/receipt/components/ReceiptCheck.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bd67b29b4f6acbe57c744993097a6346c8ca3a05"
+          },
+          {
+            "path": "app/src/features/receipt/components/receipt.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4f7043385a2db494750c81391c767e2aaf8a3f54"
+          },
+          {
+            "path": "app/src/features/receipt/encodePage.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "35b8ed8003c1be60ee1c75c5f984bf2979f0e4d6"
+          },
+          {
+            "path": "app/src/features/receipt/encodePage.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "828b1593c5599b9fc122eb5f039a7685afd0b66a"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-12.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "db1f6c002b2151017951205c4180295936609535"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/browser/sample-12.jpg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2a97ca796b257c7edf308ee7d9a92ad621e0d958"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/11-pt-app-estreito.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ac28023dbbbafb5b24210487ac53d5d745903cdf"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/11-pt-app-estreito.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a5d749d91ce0f7e60d43009d5bc7b1810e26a31a"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/11-pt-app-estreito.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1726c9c5c0847c84d01269d13993bd6a3867f2fa"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/12-pt-hiper-foto.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "db1f6c002b2151017951205c4180295936609535"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/12-pt-hiper-foto.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3187fe6e92aa2cf442c64dcafb3694337d91dc59"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/12-pt-hiper-foto.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "62060d68a98b1554a8dd2c6d2e06e75a74ddc93e"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/13-pt-loja-roupa-foto.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "72001ed62952920f4d8f3b7ca7556a49f0dec8b8"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/13-pt-loja-roupa-foto.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a90730ad03b4a84bd08de4016a62204931b3eda5"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/13-pt-loja-roupa-foto.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3ab55c52a908daa228c410e9e5f8aa7c6e819c2b"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/text/20-desconto-maior-que-o-artigo.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4b7b7d848f5b212589ca3aab8c7857ef7fa0eb43"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/textFixtures.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6d25c52ad4092f02f07fc930a1dc3179776483c0"
+          },
+          {
+            "path": "app/src/features/receipt/importDeps.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "60c67f34cc0b8eac512de6a2342f18b08eda93f9"
+          },
+          {
+            "path": "app/src/features/receipt/importReceipt.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f5f5d17161639818ca75e255cd43e66e90febcfa"
+          },
+          {
+            "path": "app/src/features/receipt/importReceipt.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "66f147ecca45da7ba022524049fc42962953196f"
+          },
+          {
+            "path": "app/src/features/receipt/localFixtures.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a77f566359f2d9e44a46806f2e575d2999dcaff0"
+          },
+          {
+            "path": "app/src/features/receipt/localFixtures.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d5beaf4d7000d09b5a1fae5e786a983459632b17"
+          },
+          {
+            "path": "app/src/features/receipt/matchedCoverage.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "67284aaf962d7a82c732b4efe7bb714c768eb18d"
+          },
+          {
+            "path": "app/src/features/receipt/matchedCoverage.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2b760bab9c812589590a4cc3e033a646a08457c5"
+          },
+          {
+            "path": "app/src/features/receipt/messages.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d6972c3aff7eca6d31398cb5a5ea377ecadcebe8"
+          },
+          {
+            "path": "app/src/features/receipt/model.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "31f49dae101d2ab6fe7e6a319e18e94658f3a32d"
+          },
+          {
+            "path": "app/src/features/receipt/parse/keywords.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2d00b8d98f5a45796ce74739e1ad734513df9080"
+          },
+          {
+            "path": "app/src/features/receipt/parse/parseReceiptText.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "db6531fb03ab4e532c3c682db2c448a2648fe880"
+          },
+          {
+            "path": "app/src/features/receipt/parse/parseReceiptText.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f2b7ef12af7857045ce5883614ce374854d08567"
+          },
+          {
+            "path": "app/src/features/receipt/preprocess.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "cd1339fc038b5f1b8ae331dd0491380da8db5960"
+          },
+          {
+            "path": "app/src/features/receipt/preprocess.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b5fc24f90f69d356f982750242f64b8fd3607dec"
+          },
+          {
+            "path": "app/src/features/receipt/receiptStore.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8de68d411c4e7bd84a437eb5fd87ba3d3b713944"
+          },
+          {
+            "path": "app/src/features/receipt/receiptStore.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5a798ddc9e80d665bd5be109a4a41dcda078439d"
+          },
+          {
+            "path": "app/src/features/receipt/receipts.local.ocr.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ef913df4dc1111fcf38ffb3f2847251b019009c1"
+          },
+          {
+            "path": "app/src/features/receipt/receipts.ocr.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "79ed971b4a6089d0d8ff73e5a5d787ed6fae6541"
+          },
+          {
+            "path": "app/src/features/receipt/review.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6fe9e2999e12b541c609a825fe8cb8987ae6cea4"
+          },
+          {
+            "path": "app/src/features/receipt/strips.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "029e72669aa813e183212c29698cc4b6c3f5b5a6"
+          },
+          {
+            "path": "app/src/features/receipt/strips.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d1770d668511a5da4bfd4d77a630a264bc4b6c1e"
+          },
+          {
+            "path": "app/src/features/receipt/toBill.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3fc177c96a2cd5f5af3ebecdc44f5dd1b6a6b326"
+          },
+          {
+            "path": "app/src/features/receipt/toBill.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ceb80825ffc7d1bcbe84e1c4d20205033eef7d17"
+          },
+          {
+            "path": "app/src/features/split/billReducer.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d79368dc86ea989b0c6c64dbd842a081f0fc9706"
+          },
+          {
+            "path": "app/src/features/split/billReducer.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "223b39ee53002ee8187b5bfb557be984c0348e54"
+          },
+          {
+            "path": "app/src/features/split/components/ResultSection.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "86de627b5ef0be393c72511b4e6ac0e5c9975c09"
+          },
+          {
+            "path": "app/src/features/split/components/split.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "879970a0c0a121dcbe2af17dddc4e548d9498410"
+          },
+          {
+            "path": "app/src/features/split/format.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d9fafb4dbc19a8edae79db064a017c0a3192270f"
+          },
+          {
+            "path": "app/src/pages/SplitPage.receipt.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "66347e59dc3168c4a2ed6d37989a52546a4e3c90"
+          },
+          {
+            "path": "app/src/pages/SplitPage.review.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6c4989aa95763497653e5aff34c0edae91a435aa"
+          },
+          {
+            "path": "app/src/pages/SplitPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c0922787f4680affe4a592d83b87c1600cd99770"
+          },
+          {
+            "path": "app/src/test/pngjs.d.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ee6d97d820ba49deaf3f8a5885185fac11a04513"
+          },
+          {
+            "path": "docs/ai-workflow/registry/milestone-2-remediation-1-artifacts.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f04ec5b37bc6c17e274dcff91aadf9515584ceb6"
+          }
+        ],
+        "reviewed_content_commit": "184a44aeabe4db5d2c9c8e29d560a4c4b025f880",
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-2-remediation-1 implementation",
+        "waived_guarantees": [],
+        "recorded_at": "2026-09-30T18:01:48Z"
+      },
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "632379e1b686ec1266b1126720f60addc4fc648449354daa3cc7a4c8526a4a8b",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "65672659cbd8d2630067e90337d6f8a3ba82087904596b8f11a0f987703f863e",
+          "verdict": "APPROVE",
+          "round": 11,
+          "completed_at": "2026-09-29T15:03:23Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "65672659cbd8d2630067e90337d6f8a3ba82087904596b8f11a0f987703f863e",
+          "verdict": "APPROVE",
+          "round": 3,
+          "completed_at": "2026-09-29T15:08:19Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 55,
+      "last_transition": "2026-09-30T18:11:18Z"
     }
   }
 }

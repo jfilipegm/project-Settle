@@ -17,9 +17,22 @@ interface Props {
   bill: Bill
   outcome: SplitOutcome
   region: Region
+  /**
+   * Notices about a scanned receipt (M2 remediation, R12 and R24): shown
+   * above the totals, and copied with them. Never blocking.
+   */
+  notices?: readonly string[]
+  /** Where the notices link to: the receipt check panel's heading. */
+  noticeTarget?: string
 }
 
-export function ResultSection({ bill, outcome, region }: Props) {
+export function ResultSection({
+  bill,
+  outcome,
+  region,
+  notices = [],
+  noticeTarget,
+}: Props) {
   return (
     <section
       id="result"
@@ -29,7 +42,13 @@ export function ResultSection({ bill, outcome, region }: Props) {
     >
       <h2 id="split-result-heading">Who owes what</h2>
       {outcome.ok ? (
-        <Result bill={bill} result={outcome.result} region={region} />
+        <Result
+          bill={bill}
+          result={outcome.result}
+          region={region}
+          notices={notices}
+          noticeTarget={noticeTarget}
+        />
       ) : (
         <div className={styles.errorSummary}>
           <p>
@@ -55,10 +74,14 @@ function Result({
   bill,
   result,
   region,
+  notices,
+  noticeTarget,
 }: {
   bill: Bill
   result: SplitResult
   region: Region
+  notices: readonly string[]
+  noticeTarget: string | undefined
 }) {
   const money = (value: Cents) => formatAmount(value, region)
   const [copyStatus, setCopyStatus] = useState('')
@@ -77,6 +100,18 @@ function Result({
 
   return (
     <>
+      {notices.map((notice) => (
+        <p key={notice} className={styles.receiptNotice}>
+          <span aria-hidden="true">⚠ </span>
+          {notice}
+          {noticeTarget !== undefined && (
+            <>
+              {' '}
+              <a href={`#${noticeTarget}`}>Go to the receipt check</a>
+            </>
+          )}
+        </p>
+      ))}
       <dl className={styles.summary}>
         <dt>Items subtotal</dt>
         <dd>{money(result.itemsSubtotal)}</dd>
@@ -152,7 +187,7 @@ function Result({
           type="button"
           className={styles.primaryButton}
           onClick={() => {
-            const text = resultAsText(result, region)
+            const text = resultAsText(result, region, notices)
             setCopyStatus('')
             // `navigator.clipboard` is missing outside secure contexts, so
             // call it inside the promise chain: a throw becomes a rejection.

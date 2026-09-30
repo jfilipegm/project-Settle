@@ -1,0 +1,37 @@
+{
+  "merchant": "Restaurante O Cantinho",
+  "merchantTaxId": "123456789",
+  "date": "2026-09-28",
+  "items": [
+    {
+      "name": "Imperial",
+      "quantity": "2",
+      "unitPrice": "1.60",
+      "lineTotal": "3.20",
+      "needsCheck": false
+    },
+    {
+      "name": "Bitoque",
+      "quantity": "1",
+      "unitPrice": "9.50",
+      "lineTotal": "9.50",
+      "needsCheck": false
+    },
+    {
+      "name": "Salada Mista",
+      "quantity": "1",
+      "unitPrice": "4.20",
+      "lineTotal": "4.20",
+      "needsCheck": false
+    },
+    {
+      "name": "Café",
+      "quantity": "2",
+      "unitPrice": "0.80",
+      "lineTotal": "1.60",
+      "needsCheck": false
+    }
+  ],
+  "total": "18.50",
+  "warnings": []
+}

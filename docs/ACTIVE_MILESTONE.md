@@ -2,60 +2,93 @@
 
 ## Milestone
 
-None active. The last milestone, M1 — Bill splitter (manual entry) (work
-item `milestone-1`), is `MILESTONE_COMPLETE`, accepted on 2026-09-28.
+None active. The last milestone, M2 — Receipt upload and built-in
+parsing (work item `milestone-2`), is `MILESTONE_COMPLETE`, accepted on
+2026-09-30, with its remediation child `milestone-2-remediation-1`
+(accepted the same day).
 
 ## Next action
 
-Plan **M2 — Receipt upload and built-in parsing** (`docs/ROADMAP.md`)
-with `/milestone-plan`: upload a photo or PDF of a receipt and get the M1
-item list filled in automatically, in the browser.
+Plan **M3 — Households, members and the expense ledger**
+(`docs/ROADMAP.md`) with `/milestone-plan`: turn one-off bills into a
+household's running expense history.
 
-Before planning, and after the user merges PR #4 (M1) into `master` (see
+Before planning, and after the user merges PR #6 (M2) into `master` (see
 CLAUDE.md, "Git and GitHub workflow"): run
-`git switch master && git pull && git switch -c feature/milestone-2`.
-After the first commit, open the M2 PR.
+`git switch master && git pull && git switch -c feature/milestone-3`.
+After the first commit, open the M3 PR.
 
-## Last completed: M1 — Bill splitter (manual entry)
+## Last completed: M2 — Receipt upload and built-in parsing
 
-Split a bill correctly with items typed in by hand; M2's receipt parsing
-fills in this editor:
+Upload a photo or PDF of a receipt and get M1's item list filled in,
+entirely in the browser:
 
-- **CP1:** `money.ts` grows `allocateExact`, `percentOf` and a
-  multi-currency `parseAmount` (EUR, GBP, USD); the Region setting
-  (locale and currency, default `pt-PT` / `EUR`) on the Settings page.
-- **CP2:** the split engine (`app/src/features/split/`): `validateBill`,
-  `computeSplit` in exact BigInt rationals with three rounding points,
-  per-person totals that always add up to the bill total, and the text
-  export.
-- **CP3:** the bill reducer and the local draft (one saved bill per
-  device).
-- **CP4:** the Split page: people and payer, items with shared
-  assignees and custom shares, tax/tip/discount, "Who owes what" with
-  breakdowns, settle-up and "Copy as text", and inline validation.
-- **CP5:** the root `README.md`, the `app/README.md` updates, the home
-  page's "Split a bill" link, and an end-to-end test of a 12-item bill
-  for 3 people.
+- **CP1:** pure receipt logic: the `ReceiptReader` interface, the
+  rule-based parser, the Portuguese fiscal QR code, the bill conversion
+  and the receipt check.
+- **CP2:** file intake (JPEG, PNG, HEIC, PDF, with size limits), the image
+  pipeline, the self-hosted reader assets and the Content-Security-Policy.
+- **CP3:** the built-in reader (Tesseract.js in a worker), QR scanning
+  (zxing-wasm), the import pipeline and the sample corpus.
+- **CP4:** the review step: the "Receipt check" panel, "⚠ Check" markers,
+  and the fallback to typing on every failure.
+- **CP5:** the READMEs, Settings' "Receipt reading" section and the
+  licence notices, and the end-to-end scans.
+
+Remediation child `milestone-2-remediation-1` (M2's functional review,
+round 1: real receipts read badly):
+
+- **M2R1-CP1:** image clean-up scaled by text size, flattening of photo
+  backgrounds, one channel, and reading tall pages in strips.
+- **M2R1-CP2:** parser and bill-conversion rules for real Portuguese
+  supermarket, app and shop layouts.
+- **M2R1-CP3:** invented real-layout corpus receipts (11–13), and the
+  user's five real receipts as **local-only** fixtures, git-ignored and
+  guarded against ever being committed.
+- **M2R1-CP4:** a gap from the receipt's total can't be missed (the check
+  panel and the result), "Add the difference" closes it in one click,
+  and lines left out to match the total are shown until confirmed.
 
 Verification:
 - `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`,
-  `vitest run` (378 tests) and `npm run build` pass.
+  `vitest run` (913 tests, 1 skipped) and `npm run build` pass; the
+  request-privacy scans (`check-requests.mjs`) pass, with logs in
+  `docs/milestones/milestone-2-evidence/` and
+  `docs/milestones/milestone-2-remediation-1-evidence/`.
 - `app`, `workflow-conformance` and `pr-title` are green on GitHub
-  (PR #4).
-- Implementation review: round 1 REVISE (B-EXT-1, B-EXT-2 fixed), round
-  2 APPROVE; technical approval `163f344` (implementation revision 2).
-- Functional review: checklist evidence `5c00e07`; the user accepted the
-  milestone.
+  (PR #6).
+- M2: implementation review round 1 REVISE, round 2 APPROVE; technical
+  approval `24e8227`. The child: two REVISE rounds, then APPROVE;
+  technical approval `ca2bf35`.
+- Functional review: M2 round 1 found four real-receipt defects (F-I-1 to
+  F-I-4), deferred to the child. The child's checklist (`ff03b38`) and
+  M2's round 2 (`e84f0f6`) passed; the user accepted both.
 
 Carried forward (not blockers):
-- Plan Open questions 1 and 3 keep their defaults: the discount is
-  always split in proportion to what each person had, and percentages
-  are taken from the items subtotal.
-- Invalid text typed in a field is lost when the Region changes.
-- In a breakdown, one item's shares across people can differ from its
-  price by a cent or two; each person's total is exact.
-- Not in M1: receipt reading (M2/M3), multiple payers, negative line
-  items, currency conversion, image/PDF export, bill history.
+- **Switch the built-in reader to PaddleOCR** (the user's decision,
+  2026-09-29). It was meant to be M2's next remediation child; it has no
+  milestone yet. A local spike (branch `spike/paddleocr`, not pushed:
+  `ppu-paddle-ocr` with ONNX Runtime Web, PP-OCRv5 mobile models, about
+  13 MB, MIT and Apache-2.0) scored lidl1 44 %, lidl2 73 %, lidl3 all 5
+  items, Continente 94 % and Tiffosi 100 %, against Tesseract's accepted
+  floors (Continente 56 %, Lidl 11–22 %; the plan's targets were 75 % and
+  60 %), with cleaner names and 0.5–2 s per read on the desktop.
+- Two requests from the same session, for later: a row-by-row review of
+  what the reader found (the receipt image with each line's role, and
+  adding a missed line), and remembering the user's corrections on the
+  device.
+- Workflow defect: `request_plan_amendment` accepts only checkpoint ids
+  shaped `CP<digits>[A-Z]?`, so a remediation child's `M2R1-CP*`
+  checkpoints can't be amended (also in workflow 2.6.0).
+- **The phone reading time** (R21: a 12.6-MP photo within 60 s, a small
+  screenshot within 20 s) was waived for Tesseract, to be measured on
+  PaddleOCR's reader.
+- O-EXT-1 (M2's review): the saved receipt summary isn't bound to the
+  bill it came from; future hardening.
+- "Matches after leaving out N lines…" and its buttons aren't reached by
+  any sample receipt; they're covered by `SplitPage.review.test.tsx`.
+- Not in M2: cropping and perspective correction, handwriting, currency
+  conversion, offline caching of the reader (M6).
 
 ## Current blockers
 
@@ -63,13 +96,15 @@ None.
 
 ## Active plan
 
-None. M1's plan is archived at
-`docs/milestones/completed/milestone-1-PLAN.md` (M0's at
-`docs/milestones/completed/milestone-0-PLAN.md`).
+None. M2's plans are archived at
+`docs/milestones/completed/milestone-2-PLAN.md` and
+`docs/milestones/completed/milestone-2-remediation-1-PLAN.md` (M0's and
+M1's are in the same folder).
 
 ## Functional review checklist
 
-None. M1's checklist (implementation revision 2) is in commit `5c00e07`.
+None. M2's round-2 checklist is in commit `e84f0f6`, the remediation
+child's in `ff03b38`, and M2's round 1 in `4b75b09`.
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is

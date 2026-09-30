@@ -1,0 +1,39 @@
+{
+  "merchant": "Café Central",
+  "merchantTaxId": "505612348",
+  "date": "2026-09-29",
+  "currencyHint": "EUR",
+  "total": "7.10",
+  "items": [
+    {
+      "name": "Galão",
+      "quantity": "1",
+      "unitPrice": "1.40",
+      "lineTotal": "1.40",
+      "needsCheck": false
+    },
+    {
+      "name": "Tosta Mista",
+      "quantity": "1",
+      "unitPrice": "3.20",
+      "lineTotal": "3.20",
+      "needsCheck": false
+    },
+    {
+      "name": "Pastel de Nata",
+      "quantity": "1",
+      "unitPrice": "1.30",
+      "lineTotal": "1.30",
+      "needsCheck": false
+    },
+    {
+      "name": "Meia de Leite",
+      "quantity": "1",
+      "unitPrice": "1.20",
+      "lineTotal": "1.20",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "check": "match"
+}

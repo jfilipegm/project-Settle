@@ -1,0 +1,6 @@
+Frutaria Sol
+Maçãs 1,20
+Desconto 1,50
+Peras 2,00
+Vale desconto -0,50
+Total 1,20

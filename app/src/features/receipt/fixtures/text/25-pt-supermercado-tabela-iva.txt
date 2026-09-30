@@ -1,0 +1,15 @@
+Auchan Amoreiras
+NIF 500987653
+Fatura Simplificada
+2026-09-28 19:03
+Queijo Fresco 1,49 A
+Poupança Imediata -0,30
+Frango Inteiro 5,99 A
+Detergente Loiça 2,79 C
+Total descontos -0,30
+TOTAL 9,97
+Taxa Base IVA Total
+A 6% 6,77 0,41 7,18
+C 23% 2,27 0,52 2,79
+Total IVA 0,93
+Visa 9,97

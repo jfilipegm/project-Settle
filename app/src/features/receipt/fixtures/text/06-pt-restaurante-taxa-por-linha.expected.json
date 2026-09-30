@@ -1,0 +1,38 @@
+{
+  "merchant": "Churrasqueira Central",
+  "merchantTaxId": "543210987",
+  "date": "2026-09-25",
+  "items": [
+    {
+      "name": "Frango no Churrasco",
+      "quantity": "1",
+      "unitPrice": "11.50",
+      "lineTotal": "11.50",
+      "needsCheck": false
+    },
+    {
+      "name": "Batata Frita",
+      "quantity": "1",
+      "unitPrice": "3.00",
+      "lineTotal": "3.00",
+      "needsCheck": false
+    },
+    {
+      "name": "2 Coca-Cola",
+      "quantity": "1",
+      "unitPrice": "4.40",
+      "lineTotal": "4.40",
+      "needsCheck": false
+    },
+    {
+      "name": "Pudim",
+      "quantity": "1",
+      "unitPrice": "2.80",
+      "lineTotal": "2.80",
+      "needsCheck": false
+    }
+  ],
+  "tax": "2.81",
+  "total": "21.70",
+  "warnings": []
+}

@@ -1,0 +1,55 @@
+{
+  "merchant": "Supermercado Pomar",
+  "merchantTaxId": "509182739",
+  "date": "2026-09-29",
+  "currencyHint": "EUR",
+  "tax": "1.87",
+  "total": "13.50",
+  "items": [
+    {
+      "name": "Leite Meio Gordo",
+      "quantity": "1",
+      "unitPrice": "0.89",
+      "lineTotal": "0.89",
+      "needsCheck": false
+    },
+    {
+      "name": "Pão de Forma",
+      "quantity": "1",
+      "unitPrice": "1.79",
+      "lineTotal": "1.79",
+      "needsCheck": false
+    },
+    {
+      "name": "Bananas",
+      "quantity": "0.532",
+      "unitPrice": "1.29",
+      "lineTotal": "0.69",
+      "needsCheck": false
+    },
+    {
+      "name": "Queijo Flamengo",
+      "quantity": "1",
+      "unitPrice": "2.99",
+      "lineTotal": "2.99",
+      "needsCheck": false
+    },
+    {
+      "name": "Detergente Loiça",
+      "quantity": "1",
+      "unitPrice": "2.15",
+      "lineTotal": "2.15",
+      "needsCheck": false
+    },
+    {
+      "name": "Vinho Tinto Reserva",
+      "quantity": "1",
+      "unitPrice": "4.99",
+      "lineTotal": "4.99",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "qr": "A:509182739*B:999999990*C:PT*D:FS*E:N*F:20260929*G:FS 0042/01234*H:KQ2M9V7T-1234*I1:PT*I3:3.18*I4:0.19*I5:2.65*I6:0.34*I7:5.80*I8:1.34*N:1.87*O:13.50*Q:Zp3c*R:2468",
+  "check": "match"
+}

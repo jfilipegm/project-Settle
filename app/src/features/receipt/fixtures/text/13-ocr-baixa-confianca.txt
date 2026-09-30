@@ -1,0 +1,5 @@
+[c=45] Tasca da Maria
+[c=38] Caldo Verde 2,50
+[c=55] Sardinhas Assadas 12,00
+[c=70] Vinho da Casa 6,00
+[c=40] TOTAL 20,50

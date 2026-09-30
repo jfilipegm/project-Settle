@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-2",
+  "requirements": {
+    "REQ-1": {
+      "description": "Upload a receipt from the file picker, the camera (on mobile) or drag and drop; JPEG, PNG, HEIC and PDF are accepted, anything else is refused with a message.",
+      "checkpoint_ids": [
+        "M2-CP2",
+        "M2-CP4"
+      ]
+    },
+    "REQ-2": {
+      "description": "Image clean-up before OCR: grayscale, contrast stretch and straightening (deskew), plus EXIF orientation and a size cap.",
+      "checkpoint_ids": [
+        "M2-CP2"
+      ]
+    },
+    "REQ-3": {
+      "description": "Text reading with Tesseract.js in the browser (Portuguese + English), in a Web Worker, with every asset served from the app's own origin.",
+      "checkpoint_ids": [
+        "M2-CP2",
+        "M2-CP3"
+      ]
+    },
+    "REQ-4": {
+      "description": "A rule-based parser finds merchant, date, line items (with quantities and item discounts), subtotal, tax, tip/service and total, for Portuguese and English receipt formats.",
+      "checkpoint_ids": [
+        "M2-CP1"
+      ]
+    },
+    "REQ-5": {
+      "description": "The Portuguese fiscal QR code, when present, is read and parsed (date, merchant NIF, total, IVA breakdown) and used to check the parsed items against its total.",
+      "checkpoint_ids": [
+        "M2-CP1",
+        "M2-CP3"
+      ]
+    },
+    "REQ-6": {
+      "description": "Review step: parsed items open in the M1 editor, with a live check of items against the receipt total, flagged low-confidence lines, and warnings.",
+      "checkpoint_ids": [
+        "M2-CP1",
+        "M2-CP4"
+      ]
+    },
+    "REQ-7": {
+      "description": "Every receipt reader sits behind one shared interface (image in, structured receipt out), with QR checks and bill conversion shared, so later readers (bring-your-own-key AI, a hosted reader) can plug in without changes elsewhere.",
+      "checkpoint_ids": [
+        "M2-CP1",
+        "M2-CP3"
+      ]
+    },
+    "REQ-8": {
+      "description": "A set of sample receipts runs through the real pipeline in tests: totals match, or the result is clearly flagged for correction.",
+      "checkpoint_ids": [
+        "M2-CP3"
+      ]
+    },
+    "REQ-9": {
+      "description": "Any parsing failure falls back to the manual editor, leaving the current bill untouched, instead of blocking the user.",
+      "checkpoint_ids": [
+        "M2-CP3",
+        "M2-CP4"
+      ]
+    },
+    "REQ-10": {
+      "description": "No receipt data leaves the browser: the app stays a static client that never sends data (no fetch/beacon/socket code, form-action 'none'), self-hosted OCR/QR/PDF/HEIC assets, a production Content-Security-Policy limiting connections to the app's origin, a real-browser request log (URLs, methods, request headers and bodies, from the document and every worker) showing only same-origin GETs of the app's static files and no value from the scanned receipt during scans, and receipt images never stored.",
+      "checkpoint_ids": [
+        "M2-CP2",
+        "M2-CP3",
+        "M2-CP4"
+      ]
+    },
+    "REQ-11": {
+      "description": "README.md and app/README.md reviewed and updated for M2 (roadmap 'Every milestone'), ADR 0002 records the receipt-reading dependencies and their licences, and the vendored packages' licence notices (including LGPL-3.0 heic-to) ship with the app.",
+      "checkpoint_ids": [
+        "M2-CP2",
+        "M2-CP5"
+      ]
+    },
+    "REQ-12": {
+      "description": "An end-to-end UI test goes from a scanned receipt through review to the split result.",
+      "checkpoint_ids": [
+        "M2-CP5"
+      ]
+    }
+  }
+}

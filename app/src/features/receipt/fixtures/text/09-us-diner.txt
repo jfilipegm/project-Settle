@@ -1,0 +1,14 @@
+Rosie's Diner
+455 Main St, Springfield
+(555) 123-4567
+09/27/2026 19:40
+Server: Amy Table 4
+1 Cheeseburger 12.00
+1 Fries 4.00
+2 Milkshake 4.00 8.00
+Subtotal 24.00
+Sales Tax 1.92
+Total 25.92
+Tip 5.00
+Total 30.92
+Visa 30.92

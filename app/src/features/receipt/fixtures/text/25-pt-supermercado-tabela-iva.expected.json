@@ -1,0 +1,31 @@
+{
+  "merchant": "Auchan Amoreiras",
+  "merchantTaxId": "500987653",
+  "date": "2026-09-28",
+  "items": [
+    {
+      "name": "Queijo Fresco",
+      "quantity": "1",
+      "unitPrice": "1.19",
+      "lineTotal": "1.19",
+      "needsCheck": false
+    },
+    {
+      "name": "Frango Inteiro",
+      "quantity": "1",
+      "unitPrice": "5.99",
+      "lineTotal": "5.99",
+      "needsCheck": false
+    },
+    {
+      "name": "Detergente Loiça",
+      "quantity": "1",
+      "unitPrice": "2.79",
+      "lineTotal": "2.79",
+      "needsCheck": false
+    }
+  ],
+  "tax": "0.93",
+  "total": "9.97",
+  "warnings": []
+}

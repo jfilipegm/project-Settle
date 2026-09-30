@@ -1,0 +1,40 @@
+{
+  "merchant": "Rosie's Diner",
+  "date": "2026-09-29",
+  "subtotal": "33.70",
+  "tax": "2.78",
+  "tip": "6.50",
+  "total": "42.98",
+  "items": [
+    {
+      "name": "Cheeseburger Deluxe",
+      "quantity": "1",
+      "unitPrice": "12.95",
+      "lineTotal": "12.95",
+      "needsCheck": false
+    },
+    {
+      "name": "Chicken Caesar Salad",
+      "quantity": "1",
+      "unitPrice": "11.50",
+      "lineTotal": "11.50",
+      "needsCheck": false
+    },
+    {
+      "name": "French Fries",
+      "quantity": "1",
+      "unitPrice": "4.25",
+      "lineTotal": "4.25",
+      "needsCheck": false
+    },
+    {
+      "name": "Coffee",
+      "quantity": "2",
+      "unitPrice": "2.50",
+      "lineTotal": "5.00",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "check": "match"
+}

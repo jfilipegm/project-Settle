@@ -1,0 +1,37 @@
+{
+  "merchant": "TESCO",
+  "currencyHint": "GBP",
+  "items": [
+    {
+      "name": "Milk 2 Pints",
+      "quantity": "1",
+      "unitPrice": "1.45",
+      "lineTotal": "1.45",
+      "needsCheck": false
+    },
+    {
+      "name": "Bread Wholemeal",
+      "quantity": "1",
+      "unitPrice": "1.00",
+      "lineTotal": "1.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Bananas Loose",
+      "quantity": "0.85",
+      "unitPrice": "0.95",
+      "lineTotal": "0.81",
+      "needsCheck": false
+    },
+    {
+      "name": "Cheddar 400g",
+      "quantity": "1",
+      "unitPrice": "3.25",
+      "lineTotal": "3.25",
+      "needsCheck": false
+    }
+  ],
+  "subtotal": "6.51",
+  "total": "6.51",
+  "warnings": []
+}

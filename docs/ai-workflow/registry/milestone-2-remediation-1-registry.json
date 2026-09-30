@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-2-remediation-1",
+  "plan_revision": 12,
+  "checkpoints": [
+    {
+      "id": "M2R1-CP1",
+      "name": "Image clean-up for screenshots and photos: text-size-aware scaling, illumination flattening, one-channel pipeline, reading in strips",
+      "depends_on": [],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "M2R1-CP2",
+      "name": "Parser and bill-conversion rules for real layouts: quantities, codes, next-line totals, savings lines, the QR total as the end of items, currency, no-items import",
+      "depends_on": [],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "M2R1-CP3",
+      "name": "Synthetic real-layout corpus receipts (CI) and the local-only real-receipt fixtures",
+      "depends_on": [
+        "M2R1-CP1",
+        "M2R1-CP2"
+      ],
+      "complexity": 2,
+      "session_target": 2
+    },
+    {
+      "id": "M2R1-CP4",
+      "name": "Review step: gap notice in the result, add-the-difference, incomplete-read wording; READMEs and verification",
+      "depends_on": [
+        "M2R1-CP2",
+        "M2R1-CP3"
+      ],
+      "complexity": 2,
+      "session_target": 2
+    }
+  ]
+}

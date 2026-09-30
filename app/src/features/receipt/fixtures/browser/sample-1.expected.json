@@ -1,0 +1,48 @@
+{
+  "merchant": "Restaurante A Tasquinha",
+  "merchantTaxId": "507342186",
+  "date": "2026-09-28",
+  "currencyHint": "EUR",
+  "tax": "2.30",
+  "total": "20.00",
+  "items": [
+    {
+      "name": "Imperial",
+      "quantity": "2",
+      "unitPrice": "1.60",
+      "lineTotal": "3.20",
+      "needsCheck": false
+    },
+    {
+      "name": "Bitoque",
+      "quantity": "1",
+      "unitPrice": "9.50",
+      "lineTotal": "9.50",
+      "needsCheck": false
+    },
+    {
+      "name": "Salada Mista",
+      "quantity": "1",
+      "unitPrice": "4.20",
+      "lineTotal": "4.20",
+      "needsCheck": false
+    },
+    {
+      "name": "Café",
+      "quantity": "2",
+      "unitPrice": "0.80",
+      "lineTotal": "1.60",
+      "needsCheck": false
+    },
+    {
+      "name": "Água das Pedras",
+      "quantity": "1",
+      "unitPrice": "1.50",
+      "lineTotal": "1.50",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "qr": "A:507342186*B:999999990*C:PT*D:FS*E:N*F:20260928*G:FS A2026/318*H:JFJ7K2LM-318*I1:PT*I5:17.70*I6:2.30*N:2.30*O:20.00*Q:k9Xa*R:1234",
+  "check": "match"
+}

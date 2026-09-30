@@ -1,0 +1,30 @@
+{
+  "merchant": "Restaurante Solar",
+  "merchantTaxId": "505555557",
+  "items": [
+    {
+      "name": "Arroz de Pato",
+      "quantity": "1",
+      "unitPrice": "14.50",
+      "lineTotal": "14.50",
+      "needsCheck": false
+    },
+    {
+      "name": "Vinho Verde",
+      "quantity": "1",
+      "unitPrice": "9.00",
+      "lineTotal": "9.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Sobremesa",
+      "quantity": "1",
+      "unitPrice": "4.00",
+      "lineTotal": "4.00",
+      "needsCheck": false
+    }
+  ],
+  "tax": "3.16",
+  "total": "27.50",
+  "warnings": []
+}

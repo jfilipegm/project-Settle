@@ -20,9 +20,20 @@ interface Props {
   dispatch: Dispatch<BillAction>
   errors: readonly BillError[]
   region: Region
+  /** Items read from a receipt that need checking (M2, D14). */
+  flaggedItemIds?: ReadonlySet<string>
+  /** Any edit to an item's name, quantity or unit price. */
+  onItemEdited?: (itemId: string) => void
 }
 
-export function ItemsSection({ bill, dispatch, errors, region }: Props) {
+export function ItemsSection({
+  bill,
+  dispatch,
+  errors,
+  region,
+  flaggedItemIds,
+  onItemEdited,
+}: Props) {
   const nameInputs = useRef(new Map<string, HTMLInputElement>())
   const focusItemId = useRef<string>(undefined)
 
@@ -47,6 +58,8 @@ export function ItemsSection({ bill, dispatch, errors, region }: Props) {
             dispatch={dispatch}
             errors={errors}
             region={region}
+            flagged={flaggedItemIds?.has(item.id) ?? false}
+            onItemEdited={onItemEdited}
             nameRef={(element) => {
               if (element) {
                 nameInputs.current.set(item.id, element)
@@ -79,9 +92,10 @@ export function ItemsSection({ bill, dispatch, errors, region }: Props) {
   )
 }
 
-interface RowProps extends Props {
+interface RowProps extends Omit<Props, 'flaggedItemIds'> {
   item: Item
   index: number
+  flagged: boolean
   nameRef: (element: HTMLInputElement | null) => void
 }
 
@@ -92,6 +106,8 @@ function ItemRow({
   dispatch,
   errors,
   region,
+  flagged,
+  onItemEdited,
   nameRef,
 }: RowProps) {
   const label = `Item ${index + 1}`
@@ -110,7 +126,19 @@ function ItemRow({
 
   return (
     <li className={styles.itemRow}>
-      <div className={styles.itemFields}>
+      {flagged && (
+        <p className={styles.checkMarker}>
+          <span aria-hidden="true">⚠ Check</span>
+          <span className={styles.srOnly}>{label}: check this line</span>
+        </p>
+      )}
+      {/* The first edit to one of these fields clears the marker (D14). */}
+      <div
+        className={styles.itemFields}
+        onChange={() => {
+          if (flagged) onItemEdited?.(item.id)
+        }}
+      >
         <TextInput
           id={fieldId(at('name'))}
           label="Name"

@@ -1,56 +1,152 @@
 # Roadmap
 
-Product milestone ordering for Settle (repository `project-Settle`). `/milestone-plan` picks the first
-milestone whose status is not **Complete**; `/accept-milestone` marks it
-complete here. Each milestone should ship something usable on its own.
+Product milestone ordering for Settle (repository `project-Settle`).
+`/milestone-plan` picks the first milestone whose status is not
+**Complete**; `/accept-milestone` marks it complete here. Each milestone
+should ship something usable on its own.
 
-Last updated: 2026-09-27
+This is a living document. Milestones after the current one are a
+direction, not a commitment. They get re-ordered, merged or dropped as we
+learn.
+
+Last updated: 2026-09-30 (M2 complete; restructured around the
+free-first product strategy on 2026-09-28, see
+[Roadmap strategy](#roadmap-strategy))
+
+## Current goal
+
+> **Phase 1: finish the free, local-first core.** The next milestone is
+> **M3 — Households, members and the expense ledger**, the start of the
+> shared-household core: households, an expense ledger, balances and
+> settling up (M3–M4).
+
+Nothing in Phases 3–8 is being built yet.
 
 ## Product vision
 
-A web app (built so it can later become an installable/mobile app) that:
+**Settle: split bills. Settle up. Stay private.**
 
-1. **Splits bills.** Upload a receipt, pick how many people are splitting it,
-   assign each item to whoever bought it, and see a dashboard of how much
-   each person owes.
-2. **Grows into a personal finance helper.** You keep your finances in a file
-   that follows a documented format. Uploading it turns it into interactive
-   dashboards (income, expenses, categories, trends, and so on). You edit
-   in the app, then download an updated file that you bring back next time.
-   That file acts as your "key".
-3. **Connects the two.** When you split a receipt and mark which part is
-   yours, your share is added to your expenses automatically.
+The core idea is **make living together financially painless.** People who
+share a home, or regularly share costs, can:
 
-Guiding principles:
+- record shared expenses (groceries, utilities, internet, cleaning
+  supplies, household purchases, takeout, shared subscriptions), typed in
+  or read from a receipt;
+- split them fairly: equally, by shares, or item by item from a receipt;
+- always see who owes whom, and settle up with the fewest payments;
+- keep a history they can correct, export and take with them.
 
-- **Simple first.** No database and no accounts in the early milestones.
-- **Your data stays yours.** Processing happens in the browser wherever
-  possible. Nothing is stored on a server until accounts exist (M9).
-- **No running costs for the project.** Built-in features are free and run
-  in the browser. Paid or AI-powered extras run on the user's own API key
-  ("bring your own key"), never on a project-owned key.
-- **Mobile-friendly from day one.** Responsive layout and PWA-ready, so
-  moving to an app later is a wrapper, not a rewrite.
+Settle is first built as a genuinely useful, **free, local-first** product
+that solves a real problem the developer has. Monetisation is deliberately
+later, and only around behaviour that real users have shown they value.
+
+**Who it's for (to be validated, not assumed):**
+
+- university students sharing houses, and roommates in shared households
+  (the primary use case);
+- anyone who regularly shares expenses with the same group;
+- possibly, later, landlords and property managers who reconcile shared
+  expenses across rooms or units. The narrow potential wedge is *shared
+  expenses and financial reconciliation for multi-tenant properties*,
+  **not** a full property-management platform.
+
+## Guiding principles
+
+- **€0 mandatory operating costs in the free product.** It runs in the
+  browser on a free static host. It never depends on a paid external API or
+  a project-owned AI key. Optional extras that cost money run on the user's
+  own key ("bring your own key") or become paid features later.
+- **No account needed.** Everything in the free product works without
+  signing up. Accounts arrive only with sync (Phase 7), and stay optional.
+- **Your data stays yours.** Financial data stays on the device. The only
+  thing that ever leaves it before accounts exist is **anonymous, aggregate
+  product telemetry** (M7), which never contains amounts, names, items,
+  merchants or receipt content.
+- **Useful for free, not crippled.** The free product must solve the
+  problem on its own. Paid features add convenience, automation, sync,
+  backup, more powerful processing and collaboration. They never remove or
+  hobble what the free product does.
+- **Do not monetise the idea. Monetise validated behaviour.**
+- **Real use before more features.** Personal use (Phase 3) and real users
+  (Phase 5) decide what gets built next, not the list of interesting ideas.
+- **Simple first, flexible data model.** Keep the model general enough to
+  grow (for example, a household could later be a property, and members
+  could have move-in and move-out dates). But build only what's needed now.
+- **Mobile-friendly from day one.** A responsive layout, and a PWA, so a
+  native wrapper later is not a rewrite.
+- **Money is exact.** Integer cents, one shared money module, and splits
+  whose totals always add up (M0/M1 decisions, kept).
+
+## Roadmap philosophy
+
+> Build the smallest genuinely useful free product first.
+> Use it personally.
+> Instrument it enough to understand usage.
+> Polish the experience.
+> Put it in the hands of real users.
+> Learn what they value.
+> Then build the paid layer around validated demand.
+
+## How to read each milestone
+
+Every milestone lists its **Objective**, **Why it matters**, its work split
+by priority, its **Completion criteria**, and **Not yet** (what it must not
+build).
+
+- **Must-have**: the milestone isn't done without it.
+- **Useful**: build it if it's cheap once the must-haves are done;
+  otherwise it moves to a later milestone.
+- **Future / validation-dependent**: don't build it until evidence (personal
+  use, user research, telemetry) says it's worth it.
+
+A milestone's plan (`/milestone-plan`) turns this outline into exact
+scope. Anything not listed as must-have is negotiable there.
 
 ## Milestone overview
 
-| #  | Milestone                                   | Status      |
-|----|---------------------------------------------|-------------|
-| M0 | Project foundation                          | Complete    |
-| M1 | Bill splitter (manual entry)                | Complete    |
-| M2 | Receipt upload and built-in parsing         | Not started |
-| M3 | Bring-your-own-key receipt reading          | Not started |
-| M4 | Finance file format ("the key")             | Not started |
-| M5 | Finance file import and dashboards          | Not started |
-| M6 | Interactive editing and export              | Not started |
-| M7 | Bill split to expenses integration          | Not started |
-| M8 | Installable app (PWA / mobile polish)       | Not started |
-| M9 | Accounts and sync                           | Not started |
+| #   | Milestone                                          | Phase                            | Status      |
+|-----|----------------------------------------------------|----------------------------------|-------------|
+| M0  | Project foundation                                 | 1 · Free local-first core        | Complete    |
+| M1  | Bill splitter (manual entry)                       | 1 · Free local-first core        | Complete    |
+| M2  | Receipt upload and built-in parsing                | 1 · Free local-first core        | Complete    |
+| M3  | Households, members and the expense ledger         | 1 · Free local-first core        | Not started |
+| M4  | Balances and settling up                           | 1 · Free local-first core        | Not started |
+| M5  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
+| M6  | Installable PWA and public deployment              | 1 · Free local-first core        | Not started |
+| M7  | Privacy-first product analytics                    | 2 · Analytics and developer BO   | Not started |
+| M8  | Minimal developer backoffice                       | 2 · Analytics and developer BO   | Not started |
+| M9  | Personal validation and stabilisation              | 3 · Personal validation          | Not started |
+| M10 | Product design and UX pass                         | 4 · Design and UX                | Not started |
+| M11 | Real-user validation (closed beta)                 | 5 · Real-user validation         | Not started |
+| M12 | Paid-product exploration                           | 6 · Paid-product exploration     | Not started |
+| M13 | Accounts, cloud sync and billing                   | 7 · Paid layer (if validated)    | Not started |
+| M14 | Student plan and verification                      | 7 · Paid layer (if validated)    | Not started |
+| M15 | Business and financial backoffice                  | 7 · Paid layer (if validated)    | Not started |
+| M16 | Landlord / property-manager experiments            | 8 · Expansion (if validated)     | Not started |
+
+Milestones M12–M16 are **conditional**. Each one starts only if the
+milestone before it produced the evidence it needs, and any of them can be
+dropped. Ideas without a milestone live in the
+[Validation-dependent backlog](#validation-dependent-backlog).
+
+**Changes in the 2026-09-28 restructure** (for anyone reading older
+plans):
+
+- The old *M3 Bring-your-own-key receipt reading* is now a backlog item,
+  revisited if personal use shows the built-in reader isn't good enough.
+- The old *M4–M7 personal finance file ("the key"), dashboards, editing
+  and bill-to-expenses integration* moved to the backlog as a possible
+  future expansion. Their durable parts are kept in the new milestones: a
+  versioned, validated, user-owned file (M5) and a local working copy that
+  autosaves (M3).
+- The old *M8 Installable app* is now M6, earlier, because real users need
+  it deployed and installable.
+- The old *M9 Accounts and sync* is now M13, a paid-layer candidate.
 
 ### Every milestone
 
-From M1 on, every milestone ends by checking the root `README.md`,
-the page people see first on GitHub:
+From M1 on, every milestone ends by checking the root `README.md`, the
+page people see first on GitHub:
 
 - **Does it still make sense?** Read it as a new visitor would.
 - **Remove** anything outdated: features that changed, steps that no
@@ -65,7 +161,25 @@ setup, commands or project layout. If nothing needs changing, the
 milestone's PR says so in one line. The check is part of every
 milestone's "Done when".
 
+From M7 on, every milestone that adds a user action also adds its
+analytics event (see M7's event rules), or says in its plan why it
+doesn't need one.
+
 ---
+
+# Phase 1 — Free, local-first core
+
+**Objective:** a Settle that one household can genuinely use for its shared
+expenses: receipts in, fair splits, a history, clear balances, settling up,
+backup and export. It works on a phone, with no account, and costs €0 to
+run.
+
+**Why it matters:** everything later (validation, design, pricing) depends
+on a core that works. The free product is the product. The paid layer
+only makes it more convenient.
+
+**Not yet in Phase 1:** accounts, cloud sync, payments, bank integrations,
+hosted AI, landlord features, and visual polish beyond clean and usable.
 
 ## M0 — Project foundation
 
@@ -131,7 +245,14 @@ split math and the UI right before OCR adds uncertainty.
 
 ## M2 — Receipt upload and built-in parsing
 
-**Status:** Not started
+**Status:** Complete (accepted 2026-09-30; PR #6), with one remediation
+child for real receipts (`milestone-2-remediation-1`). Plans archived at
+`docs/milestones/completed/milestone-2-PLAN.md` and
+`docs/milestones/completed/milestone-2-remediation-1-PLAN.md`.
+Carried forward: switching the built-in reader from Tesseract.js to
+PaddleOCR (the user's decision, 2026-09-29) to raise the accepted
+read-rate floors on real receipts, and the phone reading-time
+measurement that was waived for it. Neither has a milestone yet.
 
 **Goal:** Upload a photo or PDF of a receipt and get the item list filled in
 automatically, for free and entirely in the browser.
@@ -151,8 +272,9 @@ automatically, for free and entirely in the browser.
   mistakes before splitting. Warn when the items don't add up to the
   receipt total.
 - All receipt readers sit behind one shared interface (image in,
-  structured receipt out), so M3 can plug in other readers without changes
-  elsewhere.
+  structured receipt out), so other readers (bring-your-own-key AI, and
+  perhaps a hosted reader in the paid layer) can plug in later without
+  changes elsewhere.
 
 **Done when**
 - A set of sample receipts parses with totals matching, or is clearly
@@ -166,277 +288,682 @@ automatically, for free and entirely in the browser.
 
 ---
 
-## M3 — Bring-your-own-key receipt reading
+## M3 — Households, members and the expense ledger
 
 **Status:** Not started
 
-**Goal:** Users who want better accuracy can connect their own AI or
-receipt-reading service. It runs on their account and their costs, never
-the project's.
+**Objective:** Turn one-off bills into a household's running expense
+history. This is the core expense model.
 
-**Scope**
-- Settings page, "Receipt reading": choose **Built-in (free, private)** or
-  a provider, then paste your API key. Include a "Test key" button.
-- Supported providers, starting with the ones that can be called directly
-  from the browser (see
-  [Bring your own key](#bring-your-own-key-byok)):
-  - AI vision models, e.g. Anthropic (Claude), OpenAI, Google (Gemini).
-    Each gets a prompt asking for the receipt as structured JSON.
-  - Dedicated receipt services (e.g. Mindee, Veryfi, AWS Textract,
-    Azure Document Intelligence), each added only if it works without a
-    project-owned server.
-- **The key is stored only in the user's browser** and sent only to the
-  chosen provider, never to a project server. Option to keep it for this
-  session only, or remember it on this device. A clear "Forget key"
-  button.
-- Clear consent text: the receipt image is sent to the chosen provider,
-  and usage is billed to the user's account with them.
-- If the provider call fails (bad key, no credit, rate limit, offline),
-  show the error and fall back to the built-in reader.
-- The provider's result goes through the same checks (fiscal QR total,
-  items vs total) and the same review step as M2.
+**Why it matters:** the shared-house problem is not "split this one bill".
+It's "keep track of everything we share, over months". Balances,
+settling up, sharing and every later phase build on this model.
 
-**Done when**
-- With a valid key, a receipt is read through at least one AI provider and
-  lands in the review step. With no key or a failing key, the built-in
-  reader is used.
-- Tests or inspection confirm the key never appears in any request except
-  the one to the chosen provider.
-- `README.md` (and `app/README.md` if setup changed) reviewed and
-  updated for M3: outdated parts removed, new features added (see
-  "Every milestone").
+**Must-have**
+- **Households** (generic groups): create, rename, archive; several per
+  device (a flat and a holiday group, say).
+- **Members**: add, rename, and mark as left (with the date), keeping their
+  history. Someone who has left still appears in past expenses and
+  balances. Members are *people*, not accounts or devices.
+- **Expenses**: a description, date, amount, category (a small fixed list
+  to start), who paid, and how it's split. There are two ways to create
+  one:
+  - **a quick expense**: an amount split equally, by shares, by exact
+    amounts, or by percentages, among chosen members;
+  - **an itemised expense**: M1's bill splitter, fed by M2's receipt
+    reader. The saved expense keeps its items and assignments.
+- **Someone paid on behalf of others**: the payer can be any member,
+  including one who isn't part of the split.
+- **History**: a list per household, newest first, with a filter by
+  member and category, and a search.
+- **Corrections**: edit or delete any expense, and every balance is
+  recomputed from the history (balances are derived, never stored).
+- **Local persistence**: IndexedDB, with a versioned schema and tested
+  migrations. It autosaves, and M1's single `settle.bill` draft is
+  migrated into the new model.
+- **Duplicate-receipt warning**: warn when a receipt with the same fiscal
+  QR code (or merchant, date and total) is already in the household.
+
+**Useful**
+- Custom categories.
+- Notes and an attached receipt image (stored locally, with a size cap and
+  easy removal).
+- Undo for delete.
+
+**Future / validation-dependent**
+- Recurring expenses (rent, internet, subscriptions). They're a strong
+  household need, but wait until personal use shows how people want them
+  to work. They're also a paid-layer candidate.
+- Multi-currency households.
+
+**Completion criteria**
+- A household with 4 members, 30+ expenses of both kinds, a member who
+  leaves and one who joins, and several corrections: every expense, and
+  the history, survives a reload and an app update (a migration test).
+- The split rules are unit-tested with the same exactness guarantees as M1.
+
+**Not yet:** balances across the household (M4), sharing between devices
+(M5), properties, units or tenants (M16).
 
 ---
 
-## M4 — Finance file format ("the key")
+## M4 — Balances and settling up
 
 **Status:** Not started
 
-**Goal:** A documented, versioned file format that the user owns and the
-app can read reliably.
+**Objective:** Everyone can see what they owe or are owed across the
+whole history, and settle it with as few payments as possible.
 
-**Scope**
-- Written rules for the file: required sheets, columns, types, allowed
-  categories, and date and currency formats.
-- A downloadable blank template with example rows.
-- A hidden `_meta` sheet holding the schema version and app version, so
-  future format changes can be migrated automatically.
-- A validator that reports friendly, cell-level errors ("Sheet
-  *Transactions*, row 14: amount is not a number") instead of failing
-  silently.
+**Why it matters:** settling up is the moment the product has to earn
+trust. The balances must be exact and understandable, and the next action
+obvious.
 
-**Suggested initial sheets:** `Transactions` (date, description, amount,
-type income/expense, category, account, notes, source), `Categories`,
-`Accounts`, `Budgets` (optional), `_meta`.
+**Must-have**
+- **Net balance per member**, derived from the ledger: paid minus share,
+  exact to the cent, and summing to zero across the household.
+- **Suggested settlement**: a minimal set of payments that clears every
+  balance (debt simplification), with a deterministic tie-break.
+- **Record a settlement**, full or **partial**, between any two members.
+  It's part of the history, and editable and deletable like an expense.
+- **Explain a balance**: from a member's balance to the expenses and
+  settlements that make it up.
+- **Settle-up summary as text** (copy or share), extending M1's "Copy as
+  text".
 
-**Done when**
-- The template, the rules document, and the validator exist.
-- The validator has tests for valid files and for each class of error.
-- `README.md` (and `app/README.md` if setup changed) reviewed and
-  updated for M4: outdated parts removed, new features added (see
-  "Every milestone").
+**Useful**
+- The balance as of a date ("what did we owe at the end of last month?").
+- Mark a period as settled, so the history view can start fresh without
+  deleting anything.
+
+**Future / validation-dependent**
+- Payment links or requests (MB WAY, Revolut, IBAN QR). They depend on
+  real users showing they want them, and on the providers' terms.
+
+**Completion criteria**
+- Property tests: balances always sum to zero, and applying the suggested
+  settlements always clears them. Partial settlements and members who
+  left are covered.
+- Hand-checked examples for the edge cases in Phase 3's list.
+
+**Not yet:** real payments or bank connections, and reminders or
+notifications.
 
 ---
 
-## M5 — Finance file import and dashboards
+## M5 — Export, import, backup and sharing
 
 **Status:** Not started
 
-**Goal:** Upload the finance file and see useful dashboards right away.
+**Objective:** Users own their data, can back it up, move it to another
+device, and share a household with their roommates without an account or a
+server.
 
-**Scope**
-- Parse the file in the browser (no upload to a server).
-- Dashboards:
-  - Overview: income, expenses, net, and savings rate for the selected
-    period.
-  - Expenses by category, and category trends month over month.
-  - Income sources.
-  - Cash flow over time.
-  - Budget vs actual (if `Budgets` is filled in).
-- Filters: date range, category, account.
+**Why it matters:** local-first data is only safe if it's easy to back up.
+Roommates each have their own phone, so the free product needs *some* way
+to share, even before cloud sync exists.
 
-**Done when**
-- The template file and a realistic 12-month sample file render correctly.
-- Dashboard numbers are checked against hand-calculated totals in tests.
-- `README.md` (and `app/README.md` if setup changed) reviewed and
-  updated for M5: outdated parts removed, new features added (see
-  "Every milestone").
+**Must-have**
+- **Settle file**: one versioned, documented JSON format per household
+  (members, expenses, settlements, and optionally receipt images). It has a
+  schema version, is strictly validated with friendly errors, and
+  round-trips exactly. (This keeps the good ideas from the old "finance
+  file" plan: user-owned, versioned, validated.)
+- **Backup and restore** of all data on the device, with a reminder when
+  the last backup is old.
+- **CSV export** of expenses and settlements, for spreadsheets.
+- **Share a household**: send the Settle file to a roommate, who opens it
+  on their device.
+
+**Useful**
+- **Merge** a roommate's updated file into your copy by stable record ids,
+  with a clear view of what changes and a prompt for any conflict. This is
+  what makes sharing work without a server. How far to take it is an open
+  question, see [Sharing without a server](#sharing-without-a-server).
+- A read-only summary link or image of the balances.
+
+**Future / validation-dependent**
+- Real-time multi-device sync (M13, a paid-layer candidate).
+- Import from other apps' exports (e.g. Splitwise CSV), if early users ask
+  for it.
+
+**Completion criteria**
+- Export, import and re-export gives identical data (tested). A file from
+  an older schema version imports through migrations.
+- Two devices can share one household by exchanging files, in functional
+  review.
+
+**Not yet:** accounts, a server, or any upload of household data.
 
 ---
 
-## M6 — Interactive editing and export
+## M6 — Installable PWA and public deployment
 
 **Status:** Not started
 
-**Goal:** Close the loop: edit in the app, then download the new key.
+**Objective:** Settle is live at a public URL, installable on a phone, and
+works offline.
 
-**Scope**
-- Add, edit, and delete transactions and categories in the app.
-- Dashboards update live as you edit.
-- "Download updated file" writes a valid file in the M4 format.
-- **Autosave the working copy in the browser**, so closing the tab doesn't
-  lose work. Warn about unsaved changes that haven't been exported.
-- Keep the original file's formatting and any extra user columns where
-  possible.
+**Why it matters:** personal daily use and real users both need it on a
+phone's home screen, not on `localhost`. This also settles the open
+hosting question.
 
-**Done when**
-- Round trip passes: import, then export, then re-import gives identical
-  data (tested).
-- The exported file passes the M4 validator.
-- `README.md` (and `app/README.md` if setup changed) reviewed and
-  updated for M6: outdated parts removed, new features added (see
-  "Every milestone").
+**Must-have**
+- **Hosting** on a free static host that serves the app at `/` with the
+  SPA fallback (ADR 0001, D11), plus HTTPS and the production CSP. The
+  host's security headers replace the CSP `<meta>` where possible.
+- **PWA**: installable, offline-capable app shell, the OCR assets cached
+  after first use, and a clear update flow ("a new version is ready").
+- **Camera-first receipt capture** and touch-friendly item assignment
+  (tap a person, then tap items).
+- A short **privacy page**: what stays on the device, and what doesn't
+  (nothing, until M7).
+
+**Useful**
+- Web Share API for summaries and Settle files.
+- Persistent storage request (`navigator.storage.persist()`), so the
+  browser doesn't evict the data.
+
+**Future / validation-dependent**
+- A native wrapper (Capacitor) for the app stores.
+
+**Completion criteria**
+- It installs and works offline on Android and iOS for the full flow:
+  household, receipt, expense, balances, export.
+- Deploys from `master` automatically, costing €0.
+
+**Not yet:** a custom domain, unless it's free or trivially cheap. App
+store releases.
 
 ---
 
-## M7 — Bill split to expenses integration
+# Phase 2 — Privacy-first analytics and a minimal developer backoffice
+
+**Objective:** know, in aggregate, whether and how Settle is used, without
+learning anything about anyone's finances.
+
+**Why it matters:** Phases 3–6 rely on evidence. Without instrumentation,
+"is anyone using it, and for what?" can't be answered.
+
+**Not yet in Phase 2:** anything about revenue, plans or subscriptions
+(that's M15), per-user tracking, third-party analytics scripts, and
+session replay.
+
+## M7 — Privacy-first product analytics
 
 **Status:** Not started
 
-**Goal:** Splitting a receipt feeds your finances automatically.
+**Objective:** a small, documented event pipeline for product behaviour.
 
-**Scope**
-- While a finance file is loaded, the splitter lets you mark which person
-  is "me".
-- My share becomes an expense transaction, with category suggested from
-  the receipt/merchant and editable before saving. The source links back
-  to the split.
-- Optional: if I paid the whole bill, track what others owe me as
-  receivables, and mark them settled when repaid.
-- Also works in reverse: splitting without a finance file loaded behaves as
-  in M1–M3.
+**Must-have**
+- **An event catalogue**, documented in the repository. For example:
+  - `household_created`, `member_added`;
+  - `expense_created` (with its kind: quick or itemised), `expense_split`
+    (with the split rule);
+  - `receipt_imported`, `receipt_parsed` (outcome: matched, flagged or
+    failed; the reader used);
+  - `settlement_created`, `settlement_completed`;
+  - `export_created`, `app_opened`, `error_occurred` (an error code only).
+- **Event rules:** events carry the event name, the app version, coarse
+  properties (enums and small counts), and a coarse timestamp. **They never
+  carry** amounts, names, descriptions, items, merchants, dates of
+  expenses, receipt text or images, or free text.
+- **Active users and active households without tracking people**: counts
+  by day, week and month from an anonymous, rotating identifier or
+  equivalent. The choice is made in planning, after checking GDPR/ePrivacy
+  rules for the Portuguese and EU audience.
+- **User control**: a clear setting to turn telemetry on or off, the
+  default decided in planning under those rules (opt-in if consent is
+  required). The privacy page lists every event.
+- **A €0 ingest endpoint** (e.g. a free-tier serverless function on the
+  same host), so the CSP can keep `connect-src` to the app's own origin
+  where possible. It stores events, not users.
+- **Failure reporting**: error codes and app versions for crashes and
+  failed receipt reads, with no content.
 
-**Done when**
-- Splitting a receipt and confirming adds exactly my share to
-  `Transactions`, and it appears in dashboards and in the exported file.
-- `README.md` (and `app/README.md` if setup changed) reviewed and
-  updated for M7: outdated parts removed, new features added (see
-  "Every milestone").
+**Useful**
+- A local "what we send" viewer in Settings, showing the last events
+  queued.
+- Batching and offline queueing.
+
+**Future / validation-dependent**
+- Funnels and retention cohorts beyond simple counts. Only build these if
+  the M8 dashboard shows they're needed to answer a real question.
+
+**Completion criteria**
+- Tests prove that no event payload can contain a field outside the
+  catalogue, and none of the forbidden data.
+- Turning telemetry off stops all sending (tested).
+- Running costs €0 at the expected volume.
+
+**Not yet:** third-party analytics SDKs, fingerprinting, advertising IDs,
+and per-user profiles.
 
 ---
 
-## M8 — Installable app (PWA / mobile polish)
+## M8 — Minimal developer backoffice
 
 **Status:** Not started
 
-**Goal:** It feels like an app on a phone.
+**Objective:** one private page where the developer can see whether
+Settle is used, and whether it's healthy.
 
-**Scope**
-- PWA: installable, offline-capable app shell, camera-first receipt capture.
-- Touch-friendly item assignment (for example, tap a person, then tap
-  items).
-- Optional: wrap as a native app (Capacitor or similar) if app store
-  distribution is wanted.
+This is the **free-phase BO**. It exists for product learning, not as
+customer support infrastructure. The business BO comes later (M15).
 
-**Done when**
-- Installs and works offline on Android and iOS for the whole split flow and
-  for a previously loaded finance file. (BYOK readers need a connection;
-  the built-in reader does not.)
-- `README.md` (and `app/README.md` if setup changed) reviewed and
-  updated for M8: outdated parts removed, new features added (see
-  "Every milestone").
+**Must-have**
+- **Access limited to the developer.** It lives outside the public app, or
+  behind the host's access control. It costs €0.
+- **Usage:** active users and households (daily, weekly, monthly),
+  counts of expenses created, receipts processed (by outcome and
+  reader) and settlements completed, and exports.
+- **Product events:** counts per event over time, by app version.
+- **Health:** error codes and failed receipt reads over time, the latest
+  deploy and version, and ingest status.
+- **Storage/resources** where relevant: the event store's size and the
+  free-tier limits.
+
+**Useful**
+- A weekly summary (a generated page or email) of the key numbers.
+
+**Future / validation-dependent**
+- User and account counts, once accounts exist (M13).
+- Everything financial (plans, MRR, churn, costs), which is M15.
+
+**Completion criteria**
+- The dashboard answers "how many households used Settle this week, how
+  many expenses and receipts, and did anything break?" from real events.
+
+**Not yet:** looking up or impersonating individual users, viewing any
+household's content, and any business metrics. **Privacy rule:** the BO
+only ever shows aggregates of the M7 catalogue. It has no access to users'
+financial data, because that data never leaves their devices.
 
 ---
 
-## M9 — Accounts and sync
+# Phase 3 — Personal validation and stabilisation
+
+## M9 — Personal validation and stabilisation
 
 **Status:** Not started
 
-**Goal:** Optional accounts, so data can follow you across devices without
-passing files around.
+**Objective:** the developer uses Settle for real, with their own
+household, long enough to find what's wrong, and fixes it.
 
-**Scope**
-- Sign-in, and server-side storage of the same data model.
-- The file stays supported as import/export and backup, so nobody is
-  locked in.
-- Shared bills: friends can open a split link and see what they owe.
-- BYOK keys stay on the device by default. Syncing them to the account is
-  opt-in and only with encryption.
-- Privacy and security review before launch.
+**Why it matters:** real use finds data-model and split problems that
+tests and imagination miss. Fixing them now is far cheaper than after
+real users rely on the data.
 
-**Done when**
-- A signed-in user sees the same data on two devices. Import and export
-  still work.
-- `README.md` (and `app/README.md` if setup changed) reviewed and
-  updated for M9: outdated parts removed, new features added (see
-  "Every milestone").
+**Must-have**
+- **At least 4 weeks of real use**, recording every real shared expense
+  in Settle: receipts, corrections, and settling up at least once.
+- **A usage log**: each friction, bug or missing capability, with the date
+  and the scenario.
+- **Edge cases exercised** on purpose, each with a test once it works:
+  - a person joins or leaves the household mid-period;
+  - someone pays on behalf of others;
+  - unequal splits (shares, exact amounts, percentages);
+  - shared items on receipts;
+  - discounts, taxes and tips;
+  - duplicate receipts;
+  - correcting mistakes, including in old expenses;
+  - adding historical expenses;
+  - settling partial balances.
+- **Fixes** for every data-model, splitting or settlement problem found.
+  Schema changes go through M3's migrations, with no data loss.
+- **Receipt-reading report**: how often the built-in reader was good
+  enough, on real receipts, from the log and M7's `receipt_parsed`
+  outcomes. This decides the BYOK backlog item.
+
+**Useful**
+- Performance checks on a large history (1 000+ expenses).
+- Accessibility checks on the core flows.
+
+**Completion criteria**
+- Four consecutive weeks in which every real shared expense went through
+  Settle, with no open data-model or balance bug.
+- The usage log is triaged, with each item fixed, scheduled in a later
+  milestone, or rejected with a reason.
+
+**Not yet:** new features that the log doesn't ask for, and visual polish
+(Phase 4).
 
 ---
 
-## Later ideas (unscheduled)
+# Phase 4 — Product design and UX
 
-- Recurring transactions and subscription detection.
-- Multi-currency (for example, splitting bills on trips).
+## M10 — Product design and UX pass
+
+**Status:** Not started
+
+**Objective:** make the proven workflows feel cohesive, obvious and
+intentional, on a phone first.
+
+**Why it matters:** real users (Phase 5) judge within minutes. But polish
+only pays off once the workflow is known to work. **Visual polish is not a
+substitute for validation.**
+
+**Must-have**
+- **Visual identity**: the logo (the current "S" mark is a placeholder),
+  colour, typography, and a small component set built on the existing design
+  tokens.
+- **Onboarding**: from first open to the first household and first
+  expense in under a minute, with no explanation needed.
+- **Navigation** built around households: the household's home shows the
+  balances, a quick "add expense", and recent activity.
+- **Simpler expense and receipt-splitting flows**, informed by M9's log.
+- **Balances you understand at a glance**, and a settle-up action that's
+  obvious.
+- **Empty, loading and error states** for every screen.
+
+**Useful**
+- Motion and micro-interactions that help understanding (not decoration).
+- Portuguese UI translation, if the first users need it. (M11 answers
+  this.)
+
+**Completion criteria**
+- 3–5 people who haven't seen Settle each complete "create a household,
+  add a receipt expense, settle up" without help, in informal hallway
+  tests. The problems they hit are fixed.
+
+**Not yet:** new features. This pass reshapes existing ones.
+
+---
+
+# Phase 5 — Real-user validation
+
+## M11 — Real-user validation (closed beta)
+
+**Status:** Not started
+
+**Objective:** put Settle in front of a small group of real households and
+learn what they actually value. **Do not assume the answers in advance.**
+
+**Who:** first, university students and people living with roommates (for
+example 5–10 households). Maybe a few landlords or property managers
+later, only to listen.
+
+**Must-have**
+- **Recruitment and onboarding** of the beta households, with a simple
+  way to give feedback in the app (a link or form, not a tracking tool).
+- **Quantitative signals** from M7/M8: households created, members added
+  per household, expenses per household per week, the share of expenses
+  from receipts, settlements completed, and whether people return in week
+  2 and week 4.
+- **Qualitative research**: short interviews at the start, after 2 weeks
+  and at the end, and watching people use it.
+- **Questions to answer, with evidence:**
+  - Do people understand the product without explanation?
+  - Do they create households, and invite (share with) their roommates?
+  - Do they add expenses repeatedly?
+  - Do they use receipt processing?
+  - Do they settle balances?
+  - Do they come back after the first use?
+  - Which workflows confuse them?
+  - Which features do they ask for repeatedly, and which do they ignore?
+  - What makes them want to keep using Settle?
+- **Fixes** for what blocks them. Anything bigger becomes a candidate for a
+  later milestone.
+- **Findings report**: the answers, the evidence, and the implications
+  for Phase 6.
+
+**Useful**
+- A public "request a feature" or feedback page.
+
+**Completion criteria**
+- The findings report exists, and the beta ran at least 4 weeks. It
+  states clearly whether Settle retains households, and why or why not.
+
+**Not yet:** payments, pricing pages, or building requested features
+before they're weighed against the findings.
+
+---
+
+# Phase 6 — Paid-product exploration
+
+## M12 — Paid-product exploration
+
+**Status:** Not started, and **conditional on M11** showing that
+households keep using the free product.
+
+**Objective:** find out what, if anything, people would pay for, and at
+what price, before building any of it.
+
+**Why it matters:** *do not monetise the idea, monetise validated
+behaviour.* The paid layer should wrap what users already do and value,
+adding convenience, automation, sync, backup, more powerful processing
+and collaboration.
+
+**Must-have**
+- **A shortlist of paid-feature candidates**, each backed by M11's evidence
+  (repeat requests, workarounds, drop-off points). Candidates, none of them
+  committed:
+  - cloud sync, cloud backup and multi-device use;
+  - hosted AI/OCR and advanced receipt processing;
+  - automatic categorisation, recurring expenses, automation;
+  - advanced household features, collaboration, advanced analytics;
+  - bank integrations;
+  - landlord/property features.
+- **Willingness-to-pay tests** (interviews, a pricing page with a
+  waitlist, or pre-orders) for the top candidates.
+- **Pricing hypotheses**, to validate, not decisions:
+  - a free core that stays genuinely useful;
+  - student pricing, around **€2.49/month**;
+  - household pricing, around **€4.99/month**;
+  - higher-priced landlord/property-manager plans.
+- **Unit economics**: the cost per paying user of each candidate (hosting,
+  sync storage, AI/OCR calls), and payment-provider fees.
+- **Decision record**: which paid features to build (if any), at what
+  price, and what stays free. This updates M13–M16 below.
+
+**Completion criteria**
+- The decision record exists and is backed by evidence. If the evidence
+  doesn't support a paid layer, the roadmap says so and stays free-first.
+
+**Not yet:** billing code, accounts, or student verification.
+
+---
+
+# Phase 7 — The paid layer (only what M12 validates)
+
+## M13 — Accounts, cloud sync and billing
+
+**Status:** Not started, and **conditional on M12**.
+
+**Objective:** optional accounts, so a household's data follows its members
+across devices and people, with billing for whatever M12 validated.
+
+**Must-have (if M12 chooses sync)**
+- Sign-in, and server-side storage of the same data model, with end-to-end
+  encryption considered first.
+- **Real household sharing**: invite roommates, and see the same ledger on
+  every member's device.
+- The Settle file stays supported for import, export and backup, so nobody
+  is locked in, and the free local-first product keeps working without an
+  account.
+- Billing through a payment provider (subscriptions, invoices, VAT for EU
+  customers). No card handling in the app itself.
+- BYOK keys (if that backlog item was built) stay on the device by
+  default. Syncing them is opt-in and encrypted.
+- A privacy and security review before launch.
+
+**Completion criteria**
+- A signed-in household sees the same data on two members' devices, and
+  a paid plan can be bought, cancelled and refunded end to end.
+
+**Not yet:** any paid feature M12 didn't validate.
+
+---
+
+## M14 — Student plan and verification
+
+**Status:** Not started, and **conditional on M12** showing students value
+a student price.
+
+**Objective:** a student plan with the lightest verification that works.
+
+**Must-have (if validated)**
+- **Investigate first**: do students actually value the discount, and is
+  abuse a real problem at this price?
+- If verification is needed, **integrate a specialised verification
+  provider**. Settle does not build its own identity or enrolment checks.
+
+**Not yet:** building verification infrastructure, and storing student ID
+documents.
+
+---
+
+## M15 — Business and financial backoffice
+
+**Status:** Not started, and **conditional on M13** (there's revenue to
+track).
+
+**Objective:** extend M8's BO with what a paid product needs.
+
+**Must-have (when monetised)**
+- Plans, subscriptions and paying users (student, household, landlord).
+- MRR, revenue and churn.
+- Costs: infrastructure, AI/API usage, and payment fees, against revenue.
+- User and account counts, and active accounts.
+
+**Not yet (ever, unless there's a reason):** viewing a household's
+expenses or receipts. Support tools that need personal data get their
+own privacy review first.
+
+---
+
+# Phase 8 — Expansion (only with evidence)
+
+## M16 — Landlord / property-manager experiments
+
+**Status:** Not started, and **conditional on evidence** (landlords in
+M11/M12 asking for it, and willing to pay).
+
+**Objective:** test the narrow wedge, *shared expenses and financial
+reconciliation for multi-tenant properties*, without becoming a
+property-management platform.
+
+**Candidate scope (to validate):**
+- properties with units or rooms, and tenants, reusing households and
+  members (a property as a group of households, or a household with
+  units);
+- allocation rules for shared bills (by room, by occupancy, fixed
+  shares);
+- payment and settlement tracking per tenant, across several properties;
+- property-level reporting and export.
+
+**Not yet:** leases, rent collection, maintenance tickets, tenant
+screening, accounting integrations, and anything else that belongs to a
+full property-management system.
+
+**Architecture note for earlier milestones:** keep households and members
+general. Don't assume one household per user, that members have devices,
+or that a split rule is always per person. That keeps this path open
+without building any of it.
+
+---
+
+## Validation-dependent backlog
+
+Ideas worth keeping that don't have a milestone. Each one moves into a
+milestone only when evidence (personal use, the beta, telemetry,
+willingness to pay) supports it.
+
+- **Bring-your-own-key receipt reading** (the old M3). The user's own AI
+  or receipt-service key, called straight from the browser. It's €0 for
+  the project and much more accurate. Revisit after M9's receipt-reading
+  report. The design notes are kept under
+  [Bring your own key (BYOK)](#bring-your-own-key-byok).
+- **Personal finance** (the old M4–M7): a personal "key" file, dashboards
+  of income and expenses, and your share of household expenses feeding
+  your own finances. It's a possible expansion once the household product
+  is validated. M5's Settle file and M3's local working copy already
+  cover the durable parts of the idea.
+- Recurring expenses and subscription detection (also a paid candidate).
+- Multi-currency (for example, trips).
+- Importing bank CSV/OFX exports, and bank integrations (a paid
+  candidate).
+- Payment links (MB WAY, Revolut, IBAN QR) for settling up.
 - Savings goals and alerts.
-- Importing bank CSV/OFX exports into `Transactions`.
-- Settle-up suggestions across several bills with the same group.
-- BYOK AI for finance features too, e.g. auto-categorising transactions or
-  a "what changed this month" summary.
+- Automatic categorisation (a paid candidate if it needs a hosted model).
+- A native app-store wrapper (Capacitor).
 
 ---
 
 ## Decisions and open questions
 
-### Is the Excel file the right "key"?
-
-The idea behind it is good: no database, the user owns their data, and it
-still opens in Excel. Using the file as the *only* place data lives has two
-weak points, though:
-
-- **Forgetting to download means losing work.** If the session is closed
-  before exporting, the edits are gone.
-- **Hand-edited spreadsheets break easily.** A renamed column or a typed
-  "12,50€" in a number cell makes parsing fragile.
-
-**Recommendation (reflected in M4 and M6): keep the file as the key, but
-back it up.**
-
-- Keep a working copy **in the browser (IndexedDB)** with autosave. No
-  server or database needed. The app reopens where you left off on the same
-  device.
-- The **`.xlsx` stays the portable key**: the way to back up, move to
-  another device, or view in Excel. It is strictly validated and
-  versioned (the `_meta` sheet), with friendly error messages.
-- When accounts arrive (M9), the server takes the place of the browser copy
-  and the file stays as import/export. Nothing earlier is thrown away.
-
-An alternative is a plain JSON/CSV key, which is simpler and more robust to
-parse. The downside is that you lose "it opens nicely in Excel", so `.xlsx`
-is still the default.
-
 ### Receipt parsing
 
-Decision: two tiers, behind one shared reader interface.
+Decision: tiers behind one shared reader interface (M2's `ReceiptReader`).
 
-| Tier                                  | Cost to project | Privacy                        | Accuracy                             |
-|---------------------------------------|-----------------|--------------------------------|--------------------------------------|
-| Built-in (M2): Tesseract.js + rule parser + fiscal QR | None | Nothing leaves the browser | Fine on clean receipts, weaker on crumpled or thermal paper |
-| BYOK (M3): user's AI model or receipt service key | None (the user pays their provider) | Image sent to the user's chosen provider | Much better, returns items directly |
+| Tier | Cost to project | Privacy | Accuracy | Status |
+|------|-----------------|---------|----------|--------|
+| Built-in (M2): Tesseract.js + rule parser + fiscal QR | None | Nothing leaves the browser | Fine on clean receipts, weaker on crumpled or thermal paper | Phase 1 |
+| BYOK: the user's AI model or receipt-service key | None (the user pays their provider) | Image sent to the user's chosen provider | Much better, returns items directly | Backlog, after M9 |
+| Hosted AI/OCR | Per receipt, so it needs a paid plan | Image sent to Settle's provider | Much better | Paid candidate (M12) |
 
-The review step applies to both, so a reader that is mostly right is still
-usable.
+The review step applies to every tier, so a reader that is mostly right is
+still usable.
 
 ### Bring your own key (BYOK)
+
+Kept for the backlog item above.
 
 - **Browser to provider, with no project server in between.** This keeps
   the "no server" principle and means the key never reaches the project.
   It only works for providers that accept requests straight from a browser.
   Anthropic (which needs an explicit opt-in header), OpenAI, and Google
-  Gemini are expected to work; check each during M3 planning. Services
-  that need request signing (e.g. AWS) or block browser requests would
-  need a small relay server. Those are deferred unless one is really
-  wanted, and a relay must pass the key through without storing or
-  logging it.
+  Gemini are expected to work; check each when the item is planned.
+  Services that need request signing (e.g. AWS) or block browser requests
+  would need a small relay server. Those are deferred unless one is really
+  wanted, and a relay must pass the key through without storing or logging
+  it.
 - **Key safety.** A key stored in the browser can be stolen by any script
   injected into the page, so the app needs a strict Content Security
-  Policy, no third-party scripts on pages that handle keys, and minimal
-  dependencies. Recommend that users create a key with a spending limit
-  just for this app.
-- **Model and prompt choices** (which model, the JSON output format,
-  cost per receipt) are decided in M3 planning using the providers'
+  Policy (M2 adds one), no third-party scripts on pages that handle keys,
+  and minimal dependencies. Recommend that users create a key with a
+  spending limit just for this app.
+- **Model and prompt choices** (which model, the JSON output format, cost
+  per receipt) are decided when the item is planned, using the providers'
   current documentation.
 
-### Tech stack (to decide in M0)
+### Sharing without a server
+
+Roommates each have their own device, but the free product has no server.
+The options, cheapest first:
+
+1. **One bookkeeper**: one member keeps the household, and shares
+   summaries as text (M4).
+2. **File exchange**: send the Settle file, and the other person opens it
+   (M5, must-have).
+3. **File merge** by stable record ids, with conflict prompts (M5,
+   useful).
+4. **Real-time sync**: needs a server (M13, a paid candidate).
+
+Open question: is 2 or 3 enough for real households? M11 answers it
+("Do they invite roommates?") before sync is built.
+
+### Analytics and privacy
+
+Decided: aggregate, anonymous product events only (M7's rules), a €0
+endpoint, and a user setting. Still open, for M7 planning:
+
+- opt-in or opt-out by default, under GDPR/ePrivacy;
+- how to count active users and households without a persistent
+  identifier;
+- which free-tier endpoint and event store to use, and their limits.
+
+### Hosting
+
+Decided in principle: a free static host with an SPA fallback (ADR 0001,
+D11). Which host is chosen in M6, together with the M7 endpoint, so they
+can share an origin.
+
+### Pricing (hypotheses, not decisions)
+
+A free core, student around €2.49/month, household around €4.99/month,
+and higher-priced landlord plans. M12 validates or replaces all of these.
+
+### Tech stack
 
 **Decided in M0** (`docs/adr/0001-web-app-tech-stack.md`): TypeScript +
 React + Vite, with npm as the package manager and path-based routes
@@ -444,19 +971,53 @@ React + Vite, with npm as the package manager and path-based routes
 at `/` and rewrites unknown paths to `index.html`. Node comes from the
 system package (Node 24 LTS, matching `app/.nvmrc`).
 
-The original suggestion, for reference:
+PWA support is expected via `vite-plugin-pwa` (M6). A later native app
+would be a Capacitor wrapper around the same codebase.
 
-Suggested: **TypeScript + React + Vite**, SheetJS or ExcelJS for `.xlsx`,
-a chart library (e.g. Recharts or ECharts), and PWA support via
-`vite-plugin-pwa`. This keeps one codebase for web and a later Capacitor
-app. Alternatives (Next.js, SvelteKit, Flutter) are worth considering.
+### Earlier decisions, kept
 
-### Other open questions
+- **Default currency and locale:** `pt-PT` / `EUR` (decided in M0),
+  changeable by the user (M1, "Region setting").
+- **The user-owned file** (from the old "finance key" discussion): keep a
+  working copy in the browser (IndexedDB, autosaved), and a strictly
+  validated, versioned file as the portable backup and exchange format.
+  M3 and M5 carry this forward, as JSON rather than `.xlsx`: it's robust to
+  parse and fits the household model. A spreadsheet export is covered by
+  CSV.
 
-- ~~Default currency and locale~~ **Decided in M0:** `pt-PT` / `EUR` by
-  default (`,` decimal separator), and changeable by the user (M1 scope,
-  "Region setting").
-- Should dashboards support several people in one household file, or is it
-  one file per person?
-- Hosting target for the web app (a static host is enough until M9, or
-  until a BYOK relay is needed).
+---
+
+## Roadmap strategy
+
+Settle is built in a deliberate order: **useful, then used, then loved,
+then paid.**
+
+1. **Free local-first core (Phase 1):** receipts, households, the expense
+   ledger, balances, settling up, backup and sharing, deployed as an
+   installable PWA. It runs in the browser for €0, with no account. This is
+   the product, not a demo of it.
+2. **Just enough instrumentation (Phase 2):** anonymous, aggregate events
+   and a minimal developer BO, so every later decision can use evidence.
+   Nobody's finances are ever seen.
+3. **Personal use (Phase 3):** the developer's own household runs on
+   Settle for weeks. Edge cases and data-model problems get fixed while
+   they're cheap.
+4. **Design (Phase 4):** the proven workflows get a coherent identity and
+   an effortless mobile experience. Polish follows function; it never
+   replaces validation.
+5. **Real users (Phase 5):** a closed beta with student and roommate
+   households, measured and interviewed, to learn what they actually
+   value.
+6. **Paid exploration (Phase 6), then the paid layer (Phases 7–8):** only
+   now are paid features chosen, from observed demand and tested
+   willingness to pay. Pricing starts as hypotheses. Accounts, sync,
+   billing, a student plan, the business BO and landlord experiments are
+   each built only if the evidence supports them.
+
+**Why the business layer comes last.** A paid layer built before the free
+product has proven itself monetises a guess. Building it after validation
+means selling convenience, automation, sync and power around behaviour
+people already repeat. That's more likely to be paid for, and it keeps the
+free product honest. It also keeps running costs at €0 until there's
+revenue to cover them. The principle is simple: **do not monetise the
+idea; monetise validated behaviour.**

@@ -11,7 +11,8 @@ afterEach(() => {
 // jsdom has no matchMedia, and `system` theme mode depends on media
 // queries. The stub matches nothing, like a light-scheme browser; a test
 // that needs a match replaces it with vi.spyOn(window, 'matchMedia').
-if (typeof window.matchMedia !== 'function') {
+// Suites that run in the node environment have no window at all.
+if (typeof window !== 'undefined' && typeof window.matchMedia !== 'function') {
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     writable: true,

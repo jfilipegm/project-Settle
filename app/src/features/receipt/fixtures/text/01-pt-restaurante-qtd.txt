@@ -1,0 +1,15 @@
+Restaurante O Cantinho
+Rua da Prata 45
+1100-420 Lisboa
+NIF: 123456789
+Fatura Simplificada FS 2026/1532
+Data: 28-09-2026 Hora: 13:45
+Qtd Descrição P.Unit Total
+2 Imperial 1,60 3,20
+1 Bitoque 9,50 9,50
+1 Salada Mista 4,20 4,20
+2 Café 0,80 1,60
+TOTAL 18,50
+Multibanco 18,50
+IVA incluído à taxa em vigor
+Obrigado pela visita

@@ -1,0 +1,32 @@
+{
+  "merchant": "Marisqueira do Porto",
+  "merchantTaxId": "505555557",
+  "date": "2026-09-26",
+  "items": [
+    {
+      "name": "Arroz de Marisco",
+      "quantity": "1",
+      "unitPrice": "38.00",
+      "lineTotal": "38.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Imperial",
+      "quantity": "4",
+      "unitPrice": "2.00",
+      "lineTotal": "8.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Pão e Manteiga",
+      "quantity": "1",
+      "unitPrice": "3.50",
+      "lineTotal": "3.50",
+      "needsCheck": false
+    }
+  ],
+  "subtotal": "44.11",
+  "tip": "4.95",
+  "total": "54.45",
+  "warnings": []
+}

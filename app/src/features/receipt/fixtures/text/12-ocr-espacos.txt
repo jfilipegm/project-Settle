@@ -1,0 +1,6 @@
+Café   Imperial
+Rua Nova   22
+Torrada      1, 90
+Galão    1, 20
+Bolo de   arroz   1, 10
+TOTAL     4, 20

@@ -1,0 +1,54 @@
+{
+  "merchant": "Mercado Brisa, Lda",
+  "merchantTaxId": "502874619",
+  "date": "2026-09-20",
+  "total": "13.43",
+  "items": [
+    {
+      "name": "Agua Mineral 1,5L",
+      "quantity": "1",
+      "unitPrice": "0.39",
+      "lineTotal": "0.39",
+      "needsCheck": false
+    },
+    {
+      "name": "Refrigerante",
+      "quantity": "1",
+      "unitPrice": "6.90",
+      "lineTotal": "6.90",
+      "needsCheck": false
+    },
+    {
+      "name": "Deposito",
+      "quantity": "6",
+      "unitPrice": "0.10",
+      "lineTotal": "0.60",
+      "needsCheck": false
+    },
+    {
+      "name": "Queijo Fatiado",
+      "quantity": "1",
+      "unitPrice": "2.49",
+      "lineTotal": "2.49",
+      "needsCheck": false
+    },
+    {
+      "name": "Iogurte",
+      "quantity": "1",
+      "unitPrice": "1.90",
+      "lineTotal": "1.90",
+      "needsCheck": false
+    },
+    {
+      "name": "Bolachas Maria",
+      "quantity": "1",
+      "unitPrice": "1.15",
+      "lineTotal": "1.15",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "qr": "A:502874619*B:999999990*C:PT*D:FS*E:N*F:20260920*G:FS 0420/0831*H:JB7K2Q9M-0831*I1:PT*I3:4.14*I4:0.25*I7:6.86*I8:1.58*N:1.83*O:13.43*Q:Lm4t*R:1050",
+  "check": "match",
+  "removedLines": []
+}

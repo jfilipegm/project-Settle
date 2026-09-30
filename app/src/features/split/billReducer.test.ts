@@ -1,6 +1,11 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { cents } from '../../lib/money.ts'
-import { billReducer, createBill, type BillAction } from './billReducer.ts'
+import {
+  billReducer,
+  createBill,
+  newId,
+  type BillAction,
+} from './billReducer.ts'
 import { validateBill, type Bill } from './model.ts'
 
 function run(bill: Bill, ...actions: BillAction[]): Bill {
@@ -261,5 +266,79 @@ describe('bill-level actions', () => {
     )
 
     expect(bill).toEqual(createBill(['q1', 'q2', 'j1']))
+  })
+
+  it('replaceBill puts a whole bill in place', () => {
+    const imported = { ...createBill(['a', 'b', 'c']), payerId: 'b' }
+
+    expect(run(fresh(), { type: 'replaceBill', bill: imported })).toBe(imported)
+  })
+})
+
+describe('newId', () => {
+  const UUID_V4 =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
+
+  it('gives a random UUID', () => {
+    expect(newId()).toMatch(UUID_V4)
+    expect(newId()).not.toBe(newId())
+  })
+
+  it('works outside a secure context, with no crypto.randomUUID', () => {
+    // Plain HTTP on the local network: only getRandomValues exists.
+    vi.stubGlobal('crypto', {
+      getRandomValues: crypto.getRandomValues.bind(crypto),
+    })
+    try {
+      const ids = new Set(Array.from({ length: 50 }, () => newId()))
+      expect(ids.size).toBe(50)
+      for (const id of ids) expect(id).toMatch(UUID_V4)
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+})
+
+describe('addItems (R13, R24)', () => {
+  const bill = createBill(['alice', 'bob', 'first'])
+
+  it('adds named, priced items shared by everyone', () => {
+    const next = billReducer(bill, {
+      type: 'addItems',
+      items: [
+        { id: 'gap', name: 'Not read from the receipt', unitPrice: cents(250) },
+        { id: 'back', name: 'Vinho', unitPrice: cents(2000) },
+      ],
+    })
+    expect(next.items.slice(1)).toEqual([
+      {
+        id: 'gap',
+        name: 'Not read from the receipt',
+        quantity: { numerator: 1, denominator: 1 },
+        unitPrice: 250,
+        assignees: [
+          { personId: 'alice', weight: 1 },
+          { personId: 'bob', weight: 1 },
+        ],
+      },
+      expect.objectContaining({ id: 'back', name: 'Vinho', unitPrice: 2000 }),
+    ])
+    expect(validateBill(next)).toEqual([])
+  })
+
+  it('adds nothing when they wouldn’t all fit under the item limit', () => {
+    let full = bill
+    for (let i = 1; i < 99; i++) {
+      full = billReducer(full, { type: 'addItem', id: `i${i}` })
+    }
+    expect(full.items).toHaveLength(99)
+    const two = [
+      { id: 'a', name: 'A', unitPrice: cents(100) },
+      { id: 'b', name: 'B', unitPrice: cents(100) },
+    ]
+    expect(billReducer(full, { type: 'addItems', items: two })).toBe(full)
+    expect(
+      billReducer(full, { type: 'addItems', items: two.slice(0, 1) }).items,
+    ).toHaveLength(100)
   })
 })

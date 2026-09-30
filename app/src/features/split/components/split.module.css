@@ -195,6 +195,18 @@
   margin: 0;
 }
 
+/* An item read from a receipt that needs checking (M2, D14). */
+.checkMarker {
+  display: inline-block;
+  margin: 0 0 var(--space-2);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-sm);
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -301,4 +313,14 @@
 
 .newBill .hint {
   margin-top: var(--space-2);
+}
+
+/* A scanned receipt's notice above the totals (M2 remediation, R12, R24):
+   text first, the icon only decoration. */
+.receiptNotice {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 2px solid var(--color-error);
+  border-radius: var(--radius-md);
+  font-weight: 600;
 }

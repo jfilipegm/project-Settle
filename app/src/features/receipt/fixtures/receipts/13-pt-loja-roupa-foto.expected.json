@@ -1,0 +1,33 @@
+{
+  "merchant": "VENTO NORTE",
+  "merchantTaxId": "506132986",
+  "date": "2026-08-22",
+  "total": "38.97",
+  "items": [
+    {
+      "name": "Calcas Ganga",
+      "quantity": "1",
+      "unitPrice": "24.99",
+      "lineTotal": "24.99",
+      "needsCheck": false
+    },
+    {
+      "name": "T-shirt Basica",
+      "quantity": "1",
+      "unitPrice": "9.99",
+      "lineTotal": "9.99",
+      "needsCheck": false
+    },
+    {
+      "name": "Meias Algodao",
+      "quantity": "1",
+      "unitPrice": "3.99",
+      "lineTotal": "3.99",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "qr": "A:506132986*B:999999990*C:PT*D:FS*E:N*F:20260822*G:FR VN1202/0412*H:J6SHZSRZ-0412*I1:PT*I7:31.68*I8:7.29*N:7.29*O:38.97*Q:Vn2k*R:0755",
+  "check": "match",
+  "removedLines": []
+}

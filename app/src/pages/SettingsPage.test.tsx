@@ -80,12 +80,23 @@ describe('settings: region', () => {
 
     expect(screen.getByText(/amounts are never converted/)).toBeInTheDocument()
   })
+})
 
-  it('says receipt reading comes in M3', () => {
+describe('settings: receipts and licences', () => {
+  it('says receipts are read on this device, promising no milestone', () => {
     renderSettings()
 
     expect(
-      screen.getByText('Coming in M3: Bring-your-own-key receipt reading.'),
+      screen.getByText('Built-in: read on this device.'),
     ).toBeInTheDocument()
+    expect(screen.queryByText(/M3|coming/i)).not.toBeInTheDocument()
+  })
+
+  it('links to the third-party licences', () => {
+    renderSettings()
+
+    expect(
+      screen.getByRole('link', { name: 'Third-party licences' }),
+    ).toHaveAttribute('href', '/THIRD_PARTY_NOTICES.md')
   })
 })

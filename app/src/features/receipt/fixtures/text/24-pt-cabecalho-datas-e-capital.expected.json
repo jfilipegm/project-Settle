@@ -1,0 +1,31 @@
+{
+  "merchant": "Padaria Portuguesa",
+  "merchantTaxId": "246813571",
+  "date": "2026-09-28",
+  "currencyHint": "EUR",
+  "items": [
+    {
+      "name": "Pão de Deus",
+      "quantity": "1",
+      "unitPrice": "1.20",
+      "lineTotal": "1.20",
+      "needsCheck": false
+    },
+    {
+      "name": "Croissant Misto",
+      "quantity": "1",
+      "unitPrice": "2.40",
+      "lineTotal": "2.40",
+      "needsCheck": false
+    },
+    {
+      "name": "Meia de Leite",
+      "quantity": "1",
+      "unitPrice": "1.30",
+      "lineTotal": "1.30",
+      "needsCheck": false
+    }
+  ],
+  "total": "4.90",
+  "warnings": []
+}

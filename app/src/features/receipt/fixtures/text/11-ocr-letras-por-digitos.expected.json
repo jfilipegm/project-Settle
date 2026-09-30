@@ -1,0 +1,37 @@
+{
+  "merchant": "Snack-Bar Estrela",
+  "merchantTaxId": "200123459",
+  "date": "2026-09-24",
+  "items": [
+    {
+      "name": "Bifana",
+      "quantity": "1",
+      "unitPrice": "1.80",
+      "lineTotal": "1.80",
+      "needsCheck": true
+    },
+    {
+      "name": "Imperial",
+      "quantity": "1",
+      "unitPrice": "1.20",
+      "lineTotal": "1.20",
+      "needsCheck": true
+    },
+    {
+      "name": "Prego no Pão",
+      "quantity": "1",
+      "unitPrice": "4.50",
+      "lineTotal": "4.50",
+      "needsCheck": true
+    },
+    {
+      "name": "Água",
+      "quantity": "1",
+      "unitPrice": "0.90",
+      "lineTotal": "0.90",
+      "needsCheck": true
+    }
+  ],
+  "total": "8.40",
+  "warnings": []
+}
