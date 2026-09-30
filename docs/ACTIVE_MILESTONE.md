@@ -712,11 +712,9 @@ Verification:
 
 ## Current blockers
 
-M2 can't be accepted until its remediation child,
-`milestone-2-remediation-1`, is accepted (functional review round 1,
-below). All four of its checkpoints are complete, and implementation
-revision 2 is approved in `ca2bf35` (basis `EXTERNAL_APPROVE`, bundle
-`c868b42c6361`). It's in its functional review (checklist below).
+None. M2's remediation child, `milestone-2-remediation-1`, was accepted
+in `4165243` after its functional review passed (its checklist is pinned
+in `ff03b38`). M2 is in its functional review, round 2 (checklist below).
 
 ## Active plan
 
@@ -725,134 +723,41 @@ archived at `docs/milestones/completed/milestone-1-PLAN.md`.
 
 ## Functional review checklist
 
-### `milestone-2-remediation-1`, implementation revision 2
+### M2 functional review, round 2 (implementation revision 2)
 
-This is the re-test agreed in M2's round 1: M2's items 2, 7, 8, 9 and 11
-(in M2's checklist below), your five receipts, and the new check-panel
-behaviour. Report findings in
-`.ai-review/milestone-2-remediation-1/feedback/FUNCTIONAL_REVIEW.md`: the
-item number, what you did, what you saw, and what you expected. Name a
-real receipt by its file name (lidl1, continente…) and never paste or
-commit its image: it holds personal data.
+Round 1's findings (F-I-1 to F-I-4, below) were deferred to
+`milestone-2-remediation-1`, which is now accepted (`4165243`): its plan
+and reviews covered them, and its functional review, which re-ran this
+checklist's items 2, 7, 8, 9, 11 and 12 and your five receipts, passed.
+The accepted measured floors and the waived phone timing (in that
+child's checklist, `ff03b38`) carry over to M2 as known limitations.
 
-**Setup**
+This round checks the parts of M2 the child changed around but didn't
+re-test: the check panel, the result section and the Split page's
+reducer were all edited. Report findings in
+`.ai-review/feedback/FUNCTIONAL_REVIEW.md` (replace round 1's file): the
+item number, what you did, what you saw, and what you expected.
 
-- As in M2's setup below: the preview build (`npm run build && npm run
-  preview -- --host` from `app/`), a clean profile, Settings → Region
-  Portuguese / Euro, and DevTools open on the desktop.
-- Your five receipts are in `app/src/features/receipt/fixtures/local/`
-  (git-ignored): `lidl1.png`, `lidl2.png`, `lidl3.png`, `continente.png`
-  and `tiffosi.png`. Copy them to the phone's gallery for item 7.
-- The new invented samples: `fixtures/receipts/11-pt-app-estreito.png`,
-  `12-pt-hiper-foto.png`, `13-pt-loja-roupa-foto.png`, and
-  `fixtures/browser/sample-12.jpg`.
-- Optional: `npm --prefix app test -- receipts.local` reads your five
-  receipts with the real OCR in Node and checks the measured floors
-  (Continente 55 %, lidl1 10 %, lidl2 and lidl3 20 %, Tiffosi a match).
+**Setup:** as in round 1's setup below.
 
-**Checklist**
+**Checklist:** run items **1, 3, 4, 5, 6, 10 and 13** below.
+*Expected:* exactly as written there. In particular, with `sample-1.jpg`
+the panel still says a plain "✓ Matches the receipt total." (no
+"Matches after leaving out…" wording, no "Only … was read" line and no
+"Add the difference" button), and no notice shows above the result's
+totals while the bill matches. In item 3, raising Bitoque to `10,00` makes
+the items add up to more, so there's still no "Add the difference" button;
+lowering it to `9,00` instead offers "Add the difference (0,50 €) as an
+item" and the notice above the totals. Set it back to `9,50` afterwards.
 
-1. **M2's results haven't regressed.** Run M2's items 2, 7, 8 and 9
-   below.
-   *Expected:* exactly as written there (`sample-1.jpg` five items and
-   "Matches"; `sample-3.heic`, `sample-6-scanned.pdf` and `sample-9.pdf`
-   as listed; a "⚠ Check" on `08-pt-linha-borrada.png`; each failure
-   falls back to typing). The new image clean-up must not change any of
-   them.
-2. **The invented real-layout receipts.** Scan `11-pt-app-estreito.png`
-   (a narrow app receipt), `12-pt-hiper-foto.png` (a supermarket photo on
-   a table) and `13-pt-loja-roupa-foto.png` (a clothes-shop photo).
-   *Expected:* each "Matches", with the total from the fiscal QR code:
-   Mercado Brisa, Lda, 6 items, 13,43 €; HIPERMERCADO LARGO, 6 items
-   (Bolacha Digestive 400G … Salada Mista 250G), 16,50 €; VENTO NORTE, 3
-   items, 38,97 €. These are what the Node tests read; the browser's image
-   decoding can differ slightly, and then the panel shows the gap. Note
-   any receipt that doesn't match. `sample-12.jpg` (the JPEG of sample
-   12) read 7 items in the browser during CP4: a mismatch there is known,
-   and it's fine as long as it shows.
-3. **Tiffosi** (`tiffosi.png`, a photo on a table).
-   *Expected:* 5 items and "Matches" against 76,11 € from the QR code.
-4. **Continente, a gap you can't miss, closed in one click**
-   (`continente.png`).
-   *Expected:*
-   - About 13 items adding up to about 38,81 €, against 51,25 € from the
-     QR code. (Three lines are misread; the plan's 75 % wasn't reached,
-     see the limits below.)
-   - The panel says "⚠ Only 38,81 € of the receipt’s 51,25 € was read.
-     Add the missing items, or add the difference as one item." (the
-     amounts as read), with a button "Add the difference (12,44 €) as an
-     item".
-   - Above the result's totals: "These totals don’t match the receipt:
-     the items add up to 38,81 €, 12,44 € less than the receipt’s
-     51,25 €.", with a link to the check panel. "Copy as text" includes
-     that sentence.
-   - Set Tax to a percentage (any value): the button is replaced by "Add
-     the missing items, or change the tax or tip to an amount, to match
-     the receipt." Set Tax back to none.
-   - Press the button: a "Not read from the receipt" item for the
-     difference appears, shared by everyone, the panel says "Matches",
-     and the notice above the totals goes. Reload: all of it is kept.
-5. **Lidl app screenshots** (`lidl1.png`, `lidl2.png`, `lidl3.png`,
-   223–261 px wide).
-   *Expected:* each gives a non-empty item list (names with typos, and
-   some junk lines taken for items: about 19, 23 and 3 lines) and the QR
-   code's total as the receipt total (75,68 €, 76,77 € and 7,76 €). None
-   says "Matches": the panel and the result both show the gap. lidl1 and
-   lidl2 add up to less and offer the "Add the difference" button;
-   lidl3's lines add up to more (one of them is a footer line near the
-   total, left in), so there's no button. These are the accepted
-   measured results, not findings, unless something is worse than this.
-6. **Nothing read, but a QR code.** Photograph only the fiscal QR code of
-   a Portuguese receipt (cover or crop out the text), and scan it.
-   *Expected:* one item, "Not read from the receipt", for the QR total,
-   with "⚠ Check", and the panel says "⚠ None of the items could be
-   read. The receipt’s total was added as one item: split it as it is,
-   or type the items in." Editing that item removes the wording.
-7. **On the phone** (M2's item 11). Choose each of the five receipts from
-   the gallery, and use "Take photo" on at least two paper receipts of
-   your own, one with a fiscal QR code.
-   *Expected:* the same results as on the desktop for the five; for the
-   new ones, either "Matches" or a gap you can see before splitting.
-   Nothing freezes or crashes. Timing isn't required (waived, see the
-   limits below), but note it if a scan feels unreasonably slow.
-8. **Nothing leaves the browser** (M2's item 12), during the Continente
-   scan on the desktop.
-   *Expected:* only `GET`s to the app's own address; no URL contains a
-   merchant, amount or item text.
-9. **Phone layout, dark mode and keyboard**, for the new parts. On the
-   phone (or DevTools at 360 px) with the theme on Dark, during item 4.
-   *Expected:* the "Only … was read" line, the "Add the difference"
-   button and the notice above the totals fit with no horizontal
-   scrolling and stay readable. With Tab only, the button is reachable
-   and shows a focus ring.
+**Known limitations (not findings):** round 1's list below, plus the
+child's: the accepted measured floors on your five receipts (Continente
+56 %, Lidl 11–22 %, lidl3's footer line kept), the waived phone reading
+time (measured on the PaddleOCR child's reader), and "Matches after
+leaving out N lines…", "They aren’t items" and "Put them back", which no
+sample receipt reaches (covered by `SplitPage.review.test.tsx`).
 
-**Known limitations (not findings)**
-
-- The accepted measured floors (the user's decision, 2026-09-29):
-  Continente 56 % of its items matched (plan target 75 %), the Lidl
-  receipts 11 %, 21 % and 22 % (target 60 %), and lidl3's footer line
-  left in the list. The next remediation child (PaddleOCR) is meant to
-  raise these back to the plan's targets.
-- The phone reading time wasn't measured: the user waived it
-  (2026-09-29) because the Tesseract reader is being replaced; it's
-  measured on the PaddleOCR child's reader, with the 60-s and 20-s
-  thresholds.
-- None of the receipts here makes the import leave lines out to match the
-  total, so "Matches after leaving out N lines…", "They aren’t items" and
-  "Put them back" can't be reached with them. They're covered by
-  `SplitPage.review.test.tsx`.
-- Names from a 5-px screenshot will have typos; the amounts and the total
-  check are what the split depends on.
-- Still no cropping or perspective correction, and M2's other limits
-  below.
-
-### M2 checklist (implementation revision 2)
-
-M2 functional review, implementation revision 2. Report findings in
-`.ai-review/feedback/FUNCTIONAL_REVIEW.md`: the item number, what you
-did, what you saw, and what you expected. For a receipt that reads badly,
-note the device, whether it was a photo or a file, and, if you can, attach
-or describe the receipt (blur out anything private).
+### M2 checklist, round 1 (implementation revision 2)
 
 ### Functional review, round 1: findings and routing
 
