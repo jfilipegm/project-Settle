@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-2-5",
+  "plan_revision": 6,
+  "checkpoints": [
+    {
+      "id": "CP1",
+      "name": "The local test set (format v2) and the accuracy measure, in Node and a real browser, with the Tesseract baseline",
+      "depends_on": [],
+      "complexity": 2,
+      "session_target": 1
+    },
+    {
+      "id": "CP2",
+      "name": "The PaddleOCR reader: pinned, self-hosted runtime and models, a worker, Node route, first numbers",
+      "depends_on": [
+        "CP1"
+      ],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "CP3",
+      "name": "Tuning line assembly, clean-up and parser rules on the local set to the accuracy target",
+      "depends_on": [
+        "CP2"
+      ],
+      "complexity": 3,
+      "session_target": 2
+    },
+    {
+      "id": "CP4",
+      "name": "Corpus samples for the new layouts, small-image advice, Tesseract retired",
+      "depends_on": [
+        "CP3"
+      ],
+      "complexity": 2,
+      "session_target": 1
+    },
+    {
+      "id": "CP5",
+      "name": "The row-by-row review: line boxes and roles on the receipt image, an accessible list, adding ignored or missed lines as items",
+      "depends_on": [
+        "CP4"
+      ],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "CP6",
+      "name": "Acceptance measurement, phone times, privacy checks, ADR, notices and READMEs",
+      "depends_on": [
+        "CP5"
+      ],
+      "complexity": 2,
+      "session_target": 1
+    }
+  ]
+}

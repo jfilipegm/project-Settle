@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-2-5",
+  "requirements": {
+    "REQ-1": {
+      "description": "A local-only real-receipt test set in format v2 (images as the phone made them, names and prices, repeat photos linked), still never tracked, with at least 30 distinct receipts at acceptance.",
+      "checkpoint_ids": [
+        "CP1",
+        "CP6"
+      ]
+    },
+    "REQ-2": {
+      "description": "One accuracy measure (receipt, distinct-receipt, row and name accuracy, false matches; a pass needs the exact rows, each a recognisable product at the right price, the right adjustments and the right total), run in a real browser as the reference and in Node for iteration, with Tesseract's baseline recorded.",
+      "checkpoint_ids": [
+        "CP1",
+        "CP6"
+      ]
+    },
+    "REQ-3": {
+      "description": "A PaddleOCR reader behind `ReceiptReader`, in a worker, with pinned, checksummed, self-hosted runtime and models under the existing CSP, and D16/D17's errors, phases and cancelling.",
+      "checkpoint_ids": [
+        "CP2"
+      ]
+    },
+    "REQ-4": {
+      "description": "The tests read with PaddleOCR in Node and CI, and the committed synthetic corpus, with new invented samples for the new layouts, passes.",
+      "checkpoint_ids": [
+        "CP2",
+        "CP4"
+      ]
+    },
+    "REQ-5": {
+      "description": "Reading tuned on the set to at least 94 % receipt accuracy with zero false matches, or a reported stop.",
+      "checkpoint_ids": [
+        "CP3",
+        "CP6"
+      ]
+    },
+    "REQ-6": {
+      "description": "An image whose text is too small gets advice on a better one, without changing the saved data.",
+      "checkpoint_ids": [
+        "CP4"
+      ]
+    },
+    "REQ-7": {
+      "description": "Tesseract retired, and the ADR, notices, Settings and READMEs describe the new reader.",
+      "checkpoint_ids": [
+        "CP4",
+        "CP6"
+      ]
+    },
+    "REQ-8": {
+      "description": "The download budget, the desktop engineering gate and the phone times are met, and nothing leaves the browser.",
+      "checkpoint_ids": [
+        "CP2",
+        "CP6"
+      ]
+    },
+    "REQ-9": {
+      "description": "A row-by-row review of what the reader found: the image with each line's box and role, the same lines as an accessible list, and adding an ignored line or a missed one as an item, with nothing stored.",
+      "checkpoint_ids": [
+        "CP5"
+      ]
+    }
+  }
+}
