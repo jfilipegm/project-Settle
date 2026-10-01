@@ -12,7 +12,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { expect, vi } from 'vitest'
 import { createBuiltInReader } from './builtInReader.ts'
 import type { DecodeResult } from './decode.ts'
-import { decodePngNode, encodePageNode } from './encodePage.node.ts'
+import { decodeImageNode } from './decodeImage.node.ts'
+import { encodePageNode } from './encodePage.node.ts'
 import type { ImportDeps } from './importReceipt.ts'
 import { fragmentsToLines, hasTextLayer, toFragments } from './pdfTextLines.ts'
 import { scanFiscalQr, type ReadBarcodes } from './qrScanner.ts'
@@ -40,12 +41,18 @@ export async function openPdf(data: Uint8Array) {
   })
 }
 
-/** Node's decoding: a PNG to its pixels, a PDF to its text layer (D6). */
+/**
+ * Node's decoding: a JPEG (upright, by its EXIF orientation) or PNG to its
+ * pixels, a PDF to its text layer (D6).
+ */
 async function decodeNode(file: File): Promise<DecodeResult> {
   const bytes = new Uint8Array(await file.arrayBuffer())
   const meta = { name: file.name, type: file.type, size: file.size }
   if (!file.name.endsWith('.pdf')) {
-    return { ok: true, source: { pages: [decodePngNode(bytes)], file: meta } }
+    return {
+      ok: true,
+      source: { pages: [decodeImageNode(bytes, file.name)], file: meta },
+    }
   }
   const task = await openPdf(bytes)
   const pdf = await task.promise

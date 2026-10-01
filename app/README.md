@@ -218,27 +218,63 @@ Real receipts are the best regression test, and they carry personal data
 **only on your own machine**, in `src/features/receipt/fixtures/local/`,
 which is git-ignored, and they are **never committed**.
 
-To add one, convert it to PNG (the Node tests decode PNG only) and write
-its `.expected.json` next to it:
-
-```sh
-magick receipt.jpeg -auto-orient src/features/receipt/fixtures/local/shop.png
-```
+To add one, copy the image in **as the phone made it** (a camera original,
+a shared copy, a screenshot: JPEG, PNG or HEIC, no conversion) and write a
+`<case>.expected.json` next to it (format v2):
 
 ```json
 {
-  "qrTotal": "12.40",
-  "items": ["1.74", "2.39", "8.27"],
-  "minCoverage": 0.75
+  "image": "cafe.jpg",
+  "total": "12.40",
+  "totalSource": "qr",
+  "items": [
+    { "name": "Bica", "price": "0.80" },
+    { "name": "Tosta mista", "price": "3.20" }
+  ],
+  "tip": "1.00",
+  "capture": "camera",
+  "part": "tuning"
 }
 ```
 
-`items` are the prices printed on the receipt, one per item line.
-`receipts.local.ocr.test.ts` reads each receipt with the real OCR and
-checks its target: `minCoverage` (the share of the total read as items at
-their right price), `itemsAllRight` (every item read has its right price)
-or `"check": "match"`. It prints each receipt's numbers only. Where the
-folder is empty or missing, as in CI, the test is skipped.
+- `total` is the total as printed; `totalSource` is what the receipt
+  offers: `qr` (a fiscal QR code) or `printed`.
+- `items` has one row per item a correct bill holds: the name as printed
+  on the item's first line, and the price the row should carry (its
+  printed line total after its own savings or discount lines). `2 X 4,04
+… 8,08` is one row priced `8.08`.
+- `discount`, `tip` and `tax` (optional) are the bill-level adjustments
+  the bill should hold, as amounts. A tax already in the prices, as
+  Portuguese VAT is, isn't a `tax` here.
+- `capture` is `camera` (a full-resolution original, as the phone saved
+  it), `shared` (a compressed copy, e.g. sent through a messaging app),
+  `screenshot` or `scan`.
+- `part` is `tuning`, or `heldOut` for the receipts kept aside until the
+  final measurement (M2.5 plan, P14).
+- `sameReceiptAs` (optional) names another case when this is a second
+  photo of the same receipt, so it counts as one distinct receipt.
+- `minRowAccuracy` (optional) is the case's floor in the Node test: the
+  share of its rows that must be read.
+
+Amounts are decimal strings with a dot. A missing image, a bad amount or
+an unknown `sameReceiptAs` fails the run with the case's name.
+
+Two measurements score the set with one accuracy measure
+(`accuracy.ts`): an image needs **no edit** when the rows read are
+exactly the rows bought, each at its price and recognisable as its
+product, the adjustments are right and the check says "Matches".
+
+```sh
+npm run build && node scripts/measure-local.mjs  # in headless Brave: the reference
+node scripts/measure-node.mjs                     # in Node: faster, for iteration
+```
+
+Both print numbers and case names only (receipt accuracy, distinct-receipt,
+row and name accuracy, false matches) and write their full report, which
+holds receipt text, to the git-ignored `.ai-review/local-measure/`.
+Held-out cases are skipped unless you pass `--held-out`. HEIC cases are
+read by the browser run only (Node has no HEIC decoder). Where the folder
+is empty or missing, as in CI, the Node test is skipped.
 
 `.gitignore` stops an ordinary `git add`. It can't stop `git add -f`, or a
 file tracked before the rule, so `localFixtures.test.ts` checks, locally
