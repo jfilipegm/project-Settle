@@ -269,6 +269,12 @@ npm run build && node scripts/measure-local.mjs  # in headless Brave: the refere
 node scripts/measure-node.mjs                     # in Node: faster, for iteration
 ```
 
+The Node run reads with PaddleOCR (`--reader tesseract` to compare). The
+browser run reads with whatever the build uses: Tesseract by default until
+M2.5's CP4, PaddleOCR when built with `VITE_RECEIPT_READER=paddle npm run
+build`. `--warm` also times a second scan of each case with the reader
+already loaded, and `--time <image>` only times the named images.
+
 Both print numbers and case names only (receipt accuracy, distinct-receipt,
 row and name accuracy, false matches) and write their full report, which
 holds receipt text, to the git-ignored `.ai-review/local-measure/`.

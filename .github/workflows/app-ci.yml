@@ -26,8 +26,23 @@ jobs:
           cache: npm
           cache-dependency-path: app/package-lock.json
       - run: npm ci
+      # The PaddleOCR models (M2.5 plan, P5), downloaded by
+      # scripts/vendor-paddle.mjs, which pins their revision and SHA-256s:
+      # the key follows that file, so a changed pin downloads afresh and a
+      # restored file is still checked against its hash.
+      - uses: actions/cache@v4
+        with:
+          path: app/.paddle-models
+          key: paddle-models-${{ hashFiles('app/scripts/vendor-paddle.mjs') }}
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run format:check
       - run: npm test
+      # The PaddleOCR build (M2.5, until it's the default in CP4), then the
+      # default one, each with one ONNX Runtime wasm under vendor/ort/ (P4).
       - run: npm run build
+        env:
+          VITE_RECEIPT_READER: paddle
+      - run: node scripts/check-build.mjs
+      - run: npm run build
+      - run: node scripts/check-build.mjs

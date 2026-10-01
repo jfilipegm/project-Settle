@@ -4,6 +4,10 @@
  * real Tesseract.js, the real zxing-wasm and the real pdf.js, then turned
  * into a bill and checked (D12–D14). `fetch` fails on any http(s) URL, so
  * a library falling back to its CDN fails the test instead of passing.
+ *
+ * The corpus is also read with PaddleOCR (M2.5 plan, CP2): its results are
+ * printed, not yet enforced (CP4 enforces them, when it becomes the only
+ * reader).
  */
 import { readFile, readdir } from 'node:fs/promises'
 import path from 'node:path'
@@ -70,6 +74,41 @@ function amount(decimal: string | undefined) {
   return decimal === undefined
     ? undefined
     : cents(Math.round(Number(decimal) * 100))
+}
+
+/** Whether an import meets the sample's expected check. */
+function meetsExpected(
+  result: Awaited<ReturnType<typeof importReceipt>>,
+  expected: Sample['expected'],
+): { meets: boolean; report: unknown } {
+  if (expected.check === 'noItems') {
+    return {
+      meets: !result.ok && result.error.code === 'noItems',
+      report: result.ok ? 'imported' : result.error.code,
+    }
+  }
+  if (!result.ok) return { meets: false, report: result.error.code }
+  const check = checkReceipt(result.bill, result.summary)
+  const matches =
+    check.status === 'match' &&
+    result.bill.items.length === expected.items.length &&
+    result.summary.total === amount(expected.total)
+  const flagged =
+    check.status === 'mismatch' || result.summary.flaggedItemIds.length > 0
+  const meets =
+    expected.check === 'match'
+      ? matches
+      : expected.check === 'matchOrFlagged'
+        ? matches || flagged
+        : flagged
+  return {
+    meets,
+    report: {
+      check: check.status,
+      items: result.bill.items.length,
+      expectedItems: expected.items.length,
+    },
+  }
 }
 
 describe('the browser-check files (M-I-4)', () => {
@@ -175,5 +214,49 @@ describe('the sample receipt corpus (real OCR, offline)', () => {
       expect(node.blocked).toEqual([])
     },
     60_000,
+  )
+})
+
+describe('the sample receipt corpus with PaddleOCR (recorded, CP4 enforces)', () => {
+  let paddle: NodeImport
+  const results: { sample: string; meets: boolean }[] = []
+
+  beforeAll(async () => {
+    paddle = await setUpNodeImport('paddle')
+  })
+
+  afterAll(async () => {
+    await paddle.dispose()
+    console.log(
+      JSON.stringify({
+        reader: 'paddle',
+        corpusMeets: results.filter((entry) => entry.meets).length,
+        of: results.length,
+      }),
+    )
+  })
+
+  it.each(samples)(
+    '$name',
+    async ({ name, file, expected }) => {
+      const bytes = await readFile(path.join(CORPUS, file))
+      const type = file.endsWith('.pdf') ? 'application/pdf' : 'image/png'
+      let n = 0
+      const result = await importReceipt(
+        new File([bytes], file, { type }),
+        paddle.deps(),
+        {
+          currentBill: createBill(['p1', 'p2', 'old-item']),
+          nextId: () => `item-${++n}`,
+        },
+      )
+      const { meets, report } = meetsExpected(result, expected)
+      results.push({ sample: name, meets })
+      console.log(
+        JSON.stringify({ reader: 'paddle', sample: name, meets, report }),
+      )
+      expect(paddle.blocked).toEqual([])
+    },
+    120_000,
   )
 })

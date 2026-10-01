@@ -8,20 +8,135 @@ revision 6, `docs/milestones/milestone-2-5-PLAN.md`), on
 
 ## Next action
 
-`/milestone-implement milestone-2-5` for **CP2** (the PaddleOCR reader).
-The user checked the drafted expected files and decided the name rule
-(2026-10-01, below). Two more receipts are coming; they join as tuning
-cases, with drafted expected files, before the next measurement.
+**The user decides P13's speed (below) before CP3.** Then
+`/milestone-implement milestone-2-5` for **CP3** (tuning on the local
+set). Two more receipts are coming; they join as tuning cases, with
+drafted expected files, before CP3's first measurement.
 
 ## Checkpoints
 
 - [x] **CP1** — the local test set (format v2) and the accuracy measure,
   in Node and a real browser, with the Tesseract baseline.
-- [ ] CP2 — the PaddleOCR reader.
+- [x] **CP2** — the PaddleOCR reader (behind a build flag; Tesseract is
+  still the default).
 - [ ] CP3 — tuning on the local set.
 - [ ] CP4 — corpus, small-image advice, Tesseract retired.
 - [ ] CP5 — the row-by-row review.
 - [ ] CP6 — acceptance measurement, phone, privacy, documentation.
+
+### CP2 — done
+
+- `paddleEngine.ts`: PaddleOCR (`ppu-paddle-ocr` 6.6.0, its `web` entry)
+  on ONNX Runtime Web 1.30.0's plain wasm build, single-threaded
+  (`numThreads = 1`, `executionProviders: ['wasm']`, no WebGPU), the
+  result cache off (`noCache`). It takes the models as same-origin URLs,
+  which the library fetches (the app's code still opens no network
+  channel), or as bytes in Node.
+- `paddle.worker.ts` (a module worker) and `paddleReader.ts` (id
+  `paddle`): the models load once, on the first scan (`loadingReader`),
+  pages go to the worker as transferred copies, progress per page; a
+  failed load is `assetsUnavailable`, a failed read `ocrFailed`;
+  cancelling or any failure terminates the worker and the next scan
+  starts a new one; a PDF text layer is parsed with no OCR.
+- `paddleLines.ts` (P7, pure): boxes into lines by vertical overlap, left
+  to right, the weakest confidence, number repair, and an optional wide-gap
+  marker (off; CP3 decides).
+- `browserImport.ts`: `VITE_RECEIPT_READER=paddle` builds with PaddleOCR;
+  Tesseract stays the default (P10).
+- `vite.config.ts`: `onnxruntime-web` resolves to its wasm-only build in
+  the app build, and workers are ES modules. `scripts/check-build.mjs`
+  (in CI after both builds): `dist/` holds exactly one ONNX Runtime wasm,
+  `vendor/ort/ort-wasm-simd-threaded.wasm`.
+- `scripts/vendor-paddle.mjs` (after `vendor-assets.mjs`, and as
+  `pretest`): copies only ONNX Runtime's plain SIMD `.mjs` and `.wasm`;
+  downloads the PP-OCRv5 mobile detection model, the PP-OCRv5 Latin
+  recognition model, its dictionary and the mirror's licence, pinned to
+  revision `bf1d5edb0335d3262be7caf13f766ba274b4cadd` and a SHA-256 each,
+  cached in the git-ignored `app/.paddle-models/` (and by
+  `actions/cache` in CI, keyed on the script). Licence notices for ONNX
+  Runtime and the models go to `vendor/licenses/`
+  (`THIRD_PARTY_NOTICES.md` is CP6's).
+- Node route (`importDeps.node.ts`): the same engine in-process, the
+  models from `public/vendor/paddle/`, `@napi-rs/canvas` (dev dependency,
+  MIT) as ppu-ocv's canvas, still offline. The local test and
+  `measure-node.mjs` read with PaddleOCR (`--reader tesseract` to
+  compare); `measure-local.mjs` gained `--warm` and `--time`.
+- The corpus is also read with PaddleOCR in Node, recorded and not yet
+  enforced: **10 of 13** meet their expected check (02, 03 and 12 miss).
+
+**Licences (for CP6's ADR).** ppu-paddle-ocr 6.6.0 MIT; ppu-ocv 4.0.0
+MIT (its canvas-only entry in the browser: OpenCV.js, which it installs,
+is never bundled); onnxruntime-web 1.30.0 MIT (no licence file in the
+package: a generated notice); the models are PaddleOCR's (Apache-2.0),
+converted to ONNX and served by the ppu-paddle-ocr mirror on Hugging
+Face, whose licence is Apache-2.0 (its `LICENSE` at the pinned revision
+is vendored). Dev only: @napi-rs/canvas 1.0.9 MIT, jpeg-js BSD-3-Clause.
+All permissive.
+
+**Download (P12).** A first scan fetches 27.18 MB raw (15.57 MB
+gzipped): the runtime wasm 14.24 MB, the detection model 4.75 MB, the
+recognition model 8.07 MB, and about 0.1 MB of loader, dictionary and
+JS. Within the 30 MB budget.
+
+**Privacy and CSP.** With the flag on, `check-requests.mjs scan` passes on
+`sample-1.jpg` (5 items, QR total) and `sample-12.jpg` (6 items, QR
+total): 19 same-origin GETs each, the models and runtime fetched from the
+worker, no CSP violation, under the production policy unchanged. Logs in
+the git-ignored `.ai-review/cp2/`.
+
+**PaddleOCR's first numbers (no tuning)**, all 9 tuning cases:
+
+| case | Node: rows paired / expected (extra) | Node: no edit | browser: rows paired (extra) | browser: check | browser: no edit |
+|---|---|---|---|---|---|
+| boutique | 0 / 1 (1) | no | 0 / 1 (1) | no total | no |
+| continente | 9 / 14 (3) | no | 9 / 14 (3) | mismatch | no |
+| jackjone | 1 / 1 | **yes** | 1 / 1 | match | **yes** |
+| lidl1 | 5 / 25 (17) | no | 6 / 25 (16) | mismatch | no |
+| lidl2 | 7 / 29 (13) | no | 8 / 29 (14) | mismatch | no |
+| lidl3 | 2 / 5 (4) | no | 2 / 5 (3) | mismatch | no |
+| sushi1 | 2 / 3 (1) | no | 2 / 3 (1) | match | no |
+| sushi2 (= sushi1) | 3 / 3 | **yes** | 3 / 3 | match | **yes** |
+| tiffosi | 5 / 5 | **yes** | 5 / 5 | match | **yes** |
+
+| measure | Tesseract (browser) | PaddleOCR, Node | PaddleOCR, browser |
+|---|---|---|---|
+| receipt accuracy | 0 / 9 | 3 / 9 (33 %) | 3 / 9 (33 %) |
+| distinct-receipt accuracy | 0 / 8 | 2 / 8 | 2 / 8 |
+| row accuracy | 14.0 % | 39.5 % | 41.9 % |
+| extra rows | 55 | 39 | 38 |
+| name accuracy | 75.0 % | 64.7 % | 58.3 % |
+| false matches | 0 | 0 | 0 |
+
+**Node against the browser.** The browser can't expose the worker's
+lines, so the comparison is of the imported rows (name and price, in
+order), the parser's output from those lines: identical on 5 cases
+(boutique, jackjone, sushi1, sushi2, tiffosi), different on 4 (continente
+3 rows, lidl1 13, lidl2 20, lidl3 4). **Cause found: canvas resampling.**
+On the lossless PNG copies of those four the rows still differ, so it
+isn't JPEG decoding; changing Node's canvas smoothing changes what is
+read, so the scale-downs PaddleOCR does with `drawImage` (the detector's
+input, every 48-px-high crop) feed recognition, and `@napi-rs/canvas`'s
+resampling isn't Chromium's (no smoothing setting matches). It shows on
+the 223–261-px screenshots and the one creased photo. The totals agree
+(3 of 9 either way), but per case the Node test can't stand in for the
+browser: the browser stays the reference (P3), and CP3 confirms every
+kept change in the browser, as planned.
+
+**Speed (P13): over the engineering gate.** Times from choosing the file
+to the check panel, desktop headless Brave, the reader already loaded:
+
+| image | warm | first scan (models loaded) |
+|---|---|---|
+| (a) no camera original in the set yet; a 12-MP proxy (Tiffosi upscaled to 3000 × 4000) | **8.0 s** (gate 5 s) | 9.0 s |
+| (b) Tiffosi as received, 3.1 MP | 6.3 s | 7.1 s |
+| (c) lidl1, 223 × 1600 | 7.5 s | 8.1 s |
+
+Almost all of it is recognition: about 50 ms per text box on one thread
+(lidl1 has 160 boxes: detection 0.2 s, recognition about 8 s); decoding,
+the QR scan and the conversion take milliseconds. Batched recognition and
+the cross-line strategy didn't help. The spike's 0.5–2 s most likely ran
+on WebGPU, which P4 rules out. A phone typically 3–8× slower would put
+(c) well over its 10 s. This is a stop condition (P13): the user decides.
 
 ### CP1 — done
 

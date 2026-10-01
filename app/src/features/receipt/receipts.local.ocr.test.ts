@@ -9,7 +9,9 @@
  * It prints numbers and case names only. The full report (with the rows
  * read at the right price) goes to the git-ignored `.ai-review/`. Held-out
  * cases are skipped unless `SETTLE_HELD_OUT=1` (`scripts/measure-node.mjs
- * --held-out`); HEIC cases have no Node decoder and are scored by the
+ * --held-out`). The reader is PaddleOCR, or Tesseract with
+ * `SETTLE_READER=tesseract` (`--reader tesseract`). HEIC cases have no
+ * Node decoder and are scored by the
  * browser run only. The browser run (`scripts/measure-local.mjs`) is the
  * reference; this one is for fast iteration.
  */
@@ -18,12 +20,18 @@ import path from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createBill } from '../split/billReducer.ts'
 import {
+  readRows,
   rowAccuracy,
   scoreFailedImport,
   scoreImage,
+  type ReadRow,
   type ScoredImage,
 } from './accuracy.ts'
-import { setUpNodeImport, type NodeImport } from './importDeps.node.ts'
+import {
+  readerFromEnv,
+  setUpNodeImport,
+  type NodeImport,
+} from './importDeps.node.ts'
 import { importReceipt } from './importReceipt.ts'
 import {
   distinctReceipts,
@@ -42,6 +50,7 @@ import {
 
 const LOCAL = path.resolve('src/features/receipt/fixtures/local')
 const HELD_OUT = process.env.SETTLE_HELD_OUT === '1'
+const READER = readerFromEnv()
 
 const all = await loadLocalCases(LOCAL)
 const { scored, skipped } = selectCases(all, { heldOut: HELD_OUT })
@@ -54,11 +63,13 @@ describe.skipIf(all.length === 0)(
     let node: NodeImport
     const images: ScoredImage[] = []
     const rows: Record<string, RightPriceRow[]> = {}
+    const read: Record<string, ReadRow[]> = {}
 
     beforeAll(async () => {
-      node = await setUpNodeImport()
+      node = await setUpNodeImport(READER)
       console.log(
         JSON.stringify({
+          reader: READER,
           cases: all.length,
           distinctReceipts: distinctReceipts(all),
           scored: cases.length,
@@ -75,7 +86,7 @@ describe.skipIf(all.length === 0)(
       console.log(JSON.stringify({ totals }))
       const file = await writeReport(repositoryRoot(LOCAL), 'node', {
         when: new Date().toISOString(),
-        reader: 'tesseract',
+        reader: READER,
         heldOut: HELD_OUT,
         heldOutSkipped: skipped.map((entry) => entry.name),
         heicSkipped: heic.map((entry) => entry.name),
@@ -86,6 +97,7 @@ describe.skipIf(all.length === 0)(
           ...image.score,
         })),
         rightPriceRows: rows,
+        readRows: read,
         names: checkSetNames(scored),
       })
       console.log(`Report (local, git-ignored): ${file}`)
@@ -125,6 +137,7 @@ describe.skipIf(all.length === 0)(
           : scoreFailedImport(entry.expected)
         images.push({ name: entry.name, receipt: entry.receipt, score })
         rows[entry.name] = result.ok ? rightPriceRows(result.bill, entry) : []
+        read[entry.name] = result.ok ? readRows(result.bill) : []
         const listed = rows[entry.name] ?? []
         console.log(
           JSON.stringify({
