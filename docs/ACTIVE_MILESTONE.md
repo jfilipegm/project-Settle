@@ -8,7 +8,6 @@ revision 6, `docs/milestones/milestone-2-5-PLAN.md`), on
 
 ## Next action
 
-**The user decides P13's speed (below) before CP3.** Then
 `/milestone-implement milestone-2-5` for **CP3** (tuning on the local
 set). Two more receipts are coming; they join as tuning cases, with
 drafted expected files, before CP3's first measurement.
@@ -137,6 +136,19 @@ the QR scan and the conversion take milliseconds. Batched recognition and
 the cross-line strategy didn't help. The spike's 0.5–2 s most likely ran
 on WebGPU, which P4 rules out. A phone typically 3–8× slower would put
 (c) well over its 10 s. This is a stop condition (P13): the user decides.
+
+**The user's decision (2026-10-01): accuracy before speed.** Reading
+every item and its price correctly (P2's 94–100 %) matters more than
+speed; a receipt taking **20–30 s** to read is acceptable. So:
+- P13's desktop engineering gate (5 s) is waived, and the phone
+  thresholds become **up to 30 s** for the whole import, for images (a),
+  (b) and (c) alike (instead of 20 s and 10 s). CP6 still measures and
+  reports them, with the first load separately.
+- CP3 may keep a change that makes reading slower when it raises
+  accuracy, as long as the phone stays within 30 s. Speed-ups (threads,
+  a lighter model, WebGPU) aren't pursued now.
+- Unchanged: P12's 30 MB download budget, single-threaded ONNX Runtime
+  with no WebGPU (P4), and the accuracy targets.
 
 ### CP1 — done
 
