@@ -9,8 +9,9 @@ revision 6, `docs/milestones/milestone-2-5-PLAN.md`), on
 ## Next action
 
 `/milestone-implement milestone-2-5` for **CP2** (the PaddleOCR reader).
-Before that, the user checks the nine drafted expected files and decides
-the name-rule question below.
+The user checked the drafted expected files and decided the name rule
+(2026-10-01, below). Two more receipts are coming; they join as tuning
+cases, with drafted expected files, before the next measurement.
 
 ## Checkpoints
 
@@ -71,14 +72,14 @@ receipts (listed, not counted), and 1 pair is one name printed cut short
 (most likely the same product, two croissant lines; listed, for the user
 to confirm).
 
-**For the user to decide (P2: thresholds aren't loosened without you).**
-On Tesseract's rows read at the right price, the distinctive-word rule's
-allowance (max(1, ⌊length/4⌋)) rejects some ordinary 2-error OCR noise on
-6–7-letter words, such as a `J`→`L` plus `O`→`D` in one word and a
-`ç`→`g` plus `õ`→`d` in another. Under the plan, those rows don't pair,
-so their receipt can't pass, though its money may be right. Options:
-keep it (strict), or allow 2 edits from 6 letters. The baseline below
-uses the plan's rule (with the two tightenings).
+**The user's decisions (2026-10-01).** The expected files stand as
+drafted: prices after each row's own promotion, the description (not the
+code column) as the name, and the two croissant lines are the same
+product. The name rule **stays strict**: a row's name must be one a
+person can recognise, so the distinctive-word allowance (max(1,
+⌊length/4⌋)) is kept even where it rejects 2-error OCR noise on a 6–7
+letter word. Captures confirmed: the Lidl cases are app screenshots; all
+the others are phone photos sent through WhatsApp (`shared`).
 
 **Floors (`minRowAccuracy`)**, the lower of Tesseract's row accuracy in
 Node and the M2 coverage floor: continente 0.55, lidl1 0.10, lidl2 0,
@@ -174,6 +175,10 @@ Verification:
   M2's round 2 (`e84f0f6`) passed; the user accepted both.
 
 Carried forward (not blockers):
+- **Promotion lines, for a later plan** (the user, 2026-10-01): when a
+  receipt prints a promotion or savings line, the row-by-row review could
+  ask whether it's only informative or should come off the item's price.
+  Today R8 decides with the trusted total. Not in M2.5's plan.
 - **Switch the built-in reader to PaddleOCR** (the user's decision,
   2026-09-29). It was meant to be M2's next remediation child; it's now
   M2.5. A local spike (branch `spike/paddleocr`, not pushed:
