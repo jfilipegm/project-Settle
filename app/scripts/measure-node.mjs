@@ -5,10 +5,10 @@
  * For fast iteration; the browser run (`measure-local.mjs`) is the
  * reference.
  *
- *   node scripts/measure-node.mjs [--held-out] [--reader paddle|tesseract]
+ *   node scripts/measure-node.mjs [--held-out]
  *
  * `--held-out` also scores the held-out cases (P14): CP6's measurement
- * only. The reader is PaddleOCR unless `--reader tesseract`.
+ * only. The reader is PaddleOCR.
  */
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
@@ -17,14 +17,8 @@ import { fileURLToPath } from 'node:url'
 const APP_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const args = process.argv.slice(2)
 let heldOut = false
-let reader = 'paddle'
 for (let i = 0; i < args.length; i++) {
   if (args[i] === '--held-out') heldOut = true
-  else if (
-    args[i] === '--reader' &&
-    ['paddle', 'tesseract'].includes(args[i + 1])
-  )
-    reader = args[++i]
   else {
     console.error(`Unknown option ${args[i]}`)
     process.exit(2)
@@ -46,7 +40,6 @@ const result = spawnSync(
     env: {
       ...process.env,
       SETTLE_HELD_OUT: heldOut ? '1' : '0',
-      SETTLE_READER: reader,
     },
   },
 )

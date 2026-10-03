@@ -6,7 +6,7 @@
  * really says (`expected`, written to `.expected.json`), its fiscal QR
  * payload if it has one, and the photo effects. The script writes the SVG
  * source, renders it with `rsvg-convert`, and applies the effects with
- * `magick` (fonts: DejaVu Sans Mono, and Liberation Mono for 11–13). The
+ * `magick` (fonts: DejaVu Sans Mono, and Liberation Mono for 11–17). The
  * browser-check files need `magick` and `heif-enc` (libheif,
  * with its HEVC encoder). None of these tools is a CI or project
  * dependency: the outputs are committed.
@@ -231,7 +231,9 @@ const SAMPLES = [
       tax: '1.87',
       total: '13.50',
     },
-    check: 'match',
+    // PaddleOCR misses this one (M2.5 CP4, the user's decision,
+    // 2026-10-03): the import flags it, never a false "Matches".
+    check: 'flagged',
   },
   {
     name: '04-pt-cafe',
@@ -498,6 +500,7 @@ const SAMPLES = [
     check: 'noItems',
   },
   ...REAL_LAYOUTS(),
+  ...P9_LAYOUTS(),
 ]
 
 // ---------------------------------------------------------------------------
@@ -639,7 +642,9 @@ function REAL_LAYOUTS() {
       ],
       total: '16.50',
     },
-    check: 'match',
+    // PaddleOCR misses this one (M2.5 CP4, the user's decision,
+    // 2026-10-03): the import flags it, never a false "Matches".
+    check: 'flagged',
   }
 
   // 13: a clothes-shop receipt photographed on a table (Tiffosi-like):
@@ -704,6 +709,257 @@ function REAL_LAYOUTS() {
   }
 
   return [app, hyper, shop].map((sample) => ({
+    ...sample,
+    font: 'Liberation Mono',
+    removedLines: [],
+  }))
+}
+
+// ---------------------------------------------------------------------------
+// P9's layouts (M2.5 plan, CP4): invented receipts in the four layouts CP3
+// added parser rules for from the user's real receipts, which stay local.
+
+function P9_LAYOUTS() {
+  const qr = (issuer, fields) =>
+    [`A:${issuer}`, 'B:999999990', 'C:PT', 'D:FS', 'E:N', ...fields].join('*')
+
+  // 14: a restaurant receipt whose VAT rate is printed against the
+  // quantity (`13%2`), as an app screenshot.
+  const sushiNif = nif('51694028')
+  const sushi = {
+    name: '14-pt-restaurante-iva-qtd',
+    lines: [
+      center('Sushi Mare'),
+      center('Mare Restauracao, Lda'),
+      center('Rua Augusta 88, Lisboa'),
+      center(`NIF: ${sushiNif}`),
+      'Fatura Simplificada FS 2026/0977',
+      row('Data: 2026-09-14', '20:31'),
+      '',
+      row('Descrição', 'IVA Qtd  Preço  Valor'),
+      row('Menu Almoço', '13%2  9,50  19,00'),
+      row('Gyoza', '13%1  4,80   4,80'),
+      row('Agua 50cl', '23%3  1,20   3,60'),
+      row('Cha Verde', '23%2  1,90   3,80'),
+      row('Cafe', '23%1  0,90   0,90'),
+      '',
+      row('Total', '32,10 €'),
+      row('Multibanco', '32,10'),
+      '',
+      row('Taxa', 'Base     IVA'),
+      row('13%', '21,06    2,74'),
+      row('23%', ' 6,75    1,55'),
+      '',
+      'ATCUD: JS9W2K4M-0977',
+    ],
+    qr: qr(sushiNif, [
+      'F:20260914',
+      'G:FS 2026/0977',
+      'H:JS9W2K4M-0977',
+      'I1:PT',
+      'I5:21.06',
+      'I6:2.74',
+      'I7:6.75',
+      'I8:1.55',
+      'N:4.29',
+      'O:32.10',
+      'Q:Su7m',
+      'R:2210',
+    ]),
+    expected: {
+      merchant: 'Sushi Mare',
+      merchantTaxId: sushiNif,
+      date: '2026-09-14',
+      items: [
+        ['Menu Almoço', '2', '9.50', '19.00'],
+        ['Gyoza', '1', '4.80', '4.80'],
+        ['Agua 50cl', '3', '1.20', '3.60'],
+        ['Cha Verde', '2', '1.90', '3.80'],
+        ['Cafe', '1', '0.90', '0.90'],
+      ],
+      total: '32.10',
+    },
+    check: 'match',
+  }
+
+  // 15: a shop's invoice-receipt in the code-then-description layout: a
+  // code line with the quantity, the VAT rate and the price, the
+  // description under it, then attribute lines that are never items
+  // (`Marca :`, `Classificação AT :`). Photographed on a table.
+  const watchNif = nif('51823307')
+  const watch = {
+    name: '15-pt-loja-codigo-atributos',
+    lines: [
+      center('Relojoaria Ponteiro'),
+      center('Ponteiro Comercio, Lda'),
+      center('C.C. Sol, Loja 12, Porto'),
+      center(`NIF: ${watchNif}`),
+      'Fatura-Recibo FR 2026A/1188',
+      row('Data: 2026-09-05', '16:12'),
+      'Cliente: Consumidor Final',
+      '',
+      row('Codigo Qtd. IVA', 'Preço'),
+      row('2841177 1 23,0%', '89,90'),
+      'RELOGIO AURA 40 PRATA',
+      'Marca : Aura',
+      'Classificação AT : Joias e Relógios',
+      row('3307715 2 23,0%', '24,00'),
+      'BRACELETE PELE CASTANHA',
+      'Marca : Aura',
+      'Classificação AT : Acessórios',
+      '',
+      row('Total do documento', '113,90'),
+      row('Total a pagar', '113,90'),
+      row('Cartão de Crédito', '113,90'),
+      '',
+      row('Taxa', 'Base     IVA'),
+      row('23,0%', '92,60   21,30'),
+    ],
+    qr: qr(watchNif, [
+      'F:20260905',
+      'G:FR 2026A/1188',
+      'H:JP4Q8R2T-1188',
+      'I1:PT',
+      'I7:92.60',
+      'I8:21.30',
+      'N:21.30',
+      'O:113.90',
+      'Q:Rp3x',
+      'R:3015',
+    ]),
+    photo: { tilt: 1.5, seed: 15 },
+    expected: {
+      merchant: 'Relojoaria Ponteiro',
+      merchantTaxId: watchNif,
+      date: '2026-09-05',
+      items: [
+        ['RELOGIO AURA 40 PRATA', '1', '89.90', '89.90'],
+        ['BRACELETE PELE CASTANHA', '2', '12.00', '24.00'],
+      ],
+      total: '113.90',
+    },
+    check: 'match',
+  }
+
+  // 16: a home-goods shop whose items are each followed by continuation
+  // lines (a variant, a reference, a barcode) that are never items.
+  const homeNif = nif('51130872')
+  const home = {
+    name: '16-pt-loja-variantes',
+    lines: [
+      center('CASA LUZ'),
+      center('Casa Luz Decoracao, Lda'),
+      center('Rua de Santa Catarina 301'),
+      center(`NIF: ${homeNif}`),
+      'Fatura Simplificada FS CL04/2251',
+      row('2026-09-11', '11:05'),
+      '',
+      row('Toalha Banho Algodao', '12,99'),
+      '  Cor: Azul Petroleo',
+      '  Ref. 40112233',
+      row('Caneca Ceramica 350ml', '4,50'),
+      '  Cor: Branco',
+      '  Ref. 40115566',
+      row('Vela Aromatica', '6,95'),
+      '  Aroma: Baunilha',
+      '  EAN 5601234500017',
+      '',
+      row('TOTAL', '24,44'),
+      row('Numerario', '30,00'),
+      row('Troco', '5,56'),
+      '',
+      row('Taxa', 'Base     IVA'),
+      row('23%', '19,87    4,57'),
+    ],
+    qr: qr(homeNif, [
+      'F:20260911',
+      'G:FS CL04/2251',
+      'H:JC2L8M5N-2251',
+      'I1:PT',
+      'I7:19.87',
+      'I8:4.57',
+      'N:4.57',
+      'O:24.44',
+      'Q:Cl5v',
+      'R:1877',
+    ]),
+    expected: {
+      merchant: 'CASA LUZ',
+      merchantTaxId: homeNif,
+      date: '2026-09-11',
+      items: [
+        ['Toalha Banho Algodao', '1', '12.99', '12.99'],
+        ['Caneca Ceramica 350ml', '1', '4.50', '4.50'],
+        ['Vela Aromatica', '1', '6.95', '6.95'],
+      ],
+      total: '24.44',
+    },
+    check: 'match',
+  }
+
+  // 17: a supermarket receipt with the card terminal's slip printed after
+  // it, whose own `TOTAL` line is never a second total. As a scan.
+  const marketNif = nif('50991436')
+  const market = {
+    name: '17-pt-supermercado-cartao',
+    lines: [
+      center('MINIMERCADO ESTRELA'),
+      center('Estrela Alimentar, Lda'),
+      center(`NIF: ${marketNif}`),
+      'Fatura Simplificada FS ME01/7702',
+      row('Data 2026-09-19', '09:47'),
+      '',
+      row('Pao Alentejano', '2,10 A'),
+      row('Manteiga 250g', '2,39 A'),
+      row('Ovos Classe M x12', '3,29 A'),
+      row('Sumo Laranja 1L', '1,89 C'),
+      row('Cafe Moido 250g', '4,15 C'),
+      '',
+      row('TOTAL A PAGAR', '13,82'),
+      row('Cartao Debito', '13,82'),
+      '',
+      row('Taxa', 'Base     IVA'),
+      row('A  6%', '7,34    0,44'),
+      row('C 23%', '4,91    1,13'),
+      '',
+      center('- - - TALAO CLIENTE - - -'),
+      'COMPRA',
+      'MAESTRO DEBITO',
+      'Terminal 00451207',
+      row('TOTAL:', '13,82 EUR'),
+      'Transacao aprovada',
+    ],
+    qr: qr(marketNif, [
+      'F:20260919',
+      'G:FS ME01/7702',
+      'H:JE7T3R9W-7702',
+      'I1:PT',
+      'I3:7.34',
+      'I4:0.44',
+      'I7:4.91',
+      'I8:1.13',
+      'N:1.57',
+      'O:13.82',
+      'Q:Es8k',
+      'R:0912',
+    ]),
+    expected: {
+      merchant: 'MINIMERCADO ESTRELA',
+      merchantTaxId: marketNif,
+      date: '2026-09-19',
+      items: [
+        ['Pao Alentejano', '1', '2.10', '2.10'],
+        ['Manteiga 250g', '1', '2.39', '2.39'],
+        ['Ovos Classe M x12', '1', '3.29', '3.29'],
+        ['Sumo Laranja 1L', '1', '1.89', '1.89'],
+        ['Cafe Moido 250g', '1', '4.15', '4.15'],
+      ],
+      total: '13.82',
+    },
+    check: 'match',
+  }
+
+  return [sushi, watch, home, market].map((sample) => ({
     ...sample,
     font: 'Liberation Mono',
     removedLines: [],

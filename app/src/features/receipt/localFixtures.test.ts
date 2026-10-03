@@ -18,6 +18,7 @@ import {
   decimalToCents,
   distinctReceipts,
   isIgnored,
+  loadCalibrationCases,
   loadLocalCases,
   repositoryRoot,
   selectCases,
@@ -118,6 +119,7 @@ describe('format v2 of the local fixtures (P1), with invented files', () => {
     await rm(dir, { recursive: true, force: true })
     await mkdir(dir, { recursive: true })
     for (const [name, content] of Object.entries(files)) {
+      await mkdir(path.dirname(path.join(dir, name)), { recursive: true })
       await writeFile(
         path.join(dir, name),
         typeof content === 'string' ? content : JSON.stringify(content),
@@ -297,6 +299,39 @@ describe('format v2 of the local fixtures (P1), with invented files', () => {
     expect(without.skipped.map((entry) => entry.name)).toEqual(['shop'])
     const withFlag = selectCases(cases, { heldOut: true })
     expect(withFlag.scored.map((entry) => entry.name)).toEqual(['cafe', 'shop'])
+    expect(withFlag.skipped).toEqual([])
+  })
+
+  it('gives the photo check’s calibration images, never held-out ones unless asked for (P11, P14)', async () => {
+    const dir = await folder({
+      'cafe.jpg': 'x',
+      'cafe.expected.json': valid,
+      'web.jpg': 'x',
+      'web.expected.json': { ...valid, image: 'web.jpg', part: 'extra' },
+      'shop.jpg': 'x',
+      'shop.expected.json': { ...valid, image: 'shop.jpg', part: 'heldOut' },
+      // A small copy set aside: its image stays in the set's folder.
+      'tiny.jpg': 'x',
+      'small-copies/tiny.expected.json': { ...valid, image: 'tiny.jpg' },
+    })
+    const groups = (cases: { entry: { name: string }; group: string }[]) =>
+      cases.map(({ entry, group }) => `${entry.name}:${group}`)
+
+    const without = await loadCalibrationCases(dir, { heldOut: false })
+    expect(groups(without.cases)).toEqual([
+      'cafe:tuning',
+      'web:extra',
+      'tiny:smallCopy',
+    ])
+    expect(without.skipped.map((entry) => entry.name)).toEqual(['shop'])
+
+    const withFlag = await loadCalibrationCases(dir, { heldOut: true })
+    expect(groups(withFlag.cases)).toEqual([
+      'cafe:tuning',
+      'shop:heldOut',
+      'web:extra',
+      'tiny:smallCopy',
+    ])
     expect(withFlag.skipped).toEqual([])
   })
 

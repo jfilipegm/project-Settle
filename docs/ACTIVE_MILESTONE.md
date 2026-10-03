@@ -3,17 +3,14 @@
 ## Milestone
 
 **M2.5 — Accurate receipt reading** (work item `milestone-2-5`, plan
-revision 6, `docs/milestones/milestone-2-5-PLAN.md`), on
+revision 8, `docs/milestones/milestone-2-5-PLAN.md`), on
 `feature/milestone-2.5` (PR #9). Phase `IMPLEMENTING`.
 
 ## Next action
 
-**CP3 is done** (the user accepted its plateau, 2026-10-03). Before CP4:
-a plan revision (`/milestone-plan milestone-2-5`), agreed with the user,
-turning CP4's small-image advice into a photo quality check (text size
-from the detection boxes before reading, then blur, lighting and framing,
-and the PDF export tip for app receipts), and setting CP6's targets to
-the receipts the user can collect. Then the held-out receipts (P14).
+**CP4 is done.** Next: the held-out receipts (P14: at least 5 new
+distinct receipts, at least 3 camera originals), then
+`/milestone-implement milestone-2-5` for CP5 (the row-by-row review).
 
 ## Checkpoints
 
@@ -22,9 +19,82 @@ the receipts the user can collect. Then the held-out receipts (P14).
 - [x] **CP2** — the PaddleOCR reader (behind a build flag; Tesseract is
   still the default).
 - [x] **CP3** — tuning on the local set (plateau accepted at 83–89 %).
-- [ ] CP4 — corpus, small-image advice, Tesseract retired.
+- [x] **CP4** — corpus, the photo quality check, Tesseract retired.
 - [ ] CP5 — the row-by-row review.
 - [ ] CP6 — acceptance measurement, phone, privacy, documentation.
+
+### CP4 — done
+
+The photo quality check (P11:
+`photoQuality.ts`, a detection-only pass in the worker before reading,
+the advice in the scan status and the check panel, never saved), the
+corpus enforced with PaddleOCR and samples 14–17 (P9's four layouts),
+the CI browser smoke test (`check-requests.mjs scan --expect-bill` on
+sample 1 and sample 12, and a wrong expected bill that must fail), and
+Tesseract removed (its reader, the clean-up only it used, its vendored
+files and packages; `check-build.mjs` fails on a Tesseract file).
+
+**Tuning numbers after the removal, with the check on** (browser, two
+runs, `measure-local.mjs`): 16 and 15 of 18 with no edit, rows 96.1 and
+95.5 %, prices 97.2 and 96.6 %, false matches 0. CP3's: 16 and 14 of 18,
+rows 96 %, prices 97–98 %, 0. Unchanged; failing: doc3, doc5 and, in one
+run, boutique, as at CP3.
+
+**The photo quality check, measured** (`measure-quality.mjs --runs 2`,
+in the browser; calibration images: 18 tuning, 9 extra, 10 small copies;
+no held-out case). Per threshold, the statistic and the nearest cases:
+
+| check | statistic | threshold | flagged below/above it | nearest that reads with no edit |
+|---|---|---|---|---|
+| small text | boxes' median height | under 17 px | small copies, 12–13 px | lidl-foto1 22 px |
+| blur | Laplacian's std at text scale | under 25 | none (bauhaus 27.0 is faint) | boutique 35.7 (reads in some runs), lidl-foto1 38.0 |
+| dark | mean brightness in boxes | under 125 | real 117.5 | lidl-foto1 143.7 |
+| faint | brightness std in boxes | under 25 | bauhaus 21.8 | sushi2 29.3 |
+| glare | share of washed-out boxes | over 0.1 | none (no glare in the set) | augustiner 0.021 |
+| cut off | share of boxes at an edge | over 0.25 | none (no cut-off receipt) | it-supermarket 0.147 |
+| far away | text's share of the image | under 0.2 | harpoon 0.172 | sushi2 0.251 |
+
+Flagged, both runs: the 10 small copies (small text), real (dark),
+bauhaus (faint), harpoon (far away). No warning on any image that read
+with no edit. Added time: 0.2–0.3 s per screenshot, 0.4–1.7 s per photo,
+2.6 s on the largest (desktop).
+
+Each failure's cause (`diag-lines.mjs`): **for the photo's sake** — the
+small copies (digits misread), real (crumpled and dim, `1,70` → `6:78`),
+bauhaus (faded), **doc3 and doc5** (540 px wide, 21–23 px text, digits
+misread), **boutique** (its name line not detected, in some runs);
+**parser** — harpoon (prices a line below their labels), 99cents
+(sub-cent prices), orodinapoli (a quantity glued to the name,
+`1Margherita`).
+
+**Stop condition 1 (P11, CP4):** doc3, doc5 and boutique fail for the
+photo's sake with no warning, and no threshold separates them: doc3/doc5's
+text (21–23 px) is the size of jackjone, sushi1/2 and lidl-foto1's (22–23
+px), which read with no edit; boutique's sharpness (35.7) is just under
+lidl-foto1's (38.0) and sushi1's (38.6), and it reads with no edit in
+some runs. **The user's decision (2026-10-03): accepted as recorded
+exceptions**, the thresholds as measured; at CP6 a held-out miss or
+false warning is still a stop condition (P11).
+
+**Stop condition 2 (corpus):** with PaddleOCR, samples 03 (the weighed
+`Bananas` line is lost) and 12 (the photographed hypermarket: items
+misread, the total and payment lines read as items) miss their expected
+"match", as CP2 recorded; 02 now passes. Neither shows "Matches" (both
+are flagged as a mismatch). CP4 may not change reading (P14), so they
+can't be restored here. **The user's decision (2026-10-03): their
+expected check is now "flagged"** (the import warns, never a false
+"Matches"), recorded in `make-sample-receipts.mjs`. Sample 17 was rendered as a
+scan: photographed, two of its lines weren't detected.
+
+The local set's name check found one product with two spellings
+(`HAMBURGUER`/`HAMBURGER DE BOVINO`, which the name rule pairs); with the
+user's agreement, doc7 and the small copy lidl1 now use the PDF's exact
+`HAMBURGER DE BOVINO`. Scoring is unchanged (the rule pairs them anyway).
+
+Verification: `npm run check` (`tsc -b`, ESLint, Prettier, Vitest: 47
+files, 1043 passed, 1 skipped), `npm run build` and `check-build.mjs`
+pass; `check-requests.mjs scan --expect-bill` passes locally on sample 1
+and sample 12 (headless Brave) and fails on a wrong expected bill only.
 
 ### CP3 — done
 
@@ -419,9 +489,9 @@ skipped where the folder is missing, as in CI.
 
 ## Receipts still needed (CP6)
 
-At least 30 distinct receipts (8 now), at least 10 held out (added after
-CP3's last change), at least 10 camera originals (0 now), a HEIC one if
-the phone saves HEIC.
+At least 20 distinct receipts (16 now), at least 5 held out (added after
+CP3's last change; 0 now), at least 3 camera originals (0 now), a HEIC
+one if the phone saves HEIC (plan revision 8).
 
 ## Last completed: M2 — Receipt upload and built-in parsing
 
@@ -505,7 +575,7 @@ None.
 
 ## Active plan
 
-`docs/milestones/milestone-2-5-PLAN.md` (revision 6). M2's plans are archived at
+`docs/milestones/milestone-2-5-PLAN.md` (revision 8). M2's plans are archived at
 `docs/milestones/completed/milestone-2-PLAN.md` and
 `docs/milestones/completed/milestone-2-remediation-1-PLAN.md` (M0's and
 M1's are in the same folder).

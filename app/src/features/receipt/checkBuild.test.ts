@@ -55,6 +55,18 @@ describe('check-build.mjs', () => {
     ])
   })
 
+  it('fails a Tesseract file left in the build (P10)', async () => {
+    await files(
+      'vendor/ort/ort-wasm-simd-threaded.wasm',
+      'vendor/tesseract/worker.min.js',
+      'vendor/tesseract/lang/por.traineddata.gz',
+    )
+    expect(await checkBuild(dist)).toEqual([
+      'a Tesseract file: vendor/tesseract/lang/por.traineddata.gz',
+      'a Tesseract file: vendor/tesseract/worker.min.js',
+    ])
+  })
+
   it('fails a build without the runtime', async () => {
     await files('index.html')
     expect(await checkBuild(dist)).toEqual([

@@ -123,9 +123,60 @@ export interface ReadProgress {
   progress?: number
 }
 
+/**
+ * M2.5 plan, P11: what the photo quality check found on a page. Each has
+ * its own advice (`messages.ts`).
+ */
+export type PhotoIssue =
+  /** No text was detected at all. */
+  | 'noText'
+  /** The text is too small to read reliably. */
+  | 'smallText'
+  | 'blurred'
+  | 'dark'
+  /** Faint, washed-out text: too much light, or too little contrast. */
+  | 'faint'
+  | 'glare'
+  /** Text runs into an edge of the image: the receipt is cut off. */
+  | 'cutOff'
+  /** The text covers a small part of the image: taken from too far away. */
+  | 'farAway'
+
+/** P11's measurements on one page; absent when there was no text box. */
+export interface PhotoMeasures {
+  boxes: number
+  /** The detection boxes' median height, in the page's pixels. */
+  textHeight?: number
+  /** The Laplacian's standard deviation (0–255 scale), at text scale. */
+  sharpness?: number
+  /** Mean brightness inside the boxes, 0–255. */
+  brightness?: number
+  /** Standard deviation of the brightness inside the boxes, 0–255. */
+  contrast?: number
+  /** The share of boxes washed out white. */
+  glare?: number
+  /** The share of boxes touching an edge of the image. */
+  edgeShare?: number
+  /** The share of the image inside the rectangle around the text. */
+  coverage?: number
+}
+
+/** P11: one page's check, shown for the import and never stored. */
+export interface PhotoQuality {
+  issues: PhotoIssue[]
+  measures: PhotoMeasures
+  /** How long the check took (detection included), for the measurements. */
+  milliseconds?: number
+}
+
 export interface ReadOptions {
   signal?: AbortSignal
   onProgress?: (progress: ReadProgress) => void
+  /**
+   * P11: called with each page's photo quality check, before that page is
+   * read. Without it, no check runs; the reading is the same either way.
+   */
+  onQuality?: (quality: PhotoQuality) => void
 }
 
 /**

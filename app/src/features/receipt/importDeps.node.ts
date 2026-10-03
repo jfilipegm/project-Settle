@@ -5,24 +5,19 @@
  * http(s) URL, so a library falling back to its CDN fails the test instead
  * of passing.
  *
- * The reader is Tesseract.js (the app's default until M2.5's CP4) or
- * PaddleOCR (M2.5 plan, P6): the same engine the browser's worker wraps,
- * run in-process, with ONNX Runtime Web's Node entry, the models read from
+ * The reader is PaddleOCR (M2.5 plan, P6): the same engine the browser's
+ * worker wraps, run in-process, with ONNX Runtime Web's Node entry, the models read from
  * `public/vendor/paddle/` (`scripts/vendor-paddle.mjs`, run as `pretest`),
  * and `@napi-rs/canvas` standing in for the browser's canvas.
  */
-import { copyFile, mkdtemp, readFile, rm } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
+import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { expect, vi } from 'vitest'
-import { createBuiltInReader } from './builtInReader.ts'
+import { vi } from 'vitest'
 import type { DecodeResult } from './decode.ts'
 import { decodeImageNode } from './decodeImage.node.ts'
-import { encodePageNode } from './encodePage.node.ts'
 import type { ImportDeps } from './importReceipt.ts'
 import { fragmentsToLines, hasTextLayer, toFragments } from './pdfTextLines.ts'
-import type { ReceiptReader } from './model.ts'
 import {
   createPaddleEngine,
   type PaddleEngine,
@@ -33,19 +28,13 @@ import {
   PaddleFailure,
   type PaddleBackend,
 } from './paddleReader.ts'
+import { assessPhoto } from './photoQuality.ts'
 import { scanFiscalQr, type ReadBarcodes } from './qrScanner.ts'
 
 export const NODE_MODULES = path.resolve('node_modules')
 
 /** Where `vendor-paddle.mjs` puts the models. */
 export const PADDLE_MODELS_DIR = path.resolve('public/vendor/paddle')
-
-export type NodeReader = 'tesseract' | 'paddle'
-
-/** The reader the local measurements use: `SETTLE_READER`, else PaddleOCR. */
-export function readerFromEnv(): NodeReader {
-  return process.env.SETTLE_READER === 'tesseract' ? 'tesseract' : 'paddle'
-}
 
 async function bytesOf(file: string): Promise<ArrayBuffer> {
   const bytes = await readFile(file)
@@ -98,6 +87,15 @@ export function inProcessPaddleBackend(): PaddleBackend {
         return await engine.read(page)
       } catch (error) {
         throw new PaddleFailure('ocrFailed', String(error))
+      }
+    },
+    async check(page) {
+      if (engine === undefined) throw new PaddleFailure('ocrFailed')
+      try {
+        return assessPhoto(page, await engine.detect(page))
+      } catch {
+        // As the worker: a failed check is skipped (P11).
+        return undefined
       }
     },
     terminate() {
@@ -165,15 +163,10 @@ async function decodeNode(file: File): Promise<DecodeResult> {
 }
 
 /** Sets up the offline dependencies; call from `beforeAll`. */
-export async function setUpNodeImport(
-  readerName: NodeReader = 'tesseract',
-): Promise<NodeImport> {
+export async function setUpNodeImport(): Promise<NodeImport> {
   const blocked: string[] = []
-  // Only local files: a CDN request fails the test. This covers zxing-wasm
-  // and pdf.js, which run on this thread. Node's Tesseract.js runs in a
-  // worker thread this stub doesn't reach; its only download is the
-  // language models, from `langPath`, which is a local directory here, so
-  // it reads them from disk (and its core comes from node_modules).
+  // Only local files: a CDN request fails the test. This covers zxing-wasm,
+  // pdf.js and PaddleOCR, which all run on this thread.
   vi.stubGlobal('fetch', async (input: string | URL | Request) => {
     const url =
       input instanceof Request ? input.url : new URL(String(input)).href
@@ -185,19 +178,6 @@ export async function setUpNodeImport(
     blocked.push(url)
     throw new Error(`Network request blocked in the corpus test: ${url}`)
   })
-
-  // One directory with both models, as `vendor/tesseract/lang` has them.
-  const langDir = await mkdtemp(path.join(tmpdir(), 'settle-lang-'))
-  for (const lang of ['por', 'eng']) {
-    await copyFile(
-      path.join(
-        NODE_MODULES,
-        `@tesseract.js-data/${lang}/4.0.0_best_int/${lang}.traineddata.gz`,
-      ),
-      path.join(langDir, `${lang}.traineddata.gz`),
-    )
-  }
-  expect(URL.canParse(langDir)).toBe(false) // a path, never a URL
 
   // zxing's default wasm location is a CDN in every environment (I-4).
   const zxing = await import('zxing-wasm/reader')
@@ -215,31 +195,21 @@ export async function setUpNodeImport(
 
   // One PaddleOCR reader for the whole run: the models load once.
   let backend: PaddleBackend | undefined
-  const paddle =
-    readerName === 'paddle'
-      ? createPaddleReader({
-          createBackend: () => (backend = inProcessPaddleBackend()),
-        })
-      : undefined
-  const reader = (): ReceiptReader =>
-    paddle ??
-    createBuiltInReader({
-      // `cacheMethod: 'none'`: no model files written to the working tree.
-      assets: { langPath: langDir, cacheMethod: 'none', gzip: true },
-      encodePage: encodePageNode,
-    })
+  const reader = createPaddleReader({
+    createBackend: () => (backend = inProcessPaddleBackend()),
+  })
 
   return {
     blocked,
     deps: () => ({
       decode: decodeNode,
-      reader: reader(),
+      reader,
       scanQr: (pages) => scanFiscalQr(pages, { readBarcodes }),
     }),
-    dispose: async () => {
+    dispose: () => {
       backend?.terminate()
       vi.unstubAllGlobals()
-      await rm(langDir, { recursive: true, force: true })
+      return Promise.resolve()
     },
   }
 }

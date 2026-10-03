@@ -5,9 +5,10 @@ import type { Bill } from '../../split/model.ts'
 import splitStyles from '../../split/components/split.module.css'
 import type { ImportResult } from '../importReceipt.ts'
 import { billHasContent, revokeImageUrl } from '../importUi.ts'
-import { readErrorMessage } from '../messages.ts'
-import type { ReadErrorCode, ReadProgress } from '../model.ts'
+import { PHOTO_ADVICE_LEAD, readErrorMessage } from '../messages.ts'
+import type { PhotoIssue, ReadErrorCode, ReadProgress } from '../model.ts'
 import { useReceiptImport } from '../receiptImport.ts'
+import { PhotoAdvice } from './PhotoAdvice.tsx'
 import styles from './receipt.module.css'
 
 /** The file types the picker offers (D7, D6): JPEG, PNG, HEIC/HEIF, PDF. */
@@ -48,12 +49,15 @@ function phaseText({ phase, progress }: ReadProgress, region: Region): string {
  * "Scan a receipt" (M2 plan, CP4): choose a file, take a photo, or drop a
  * file on the section. The receipt is read on this device; while it's read
  * the status line shows the phase and Cancel stops it. Any failure shows
- * its message and leaves the bill as it was.
+ * its message and leaves the bill as it was. The photo quality check's
+ * advice (M2.5, P11) shows as soon as a page is checked, while the reading
+ * goes on, so the user can cancel and take a better photo.
  */
 export function ScanReceipt({ bill, region, onBusyChange, onImported }: Props) {
   const importReceipt = useReceiptImport()
   const [progress, setProgress] = useState<ReadProgress>()
   const [error, setError] = useState<ReadErrorCode>()
+  const [photoIssues, setPhotoIssues] = useState<PhotoIssue[]>([])
   const [dragging, setDragging] = useState(false)
   const controller = useRef<AbortController>(undefined)
   const busy = progress !== undefined
@@ -71,6 +75,7 @@ export function ScanReceipt({ bill, region, onBusyChange, onImported }: Props) {
     const current = new AbortController()
     controller.current = current
     setError(undefined)
+    setPhotoIssues([])
     setProgress({ phase: 'opening' })
     onBusyChange(true)
     let result: ImportResult
@@ -83,6 +88,9 @@ export function ScanReceipt({ bill, region, onBusyChange, onImported }: Props) {
         onProgress: (next) => {
           if (!current.signal.aborted) setProgress(next)
         },
+        onQuality: (issues) => {
+          if (!current.signal.aborted) setPhotoIssues(issues)
+        },
       })
     } catch {
       result = { ok: false, error: { code: 'ocrFailed' } }
@@ -91,6 +99,8 @@ export function ScanReceipt({ bill, region, onBusyChange, onImported }: Props) {
       controller.current = undefined
     }
     setProgress(undefined)
+    // An import takes its advice to the check panel; a failed one drops it.
+    setPhotoIssues([])
     onBusyChange(false)
     if (current.signal.aborted && result.ok) {
       // Cancelled at the last moment: nothing is imported.
@@ -199,6 +209,7 @@ export function ScanReceipt({ bill, region, onBusyChange, onImported }: Props) {
           </button>
         )}
       </div>
+      {busy && <PhotoAdvice issues={photoIssues} lead={PHOTO_ADVICE_LEAD} />}
       {error !== undefined && (
         <p className={styles.error} role="alert">
           {readErrorMessage(error)}

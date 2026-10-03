@@ -9,8 +9,7 @@
  * It prints numbers and case names only. The full report (with the rows
  * read at the right price) goes to the git-ignored `.ai-review/`. Held-out
  * cases are skipped unless `SETTLE_HELD_OUT=1` (`scripts/measure-node.mjs
- * --held-out`). The reader is PaddleOCR, or Tesseract with
- * `SETTLE_READER=tesseract` (`--reader tesseract`). HEIC cases have no
+ * --held-out`). The reader is PaddleOCR. HEIC cases have no
  * Node decoder and are scored by the
  * browser run only. The browser run (`scripts/measure-local.mjs`) is the
  * reference; this one is for fast iteration.
@@ -27,11 +26,7 @@ import {
   type ReadRow,
   type ScoredImage,
 } from './accuracy.ts'
-import {
-  readerFromEnv,
-  setUpNodeImport,
-  type NodeImport,
-} from './importDeps.node.ts'
+import { setUpNodeImport, type NodeImport } from './importDeps.node.ts'
 import { importReceipt } from './importReceipt.ts'
 import {
   countedCases,
@@ -51,7 +46,7 @@ import {
 
 const LOCAL = path.resolve('src/features/receipt/fixtures/local')
 const HELD_OUT = process.env.SETTLE_HELD_OUT === '1'
-const READER = readerFromEnv()
+const READER = 'paddle'
 
 const all = await loadLocalCases(LOCAL)
 const { scored, skipped } = selectCases(all, { heldOut: HELD_OUT })
@@ -67,7 +62,7 @@ describe.skipIf(all.length === 0)(
     const read: Record<string, ReadRow[]> = {}
 
     beforeAll(async () => {
-      node = await setUpNodeImport(READER)
+      node = await setUpNodeImport()
       console.log(
         JSON.stringify({
           reader: READER,

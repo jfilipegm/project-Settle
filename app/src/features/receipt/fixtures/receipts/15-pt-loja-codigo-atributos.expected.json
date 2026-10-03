@@ -1,0 +1,26 @@
+{
+  "merchant": "Relojoaria Ponteiro",
+  "merchantTaxId": "518233073",
+  "date": "2026-09-05",
+  "total": "113.90",
+  "items": [
+    {
+      "name": "RELOGIO AURA 40 PRATA",
+      "quantity": "1",
+      "unitPrice": "89.90",
+      "lineTotal": "89.90",
+      "needsCheck": false
+    },
+    {
+      "name": "BRACELETE PELE CASTANHA",
+      "quantity": "2",
+      "unitPrice": "12.00",
+      "lineTotal": "24.00",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "qr": "A:518233073*B:999999990*C:PT*D:FS*E:N*F:20260905*G:FR 2026A/1188*H:JP4Q8R2T-1188*I1:PT*I7:92.60*I8:21.30*N:21.30*O:113.90*Q:Rp3x*R:3015",
+  "check": "match",
+  "removedLines": []
+}

@@ -1,6 +1,6 @@
 /**
- * Copies the receipt reader's runtime files from node_modules into
- * public/vendor/, so every worker, wasm, model and font is served from the
+ * Copies the receipt import's runtime files from node_modules into
+ * public/vendor/ (PaddleOCR's are `vendor-paddle.mjs`'s), so every worker, wasm, model and font is served from the
  * app's own origin and never from a CDN (M2 plan, D8). heic-to's CSP build
  * is copied unmodified, as its own file (D7, LGPL-3.0). Every source must
  * exist, or the script fails, and with it `npm run build`.
@@ -21,30 +21,6 @@ import { fileURLToPath } from 'node:url'
 
 /** One file, from `node_modules/<from>` to `public/vendor/<to>`. */
 export const VENDOR_FILES = [
-  // Tesseract.js: the worker, and the three LSTM-only core builds that
-  // getCore.js picks from a corePath directory (R2-O-4).
-  { from: 'tesseract.js/dist/worker.min.js', to: 'tesseract/worker.min.js' },
-  {
-    from: 'tesseract.js-core/tesseract-core-lstm.wasm.js',
-    to: 'tesseract/core/tesseract-core-lstm.wasm.js',
-  },
-  {
-    from: 'tesseract.js-core/tesseract-core-simd-lstm.wasm.js',
-    to: 'tesseract/core/tesseract-core-simd-lstm.wasm.js',
-  },
-  {
-    from: 'tesseract.js-core/tesseract-core-relaxedsimd-lstm.wasm.js',
-    to: 'tesseract/core/tesseract-core-relaxedsimd-lstm.wasm.js',
-  },
-  // The por + eng best_int models (D4).
-  {
-    from: '@tesseract.js-data/por/4.0.0_best_int/por.traineddata.gz',
-    to: 'tesseract/lang/por.traineddata.gz',
-  },
-  {
-    from: '@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz',
-    to: 'tesseract/lang/eng.traineddata.gz',
-  },
   // zxing-wasm's reader (D5).
   {
     from: 'zxing-wasm/dist/reader/zxing_reader.wasm',
@@ -67,38 +43,6 @@ export const VENDOR_DIRECTORIES = [
 
 /** Every vendored package, with its licence file(s) (M-I-3). */
 export const VENDOR_PACKAGES = [
-  {
-    name: 'tesseract.js',
-    license: 'Apache-2.0',
-    source: 'https://github.com/naptha/tesseract.js',
-    licenseFiles: [
-      { from: 'tesseract.js/LICENSE.md', to: 'tesseract.js-LICENSE.md' },
-    ],
-  },
-  {
-    name: 'tesseract.js-core',
-    license: 'Apache-2.0',
-    source: 'https://github.com/naptha/tesseract.js-core',
-    licenseFiles: [
-      {
-        from: 'tesseract.js-core/LICENSE',
-        to: 'tesseract.js-core-LICENSE.txt',
-      },
-    ],
-  },
-  {
-    name: '@tesseract.js-data/por',
-    license: 'MIT',
-    source: 'https://github.com/naptha/tessdata',
-    // The package ships no licence file: see generatedNotice below.
-    licenseFiles: [],
-  },
-  {
-    name: '@tesseract.js-data/eng',
-    license: 'MIT',
-    source: 'https://github.com/naptha/tessdata',
-    licenseFiles: [],
-  },
   {
     name: 'zxing-wasm',
     license: 'MIT',
@@ -150,16 +94,6 @@ export const VENDOR_PACKAGES = [
  * ship as a file.
  */
 export const GENERATED_NOTICES = [
-  {
-    to: 'tesseract.js-data-NOTICE.txt',
-    text: `@tesseract.js-data/por and @tesseract.js-data/eng (version 1.0.0)
-
-The 4.0.0_best_int language models (por.traineddata.gz, eng.traineddata.gz),
-served unmodified. Both packages declare the MIT licence in package.json
-and ship no licence file. Author: Balearica. Source:
-https://github.com/naptha/tessdata
-`,
-  },
   {
     to: 'heic-to-bundled-libraries-NOTICE.txt',
     text: `Libraries bundled inside heic-to's CSP build (vendor/heic-to/heic-to.js)

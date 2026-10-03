@@ -47,7 +47,10 @@
  *   node scripts/check-requests.mjs scan --file <receipt> --values <expected.json>
  *       [--qr <payload>] [--expect <url part>]... [--input <selector>]
  *       (--qr defaults to the `.expected.json`'s own `qr`)
- *       [--wait <selector>]
+ *       [--wait <selector>] [--expect-bill <expected.json>]
+ *       (--expect-bill: the run also fails unless the imported bill matches
+ *       that sample's expected bill by P2's measure, no edit needed: the
+ *       CI browser smoke test of M2.5's CP4)
  * Common: [--out <log.json>] [--brave <path>] [--path <route>] [--port <n>]
  *   [--probe-csp yes] (triggers one CSP violation, so the run must fail)
  *   (the proxy listens on --port, default 4179; vite preview on the next)
@@ -58,6 +61,8 @@ import http from 'node:http'
 import { readFile, rm, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { scoreImage } from '../src/features/receipt/accuracy.ts'
+import { expectedBillOf } from '../src/features/receipt/expectedBill.ts'
 import {
   APP_DIR,
   Cdp,
@@ -652,6 +657,26 @@ export async function run(options) {
         proxyFailures.push({ path: entry.path, problems })
     }
 
+    // M2.5 CP4's smoke test: the bill as P2 scores it against the sample.
+    let billCheck
+    if (options['expect-bill'] !== undefined) {
+      const expectedBill = expectedBillOf(
+        JSON.parse(await readFile(options['expect-bill'], 'utf8')),
+      )
+      const score =
+        read.bill?.bill !== undefined && read.receipt?.receipt !== undefined
+          ? scoreImage(read.bill.bill, read.receipt.receipt, expectedBill)
+          : undefined
+      billCheck = {
+        file: path.basename(options['expect-bill']),
+        noEditNeeded: score?.noEditNeeded ?? false,
+        rows: score?.rowsRight ?? false,
+        adjustments: score?.adjustmentsRight ?? false,
+        total: score?.totalRight ?? false,
+        check: score?.check ?? 'importFailed',
+      }
+    }
+
     const expectations = options.expect.map((part) => ({
       part,
       found: network
@@ -669,7 +694,8 @@ export async function run(options) {
       failures.length === 0 &&
       proxyFailures.length === 0 &&
       csp.length === 0 &&
-      expectations.every((expectation) => expectation.found.length > 0)
+      expectations.every((expectation) => expectation.found.length > 0) &&
+      (billCheck === undefined || billCheck.noEditNeeded)
 
     const report = {
       mode,
@@ -683,6 +709,7 @@ export async function run(options) {
       proxyFailures,
       cspViolations: csp,
       workerExpectations: expectations,
+      expectBill: billCheck,
       valueSetSize: values.length,
       // The exact values searched for, so `audit` can repeat the search.
       valueSet: values,
@@ -784,6 +811,7 @@ if (
     workerExpectations: report.workerExpectations,
     sessions: report.sessions,
     appRead: report.appRead,
+    expectBill: report.expectBill,
   }
   console.log(JSON.stringify(summary, null, 2))
   process.exit(report.pass ? 0 : 1)

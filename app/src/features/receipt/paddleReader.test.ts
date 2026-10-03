@@ -1,5 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
-import type { ReadProgress, ReceiptPage, ReceiptSource } from './model.ts'
+import type {
+  PhotoQuality,
+  ReadProgress,
+  ReceiptPage,
+  ReceiptSource,
+} from './model.ts'
 import type { PaddleBox } from './paddleLines.ts'
 import {
   createPaddleReader,
@@ -70,10 +75,18 @@ class FakeWorker implements WorkerLike {
   }
 }
 
+/** An invented check result: small text. */
+const SMALL_TEXT: PhotoQuality = {
+  issues: ['smallText'],
+  measures: { boxes: 6, textHeight: 8 },
+}
+
 const happy = (request: PaddleRequest): PaddleResponse =>
   request.type === 'load'
     ? { type: 'loaded' }
-    : { type: 'boxes', id: request.id, boxes: RECEIPT_BOXES }
+    : request.type === 'check'
+      ? { type: 'quality', id: request.id, quality: SMALL_TEXT }
+      : { type: 'boxes', id: request.id, boxes: RECEIPT_BOXES }
 
 /** A reader over fake workers, each one recorded. */
 function readerWith(
@@ -267,6 +280,108 @@ describe('createPaddleReader (P6) over a worker', () => {
       controller.abort()
       expect(result.ok).toBe(true)
       expect(workers[0]?.terminated).toBe(false)
+    })
+  })
+
+  describe('the photo quality check (M2.5 plan, P11)', () => {
+    it('checks each page before reading it, and passes the findings on first', async () => {
+      const { reader, workers } = readerWith(happy)
+      const events: string[] = []
+      const result = await reader.read(source([page(), page()]), {
+        onQuality: (quality) => {
+          events.push(
+            `quality ${quality.issues.join()} after ${workers[0]?.received.at(-1)?.type}`,
+          )
+        },
+        onProgress: (progress) => {
+          if (progress.phase === 'reading') events.push(`reading`)
+        },
+      })
+      expect(result.ok).toBe(true)
+      expect(workers[0]?.received.map((request) => request.type)).toEqual([
+        'load',
+        'check',
+        'read',
+        'check',
+        'read',
+      ])
+      // Each page's findings arrive before its read is even sent.
+      expect(events).toEqual([
+        'reading',
+        'quality smallText after check',
+        'reading',
+        'quality smallText after check',
+        'reading',
+      ])
+    })
+
+    it('doesn’t change the reading, and runs no check without a listener', async () => {
+      const without = readerWith(happy)
+      const plain = await without.reader.read(source([page()]))
+      expect(without.workers[0]?.received.map((r) => r.type)).toEqual([
+        'load',
+        'read',
+      ])
+      const checked = await readerWith(happy).reader.read(source([page()]), {
+        onQuality: () => undefined,
+      })
+      expect(checked).toEqual(plain)
+    })
+
+    it('skips a check that failed and reads on', async () => {
+      const { reader } = readerWith((request) =>
+        request.type === 'check'
+          ? { type: 'quality', id: request.id, quality: null }
+          : happy(request),
+      )
+      const onQuality = vi.fn()
+      const result = await reader.read(source([page()]), { onQuality })
+      expect(result.ok).toBe(true)
+      expect(onQuality).not.toHaveBeenCalled()
+    })
+
+    it('fails a worker crash during the check as ocrFailed', async () => {
+      const { reader, workers } = readerWith((request) =>
+        request.type === 'check' ? 'crash' : happy(request),
+      )
+      expect(
+        await reader.read(source([page()]), { onQuality: () => undefined }),
+      ).toEqual({ ok: false, error: { code: 'ocrFailed' } })
+      expect(workers[0]?.terminated).toBe(true)
+    })
+
+    it('cancelling during the check terminates the worker', async () => {
+      const { reader, workers } = readerWith((request) =>
+        request.type === 'check' ? undefined : happy(request),
+      )
+      const controller = new AbortController()
+      const reading = reader.read(source([page()]), {
+        signal: controller.signal,
+        onQuality: () => undefined,
+      })
+      await vi.waitFor(() =>
+        expect(workers[0]?.received.at(-1)?.type).toBe('check'),
+      )
+      controller.abort()
+      expect(await reading).toEqual({
+        ok: false,
+        error: { code: 'cancelled' },
+      })
+      expect(workers[0]?.terminated).toBe(true)
+    })
+
+    it('doesn’t check a PDF read from its text layer', async () => {
+      const { reader, workers } = readerWith(happy)
+      const onQuality = vi.fn()
+      await reader.read(
+        {
+          ...source([page()]),
+          textLayer: [{ text: 'TOTAL 0,80', confidence: 100 }],
+        },
+        { onQuality },
+      )
+      expect(onQuality).not.toHaveBeenCalled()
+      expect(workers).toHaveLength(0)
     })
   })
 

@@ -38,11 +38,53 @@ jobs:
       - run: npm run lint
       - run: npm run format:check
       - run: npm test
-      # The PaddleOCR build (M2.5, until it's the default in CP4), then the
-      # default one, each with one ONNX Runtime wasm under vendor/ort/ (P4).
-      - run: npm run build
-        env:
-          VITE_RECEIPT_READER: paddle
-      - run: node scripts/check-build.mjs
+      # The build, with one ONNX Runtime wasm under vendor/ort/ (M2.5, P4)
+      # and no Tesseract file (P10).
       - run: npm run build
       - run: node scripts/check-build.mjs
+      # The browser smoke test (M2.5, CP4): the runner's Chrome scans two
+      # committed samples through the real app (the worker, the wasm and
+      # model paths, Vite's bundling, the browser's pixels, the CSP), and
+      # each imported bill must match its sample by P2, with no request
+      # carrying a receipt value. Ubuntu 24.04 restricts the unprivileged
+      # user namespaces Chrome's sandbox needs; this lifts that for the job.
+      - run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - name: Smoke test, sample 1 (a JPEG photo with a fiscal QR code)
+        run: >-
+          node scripts/check-requests.mjs scan
+          --file src/features/receipt/fixtures/browser/sample-1.jpg
+          --values src/features/receipt/fixtures/browser/sample-1.expected.json
+          --expect-bill src/features/receipt/fixtures/browser/sample-1.expected.json
+          --brave "$(command -v google-chrome)"
+      - name: Smoke test, sample 12 (a supermarket photo)
+        run: >-
+          node scripts/check-requests.mjs scan
+          --file src/features/receipt/fixtures/browser/sample-12.jpg
+          --values src/features/receipt/fixtures/browser/sample-12.expected.json
+          --expect-bill src/features/receipt/fixtures/browser/sample-12.expected.json
+          --brave "$(command -v google-chrome)"
+      # The smoke test can fail: with a wrong expected bill (one price
+      # changed), the same scan must fail on the bill, and on nothing else.
+      - name: Smoke test, a wrong expected bill fails
+        run: |
+          node -e "
+            const fs = require('node:fs')
+            const file = 'src/features/receipt/fixtures/browser/sample-1.expected.json'
+            const expected = JSON.parse(fs.readFileSync(file, 'utf8'))
+            expected.items[0].lineTotal = '3.10'
+            fs.writeFileSync('/tmp/sample-1.wrong.json', JSON.stringify(expected))
+          "
+          if node scripts/check-requests.mjs scan \
+            --file src/features/receipt/fixtures/browser/sample-1.jpg \
+            --values src/features/receipt/fixtures/browser/sample-1.expected.json \
+            --expect-bill /tmp/sample-1.wrong.json \
+            --out /tmp/wrong.json --brave "$(command -v google-chrome)"; then
+            echo 'A wrong expected bill passed'; exit 1
+          fi
+          node -e "
+            const report = JSON.parse(require('node:fs').readFileSync('/tmp/wrong.json', 'utf8'))
+            const onlyTheBill = report.expectBill?.noEditNeeded === false &&
+              report.failures.length === 0 && report.proxyFailures.length === 0 &&
+              report.cspViolations.length === 0
+            if (!onlyTheBill) { console.error(JSON.stringify(report.expectBill)); process.exit(1) }
+          "

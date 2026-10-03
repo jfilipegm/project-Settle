@@ -1,8 +1,9 @@
 /**
- * The build's ONNX Runtime check (M2.5 plan, P4): `dist/` holds exactly
- * one ONNX Runtime wasm, the plain SIMD build under `vendor/ort/`, and
- * Vite emitted no second copy (WebGPU, JSPI, asyncify or any other) into
- * `dist/assets/`. Runs after `npm run build` (in CI too).
+ * The build's reader check (M2.5 plan, P4, P10): `dist/` holds exactly one
+ * ONNX Runtime wasm, the plain SIMD build under `vendor/ort/`, Vite emitted
+ * no second copy (WebGPU, JSPI, asyncify or any other) into
+ * `dist/assets/`, and no Tesseract file is left (retired in CP4). Runs
+ * after `npm run build` (in CI too).
  *
  *   node scripts/check-build.mjs [<dist>]
  *
@@ -28,17 +29,21 @@ async function filesUnder(dir) {
     .sort()
 }
 
-/** The problems with `dist`'s ONNX Runtime files; none is a pass. */
+/** The problems with `dist`'s reader files; none is a pass. */
 export async function checkBuild(dist) {
-  const wasm = (await filesUnder(dist)).filter((file) =>
-    /(^|\/)ort-wasm[^/]*\.wasm$/.test(file),
-  )
+  const all = await filesUnder(dist)
+  const wasm = all.filter((file) => /(^|\/)ort-wasm[^/]*\.wasm$/.test(file))
   const problems = []
   if (!wasm.includes(EXPECTED_ORT_WASM)) {
     problems.push(`missing ${EXPECTED_ORT_WASM}`)
   }
   for (const file of wasm) {
     if (file !== EXPECTED_ORT_WASM) problems.push(`unexpected ${file}`)
+  }
+  for (const file of all) {
+    if (/tesseract|traineddata/i.test(file)) {
+      problems.push(`a Tesseract file: ${file}`)
+    }
   }
   return problems
 }
@@ -52,5 +57,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     console.error(`check-build: ${problems.join('; ')}`)
     process.exit(1)
   }
-  console.log(`check-build: one ONNX Runtime wasm, ${EXPECTED_ORT_WASM}`)
+  console.log(
+    `check-build: one ONNX Runtime wasm, ${EXPECTED_ORT_WASM}; no Tesseract file`,
+  )
 }

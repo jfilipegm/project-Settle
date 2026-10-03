@@ -3,12 +3,7 @@ import {
   VENDOR_DIRECTORIES,
   VENDOR_FILES,
 } from '../../../scripts/vendor-assets.mjs'
-import {
-  ASSETS,
-  pdfDocumentOptions,
-  tesseractWorkerOptions,
-  zxingLocateFile,
-} from './assets.ts'
+import { ASSETS, pdfDocumentOptions, zxingLocateFile } from './assets.ts'
 
 const VENDOR = '/vendor/'
 
@@ -36,29 +31,10 @@ describe('assets (D8)', () => {
     }
   })
 
-  it('gives Tesseract same-origin paths and no blob worker (I-5)', () => {
-    const options = tesseractWorkerOptions()
-    expect(options).toEqual({
-      workerPath: '/vendor/tesseract/worker.min.js',
-      corePath: '/vendor/tesseract/core',
-      langPath: '/vendor/tesseract/lang',
-      workerBlobURL: false,
-      gzip: true,
-    })
-    // getCore.js loads one of these three core builds from corePath.
-    for (const core of [
-      'tesseract-core-lstm.wasm.js',
-      'tesseract-core-simd-lstm.wasm.js',
-      'tesseract-core-relaxedsimd-lstm.wasm.js',
-    ]) {
-      expect(VENDOR_FILES.map((file) => file.to)).toContain(
-        `tesseract/core/${core}`,
-      )
-    }
-    for (const lang of ['por', 'eng']) {
-      expect(VENDOR_FILES.map((file) => file.to)).toContain(
-        `tesseract/lang/${lang}.traineddata.gz`,
-      )
+  it('vendors no Tesseract file any more (M2.5 plan, P10)', () => {
+    for (const file of VENDOR_FILES) {
+      expect(file.to).not.toMatch(/tesseract/i)
+      expect(file.from).not.toMatch(/tesseract/i)
     }
   })
 

@@ -11,8 +11,14 @@
  * starts a new one (the browser reloads the models from its HTTP cache).
  * D16's codes keep their meaning: a failed load is `assetsUnavailable`, a
  * failed read `ocrFailed`. A PDF's text layer is parsed with no OCR (D6).
+ *
+ * P11: with an `onQuality` listener, each page is checked before it's read
+ * (detection only, then `photoQuality.ts`), and the findings are passed on
+ * at once, so the advice shows while the slow reading runs. A check that
+ * fails is skipped: it only ever warns.
  */
 import type {
+  PhotoQuality,
   ReadErrorCode,
   ReadOptions,
   ReadResult,
@@ -39,6 +45,11 @@ export interface PaddleBackend {
   load(): Promise<void>
   /** Rejects with `PaddleFailure('ocrFailed')` on a failed read. */
   read(page: ReceiptPage): Promise<PaddleBox[]>
+  /**
+   * P11's check of one page; `undefined` when it failed (it never fails the
+   * import). Rejects only as `read` does when the backend itself fails.
+   */
+  check(page: ReceiptPage): Promise<PhotoQuality | undefined>
   /** Stops it at once, a load or read still running included. */
   terminate(): void
 }
@@ -60,7 +71,8 @@ export type PaddleRequest =
       }
     }
   | {
-      type: 'read'
+      /** `read` reads the page; `check` runs P11's photo quality check. */
+      type: 'read' | 'check'
       id: number
       width: number
       height: number
@@ -72,6 +84,7 @@ export type PaddleRequest =
 export type PaddleResponse =
   | { type: 'loaded' }
   | { type: 'boxes'; id: number; boxes: PaddleBox[] }
+  | { type: 'quality'; id: number; quality: PhotoQuality | null }
   | { type: 'failed'; code: 'assetsUnavailable' | 'ocrFailed'; id?: number }
 
 /** The part of a `Worker` the backend uses. */
@@ -97,6 +110,22 @@ const createModuleWorker = (): WorkerLike =>
     type: 'module',
     name: 'paddle-ocr',
   }) as unknown as WorkerLike
+
+/**
+ * A page as a request to the worker. Its pixels are a copy, transferred:
+ * the page itself is still needed (the QR scan, the preview).
+ */
+function pageMessage(
+  type: 'read' | 'check',
+  id: number,
+  page: ReceiptPage,
+): { message: PaddleRequest; transfer: Transferable[] } {
+  const data = page.data.slice().buffer
+  return {
+    message: { type, id, width: page.width, height: page.height, data },
+    transfer: [data],
+  }
+}
 
 /**
  * A backend in a worker. One request at a time: the reader never overlaps
@@ -152,17 +181,21 @@ export function workerBackend(
     },
     async read(page) {
       const id = ++nextId
-      // A copy: the page itself is still needed (QR scan, preview).
-      const data = page.data.slice().buffer
-      const response = await request(
-        { type: 'read', id, width: page.width, height: page.height, data },
-        'ocrFailed',
-        [data],
-      )
+      const { message, transfer } = pageMessage('read', id, page)
+      const response = await request(message, 'ocrFailed', transfer)
       if (response.type !== 'boxes' || response.id !== id) {
         throw new PaddleFailure('ocrFailed')
       }
       return response.boxes
+    },
+    async check(page) {
+      const id = ++nextId
+      const { message, transfer } = pageMessage('check', id, page)
+      const response = await request(message, 'ocrFailed', transfer)
+      if (response.type !== 'quality' || response.id !== id) {
+        throw new PaddleFailure('ocrFailed')
+      }
+      return response.quality ?? undefined
     },
     terminate() {
       const waiter = pending
@@ -221,7 +254,7 @@ export function createPaddleReader({
 
   async function ocr(
     pages: readonly ReceiptPage[],
-    { signal, onProgress }: ReadOptions,
+    { signal, onProgress, onQuality }: ReadOptions,
   ): Promise<ReadResult> {
     onProgress?.({ phase: 'loadingReader' })
     if (current === undefined) {
@@ -241,6 +274,12 @@ export function createPaddleReader({
       const text: TextLine[][] = []
       for (const [index, page] of pages.entries()) {
         onProgress?.({ phase: 'reading', progress: index / pages.length })
+        if (onQuality !== undefined) {
+          // A check that failed is `undefined` and skipped; only a crashed
+          // worker rejects, and then the read would fail too.
+          const quality = await abortable(backend.check(page), signal)
+          if (quality !== undefined) onQuality(quality)
+        }
         const boxes = await abortable(backend.read(page), signal)
         text.push(assembleLines(boxes))
       }

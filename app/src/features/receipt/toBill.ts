@@ -92,10 +92,14 @@ function toItem(parsed: ParsedItem, id: string, bill: Bill): Item | undefined {
   return item
 }
 
-type AdjustmentName = 'tax' | 'tip' | 'discount'
+export type AdjustmentName = 'tax' | 'tip' | 'discount'
 
-// D13's fixed order: the first combination that closes the arithmetic wins.
-const COMBINATIONS: readonly (readonly AdjustmentName[])[] = [
+/**
+ * D13's fixed order: the first combination that closes the arithmetic
+ * wins. Exported for the browser smoke test's expected bill (M2.5, CP4),
+ * so the two can't drift.
+ */
+export const COMBINATIONS: readonly (readonly AdjustmentName[])[] = [
   [],
   ['tax'],
   ['tip'],

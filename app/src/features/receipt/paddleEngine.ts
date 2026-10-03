@@ -12,6 +12,7 @@
  */
 import type { ReceiptPage } from './model.ts'
 import type { PaddleBox } from './paddleLines.ts'
+import type { TextBox } from './photoQuality.ts'
 
 /** The two models and the recognition dictionary, as URLs or bytes. */
 export interface PaddleModels {
@@ -58,6 +59,12 @@ export interface PaddleEngineOptions {
 export interface PaddleEngine {
   /** One page's text boxes, in the page's pixels. */
   read(page: ReceiptPage): Promise<PaddleBox[]>
+  /**
+   * P11: one page's text boxes from detection alone, no recognition (a
+   * fraction of `read`'s time), for the photo quality check. A separate
+   * pass: `read` doesn't use it, and nothing it does is kept.
+   */
+  detect(page: ReceiptPage): Promise<TextBox[]>
   dispose(): Promise<void>
 }
 
@@ -114,17 +121,22 @@ export async function createPaddleEngine({
   } as unknown as ConstructorParameters<typeof PaddleOcrService>[0])
   await service.initialize()
 
+  const toCanvas = (page: ReceiptPage): Canvas2d => {
+    const canvas = getPlatform().createCanvas(
+      page.width,
+      page.height,
+    ) as unknown as Canvas2d
+    const context = canvas.getContext('2d')
+    if (context === null) throw new Error('No 2D canvas for the page')
+    const image = context.createImageData(page.width, page.height)
+    image.data.set(page.data)
+    context.putImageData(image, 0, 0)
+    return canvas
+  }
+
   return {
     async read(page) {
-      const canvas = getPlatform().createCanvas(
-        page.width,
-        page.height,
-      ) as unknown as Canvas2d
-      const context = canvas.getContext('2d')
-      if (context === null) throw new Error('No 2D canvas for the page')
-      const image = context.createImageData(page.width, page.height)
-      image.data.set(page.data)
-      context.putImageData(image, 0, 0)
+      const canvas = toCanvas(page)
       // `noCache`: no page is kept in the library's result cache.
       const result = await service.recognize(canvas, {
         flatten: true,
@@ -143,6 +155,11 @@ export async function createPaddleEngine({
       }))
       const splitTall = overrides.splitTall ?? READING_OPTIONS.splitTall
       return splitTall === true ? splitTallBoxes(canvas, boxes) : boxes
+    },
+    async detect(page) {
+      // Detection never reads or writes the library's result cache.
+      const { boxes } = await service.detect(toCanvas(page))
+      return boxes.map(({ x, y, width, height }) => ({ x, y, width, height }))
     },
     dispose: () => service.destroy(),
   }

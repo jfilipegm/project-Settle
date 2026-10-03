@@ -270,8 +270,15 @@ export function linkReceipts(parsed: readonly Parsed[]): LocalCase[] {
   })
 }
 
-/** Every case in `dir` (none if it's missing), sorted by name. */
-export async function loadLocalCases(dir: string): Promise<LocalCase[]> {
+/**
+ * Every case in `dir` (none if it's missing), sorted by name. The images
+ * are in `imageDir`, `dir` itself unless the expected files were set
+ * aside in a folder of their own (P11's small copies).
+ */
+export async function loadLocalCases(
+  dir: string,
+  imageDir: string = dir,
+): Promise<LocalCase[]> {
   if (!existsSync(dir)) return []
   const names = (await readdir(dir))
     .filter((file) => file.endsWith('.expected.json'))
@@ -287,7 +294,9 @@ export async function loadLocalCases(dir: string): Promise<LocalCase[]> {
       throw new LocalCaseError(name, 'not valid JSON')
     }
     parsed.push(
-      parseLocalCase(name, json, (file) => existsSync(path.join(dir, file))),
+      parseLocalCase(name, json, (file) =>
+        existsSync(path.join(imageDir, file)),
+      ),
     )
   }
   return linkReceipts(parsed)
@@ -312,4 +321,44 @@ export function countedCases(cases: readonly LocalCase[]): LocalCase[] {
 /** The number of distinct receipts among `cases`. */
 export function distinctReceipts(cases: readonly LocalCase[]): number {
   return new Set(cases.map((entry) => entry.receipt)).size
+}
+
+/**
+ * P11: the folder, inside the set, of the small copies set aside on
+ * 2026-10-03 (their expected files; the images stay in the set's folder).
+ * They're no part of the set, but they calibrate the photo quality check.
+ */
+export const SMALL_COPIES = 'small-copies'
+
+/** Where a case the photo quality check measures comes from. */
+export type CalibrationGroup = 'tuning' | 'extra' | 'smallCopy' | 'heldOut'
+
+export interface CalibrationCase {
+  entry: LocalCase
+  group: CalibrationGroup
+}
+
+/**
+ * P11's calibration images: the set's tuning and extra cases and the small
+ * copies, never a held-out case unless `heldOut` (CP6 only, P14), and then
+ * the held-out cases too, as their own group.
+ */
+export async function loadCalibrationCases(
+  dir: string,
+  { heldOut }: { heldOut: boolean },
+): Promise<{ cases: CalibrationCase[]; skipped: LocalCase[] }> {
+  const { scored, skipped } = selectCases(await loadLocalCases(dir), {
+    heldOut,
+  })
+  const small = await loadLocalCases(path.join(dir, SMALL_COPIES), dir)
+  return {
+    cases: [
+      ...scored.map((entry): CalibrationCase => ({
+        entry,
+        group: entry.part === 'heldOut' ? 'heldOut' : entry.part,
+      })),
+      ...small.map((entry): CalibrationCase => ({ entry, group: 'smallCopy' })),
+    ],
+    skipped,
+  }
 }
