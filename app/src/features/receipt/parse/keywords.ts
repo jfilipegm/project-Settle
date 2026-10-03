@@ -34,6 +34,13 @@ export const IGNORE = [
   'cash',
   'pago',
   'paid',
+  'rueckgeld',
+  'ruckgeld',
+  'zuruck',
+  'gegeben',
+  'contanti',
+  'contante',
+  'pagato',
 ] as const
 
 /** Words that make a line a payment line (manual review M-O-2). */
@@ -53,6 +60,13 @@ export const PAYMENT_WORDS = [
   'cash',
   'pago',
   'paid',
+  'rueckgeld',
+  'ruckgeld',
+  'zuruck',
+  'gegeben',
+  'contanti',
+  'contante',
+  'pagato',
 ] as const
 
 /** Card payment phrases: also payment lines. */
@@ -114,12 +128,15 @@ export const SUBTOTAL = [
   'net total',
   'sub total',
   'subtotal',
+  'zwischensumme',
+  'subtotale',
 ] as const
 
 export const TOTAL = [
   'total including vat',
   'total incl vat',
   'total inc vat',
+  'total do documento',
   'total a pagar',
   'total com iva',
   'total c iva',
@@ -129,6 +146,10 @@ export const TOTAL = [
   'total eur',
   'a pagar',
   'total',
+  'gesamtsumme',
+  'zu zahlen',
+  'summe',
+  'totale',
 ] as const
 
 /** Rule 8: a later total with one of these replaces a plainer one. */
@@ -171,6 +192,8 @@ export const TAX_TABLE_WORDS = [
   'taxa',
   'rate',
   'base',
+  'mwst',
+  'ust',
 ] as const
 
 /**
@@ -187,6 +210,10 @@ export const TAX_COLUMN_WORDS = [
   'valor',
   'val',
   'total',
+  'mwst',
+  'netto',
+  'brutto',
+  'steuer',
 ] as const
 
 export const DISCOUNT = [

@@ -3,7 +3,7 @@
  * the manual editor, which is right there.
  */
 import type { MoneyCurrency } from '../../lib/money.ts'
-import type { ReadErrorCode, ReceiptWarning } from './model.ts'
+import type { PhotoIssue, ReadErrorCode, ReceiptWarning } from './model.ts'
 
 const FALLBACK = 'You can type the items in below.'
 
@@ -58,3 +58,36 @@ export function warningMessage(
   }
   return WARNINGS[warning]
 }
+
+/**
+ * M2.5 plan, P11: the photo quality check's advice, one specific message
+ * per issue, saying how to take a better photo. The import goes on either
+ * way: this is advice, never an error.
+ */
+const PHOTO_ADVICE: Record<PhotoIssue, string> = {
+  noText:
+    'No text was found in this image. Check it’s the receipt, in focus and well lit.',
+  smallText:
+    'The text in this image is small, so some numbers may be misread. Move closer to the receipt. For a receipt from an app, share the original image as a document, or use the app’s PDF export: it’s read exactly.',
+  blurred:
+    'This photo looks blurred. Hold the phone steady and let it focus before taking the photo.',
+  dark: 'This photo is dark. Take it in more light.',
+  faint:
+    'The text in this photo is faint. Take it in even light, without the flash pointing straight at the receipt.',
+  glare:
+    'There’s glare on the receipt. Tilt it away from the light, or turn off the flash.',
+  cutOff:
+    'The receipt seems cut off at the edge of the photo. Include the whole receipt, with a little space around it.',
+  farAway:
+    'The receipt is small in this photo. Come closer, so it fills most of the photo.',
+}
+
+export function photoAdvice(issue: PhotoIssue): string {
+  return PHOTO_ADVICE[issue]
+}
+
+/** The line before the advice, while reading and in the check panel. */
+export const PHOTO_ADVICE_LEAD =
+  'This photo may not read well. You can cancel and take a better one:'
+export const PHOTO_ADVICE_LEAD_DONE =
+  'This photo may not have read well. Check the items, or scan a better photo:'

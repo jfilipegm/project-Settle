@@ -6,6 +6,10 @@
  *
  * Everything that isn't pure is injected (`deps`), so the UI tests and
  * later readers can swap it.
+ *
+ * M2.5's photo quality check (P11): the reader's findings are passed on as
+ * they come (`onQuality`) and returned with the import, for that import's
+ * check panel only; they're never part of the summary, so never saved.
  */
 import type { MoneyCurrency } from '../../lib/money.ts'
 import type { Bill } from '../split/model.ts'
@@ -13,6 +17,8 @@ import type { DecodeResult } from './decode.ts'
 import type { FiscalQr } from './fiscalQr.ts'
 import type {
   ParsedReceipt,
+  PhotoIssue,
+  PhotoQuality,
   ReadError,
   ReadProgress,
   ReadResult,
@@ -20,6 +26,7 @@ import type {
   ReceiptReader,
   ReceiptSummary,
 } from './model.ts'
+import { combineIssues } from './photoQuality.ts'
 import { receiptToBill } from './toBill.ts'
 
 export interface ImportDeps {
@@ -48,10 +55,24 @@ export interface ImportOptions {
   regionCurrency?: MoneyCurrency
   signal?: AbortSignal
   onProgress?: (progress: ReadProgress) => void
+  /** P11: every page's photo issues so far, each time a page is checked. */
+  onQuality?: (issues: PhotoIssue[]) => void
 }
 
 export type ImportResult =
-  | { ok: true; bill: Bill; summary: ReceiptSummary; imageUrl?: string }
+  | {
+      ok: true
+      bill: Bill
+      summary: ReceiptSummary
+      imageUrl?: string
+      /** P11: the photo's issues, when it has any. Never saved. */
+      photoIssues?: PhotoIssue[]
+      /**
+       * P11: each checked page's measurements, when a check ran, for
+       * `scripts/measure-quality.mjs`. Never saved.
+       */
+      photoChecks?: PhotoQuality[]
+    }
   | { ok: false; error: ReadError }
 
 function failure(code: ReadError['code']): ImportResult {
@@ -61,7 +82,14 @@ function failure(code: ReadError['code']): ImportResult {
 export async function importReceipt(
   file: File,
   deps: ImportDeps,
-  { currentBill, nextId, regionCurrency, signal, onProgress }: ImportOptions,
+  {
+    currentBill,
+    nextId,
+    regionCurrency,
+    signal,
+    onProgress,
+    onQuality,
+  }: ImportOptions,
 ): Promise<ImportResult> {
   const cancelled = () => signal?.aborted === true
   if (cancelled()) {
@@ -94,13 +122,21 @@ export async function importReceipt(
   }
   signal?.addEventListener('abort', stopQr, { once: true })
   let qr: FiscalQr | undefined
+  const qualities: PhotoQuality[] = []
   try {
     const qrScan = deps
       .scanQr(source.pages, { signal: qrController.signal })
       .catch(() => undefined)
     let read: ReadResult
     try {
-      read = await deps.reader.read(source, { signal, onProgress })
+      read = await deps.reader.read(source, {
+        signal,
+        onProgress,
+        onQuality: (quality) => {
+          qualities.push(quality)
+          onQuality?.(combineIssues(qualities))
+        },
+      })
     } catch {
       read = { ok: false, error: { code: 'ocrFailed' } }
     }
@@ -139,7 +175,13 @@ export async function importReceipt(
   if (deps.previewUrl !== undefined && first !== undefined) {
     imageUrl = await deps.previewUrl(first).catch(() => undefined)
   }
-  return imageUrl === undefined
-    ? { ok: true, bill, summary }
-    : { ok: true, bill, summary, imageUrl }
+  const photoIssues = combineIssues(qualities)
+  return {
+    ok: true,
+    bill,
+    summary,
+    ...(imageUrl !== undefined && { imageUrl }),
+    ...(photoIssues.length > 0 && { photoIssues }),
+    ...(qualities.length > 0 && { photoChecks: qualities }),
+  }
 }

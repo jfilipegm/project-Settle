@@ -11,7 +11,12 @@ import { ReceiptCheck } from '../features/receipt/components/ReceiptCheck.tsx'
 import { ScanReceipt } from '../features/receipt/components/ScanReceipt.tsx'
 import { revokeImageUrl } from '../features/receipt/importUi.ts'
 import { NOT_READ_ITEM_NAME } from '../features/receipt/messages.ts'
-import type { ReceiptSummary, RemovedLine } from '../features/receipt/model.ts'
+import type {
+  PhotoIssue,
+  PhotoQuality,
+  ReceiptSummary,
+  RemovedLine,
+} from '../features/receipt/model.ts'
 import { checkReceipt } from '../features/receipt/reconcile.ts'
 import { receiptNotices } from '../features/receipt/review.ts'
 import {
@@ -40,11 +45,14 @@ export function SplitPage() {
   const [editorSession, setEditorSession] = useState(0)
 
   // The receipt check (M2, D14, D15): the summary is saved next to the
-  // bill; the image's object URL lives in memory only.
+  // bill; the image's object URL lives in memory only, and so does the
+  // photo quality check's advice (M2.5, P11).
   const [summary, setSummary] = useState<ReceiptSummary | null>(
     loadReceiptSummary,
   )
   const [imageUrl, setImageUrl] = useState<string>()
+  const [photoIssues, setPhotoIssues] = useState<PhotoIssue[]>()
+  const [photoChecks, setPhotoChecks] = useState<PhotoQuality[]>()
   const [scanning, setScanning] = useState(false)
   const checkHeading = useRef<HTMLHeadingElement>(null)
   const focusCheck = useRef(false)
@@ -120,6 +128,8 @@ export function SplitPage() {
           dispatch({ type: 'replaceBill', bill: imported.bill })
           updateSummary(imported.summary)
           setImageUrl(imported.imageUrl)
+          setPhotoIssues(imported.photoIssues)
+          setPhotoChecks(imported.photoChecks)
           setEditorSession((session) => session + 1)
           focusCheck.current = true
         }}
@@ -130,11 +140,15 @@ export function SplitPage() {
           bill={bill}
           summary={summary}
           imageUrl={imageUrl}
+          photoIssues={photoIssues}
+          photoChecks={photoChecks}
           region={region}
           headingRef={checkHeading}
           onDismiss={() => {
             updateSummary(null)
             setImageUrl(undefined)
+            setPhotoIssues(undefined)
+            setPhotoChecks(undefined)
           }}
           onAddDifference={(amount) => {
             addFlaggedItems(summary, [{ name: NOT_READ_ITEM_NAME, amount }])
@@ -189,6 +203,9 @@ export function SplitPage() {
               dispatch({ type: 'newBill', ids: newBillIds() })
               updateSummary(null)
               setImageUrl(undefined)
+              setPhotoIssues(undefined)
+              setPhotoChecks(undefined)
+              setPhotoChecks(undefined)
               setEditorSession((session) => session + 1)
             }
           }}

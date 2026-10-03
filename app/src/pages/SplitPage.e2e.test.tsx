@@ -13,7 +13,7 @@ import {
 } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { RegionProvider } from '../app/RegionProvider.tsx'
-import { createBuiltInReader } from '../features/receipt/builtInReader.ts'
+import { createPaddleReader } from '../features/receipt/paddleReader.ts'
 import { parseFiscalQr } from '../features/receipt/fiscalQr.ts'
 import sample1 from '../features/receipt/fixtures/receipts/01-pt-restaurante-qr.expected.json'
 import {
@@ -221,9 +221,11 @@ describe('Scan to split, end to end (M2)', () => {
               file: { name: file.name, type: file.type, size: file.size },
             },
           }),
-        reader: createBuiltInReader({
-          assets: {},
-          encodePage: () => Promise.reject(new Error('no OCR in this test')),
+        // A text layer is parsed with no OCR: no worker starts.
+        reader: createPaddleReader({
+          createBackend: () => {
+            throw new Error('no OCR in this test')
+          },
         }),
         scanQr: () => Promise.resolve(qr.qr),
       }

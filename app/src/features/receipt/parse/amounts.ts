@@ -178,9 +178,12 @@ const NUMBER = /^\d+(?:[.,]\d+)?$/
 // Any capital but `X`, which is a multiplication sign (`2 X 2,20`).
 const TAX_CODE = /^\(?[A-WYZ]\)?$/
 
-/** Enclosing punctuation that never belongs to what's inside it. */
+/**
+ * Enclosing punctuation that never belongs to what's inside it, and a
+ * stray quote mark the OCR puts before a price (`'3,29`).
+ */
 function stripEnclosing(token: string): string {
-  return token.replace(/^[([]+/, '').replace(/[)\]:;]+$/, '')
+  return token.replace(/^[([‘’'`"]+/, '').replace(/[)\]:;]+$/, '')
 }
 
 /**
@@ -246,7 +249,13 @@ function isTimeContext(token: LineToken | undefined): boolean {
  * `hora`/`time` or sits next to a date.
  */
 export function tokenizeLine(text: string): LineToken[] {
-  const raw = normalizeLine(text).replace(/(\d) %/g, '$1%')
+  const raw = normalizeLine(text)
+    .replace(/(\d) %/g, '$1%')
+    // A VAT rate printed against the quantity (`13%3`, M2.5 P9): the rate
+    // and the quantity are two tokens.
+    .replace(/(\d%)(\d{1,3})(?![\d.,%])/g, '$1 $2')
+    // A tax code read against the line's last price (`2,69A`).
+    .replace(/(\d[.,]\d{2})([A-WYZ])$/, '$1 $2')
   if (raw === '') {
     return []
   }

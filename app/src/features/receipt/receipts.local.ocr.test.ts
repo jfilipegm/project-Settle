@@ -1,142 +1,168 @@
 // @vitest-environment node
 /**
- * The user's real receipts (remediation plan, R17 and the acceptance
- * targets), read with the real OCR like the corpus. They carry personal
- * data, so they live only in the git-ignored `fixtures/local/` folder on
- * the user's machine; wherever it's empty or missing, as in CI, this test
- * is skipped. See app/README.md, "Local real-receipt fixtures".
+ * The local real-receipt set (M2.5 plan, P1–P3, P14), read with the real
+ * OCR like the corpus and scored with P2's measure. The receipts carry
+ * personal data, so they live only in the git-ignored `fixtures/local/`
+ * folder on the user's machine; wherever it's empty or missing, as in CI,
+ * this test is skipped. See app/README.md, "Local real-receipt fixtures".
  *
- * Each `<name>.png` has a `<name>.expected.json`: the QR total, the item
- * prices as printed, and its target (`minCoverage`, R19's local coverage;
- * `itemsAllRight`, every read item at its right price; `check`).
+ * It prints numbers and case names only. The full report (with the rows
+ * read at the right price) goes to the git-ignored `.ai-review/`. Held-out
+ * cases are skipped unless `SETTLE_HELD_OUT=1` (`scripts/measure-node.mjs
+ * --held-out`). The reader is PaddleOCR. HEIC cases have no
+ * Node decoder and are scored by the
+ * browser run only. The browser run (`scripts/measure-local.mjs`) is the
+ * reference; this one is for fast iteration.
  */
-import { existsSync } from 'node:fs'
-import { readFile, readdir } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { cents, type Cents } from '../../lib/money.ts'
 import { createBill } from '../split/billReducer.ts'
-import { lineTotal } from '../split/model.ts'
+import {
+  readRows,
+  rowAccuracy,
+  scoreFailedImport,
+  scoreImage,
+  type ReadRow,
+  type ScoredImage,
+} from './accuracy.ts'
 import { setUpNodeImport, type NodeImport } from './importDeps.node.ts'
 import { importReceipt } from './importReceipt.ts'
-import { matchedCoverage } from './matchedCoverage.ts'
-import { isNearTotal } from './toBill.ts'
-import { checkReceipt } from './reconcile.ts'
-
-interface LocalExpected {
-  qrTotal: string
-  items: string[]
-  minCoverage?: number
-  itemsAllRight?: boolean
-  check?: 'match'
-}
+import {
+  countedCases,
+  distinctReceipts,
+  loadLocalCases,
+  repositoryRoot,
+  selectCases,
+} from './localFixtures.node.ts'
+import {
+  caseNumbers,
+  checkSetNames,
+  rightPriceRows,
+  partNumbers,
+  writeReport,
+  type RightPriceRow,
+} from './localReport.node.ts'
 
 const LOCAL = path.resolve('src/features/receipt/fixtures/local')
+const HELD_OUT = process.env.SETTLE_HELD_OUT === '1'
+const READER = 'paddle'
 
-const toCents = (decimal: string): Cents =>
-  cents(Math.round(Number(decimal) * 100))
+const all = await loadLocalCases(LOCAL)
+const { scored, skipped } = selectCases(all, { heldOut: HELD_OUT })
+const heic = scored.filter((entry) => entry.imageType === 'heic')
+const cases = scored.filter((entry) => entry.imageType !== 'heic')
 
-async function loadLocal() {
-  if (!existsSync(LOCAL)) return []
-  const names = (await readdir(LOCAL))
-    .filter((name) => name.endsWith('.expected.json'))
-    .map((name) => name.replace(/\.expected\.json$/, ''))
-    .sort()
-  return Promise.all(
-    names.map(async (name) => ({
-      name,
-      expected: JSON.parse(
-        await readFile(path.join(LOCAL, `${name}.expected.json`), 'utf8'),
-      ) as LocalExpected,
-    })),
-  )
-}
-
-const receipts = await loadLocal()
-
-describe.skipIf(receipts.length === 0)(
-  'the local real receipts (R17, the acceptance targets)',
+describe.skipIf(all.length === 0)(
+  'the local real receipts (M2.5, P2 in Node)',
   () => {
     let node: NodeImport
+    const images: ScoredImage[] = []
+    const rows: Record<string, RightPriceRow[]> = {}
+    const read: Record<string, ReadRow[]> = {}
+
     beforeAll(async () => {
       node = await setUpNodeImport()
-    })
-    afterAll(async () => {
-      await node.dispose()
+      console.log(
+        JSON.stringify({
+          reader: READER,
+          cases: all.length,
+          distinctReceipts: distinctReceipts(countedCases(all)),
+          extraCases: all.length - countedCases(all).length,
+          scored: cases.length,
+          heldOutSkipped: skipped.length,
+          heicSkipped: heic.map((entry) => entry.name),
+        }),
+      )
     })
 
-    it.each(receipts)(
+    afterAll(async () => {
+      await node.dispose()
+      if (images.length === 0) return
+      const { totals, extra } = partNumbers(images, scored)
+      console.log(JSON.stringify({ totals }))
+      if (extra !== undefined) console.log(JSON.stringify({ extra }))
+      const file = await writeReport(repositoryRoot(LOCAL), 'node', {
+        when: new Date().toISOString(),
+        reader: READER,
+        heldOut: HELD_OUT,
+        heldOutSkipped: skipped.map((entry) => entry.name),
+        heicSkipped: heic.map((entry) => entry.name),
+        totals,
+        extra,
+        cases: images.map((image) => ({
+          name: image.name,
+          receipt: image.receipt,
+          ...image.score,
+        })),
+        rightPriceRows: rows,
+        readRows: read,
+        names: checkSetNames(scored),
+      })
+      console.log(`Report (local, git-ignored): ${file}`)
+    })
+
+    it('has no two different expected names the rule would pair', () => {
+      const check = checkSetNames(scored)
+      // Numbers only; the pairs themselves stay local.
+      console.log(
+        JSON.stringify({
+          namePairsCompared: check.pairsCompared,
+          collisions: check.collisions.length,
+          identicalProducts: check.identical.length,
+          truncatedNames: check.truncated.length,
+        }),
+      )
+      expect(check.collisions).toEqual([])
+    })
+
+    it.each(cases)(
       '$name',
-      async ({ name, expected }) => {
-        const bytes = await readFile(path.join(LOCAL, `${name}.png`))
+      async (entry) => {
+        const bytes = await readFile(path.join(LOCAL, entry.image))
         let n = 0
         const result = await importReceipt(
-          new File([bytes], `${name}.png`, { type: 'image/png' }),
+          new File([bytes], entry.image, {
+            type:
+              entry.imageType === 'png'
+                ? 'image/png'
+                : entry.imageType === 'pdf'
+                  ? 'application/pdf'
+                  : 'image/jpeg',
+          }),
           node.deps(),
           {
             currentBill: createBill(['p1', 'p2', 'old']),
             nextId: () => `i${++n}`,
           },
         )
-        if (!result.ok) throw new Error(`${name}: ${result.error.code}`)
-        const qrTotal = toCents(expected.qrTotal)
-        const read = result.bill.items.map((item) => ({
-          name: item.name,
-          amount: lineTotal(item),
-        }))
-        const coverage = matchedCoverage(
-          read,
-          expected.items.map(toCents),
-          qrTotal,
-        )
-        const itemsSum = read.reduce((acc, item) => acc + item.amount, 0)
-        const inApp = Math.min(
-          1,
-          read
-            .filter((item) => item.name !== 'Not read from the receipt')
-            .reduce((acc, item) => acc + item.amount, 0) / qrTotal,
-        )
-        const check = checkReceipt(result.bill, result.summary).status
-        const nearTotalLeft = read.filter((item) =>
-          isNearTotal(item.amount, qrTotal),
-        ).length
-        // The checkpoint notes' measurements: numbers only, no content.
+        const score = result.ok
+          ? scoreImage(result.bill, result.summary, entry.expected)
+          : scoreFailedImport(entry.expected)
+        images.push({ name: entry.name, receipt: entry.receipt, score })
+        rows[entry.name] = result.ok ? rightPriceRows(result.bill, entry) : []
+        read[entry.name] = result.ok ? readRows(result.bill) : []
+        const listed = rows[entry.name] ?? []
         console.log(
           JSON.stringify({
-            receipt: name,
-            items: read.length,
-            itemsSum,
-            localCoverage: Number(coverage.coverage.toFixed(3)),
-            unmatchedSum: coverage.unmatchedSum,
-            inAppCoverage: Number(inApp.toFixed(3)),
-            check,
-            totalSource: result.summary.totalSource,
-            cutLines: result.summary.removedLines?.length ?? 0,
-            itemsNearQrTotalLeft: nearTotalLeft,
-            billDiscount: result.bill.discount,
+            ...caseNumbers(entry, score),
+            ...(!result.ok && { importError: result.error.code }),
+            rightPriceRows: listed.length,
+            rightPricePaired: listed.filter((row) => row.pairs).length,
           }),
         )
 
-        expect(read.length, name).toBeGreaterThan(0)
-        expect(result.summary.totalSource, name).toBe('qr')
-        expect(result.summary.total, name).toBe(qrTotal)
-        if (expected.minCoverage !== undefined) {
-          expect(coverage.coverage, name).toBeGreaterThanOrEqual(
-            expected.minCoverage,
+        if (entry.minRowAccuracy !== undefined) {
+          expect(rowAccuracy(score), entry.name).toBeGreaterThanOrEqual(
+            entry.minRowAccuracy,
           )
         }
-        if (expected.itemsAllRight) {
-          expect(coverage.unmatchedSum, name).toBe(0)
-        }
-        if (expected.check !== undefined) {
-          expect(check, name).toBe(expected.check)
-        }
       },
-      120_000,
+      180_000,
     )
   },
 )
 
-describe.runIf(receipts.length === 0)('the local real receipts', () => {
+describe.runIf(all.length === 0)('the local real receipts', () => {
   it.skip('are absent here (as in CI): nothing to read', () => undefined)
 })
