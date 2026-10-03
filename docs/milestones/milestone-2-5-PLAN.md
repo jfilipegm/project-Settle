@@ -1,9 +1,17 @@
-# Milestone 2.5 — Accurate receipt reading: execution plan (Revision 6)
+# Milestone 2.5 — Accurate receipt reading: execution plan (Revision 8)
 
 - **Work item:** `milestone-2-5` (product, governing workflow version
   `2.2`). Work item ids can't contain a dot, so the roadmap's **M2.5** is
   `milestone-2-5` here.
-- **Plan revision:** 6 (revision 6 applies the manual external plan
+- **Plan revision:** 8 (revision 8 applies local plan review round 6
+  and the manual external review of revision 7: L7-I1, L7-I2/M-I-4,
+  L7-O1, L7-O2, M-O-1 to M-O-3, see "Review dispositions"); revision 7
+  is a **plan amendment** requested by the user on
+  2026-10-03 after CP3 (CP1–CP3 are complete and stay as they are; see
+  "The plan amendment"): CP4's small-image advice becomes a photo quality
+  check (P11), CP6's acceptance targets are set to the receipts the user
+  can collect and to CP3's accepted level, and P13 records the user's
+  speed decision of 2026-10-01. (Revision 6 applies the manual external plan
   review, round 2: M-I-3, the tighter recognisable-product rule, and
   local round 4's optional L4-O1, see "Review dispositions"; revision 5
   applies local plan review round 3:
@@ -37,7 +45,7 @@
 | CP1 | The local test set (format v2) and the accuracy measure, in Node and a real browser, with the Tesseract baseline | - | 2 | 1 |
 | CP2 | The PaddleOCR reader: pinned, self-hosted runtime and models, a worker, Node route, first numbers | CP1 | 3 | 1 |
 | CP3 | Tuning line assembly, clean-up and parser rules on the local set to the accuracy target | CP2 | 3 | 2 |
-| CP4 | Corpus samples for the new layouts, small-image advice, Tesseract retired | CP3 | 2 | 1 |
+| CP4 | Corpus samples for the new layouts, the photo quality check, Tesseract retired | CP3 | 3 | 2 |
 | CP5 | The row-by-row review: line boxes and roles on the receipt image, an accessible list, adding ignored or missed lines as items | CP4 | 3 | 1 |
 | CP6 | Acceptance measurement, phone times, privacy checks, ADR, notices and READMEs | CP5 | 2 | 1 |
 
@@ -54,9 +62,14 @@ After this milestone:
 
 - the built-in reader is **PaddleOCR**, still free and entirely in the
   browser: nothing leaves the device;
-- on a local test set of **at least 30 real receipts**, at least **94 %**
-  of the images are read with **no edit needed** (aiming for 100 %), and
-  **no** receipt with a wrong or missing price ever shows "Matches";
+- on a local test set of **at least 20 real receipts**, receipts are read
+  with **no edit needed** at least at the level CP3 reached and the user
+  accepted (15 of its 18 images, 83 %), new receipts included, aiming for
+  94 % and beyond; and **no** receipt with a wrong or missing price ever
+  shows "Matches";
+- a photo that won't read well (text too small, blurred, too dark or
+  bright, cut off or too far away) is flagged while it's being read, with
+  specific advice on taking a better one;
 - that number comes from one written-down measure (P2), run in a real
   browser, so it can be repeated and compared.
 
@@ -128,36 +141,60 @@ wide): none is a camera original as the app's "Take photo" receives it
 | P8 | Image clean-up | M2R1's clean-up (R1 text-size scaling, R2 flattening, R20 strips) was tuned for Tesseract. CP2 starts PaddleOCR on the decoded page with only EXIF-aware orientation (as today) and a resize to the detector's input rules; CP3 then re-introduces, **only where the set shows a gain**, text-size upscaling for small screenshots and tiling for long receipts whose text the detector's downscale would shrink below about 10 px. What isn't used any more is deleted, not left dormant. |
 | P9 | Parser rules | M2's parser and M2R1's rules stay, re-checked on PaddleOCR's lines. New rules come only from layouts in the set, each with an **invented** synthetic unit test (never real receipt text in a committed file). Known from the four new receipts: a VAT rate printed against the quantity (`13%3`); a code line carrying quantity and price with the description on the next line and attribute lines after it (`Marca :`, `Classificação AT :`) that are never items; an item line followed by continuation lines (a variant, codes) that are never items; a card-payment slip after the total whose `Total` line is never a second total. |
 | P10 | Tesseract | **Removed** once PaddleOCR is at least as good as Tesseract on every **tuning** case of the set and every corpus sample (CP4; held-out cases stay unscored until CP6, P14): its worker, cores and language models leave `public/vendor/`, and `tesseract.js` and its data packages leave `package.json`. Until then it stays the default in the committed app, and PaddleOCR is selected with a build flag, so every intermediate commit is shippable. (Default kept by the user, 2026-09-30; a fallback would only help if PaddleOCR failed to load, which a same-origin Tesseract load would likely share.) |
-| P11 | Help with images that are too small | When the text in an image is too small to read reliably even after upscaling (the estimated character height, from M2R1's `estimateTextHeight`, under a threshold CP4 sets from the set), the import says so in the scan status, with advice: take a full-resolution screenshot, or zoom in before taking it. It's **not stored**: it's shown for the import that produced it, so the saved summary's format doesn't change (see "Migration"). |
+| P11 | The photo quality check (revision 7, replacing the small-image advice) | CP3 showed what fails is mostly the photo, not the parser: images 540 px wide or less misread digits, and blurred, crumpled or cut-off photos lose rows. So every page read by OCR (an image, or a PDF page without a text layer; a text-layer PDF needs none) is checked **before the slow reading step**, in the reader's worker. **(1) Text size:** PaddleOCR's detection alone (`detect`, no recognition: about 0.2 s on the development machine, against seconds for recognition) gives the text boxes; their median height in the page's pixels is the text size. It replaces M2R1's `estimateTextHeight` for this. No box at all is its own finding (no text found). **(2) Blur:** sharpness inside the text boxes (the variance of a Laplacian over their pixels, relative to the text size). **(3) Lighting:** brightness and contrast inside the text boxes, and the share of clipped, glare-white pixels over them. **(4) Framing:** text boxes touching an edge of the image (the receipt is cut off) and the text covering a small share of the image (taken from too far away). **Each warning is specific**, in `messages.ts`: small text says to move closer or, for an app receipt, to send the original image as a document or the app's PDF export (which has a text layer and needs no OCR); blur to hold the phone steady and let it focus; lighting to find more light or tilt the receipt away from the glare; framing to include the whole receipt, or to come closer. **It warns and never blocks:** the reading goes on; the warning shows in the scan status while it runs, so the user can use the existing Cancel and take a better photo, and stays with that import's check panel. **Thresholds come from measurements:** CP4 measures the four checks on the calibration images (the tuning and extra cases, and the set-aside small copies; **never a held-out case**, P14) beside whether each read with no edit, and sets each threshold so that it flags the images that fail for the photo's sake and no image that reads with no edit; any exception is recorded with its reason. An image fails **for the photo's sake** when what goes wrong is the OCR (a printed character read as another, or a printed line not found, as `scripts/diag-lines.mjs` shows), not a parser rule (a layout or keyword the parser doesn't know, as the extra set's sub-cent prices); each failing image's cause is recorded with the measurements, and each threshold with its measured statistic and the calibration cases just above and below it. Numbers and case names only. **On held-out images (CP6), the check is accepted, not only reported:** a held-out image that reads with no edit and gets a quality warning (a false warning), or one that fails for the photo's sake with no warning relevant to its cause (a miss), is a **stop condition** for the user's decision (adjust the thresholds, accept the limitation, or revise the check); a held-out image that fails for a parser reason counts as neither. CP4's calibration exceptions are recorded with their reasons and stand; at CP6 a false warning or a miss is never an accepted exception without the user's decision. Changing a threshold after held-out images have been checked is tuning under P14: those held-out cases become tuning cases, and the held-out requirement has to be met again with new receipts. **It doesn't change reading:** the check's detection is a separate pass, and the reader's output is the same with or without it (P14: the tuning numbers are unchanged). It's **not stored**: shown for the import that produced it, so the saved summary's format doesn't change (see "Migration"). |
 | P12 | Download size | The first scan downloads the runtime and both models once; the browser's HTTP cache keeps them (offline caching stays M6's). **Budget: 30 MB raw** for everything a scan fetches, runtime and models together (about 27 MB measured); over it is a stop condition. |
-| P13 | Speed | Measured on **named images**, as the time the user waits for the **whole import** (decoding, the reader, the QR scan and the bill conversion: from choosing the file to the check panel), with the reader already loaded; the first load (runtime and models) is measured and reported separately. The images: **(a)** the largest camera original in the set (P1's `camera`, at least 12 MP), **(b)** the Tiffosi photo as received (1536 × 2048, 3.1 MP), **(c)** lidl1 (223 × 1600). **Engineering gate**, the development machine's browser: (a) in at most **5 s**. **Phone** (the user's, the preview build over the local network): (a) and (b) within **20 s**, (c) within **10 s**. M2R1's R21 named "the 12.6-MP photo", which was the Tiffosi photo *after* Tesseract's ×2 enlargement (M2R1 plan, R1 and CP1), not an input; these replace it. The thresholds tighten R21's 60 s and 20 s (waived for Tesseract), set from the spike's 0.5–2 s on the desktop and a phone typically being 3–8× slower (default kept by the user, 2026-09-30). |
-| P14 | Tuning without fooling ourselves | Rules tuned on the same receipts they're measured on can look better than they are. So the set has two parts: **tuning cases** (every case present when CP3 starts, and any added during CP3) and **held-out cases**: at least **10 distinct receipts** the user adds after CP3's last change, scored in CP6 without any change made for them. The target applies to the whole set; the held-out part's receipt accuracy is reported beside it, and falling more than 10 points below the tuning part's is a stop condition (the rules don't generalise). The expected file records its part (`"part": "tuning"` or `"heldOut"`). **Protecting them:** held-out cases are **not scored before CP6's measurement**: both measurements skip them unless run with an explicit `--held-out` flag, used only in CP6. CP4 and CP5 may not change reading, and their "numbers unchanged" checks run on the tuning cases only. If any reading change is made after a held-out case has been scored, every scored held-out case becomes a tuning case, and the 10-held-out requirement has to be met again with new receipts. |
+| P13 | Speed | Measured on **named images**, as the time the user waits for the **whole import** (decoding, the reader, the QR scan and the bill conversion: from choosing the file to the check panel), with the reader already loaded; the first load (runtime and models) is measured and reported separately. The images: **(a)** the largest camera original in the set (P1's `camera`, at least 12 MP), **(b)** the Tiffosi photo as received (1536 × 2048, 3.1 MP), **(c)** lidl1 (223 × 1600). **Engineering gate**, the development machine's browser: (a) in at most **5 s**. **Phone** (the user's, the preview build over the local network): (a) and (b) within **20 s**, (c) within **10 s**. M2R1's R21 named "the 12.6-MP photo", which was the Tiffosi photo *after* Tesseract's ×2 enlargement (M2R1 plan, R1 and CP1), not an input; these replace it. The thresholds tighten R21's 60 s and 20 s (waived for Tesseract), set from the spike's 0.5–2 s on the desktop and a phone typically being 3–8× slower (default kept by the user, 2026-09-30). **The user's decision, 2026-10-01 (accuracy before speed), recorded here in revision 7:** CP2 measured 6–8 s on the desktop (single-threaded recognition, about 50 ms per text box; the spike most likely ran on WebGPU), over the 5 s gate. The engineering gate is **waived**, and the phone thresholds become **up to 30 s** for the whole import, for (a), (b) and (c) alike; a change that raises accuracy may make reading slower within that. P11's check adds its detection pass to this time. Threads, a lighter model and WebGPU aren't pursued in this milestone; P4 and P12 are unchanged. |
+| P14 | Tuning without fooling ourselves | Rules tuned on the same receipts they're measured on can look better than they are. So the set has two parts: **tuning cases** (every case present when CP3 starts, and any added during CP3) and **held-out cases**: at least **5 distinct receipts** (10 until revision 7; the user's decision, 2026-10-03) the user adds after CP3's last change, scored in CP6 without any change made for them. Every real receipt added after CP3 is a held-out case. The extra set (CP3: freely licensed receipts from elsewhere, `"part": "extra"`) is reported beside the set and never counted in it. The target applies to the whole set; the held-out part's receipt accuracy is reported beside it, and falling more than 10 points below the tuning part's is a stop condition (the rules don't generalise). The expected file records its part (`"part": "tuning"` or `"heldOut"`). **Protecting them:** held-out cases are **not scored before CP6's measurement**: both measurements skip them unless run with an explicit `--held-out` flag, used only in CP6. CP4 and CP5 may not change reading, and their "numbers unchanged" checks run on the tuning cases only. If any reading change is made after a held-out case has been scored, every scored held-out case becomes a tuning case, and the 5-held-out requirement has to be met again with new receipts. |
 | P15 | The row-by-row review | Next to the check panel, "Review lines" shows what the reader found: the receipt image with a box over each line it read, coloured by the role the parser gave it (**item**, **item detail** such as a code or variant line, **discount or savings**, **total or subtotal**, **tax table**, **payment**, **ignored**), and the same lines as a list, in receipt order, each with its role, its text and its amount. Selecting a line in the list highlights its box and the matching bill row. An **ignored** or **item detail** line with an amount has **"Add as item"**, which adds it as a named, priced, flagged item shared by everyone, through M2R1's existing `addItems` action (all-or-nothing under the 100-item limit). **"Add a missed line"** adds an item the reader didn't see at all (a name and a price) the same way. Nothing here is stored: like "Show receipt image", the review exists only for the import that produced it, and a reload drops it (see "Migration"). A PDF read from its text layer has no image boxes, so it shows the list only. The list is the accessible form; the boxes are a visual aid. |
 
 ## Acceptance targets
 
-- **The local test set** has at least **30 distinct receipts** when CP6
-  measures it (more photos of the same receipt are extra cases, not extra
-  receipts), at least 10 of them held out (P14), **at least 10 cases
-  that are camera originals** (P1's `camera`, full resolution as the
-  phone saved them, including at least one HEIC if the user's phone saves
-  HEIC), with a variety of kinds: supermarkets, restaurants and
-  cafés, shops, app screenshots and phone photos (crumpled, long or at an
-  angle).
-- **Receipt accuracy ≥ 94 %** of the images, aiming for 100 %, measured
-  by P2 in the browser (P3), on the whole set; the held-out part within
-  10 points of the tuning part (P14). In counts: with 30–33 images at
-  most one may fail (29/30 = 96.7 %, 28/30 = 93.3 %), with 34–49 at most
-  two, with 50–66 at most three. Distinct-receipt accuracy (P2) is
-  reported beside it, with no separate target.
-- **Zero false matches.**
+Revision 7 sets these to the receipts the user can collect and to the
+level CP3 reached, which the user accepted (2026-10-03); revision 6's
+30 receipts, 10 held out, 10 camera originals and 94 % pass mark are
+replaced as each line says.
+
+- **The local test set** has at least **20 distinct receipts** when CP6
+  measures it (30 until revision 7; more photos of the same receipt are
+  extra cases, not extra receipts; the extra set doesn't count), at least
+  **5** of them held out (P14), **at least 3 cases that are camera
+  originals** (P1's `camera`, full resolution as the phone saved them,
+  including one HEIC if the user's phone saves HEIC), with a variety of
+  kinds: supermarkets, restaurants and cafés, shops, app screenshots,
+  app PDFs and phone photos (crumpled, long or at an angle). Today: 16
+  distinct receipts in 18 images, all tuning, no camera original.
+- **Receipt accuracy at CP3's level, 94 % the aim**, measured by P2 in
+  the browser (P3), as the mean of **two browser runs** (CP3's two runs
+  of one build read 16 and 14 of 18: readings of the narrowest images
+  vary from run to run). **Passes:** the tuning part at least CP3's
+  accepted **15 of its 18 images (83.3 %)**, and the held-out part within
+  **10 points** of the tuning part's own result (P14; with 5 held-out
+  images and the tuning part at 83.3 %, that is at least 4 of 5, or 8 of
+  10 run-results over the two runs). With so few images this is a
+  regression alarm, not a precise estimate, so each held-out case's
+  outcome in each run is reported, not only the percentage. The
+  whole set's receipt accuracy and distinct-receipt accuracy (P2) are
+  reported beside it against the **94 % aim**, which is no longer the
+  pass mark. Each run is recorded per case.
+- **Zero false matches**, in every run.
+- **CP3's numbers are the reference**: CP6's report puts each measure
+  beside CP3's accepted figures (`docs/ACTIVE_MILESTONE.md`, "CP3 —
+  done": Node 15 of 18, browser 16 and 14 of 18, rows 96 %, prices
+  97–98 %, false matches 0), on the tuning part, so any change since is
+  visible.
 - **Row accuracy and name accuracy** are reported per case and in total;
   they carry no separate target: receipt accuracy already requires every
   row right, and names don't decide a pass (P2).
 - **The committed synthetic corpus** (samples 01–13 and CP4's new ones)
   passes in CI with PaddleOCR. Samples keep their current result unless a
   sample's expected file was itself wrong, which is recorded.
-- **P12's download budget, P13's engineering gate and phone times.**
+- **P12's download budget and P13's phone times** (up to 30 s; the
+  desktop engineering gate is waived, P13).
+- **The photo quality check (P11)**: on the calibration images (CP4), it
+  flags the images that fail for the photo's sake and none that reads
+  with no edit, or each exception is recorded with its reason; on the
+  held-out images (CP6), no false warning and no miss (P11), or the
+  stop condition was reported and the user decided.
 - **Privacy:** `check-requests.mjs` passes on the new reader (only
   same-origin `GET`s for build files, no receipt value in any request, no
   CSP violation).
@@ -367,7 +404,7 @@ measurement.
 <!-- /CP3 -->
 
 <!-- CP4 -->
-### CP4 — Corpus, small-image help, Tesseract retired
+### CP4 — Corpus, the photo quality check, Tesseract retired
 
 **Requirements:** REQ-4, REQ-6, REQ-7
 
@@ -396,8 +433,34 @@ measurement.
   in its prices, means a bill tax of none). This covers what the Node corpus can't: the
   worker, the wasm and model paths, Vite's bundling, the browser's pixel
   handling and the CSP.
-- P11: `importReceipt.ts` (the too-small estimate), the scan status UI
-  and `messages.ts` (the advice).
+- P11, the photo quality check:
+  - `app/src/features/receipt/photoQuality.ts` (new, pure; bare file
+    names below are in this folder): the four checks from a page's pixels
+    and its detection boxes (text size, blur, lighting, framing), each
+    returning its measured value and whether it's past its threshold; the
+    thresholds as named, exported constants.
+  - `model.ts`: `ReadOptions` gains the optional `onQuality` callback
+    (beside `onProgress`) and the findings' type.
+  - `paddleEngine.ts`: a `detect(page)` beside `read(page)`, PaddleOCR's
+    detection only; `read` is unchanged.
+  - `paddle.worker.ts`, `paddleReader.ts`: before reading a page, the
+    worker detects, runs `photoQuality.ts` and posts the findings, then
+    reads as before; the reader passes them on through a new optional
+    `onQuality` callback beside progress. Cancelling works during the
+    check as during the reading.
+  - `importReceipt.ts`, `importUi.ts`, the scan status UI
+    (`components/ScanReceipt.tsx`), `components/ReceiptCheck.tsx` and
+    `messages.ts`: the specific advice, shown while reading and kept with
+    that import's check panel, never saved. `estimateTextHeight` goes from
+    `preprocess.ts` if nothing else uses it.
+  - `app/scripts/measure-quality.mjs` (new; local only, like
+    `measure-local.mjs`): the four values for every calibration image
+    beside whether it read with no edit; held-out cases are skipped
+    unless it's given `--held-out` (CP6 only, P14), like
+    `measure-local.mjs`; numbers and case names only, its full
+    report under the git-ignored `.ai-review/`. The thresholds are set
+    from it and recorded in `docs/ACTIVE_MILESTONE.md` (P11: each with
+    its statistic, the cases nearest it, and each failure's cause).
 - P10: `browserImport.ts` (PaddleOCR is the reader, the flag goes),
   `builtInReader.ts` and its tests removed, `vendor-assets.mjs` without
   Tesseract's files, `package.json` without `tesseract.js`,
@@ -413,15 +476,33 @@ measurement.
   (VAT included in its prices) gives a bill tax of none and its correct
   bill passes; an invented file with an added tax and a tip (as
   `07-us-diner`) gives both as adjustments.
-- P11: a small invented screenshot shows the advice; a normal one
-  doesn't; nothing about it is saved (a reload doesn't show it).
+- P11, `photoQuality.ts` on **invented** images (never a real receipt):
+  small text, a blurred copy, a dark and an overexposed copy, glare, a
+  receipt cut off at an edge and one far away each give their own
+  finding, and a clear, well-framed one gives none; no detection box
+  gives "no text found". Each threshold is tested at its edge.
+- P11, the reader and the UI: the worker posts the findings before the
+  reading's progress; cancelling during the check terminates the worker;
+  the advice shows while reading, the reading goes on, and the check
+  panel keeps it; each finding's message is the specific one; a
+  text-layer PDF is not checked; nothing about it is saved (a reload
+  doesn't show it), and the saved summary's format is unchanged.
+- P11 doesn't change reading: `read`'s boxes on the corpus samples are
+  the same with the check on and off.
+- `measure-quality.mjs` skips a `heldOut` case without `--held-out` and
+  includes it with the flag, saying how many were skipped (invented
+  expected files in a temporary folder, as CP1's held-out test).
 - After the removal: no Tesseract file in `dist/`, and every existing
   reader-independent test passes.
 
 **Done when**
 - CI passes on PR #9 with PaddleOCR as the only reader.
 - The local set's numbers on the **tuning** cases, re-measured after the
-  removal, are unchanged (P14: held-out cases aren't scored here).
+  removal and with the photo quality check on, are unchanged (P14:
+  held-out cases aren't scored here).
+- The photo quality check's thresholds and what they flag on the local
+  set are recorded (numbers and case names only), with any exception and
+  its reason, and the check's added time per image.
 <!-- /CP4 -->
 
 <!-- CP5 -->
@@ -468,9 +549,10 @@ measurement.
   neither is offered when the bill is at 100 items; a PDF text layer
   shows the list without boxes; keyboard use and labels; nothing about
   the view is in the saved bill or summary after a reload.
-- Boxes after clean-up: if CP3 kept upscaling or tiling (P8), a scaled
-  page and a tiled page each map every box back to the decoded page's
-  pixels (the image the view shows).
+- Boxes after clean-up: CP3 kept no upscaling or tiling (P8), but it
+  kept re-reading a tall box enlarged (`splitTall`); the parts of a
+  re-read box map back to the decoded page's pixels (the image the view
+  shows).
 - Layout at 360 px and in dark mode (the boxes' colours keep their
   contrast; the roles are also written, never colour alone).
 
@@ -497,19 +579,23 @@ measurement.
   Tesseract removed.
 - `README.md`, `app/README.md`: what works now, accuracy measured on
   real receipts (the number, not the receipts), the first scan's
-  download, reading times, the small-image advice, the row-by-row
+  download, reading times, the photo quality check, the row-by-row
   review.
 - `docs/milestones/milestone-2-5-evidence/` (new): the privacy logs
   (`check-requests.mjs`), as for M2.
 
 **Verification**
-- P3's browser measurement on the full set (at least 30 distinct
-  receipts, at least 10 of them held out, at least 10 camera originals),
-  with `--held-out`: the acceptance targets,
-  recorded per case (names and numbers only), for each part and in
-  total.
-- The user's phone: P13's times on images (a), (b) and (c), with the
-  first load reported separately.
+- P3's browser measurement on the full set (at least 20 distinct
+  receipts, at least 5 of them held out, at least 3 camera originals),
+  with `--held-out`, run twice: the acceptance targets, recorded per case
+  (names and numbers only), for each part and in total, beside CP3's
+  accepted numbers; the extra set reported beside it.
+- The photo quality check on the held-out images (`measure-quality.mjs
+  --held-out`): what it flagged, beside whether each read with no edit
+  and, for each failure, its cause; any false warning or miss (P11) is
+  the stop condition, and no threshold is changed for them (P14).
+- The user's phone: P13's times on images (a), (b) and (c), up to 30 s,
+  with the first load reported separately.
 - `check-requests.mjs page-load` and `scan` on `sample-1.jpg` and
   `sample-12.jpg`: pass.
 - `npm run check` and `npm run build`; on PR #9, `app`,
@@ -524,14 +610,14 @@ measurement.
 
 | id | Requirement | Checkpoints |
 |----|-------------|-------------|
-| REQ-1 | A local-only real-receipt test set in format v2 (images as the phone made them, names and prices, repeat photos linked), still never tracked, with at least 30 distinct receipts at acceptance. | CP1, CP6 |
+| REQ-1 | A local-only real-receipt test set in format v2 (images as the phone made them, names and prices, repeat photos linked), still never tracked, with at least 20 distinct receipts, 5 held out and 3 camera originals at acceptance. | CP1, CP6 |
 | REQ-2 | One accuracy measure (receipt, distinct-receipt, row and name accuracy, false matches; a pass needs the exact rows, each a recognisable product at the right price, the right adjustments and the right total), run in a real browser as the reference and in Node for iteration, with Tesseract's baseline recorded. | CP1, CP6 |
 | REQ-3 | A PaddleOCR reader behind `ReceiptReader`, in a worker, with pinned, checksummed, self-hosted runtime and models under the existing CSP, and D16/D17's errors, phases and cancelling. | CP2 |
 | REQ-4 | The tests read with PaddleOCR in Node and CI, and the committed synthetic corpus, with new invented samples for the new layouts, passes. | CP2, CP4 |
-| REQ-5 | Reading tuned on the set to at least 94 % receipt accuracy with zero false matches, or a reported stop. | CP3, CP6 |
-| REQ-6 | An image whose text is too small gets advice on a better one, without changing the saved data. | CP4 |
+| REQ-5 | Reading tuned on the set (CP3: plateau accepted by the user at 15 of 18), and at acceptance at least CP3's level on the tuning part, the held-out part within 10 points of it, 94 % the aim, zero false matches; or a reported stop. | CP3, CP6 |
+| REQ-6 | A photo quality check before the slow reading step (text size from the detection boxes, blur, lighting, framing) gives specific advice on a better photo, with thresholds set from measurements, never blocking the import and never changing what is read or the saved data. | CP4 |
 | REQ-7 | Tesseract retired, and the ADR, notices, Settings and READMEs describe the new reader. | CP4, CP6 |
-| REQ-8 | The download budget, the desktop engineering gate and the phone times are met, and nothing leaves the browser. | CP2, CP6 |
+| REQ-8 | The download budget and the phone times (up to 30 s, the desktop gate waived by the user) are met, and nothing leaves the browser. | CP2, CP6 |
 | REQ-9 | A row-by-row review of what the reader found: the image with each line's box and role, the same lines as an accessible list, and adding an ignored line or a missed one as an item, with nothing stored. | CP5 |
 
 ## Files touched and review classification
@@ -575,22 +661,29 @@ models use the HTTP cache.
 ## Open questions (for the plan reviewer / user)
 
 None open. The user answered revision 1's seven questions and revision
-2's two on 2026-09-30 (see "Review dispositions").
+2's two on 2026-09-30, and the amendment's four on 2026-10-03 (see
+"Review dispositions").
 
 ## Stop conditions
 
-- Receipt accuracy below 94 %, or any false match, at CP3's end or CP6's
-  measurement: report per case (names and numbers) and the causes; the
-  user decides (improve further, amend the plan, or accept).
-- A local set with fewer than 30 distinct receipts, fewer than 10
-  held-out ones, or fewer than 10 camera originals, when CP6 starts.
+- Receipt accuracy below 94 % at CP3's end (this one fired; the user
+  accepted the plateau, 2026-10-03), or, at CP6's measurement, the tuning part
+  below CP3's accepted 15 of 18, or any false match: report per case
+  (names and numbers) and the causes; the user decides (improve further,
+  amend the plan, or accept).
+- A local set with fewer than 20 distinct receipts, fewer than 5
+  held-out ones, or fewer than 3 camera originals, when CP6 starts.
 - The held-out part's receipt accuracy more than 10 points below the
   tuning part's (P14).
 - A licence that isn't permissive (MIT, Apache-2.0, BSD or similar) on
   the engine, the runtime or the models, or a model mirror whose
   licence can't be established (CP2).
-- The download over P12's 30 MB, the engineering gate over P13's 5 s,
-  or a phone time over P13's thresholds.
+- The download over P12's 30 MB, or a phone time over P13's 30 s.
+- The photo quality check unable to separate the images that fail for
+  the photo's sake from those that read with no edit, with any threshold
+  (CP4): the measurements go to the user, who decides.
+- On a held-out image at CP6, a false warning or a miss by the photo
+  quality check (P11).
 - A corpus sample (01–13) that changes its result and can't be restored.
 - Node and the browser reading differently on more than two cases, with
   no cause found (CP2): the Node test can't stand in for the browser.
@@ -677,3 +770,40 @@ Revision 1 was withdrawn from review before any review ran
 | M-O-2, M-O-3 | No change requested. |
 | L4-O1 (local round 4, optional) `--expect-bill` should reuse D13's order | Accepted (CP4: the combination order is exported from `toBill.ts` and reused). |
 | L4-O2 (local round 4, optional) `REVIEW_REQUEST.md` said CP5 | Accepted: the request now says CP6. |
+
+### The plan amendment (revision 6 → 7, the user's request, 2026-10-03)
+
+Requested with `/request-plan-amendment` after CP3 (the work item was at
+`IMPLEMENTING`, CP1–CP3 complete). The user's reason, as recorded in the
+amendment history: *CP4's small-image advice becomes a photo quality check
+(text height from detection boxes before the slow reading step, then blur,
+lighting and framing, with specific warnings that don't block and
+thresholds set from measurements). CP6's acceptance targets are reset to
+the receipts collected (count, held-out set) plus the CP3 numbers. CP3
+stays complete as it stands.*
+
+| Change | Where |
+|--------|-------|
+| The small-image advice becomes a photo quality check: text size from PaddleOCR's detection alone before recognition, then blur, lighting and framing; specific advice, including the app's PDF export; warns, never blocks; thresholds measured on the local set; reading unchanged. Why: CP3's remaining failures are the photos (the 540-px images, and in the extra set a blurred and a crumpled one), not the parser. | P11, CP4, REQ-6, a stop condition |
+| The user's answers (2026-10-03) on CP6: at least **20** distinct receipts (was 30), **5** held out (was 10), **3** camera originals (was 10); the pass mark is **CP3's accepted level** on the tuning part (15 of 18, the mean of two browser runs), the held-out part within 10 points of it, zero false matches; **94 % stays the aim**, reported; CP3's numbers are the reference in CP6's report. | Goal, acceptance targets, P14, CP6, REQ-1, REQ-5, stop conditions |
+| The user's speed decision (2026-10-01), until now recorded only in `docs/ACTIVE_MILESTONE.md`: the desktop gate waived, up to 30 s per receipt on the phone. | P13, acceptance targets, CP6, REQ-8, stop conditions |
+| CP4 is renamed for the check, and sized at complexity 3 over two sessions (was 2 in one): it now holds the corpus samples, the CI browser smoke test, the check and Tesseract's removal. | Registry, CP4 |
+| CP3 kept `splitTall` and no upscaling or tiling, so CP5's box test maps a re-read tall box's parts back to the page. | CP5 |
+| Unchanged: CP1–CP3 (complete, their sections and the registry's entries for them as approved), P1–P10, P12, P15, CP5's scope, the Tesseract removal, the corpus samples and the browser smoke test in CI. | — |
+
+### Local plan review, round 6 (`LOCAL_MODEL_PLAN_REVIEW`, revision 7 → 8), with the manual external review of revision 7
+
+The manual external review of revision 7 (REVISE, M-I-4 important,
+M-O-1 to M-O-3 optional) was pasted before the local round ran; the
+local round re-derived the same gap (L7-I2) and found one more (L7-I1). Both rounds' findings are applied together.
+
+| Finding | Disposition |
+|---------|-------------|
+| L7-I1 `measure-quality.mjs` would score held-out cases before CP6 | Accepted. Checked: CP4's file list said "every local image", while P11 named only tuning, extra and small-copy images; `measure-local.mjs` already skips held-out cases without `--held-out` (`app/scripts/measure-local.mjs`, its `selectCases(all, { heldOut })`). P11 now calibrates on those images only, "never a held-out case"; `measure-quality.mjs` skips held-out cases unless given `--held-out` (CP6 only), with a CP4 test. |
+| L7-I2 / M-I-4 P11 has no pass/fail on held-out images | Accepted. P11: at CP6 a false warning on a held-out image that reads with no edit, or a miss on one that fails for the photo's sake, is a stop condition for the user's decision; parser failures count as neither; a threshold changed after held-out images were checked is tuning under P14. Added to the acceptance targets, CP6's verification and the stop conditions. |
+| M-O-2 Calibration exceptions vs acceptance | Accepted (P11: CP4's recorded exceptions stand; at CP6 an exception needs the user's decision). |
+| M-O-1 Five held-out images make the 10-point check coarse | Accepted (acceptance targets: 8 of 10 run-results; a regression alarm; each held-out outcome reported per run). |
+| M-O-3 Record the quality measurement conditions | Accepted (P11 and CP4: each threshold with its statistic, the nearest calibration cases and each failure's cause). |
+| L7-O1 CP6's README line said "the small-image advice" | Accepted (CP6). |
+| L7-O2 `model.ts` missing from CP4 | Accepted. Checked: `ReadOptions` (`app/src/features/receipt/model.ts`, `signal`, `onProgress`) is where `onQuality` goes; added to CP4's files. |
+

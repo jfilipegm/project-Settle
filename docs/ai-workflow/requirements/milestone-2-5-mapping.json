@@ -3,7 +3,7 @@
   "work_item_id": "milestone-2-5",
   "requirements": {
     "REQ-1": {
-      "description": "A local-only real-receipt test set in format v2 (images as the phone made them, names and prices, repeat photos linked), still never tracked, with at least 30 distinct receipts at acceptance.",
+      "description": "A local-only real-receipt test set in format v2 (images as the phone made them, names and prices, repeat photos linked), still never tracked, with at least 20 distinct receipts, 5 held out and 3 camera originals at acceptance.",
       "checkpoint_ids": [
         "CP1",
         "CP6"
@@ -30,14 +30,14 @@
       ]
     },
     "REQ-5": {
-      "description": "Reading tuned on the set to at least 94 % receipt accuracy with zero false matches, or a reported stop.",
+      "description": "Reading tuned on the set (CP3: plateau accepted by the user at 15 of 18), and at acceptance at least CP3's level on the tuning part, the held-out part within 10 points of it, 94 % the aim, zero false matches; or a reported stop.",
       "checkpoint_ids": [
         "CP3",
         "CP6"
       ]
     },
     "REQ-6": {
-      "description": "An image whose text is too small gets advice on a better one, without changing the saved data.",
+      "description": "A photo quality check before the slow reading step (text size from the detection boxes, blur, lighting, framing) gives specific advice on a better photo, with thresholds set from measurements, never blocking the import and never changing what is read or the saved data.",
       "checkpoint_ids": [
         "CP4"
       ]
@@ -50,7 +50,7 @@
       ]
     },
     "REQ-8": {
-      "description": "The download budget, the desktop engineering gate and the phone times are met, and nothing leaves the browser.",
+      "description": "The download budget and the phone times (up to 30 s, the desktop gate waived by the user) are met, and nothing leaves the browser.",
       "checkpoint_ids": [
         "CP2",
         "CP6"

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "work_item_id": "milestone-2-5",
-  "plan_revision": 6,
+  "plan_revision": 8,
   "checkpoints": [
     {
       "id": "CP1",
@@ -30,12 +30,12 @@
     },
     {
       "id": "CP4",
-      "name": "Corpus samples for the new layouts, small-image advice, Tesseract retired",
+      "name": "Corpus samples for the new layouts, the photo quality check, Tesseract retired",
       "depends_on": [
         "CP3"
       ],
-      "complexity": 2,
-      "session_target": 1
+      "complexity": 3,
+      "session_target": 2
     },
     {
       "id": "CP5",
