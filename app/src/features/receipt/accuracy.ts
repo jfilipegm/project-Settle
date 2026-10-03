@@ -134,14 +134,9 @@ function wordAllowance(length: number): number {
   return Math.max(1, Math.floor(length / 4))
 }
 
-/**
- * The expected name's numbers (any word with a digit, like `250g` or
- * `0 10`'s `10`): each must be read exactly, after look-alike folding.
- * CP1's tightening: on the set's own names, two deposit lines differing
- * only in their amount (`0.10`, `0.20`) were otherwise one edit apart.
- */
-export function numberWords(expected: string): string[] {
-  return normalizeName(expected)
+/** An expected name's numbers: its words with a digit (`250g`, `0`, `10`). */
+export function numberWords(name: string): string[] {
+  return normalizeName(name)
     .split(' ')
     .filter((word) => /\d/.test(word))
 }
@@ -156,12 +151,36 @@ export function distinctiveWords(expected: string): string[] {
 /**
  * P2's recognisable product: a read name is the expected product when (i)
  * the whole name is close and (ii) every distinctive word of the expected
- * name occurs in it, spaces ignored, and every number exactly, all after
- * look-alike folding.
+ * name occurs in it, spaces ignored, both after look-alike folding; and
+ * (iii) every number that *was* read is one of the expected name's. A number may be missing (`Deposito` for
+ * `Deposito 0.10`: the parser never keeps an amount in a name), but a
+ * different one fails (`Deposito 0.20`): the user's decision, 2026-10-01,
+ * replacing CP1's rule that every number had to be read.
  */
 export function nameMatches(read: string, expected: string): boolean {
-  const readName = foldLookAlikes(normalizeName(read))
-  const expectedName = foldLookAlikes(normalizeName(expected))
+  const readWords = normalizeName(read).split(' ').filter(Boolean)
+  const readFolded = readWords.map(foldLookAlikes)
+  const expectedNumbers = new Set(numberWords(expected).map(foldLookAlikes))
+  // (iii) A number read (a word starting with a digit) must be expected.
+  if (
+    readWords.some(
+      (word, i) =>
+        /^\d/.test(word) && !expectedNumbers.has(readFolded[i] ?? ''),
+    )
+  ) {
+    return false
+  }
+  // A number the reader left out is left out of the comparison too.
+  const expectedName = normalizeName(expected)
+    .split(' ')
+    .filter(
+      (word) =>
+        word !== '' &&
+        (!/\d/.test(word) || readFolded.includes(foldLookAlikes(word))),
+    )
+    .map(foldLookAlikes)
+    .join(' ')
+  const readName = readFolded.join(' ')
   if (readName === '' || expectedName === '') {
     return false
   }
@@ -171,13 +190,10 @@ export function nameMatches(read: string, expected: string): boolean {
     return false
   }
   const joined = readName.replace(/ /g, '')
-  return (
-    distinctiveWords(expected).every(
-      (word) =>
-        substringDistance(foldLookAlikes(word), joined) <=
-        wordAllowance(word.length),
-    ) &&
-    numberWords(expected).every((word) => joined.includes(foldLookAlikes(word)))
+  return distinctiveWords(expected).every(
+    (word) =>
+      substringDistance(foldLookAlikes(word), joined) <=
+      wordAllowance(word.length),
   )
 }
 
@@ -410,6 +426,16 @@ export interface SetScore {
   /** Share of expected rows paired, over every image. */
   rowAccuracy: number
   extraRows: number
+  /**
+   * Share of expected rows whose price was read, names aside: next to
+   * `rowAccuracy`, it tells a misread amount from a misread or misplaced
+   * name (CP3).
+   */
+  priceRowAccuracy: number
+  /** Share of read rows that pair an expected row: 1 − the false-item rate. */
+  rowPrecision: number
+  /** Share of images whose check panel says "match" (CP3). */
+  checkMatches: number
   /** Share of paired rows whose name is exact. */
   nameAccuracy: number
   falseMatches: number
@@ -443,6 +469,18 @@ export function scoreSet(images: readonly ScoredImage[]): SetScore {
       total((score) => score.expectedRows),
     ),
     extraRows: total((score) => score.extraRows),
+    priceRowAccuracy: share(
+      total((score) => score.pricePairedRows),
+      total((score) => score.expectedRows),
+    ),
+    rowPrecision: share(
+      total((score) => score.pairedRows),
+      total((score) => score.pairedRows + score.extraRows),
+    ),
+    checkMatches: share(
+      images.filter((image) => image.score.check === 'match').length,
+      images.length,
+    ),
     nameAccuracy: share(
       total((score) => score.exactNames),
       total((score) => score.pairedRows),

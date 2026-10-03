@@ -54,7 +54,29 @@ export function setNumbers(images: readonly ScoredImage[]): SetScore {
     receiptAccuracy: round(totals.receiptAccuracy),
     distinctReceiptAccuracy: round(totals.distinctReceiptAccuracy),
     rowAccuracy: round(totals.rowAccuracy),
+    priceRowAccuracy: round(totals.priceRowAccuracy),
+    rowPrecision: round(totals.rowPrecision),
+    checkMatches: round(totals.checkMatches),
     nameAccuracy: round(totals.nameAccuracy),
+  }
+}
+
+/**
+ * The set's totals, and the `extra` cases' apart: they never count in the
+ * set's (the user's decision, 2026-10-01).
+ */
+export function partNumbers(
+  images: readonly ScoredImage[],
+  cases: readonly LocalCase[],
+): { totals: SetScore; extra?: SetScore } {
+  const extra = new Set(
+    cases.filter((entry) => entry.part === 'extra').map((entry) => entry.name),
+  )
+  const counted = images.filter((image) => !extra.has(image.name))
+  const others = images.filter((image) => extra.has(image.name))
+  return {
+    totals: setNumbers(counted),
+    ...(others.length > 0 && { extra: setNumbers(others) }),
   }
 }
 

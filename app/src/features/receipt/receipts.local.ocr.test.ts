@@ -34,6 +34,7 @@ import {
 } from './importDeps.node.ts'
 import { importReceipt } from './importReceipt.ts'
 import {
+  countedCases,
   distinctReceipts,
   loadLocalCases,
   repositoryRoot,
@@ -43,7 +44,7 @@ import {
   caseNumbers,
   checkSetNames,
   rightPriceRows,
-  setNumbers,
+  partNumbers,
   writeReport,
   type RightPriceRow,
 } from './localReport.node.ts'
@@ -71,7 +72,8 @@ describe.skipIf(all.length === 0)(
         JSON.stringify({
           reader: READER,
           cases: all.length,
-          distinctReceipts: distinctReceipts(all),
+          distinctReceipts: distinctReceipts(countedCases(all)),
+          extraCases: all.length - countedCases(all).length,
           scored: cases.length,
           heldOutSkipped: skipped.length,
           heicSkipped: heic.map((entry) => entry.name),
@@ -82,8 +84,9 @@ describe.skipIf(all.length === 0)(
     afterAll(async () => {
       await node.dispose()
       if (images.length === 0) return
-      const totals = setNumbers(images)
+      const { totals, extra } = partNumbers(images, scored)
       console.log(JSON.stringify({ totals }))
+      if (extra !== undefined) console.log(JSON.stringify({ extra }))
       const file = await writeReport(repositoryRoot(LOCAL), 'node', {
         when: new Date().toISOString(),
         reader: READER,
@@ -91,6 +94,7 @@ describe.skipIf(all.length === 0)(
         heldOutSkipped: skipped.map((entry) => entry.name),
         heicSkipped: heic.map((entry) => entry.name),
         totals,
+        extra,
         cases: images.map((image) => ({
           name: image.name,
           receipt: image.receipt,
@@ -124,7 +128,12 @@ describe.skipIf(all.length === 0)(
         let n = 0
         const result = await importReceipt(
           new File([bytes], entry.image, {
-            type: entry.imageType === 'png' ? 'image/png' : 'image/jpeg',
+            type:
+              entry.imageType === 'png'
+                ? 'image/png'
+                : entry.imageType === 'pdf'
+                  ? 'application/pdf'
+                  : 'image/jpeg',
           }),
           node.deps(),
           {

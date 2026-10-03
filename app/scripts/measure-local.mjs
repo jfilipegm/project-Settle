@@ -28,6 +28,7 @@ import {
   scoreImage,
 } from '../src/features/receipt/accuracy.ts'
 import {
+  countedCases,
   distinctReceipts,
   loadLocalCases,
   repositoryRoot,
@@ -36,7 +37,7 @@ import {
 import {
   caseNumbers,
   rightPriceRows,
-  setNumbers,
+  partNumbers,
   writeReport,
 } from '../src/features/receipt/localReport.node.ts'
 import {
@@ -108,9 +109,23 @@ async function importFile(cdp, page, file) {
   )
   const seconds = Number(((Date.now() - started) / 1000).toFixed(1))
   if (outcome.error !== undefined) return { error: outcome.error, seconds }
+  // The bill and the summary are saved separately: read them until two
+  // reads agree, so a bill saved a moment after the summary isn't missed.
+  let saved = outcome
+  for (let attempt = 0; attempt < 20; attempt++) {
+    await sleep(250)
+    const again = await evaluate(
+      cdp,
+      page,
+      `({ bill: localStorage.getItem('settle.bill'), receipt: localStorage.getItem('settle.receipt') })`,
+    )
+    const stable = again.bill === saved.bill && again.receipt === saved.receipt
+    saved = again
+    if (stable) break
+  }
   return {
-    bill: JSON.parse(outcome.bill).bill,
-    summary: JSON.parse(outcome.receipt).receipt,
+    bill: JSON.parse(saved.bill).bill,
+    summary: JSON.parse(saved.receipt).receipt,
     seconds,
   }
 }
@@ -190,7 +205,8 @@ async function measure(options) {
   console.log(
     JSON.stringify({
       cases: all.length,
-      distinctReceipts: distinctReceipts(all),
+      distinctReceipts: distinctReceipts(countedCases(all)),
+      extraCases: all.length - countedCases(all).length,
       scored: scored.length,
       heldOutSkipped: selected.skipped.length,
     }),
@@ -240,13 +256,15 @@ async function measure(options) {
     )
   }
 
-  const totals = setNumbers(images)
+  const { totals, extra } = partNumbers(images, scored)
   console.log(JSON.stringify({ totals }))
+  if (extra !== undefined) console.log(JSON.stringify({ extra }))
   const file = await writeReport(repositoryRoot(LOCAL), 'browser', {
     when: new Date().toISOString(),
     heldOut: options.heldOut,
     heldOutSkipped: selected.skipped.map((entry) => entry.name),
     totals,
+    extra,
     cases: caseReports,
     rightPriceRows: rows,
     readRows: read,

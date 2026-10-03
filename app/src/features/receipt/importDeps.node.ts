@@ -23,7 +23,11 @@ import { encodePageNode } from './encodePage.node.ts'
 import type { ImportDeps } from './importReceipt.ts'
 import { fragmentsToLines, hasTextLayer, toFragments } from './pdfTextLines.ts'
 import type { ReceiptReader } from './model.ts'
-import { createPaddleEngine, type PaddleEngine } from './paddleEngine.ts'
+import {
+  createPaddleEngine,
+  type PaddleEngine,
+  type ReadingOptions,
+} from './paddleEngine.ts'
 import {
   createPaddleReader,
   PaddleFailure,
@@ -79,6 +83,10 @@ export function inProcessPaddleBackend(): PaddleBackend {
             dictionary: await bytesOf(path.join(PADDLE_MODELS_DIR, 'dict.txt')),
           },
           setUp: useNodeCanvas,
+          // CP3's experiments: reading options to try, as JSON.
+          overrides: JSON.parse(
+            process.env.SETTLE_PADDLE_OPTIONS ?? '{}',
+          ) as ReadingOptions,
         })
       } catch (error) {
         throw new PaddleFailure('assetsUnavailable', String(error))

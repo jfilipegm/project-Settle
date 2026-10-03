@@ -13,6 +13,7 @@ import {
   LOCAL_FIXTURES,
   LocalCaseError,
   ShallowRepositoryError,
+  countedCases,
   commitsTouching,
   decimalToCents,
   distinctReceipts,
@@ -133,6 +134,16 @@ describe('format v2 of the local fixtures (P1), with invented files', () => {
     await rm(path.dirname(dir), { recursive: true, force: true })
   })
 
+  it('loads a PDF a store app exported as a case', async () => {
+    const cases = await loadLocalCases(
+      await folder({
+        'lidl.pdf': 'x',
+        'lidl.expected.json': { ...valid, image: 'lidl.pdf' },
+      }),
+    )
+    expect(cases.map((entry) => entry.imageType)).toEqual(['pdf'])
+  })
+
   it('loads a case, in cents, with its image type', async () => {
     const cases = await loadLocalCases(
       await folder({ 'cafe.jpg': 'x', 'cafe.expected.json': valid }),
@@ -198,7 +209,7 @@ describe('format v2 of the local fixtures (P1), with invented files', () => {
     ['no items', { ...valid, items: [] }, /non-empty list/],
     ['a bad total source', { ...valid, totalSource: 'ocr' }, /totalSource/],
     ['a bad capture', { ...valid, capture: 'photo' }, /capture/],
-    ['a bad part', { ...valid, part: 'test' }, /part/],
+    ['a bad part', { ...valid, part: 'test' }, /"part" must be/],
     [
       'an unknown field',
       { ...valid, qrTotal: '3.30' },
@@ -287,6 +298,20 @@ describe('format v2 of the local fixtures (P1), with invented files', () => {
     const withFlag = selectCases(cases, { heldOut: true })
     expect(withFlag.scored.map((entry) => entry.name)).toEqual(['cafe', 'shop'])
     expect(withFlag.skipped).toEqual([])
+  })
+
+  it('keeps `extra` cases out of the counted ones', async () => {
+    const cases = await loadLocalCases(
+      await folder({
+        'cafe.jpg': 'x',
+        'cafe.expected.json': valid,
+        'web.jpg': 'x',
+        'web.expected.json': { ...valid, image: 'web.jpg', part: 'extra' },
+      }),
+    )
+    expect(cases.map((entry) => entry.part)).toEqual(['tuning', 'extra'])
+    expect(countedCases(cases).map((entry) => entry.name)).toEqual(['cafe'])
+    expect(distinctReceipts(countedCases(cases))).toBe(1)
   })
 
   it('reads decimal amounts exactly', () => {

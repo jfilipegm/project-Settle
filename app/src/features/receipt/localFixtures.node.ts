@@ -88,10 +88,15 @@ export function commitsTouching(
 /** How the image was made (P1). */
 export type Capture = 'camera' | 'shared' | 'screenshot' | 'scan'
 
-/** P14: a tuning case, or one held out until CP6's measurement. */
-export type Part = 'tuning' | 'heldOut'
+/**
+ * P14: a tuning case, or one held out until CP6's measurement; or `extra`,
+ * a receipt from elsewhere (freely licensed photos, e.g. Wikimedia
+ * Commons), measured and reported beside the set but never counted in its
+ * totals, its 94 % or its 30 receipts (the user's decision, 2026-10-01).
+ */
+export type Part = 'tuning' | 'heldOut' | 'extra'
 
-export type LocalImageType = 'jpeg' | 'png' | 'heic'
+export type LocalImageType = 'jpeg' | 'png' | 'heic' | 'pdf'
 
 /** One local case: an image and what a correct import of it holds. */
 export interface LocalCase {
@@ -120,7 +125,7 @@ export class LocalCaseError extends Error {
 }
 
 const CAPTURES: readonly Capture[] = ['camera', 'shared', 'screenshot', 'scan']
-const PARTS: readonly Part[] = ['tuning', 'heldOut']
+const PARTS: readonly Part[] = ['tuning', 'heldOut', 'extra']
 const FIELDS = [
   'image',
   'total',
@@ -151,6 +156,8 @@ function imageTypeOf(file: string): LocalImageType | undefined {
   if (extension === '.jpg' || extension === '.jpeg') return 'jpeg'
   if (extension === '.png') return 'png'
   if (extension === '.heic' || extension === '.heif') return 'heic'
+  // A receipt a store's app exports, read from its text layer (D6).
+  if (extension === '.pdf') return 'pdf'
   return undefined
 }
 
@@ -204,7 +211,7 @@ export function parseLocalCase(
     fail(`"capture" must be one of ${CAPTURES.join(', ')}`)
   }
   if (!PARTS.includes(raw.part as Part)) {
-    fail('"part" must be "tuning" or "heldOut"')
+    fail('"part" must be "tuning", "heldOut" or "extra"')
   }
   if (
     raw.sameReceiptAs !== undefined &&
@@ -295,6 +302,11 @@ export function selectCases(
     scored: cases.filter((entry) => heldOut || entry.part !== 'heldOut'),
     skipped: cases.filter((entry) => !heldOut && entry.part === 'heldOut'),
   }
+}
+
+/** The cases that count in the set's totals: every part but `extra`. */
+export function countedCases(cases: readonly LocalCase[]): LocalCase[] {
+  return cases.filter((entry) => entry.part !== 'extra')
 }
 
 /** The number of distinct receipts among `cases`. */

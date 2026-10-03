@@ -118,7 +118,12 @@ describe('nameMatches (P2’s recognisable product)', () => {
     expect(pair('Gelado de Baunilha com Co', 'Gelado de Baunilha')).toBe(false)
   })
 
-  it('needs every number read exactly, after folding (CP1)', () => {
+  it('lets a number be missing, but never a different one (2026-10-01)', () => {
+    expect(pair('Garrafa tara', 'Garrafa tara 0.10')).toBe(true)
+    expect(pair('Iogurte Grego', 'Iogurte Grego 4 x 125g')).toBe(true)
+  })
+
+  it('fails a number read differently, after folding (CP1)', () => {
     expect(pair('Garrafa tara 0.10', 'Garrafa tara 0.20')).toBe(false)
     expect(pair('Garrafa tara 0.20', 'Garrafa tara 0.10')).toBe(false)
     expect(pair('GARRAFA TARA 0.l0', 'Garrafa tara 0.10')).toBe(true)
@@ -621,9 +626,28 @@ describe('scoreSet', () => {
       distinctReceiptAccuracy: 1 / 2,
       rowAccuracy: 7 / 8,
       extraRows: 1,
+      priceRowAccuracy: 7 / 8,
+      rowPrecision: 7 / 8,
+      checkMatches: 1,
       nameAccuracy: 6 / 7,
       falseMatches: 0,
     })
+  })
+
+  it('tells a misread price from a misread name, and counts false items', () => {
+    const misnamed = { ...score(false, 1, 3, 2), pricePairedRows: 3 }
+    const result = scoreSet([
+      { name: 'a', receipt: 'a', score: misnamed },
+      {
+        name: 'b',
+        receipt: 'b',
+        score: { ...score(false, 0, 2), check: 'mismatch' },
+      },
+    ])
+    expect(result.rowAccuracy).toBe(1 / 5)
+    expect(result.priceRowAccuracy).toBe(3 / 5)
+    expect(result.rowPrecision).toBe(1 / 3)
+    expect(result.checkMatches).toBe(1 / 2)
   })
 
   it('counts false matches', () => {

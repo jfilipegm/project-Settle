@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { assembleLines, repairNumbers, type PaddleBox } from './paddleLines.ts'
+import {
+  assembleLines,
+  estimateSlope,
+  repairNumbers,
+  type PaddleBox,
+} from './paddleLines.ts'
 
 /** An invented box: text, left, top, width, and optional height/confidence. */
 const box = (
@@ -80,5 +85,54 @@ describe('assembleLines (P7)', () => {
       assembleLines([box('  ', 10, 40), box('Bica', 10, 70), box('', 60, 70)]),
     ).toEqual([{ text: 'Bica', confidence: 95 }])
     expect(assembleLines([])).toEqual([])
+  })
+})
+
+describe('a photo taken at an angle (CP3)', () => {
+  // An invented, tightly printed receipt (lines 14 px apart, boxes 20 px
+  // high) tilted so the price column sits 10 px above its names.
+  const names = ['Bica', 'Tosta mista', 'Agua 50cl', 'Pastel de nata']
+  const prices = ['0,80', '2,50', '1,00', '1,20']
+  const tilted = names.flatMap((name, row) => [
+    box(name, 10, 100 + 14 * row, 100, 20),
+    box(prices[row] ?? '', 300, 90 + 14 * row, 40, 20),
+  ])
+
+  it('estimates the slope from prices and their names', () => {
+    // 10 px over the 245 px between the boxes' centres.
+    expect(estimateSlope(tilted)).toBeCloseTo(-10 / 245, 2)
+  })
+
+  it('keeps each price with its own name', () => {
+    expect(assembleLines(tilted).map((line) => line.text)).toEqual([
+      'Bica 0,80',
+      'Tosta mista 2,50',
+      'Agua 50cl 1,00',
+      'Pastel de nata 1,20',
+    ])
+  })
+
+  it('assumes no slope without enough evidence', () => {
+    expect(estimateSlope(tilted.slice(0, 4))).toBe(0)
+    expect(estimateSlope([])).toBe(0)
+  })
+
+  it('finds no slope on a straight receipt', () => {
+    const straight = names.flatMap((name, row) => [
+      box(name, 10, 100 + 30 * row),
+      box(prices[row] ?? '', 300, 100 + 30 * row),
+    ])
+    expect(estimateSlope(straight)).toBe(0)
+  })
+
+  it('never lets a row grow into its neighbours', () => {
+    // Overlapping boxes chained top to bottom stay on their own lines.
+    const chain = [0, 1, 2, 3].map((row) => box(`L${row}`, 10, 100 + 12 * row))
+    expect(assembleLines(chain).map((line) => line.text)).toEqual([
+      'L0',
+      'L1',
+      'L2',
+      'L3',
+    ])
   })
 })
