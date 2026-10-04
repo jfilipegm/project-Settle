@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "work_item_id": "milestone-2-5",
-  "plan_revision": 8,
+  "plan_revision": 10,
   "checkpoints": [
     {
       "id": "CP1",
@@ -53,6 +53,15 @@
         "CP5"
       ],
       "complexity": 2,
+      "session_target": 1
+    },
+    {
+      "id": "CP6A",
+      "name": "Browsers that can't run the reader: a support check up front, photos not offered and a note naming the cause, text-layer PDFs kept, and a readerUnsupported read error",
+      "depends_on": [
+        "CP6"
+      ],
+      "complexity": 1,
       "session_target": 1
     }
   ]

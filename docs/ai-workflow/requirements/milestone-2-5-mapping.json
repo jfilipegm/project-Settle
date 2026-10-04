@@ -61,6 +61,12 @@
       "checkpoint_ids": [
         "CP5"
       ]
+    },
+    "REQ-10": {
+      "description": "A browser that can't run the reader (no WebAssembly, as Lockdown Mode makes it, or no SIMD) is detected up front: photos aren't offered, a note names the cause, a PDF with a text layer still imports, and a file that needs OCR gets its own error instead of the misleading download failure; typing the items in works as before.",
+      "checkpoint_ids": [
+        "CP6A"
+      ]
     }
   }
 }

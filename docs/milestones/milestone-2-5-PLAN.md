@@ -1,9 +1,16 @@
-# Milestone 2.5 — Accurate receipt reading: execution plan (Revision 8)
+# Milestone 2.5 — Accurate receipt reading: execution plan (Revision 10)
 
 - **Work item:** `milestone-2-5` (product, governing workflow version
   `2.2`). Work item ids can't contain a dot, so the roadmap's **M2.5** is
   `milestone-2-5` here.
-- **Plan revision:** 8 (revision 8 applies local plan review round 6
+- **Plan revision:** 10 (revision 10 applies local plan review round 8
+  on the amendment: L9-I1 with the user's choice of keeping PDFs, L9-O1,
+  L9-O2, see "Review dispositions"; revision 9 is a **plan amendment** requested
+  by the user on 2026-10-04 after CP6 (CP1–CP6 are complete and stay as
+  they are; see "The plan amendment (revision 8 → 9)"): CP6A makes the
+  receipt import tell a browser that can't run the reader from a failed
+  download, offers only what works there up front, and names the cause
+  (P16). Revision 8 applies local plan review round 6
   and the manual external review of revision 7: L7-I1, L7-I2/M-I-4,
   L7-O1, L7-O2, M-O-1 to M-O-3, see "Review dispositions"); revision 7
   is a **plan amendment** requested by the user on
@@ -48,6 +55,7 @@
 | CP4 | Corpus samples for the new layouts, the photo quality check, Tesseract retired | CP3 | 3 | 2 |
 | CP5 | The row-by-row review: line boxes and roles on the receipt image, an accessible list, adding ignored or missed lines as items | CP4 | 3 | 1 |
 | CP6 | Acceptance measurement, phone times, privacy checks, ADR, notices and READMEs | CP5 | 2 | 1 |
+| CP6A | Browsers that can't run the reader: a support check up front, photos not offered and a note naming the cause, text-layer PDFs kept, and a readerUnsupported read error | CP6 | 1 | 1 |
 
 ## Goal
 
@@ -71,7 +79,11 @@ After this milestone:
   bright, cut off or too far away) is flagged while it's being read, with
   specific advice on taking a better one;
 - that number comes from one written-down measure (P2), run in a real
-  browser, so it can be repeated and compared.
+  browser, so it can be repeated and compared;
+- a browser that can't run the reader (WebAssembly turned off, as
+  Lockdown Mode does, or no WebAssembly SIMD) doesn't offer photos and
+  says why, instead of failing after the photo with a message that blames
+  the connection, and still imports an app's PDF receipt (P16).
 
 ## Evidence (before planning)
 
@@ -146,6 +158,7 @@ wide): none is a camera original as the app's "Take photo" receives it
 | P13 | Speed | Measured on **named images**, as the time the user waits for the **whole import** (decoding, the reader, the QR scan and the bill conversion: from choosing the file to the check panel), with the reader already loaded; the first load (runtime and models) is measured and reported separately. The images: **(a)** the largest camera original in the set (P1's `camera`, at least 12 MP), **(b)** the Tiffosi photo as received (1536 × 2048, 3.1 MP), **(c)** lidl1 (223 × 1600). **Engineering gate**, the development machine's browser: (a) in at most **5 s**. **Phone** (the user's, the preview build over the local network): (a) and (b) within **20 s**, (c) within **10 s**. M2R1's R21 named "the 12.6-MP photo", which was the Tiffosi photo *after* Tesseract's ×2 enlargement (M2R1 plan, R1 and CP1), not an input; these replace it. The thresholds tighten R21's 60 s and 20 s (waived for Tesseract), set from the spike's 0.5–2 s on the desktop and a phone typically being 3–8× slower (default kept by the user, 2026-09-30). **The user's decision, 2026-10-01 (accuracy before speed), recorded here in revision 7:** CP2 measured 6–8 s on the desktop (single-threaded recognition, about 50 ms per text box; the spike most likely ran on WebGPU), over the 5 s gate. The engineering gate is **waived**, and the phone thresholds become **up to 30 s** for the whole import, for (a), (b) and (c) alike; a change that raises accuracy may make reading slower within that. P11's check adds its detection pass to this time. Threads, a lighter model and WebGPU aren't pursued in this milestone; P4 and P12 are unchanged. |
 | P14 | Tuning without fooling ourselves | Rules tuned on the same receipts they're measured on can look better than they are. So the set has two parts: **tuning cases** (every case present when CP3 starts, and any added during CP3) and **held-out cases**: at least **5 distinct receipts** (10 until revision 7; the user's decision, 2026-10-03) the user adds after CP3's last change, scored in CP6 without any change made for them. Every real receipt added after CP3 is a held-out case. The extra set (CP3: freely licensed receipts from elsewhere, `"part": "extra"`) is reported beside the set and never counted in it. The target applies to the whole set; the held-out part's receipt accuracy is reported beside it, and falling more than 10 points below the tuning part's is a stop condition (the rules don't generalise). The expected file records its part (`"part": "tuning"` or `"heldOut"`). **Protecting them:** held-out cases are **not scored before CP6's measurement**: both measurements skip them unless run with an explicit `--held-out` flag, used only in CP6. CP4 and CP5 may not change reading, and their "numbers unchanged" checks run on the tuning cases only. If any reading change is made after a held-out case has been scored, every scored held-out case becomes a tuning case, and the 5-held-out requirement has to be met again with new receipts. |
 | P15 | The row-by-row review | Next to the check panel, "Review lines" shows what the reader found: the receipt image with a box over each line it read, coloured by the role the parser gave it (**item**, **item detail** such as a code or variant line, **discount or savings**, **total or subtotal**, **tax table**, **payment**, **ignored**), and the same lines as a list, in receipt order, each with its role, its text and its amount. Selecting a line in the list highlights its box and the matching bill row. An **ignored** or **item detail** line with an amount has **"Add as item"**, which adds it as a named, priced, flagged item shared by everyone, through M2R1's existing `addItems` action (all-or-nothing under the 100-item limit). **"Add a missed line"** adds an item the reader didn't see at all (a name and a price) the same way. Nothing here is stored: like "Show receipt image", the review exists only for the import that produced it, and a reload drops it (see "Migration"). A PDF read from its text layer has no image boxes, so it shows the list only. The list is the accessible form; the boxes are a visual aid. |
+| P16 | Browsers that can't run the reader (revision 9; revision 10 keeps PDFs) | Found on the user's iPhone 13 (iOS 26.6.1) on 2026-10-04: with **Lockdown Mode** on, Safari has no `WebAssembly` at all, so ONNX Runtime finds no backend and every scan fails as `assetsUnavailable`, whose message ("Check your connection: the first scan downloads it") sends the user after the wrong cause. The reader needs WebAssembly **with SIMD**: ONNX Runtime 1.30 ships only its SIMD build and refuses without it (its `isSimdSupported`, a `WebAssembly.validate` of a small SIMD module). **What still works without it** (measured for revision 10 in headless Brave with `WebAssembly` deleted from the page and from every worker over the DevTools protocol, each file on a fresh profile): a **PDF with a text layer** imports in full (`sample-9.pdf`, its 4 items), because the reader parses a text layer with no OCR (`paddleReader.ts`, `read`'s `textLayer` branch) and a failed QR scan only means no QR code (`importReceipt.ts`, `scanQr(...).catch(() => undefined)`); a JPEG, a HEIC and a scanned PDF fail with today's `assetsUnavailable` message, as on the user's iPhone. **The check:** `readerSupport.ts` answers `ok`, `noWebAssembly` (`WebAssembly` missing or without `validate`) or `noSimd` (`WebAssembly.validate` of the same kind of SIMD test module is false, or throws), synchronously, from the page, with no download and no request. **Up front** (the user's choice, 2026-10-04: keep PDFs, warn about photos): when it isn't `ok`, "Scan a receipt" drops **Take photo**, turns **Choose file** into **Choose PDF** (`accept` `application/pdf` only), says "Or drop a PDF file here", and shows a note naming the cause: for `noWebAssembly`, that photos can't be read in this browser because WebAssembly is turned off, that Lockdown Mode turns it off and can be turned off for this site (on an iPhone or iPad: **aA** → Website Settings; on a Mac: Safari → Settings for This Website), and that an app's PDF receipt still works; for `noSimd`, that photos need a newer browser (on an iPhone or iPad, a newer iOS) and that a PDF receipt still works. The bill editor and everything else work as before. **In the import:** the reader answers a new `ReadErrorCode`, `readerUnsupported`, where it would start OCR (an image, or a PDF page with no text layer) and `readerSupport()` isn't `ok`, without starting the worker, so no path reaches the misleading message; its message says this file has to be read as an image, which this browser can't do, and that a PDF with selectable text works. `assetsUnavailable` keeps its message for a real download failure. **Not stored:** an error code is never saved (the saved summary holds warnings only), so nothing migrates. |
 
 ## Acceptance targets
 
@@ -195,6 +208,13 @@ replaced as each line says.
   with no edit, or each exception is recorded with its reason; on the
   held-out images (CP6), no false warning and no miss (P11), or the
   stop condition was reported and the user decided.
+- **Browsers that can't run the reader (P16, CP6A):** with WebAssembly
+  missing, or without SIMD, the Split page offers only Choose PDF, with
+  the note naming the cause; a text-layer PDF imports; a photo or a
+  scanned PDF answers `readerUnsupported` without starting the reader's
+  worker; in a browser that runs it (the CI browser smoke test's Chrome, the user's desktop browser,
+  and the user's iPhone with Lockdown Mode off for the site), scanning
+  works as before.
 - **Privacy:** `check-requests.mjs` passes on the new reader (only
   same-origin `GET`s for build files, no receipt value in any request, no
   CSP violation).
@@ -606,6 +626,82 @@ measurement.
   the user decided.
 <!-- /CP6 -->
 
+<!-- CP6A -->
+### CP6A — Browsers that can't run the reader (plan amendment, revisions 9–10)
+
+**Requirements:** REQ-10
+
+**Files**
+- `app/src/features/receipt/readerSupport.ts` (new): `readerSupport(scope
+  = globalThis)` answers `ok`, `noWebAssembly` or `noSimd` (P16); the
+  scope is a parameter, so the tests pass one without `WebAssembly`, one
+  without `validate`, one whose `validate` refuses the SIMD module, one
+  whose `validate` throws, and the real one.
+- `app/src/features/receipt/model.ts`: `ReadErrorCode` gains
+  `readerUnsupported`.
+- `app/src/features/receipt/messages.ts`: `readerUnsupported`'s message
+  and the two notes (`noWebAssembly`, `noSimd`), worded as P16 says.
+- `app/src/features/receipt/paddleReader.ts`: `PaddleReaderOptions`
+  gains an optional `support` function (default `readerSupport`), beside
+  `createBackend`; `read`
+  answers `readerUnsupported` before `ocr()` when it isn't `ok`. The
+  text-layer branch, which comes first, is unchanged.
+- `app/src/features/receipt/components/ScanReceipt.tsx`: when the answer
+  isn't `ok`, no Take photo; Choose PDF (`accept="application/pdf"`); the
+  PDF drop hint; the note (`role="note"`) under the heading. Dropping a
+  file still imports it (the reader answers for a photo). The answer
+  comes from an optional `support` prop (the tests pass each answer),
+  defaulting to `readerSupport()`, read once per mount (it can't change
+  while the page is open).
+- Tests next to each file; `app/README.md`'s receipt section gets one
+  line on what's needed (WebAssembly with SIMD for photos; Lockdown Mode
+  turns it off; a text-layer PDF works without it).
+
+**Tests**
+- `readerSupport.ts`: `ok` in Node (which has both); `noWebAssembly` for
+  a scope without `WebAssembly` and for one without `validate`;
+  `noSimd` for a scope whose `validate` returns false and for one whose
+  `validate` throws.
+- `paddleReader.ts`: with `support` answering `noWebAssembly`, an image
+  source answers `readerUnsupported` and creates no worker (the backend
+  factory is never called); a text-layer source is still parsed; with
+  `ok`, reading is unchanged (the existing tests).
+- `ScanReceipt` (Testing Library, each answer through the `support`
+  prop): `ok` shows Choose file and Take photo and the hint as today;
+  `noWebAssembly` and `noSimd` show one file input accepting
+  `application/pdf` only, labelled Choose PDF, no Take photo, the PDF
+  hint, and their own note, which names Lockdown Mode only for
+  `noWebAssembly`; a chosen PDF still starts an import.
+- `messages.ts`: `readerUnsupported` has a message, and
+  `assetsUnavailable`'s is unchanged.
+- The Split page's existing receipt tests unchanged: the check answers
+  `ok` under the tests' jsdom environment, which has Node's
+  `WebAssembly` with SIMD (checked while planning revision 9).
+- The CI browser smoke test (CP4) still scans its corpus samples in
+  the runner's Chrome: the check never hides scanning where the reader
+  runs.
+
+**Verification**
+- `npm run check` and `npm run build`; on PR #9, `app`,
+  `workflow-conformance` and `pr-title` pass.
+- In headless Brave with `WebAssembly` deleted from the page and every
+  worker (P16's method, a one-off script, not committed): the note and
+  Choose PDF show; `sample-9.pdf` imports its 4 items; `sample-1.jpg`
+  and `sample-6-scanned.pdf` show `readerUnsupported`'s message, with no
+  reader worker started. Recorded in `docs/ACTIVE_MILESTONE.md`.
+- On the user's iPhone (the preview build over the local network): with
+  Lockdown Mode on for the site, the note and Choose PDF show, and an
+  app's PDF receipt imports if the user has one; with Lockdown Mode off
+  for the site, a photo is read as before. The user reports them;
+  nothing is timed.
+
+**Done when**
+- In a browser without WebAssembly, or without SIMD, photos aren't
+  offered and the note says why, a text-layer PDF imports, a photo or a
+  scanned PDF answers `readerUnsupported`, and in a browser that runs the
+  reader nothing changes.
+<!-- /CP6A -->
+
 ## Requirement coverage
 
 | id | Requirement | Checkpoints |
@@ -619,6 +715,7 @@ measurement.
 | REQ-7 | Tesseract retired, and the ADR, notices, Settings and READMEs describe the new reader. | CP4, CP6 |
 | REQ-8 | The download budget and the phone times (up to 30 s, the desktop gate waived by the user) are met, and nothing leaves the browser. | CP2, CP6 |
 | REQ-9 | A row-by-row review of what the reader found: the image with each line's box and role, the same lines as an accessible list, and adding an ignored line or a missed one as an item, with nothing stored. | CP5 |
+| REQ-10 | A browser that can't run the reader (no WebAssembly, as Lockdown Mode makes it, or no SIMD) is detected up front: photos aren't offered, a note names the cause, a PDF with a text layer still imports, and a file that needs OCR gets its own error instead of the misleading download failure; typing the items in works as before. | CP6A |
 
 ## Files touched and review classification
 
@@ -637,7 +734,8 @@ any bundle.
 None. The reader's id isn't saved anywhere. The saved bill
 (`settle.bill`) and receipt summary (`settle.receipt`) keep their
 formats exactly: P11's advice and P15's lines aren't stored, and no warning code is
-added (an older build drops a summary with a code it doesn't know, as
+added (P16's `readerUnsupported` is a read error code, and error codes
+are never saved) (an older build drops a summary with a code it doesn't know, as
 M2R1 recorded). Tesseract's models cached in IndexedDB by earlier
 builds are left alone (a few MB, cleared with the site's data); the new
 models use the HTTP cache.
@@ -657,6 +755,9 @@ models use the HTTP cache.
   photos failing (then it's proposed to the user as a plan amendment).
 - WebGPU and multi-threaded inference (P4).
 - Offline caching of the reader (M6).
+- A reader for photos in browsers without WebAssembly or SIMD (a server
+  would break "nothing leaves the device"): such a browser gets the note,
+  text-layer PDFs and the editor (P16).
 
 ## Open questions (for the plan reviewer / user)
 
@@ -689,6 +790,9 @@ None open. The user answered revision 1's seven questions and revision
   no cause found (CP2): the Node test can't stand in for the browser.
 - A new network request other than same-origin `GET`s for build files,
   or a CSP change.
+- CP6A's check hiding scanning in a browser that runs the reader (the
+  CI smoke test's Chrome, or the user's desktop browser or iPhone with
+  Lockdown Mode off for the site).
 - A real receipt, its text or its expected values staged for a commit,
   or R17's guards firing (the user removes it, never the workflow).
 
@@ -790,6 +894,37 @@ stays complete as it stands.*
 | CP4 is renamed for the check, and sized at complexity 3 over two sessions (was 2 in one): it now holds the corpus samples, the CI browser smoke test, the check and Tesseract's removal. | Registry, CP4 |
 | CP3 kept `splitTall` and no upscaling or tiling, so CP5's box test maps a re-read tall box's parts back to the page. | CP5 |
 | Unchanged: CP1–CP3 (complete, their sections and the registry's entries for them as approved), P1–P10, P12, P15, CP5's scope, the Tesseract removal, the corpus samples and the browser smoke test in CI. | — |
+
+### Local plan review, round 8 (`LOCAL_MODEL_PLAN_REVIEW`, revision 9 → 10)
+
+REVISE: one important finding, two optional.
+
+| Finding | Disposition |
+|---------|-------------|
+| L9-I1 P16's reason for blocking text-layer PDFs is wrong | Accepted, and confirmed by measurement. Checked: `paddleReader.ts`'s `read` parses a `textLayer` before `ocr()`, and `importReceipt.ts` runs the QR scan as `scanQr(...).catch(() => undefined)`. In headless Brave with `WebAssembly` deleted from the page and every worker, each file on a fresh profile: `sample-9.pdf` (text layer) imported its 4 items; `sample-1.jpg`, `sample-3.heic` and `sample-6-scanned.pdf` failed with today's `assetsUnavailable` message; with WebAssembly on, `sample-9.pdf` imported the same 4 items. **The user's decision (2026-10-04):** keep PDFs and warn about photos ("if only the photos fail, go with A"). P16 and CP6A now offer Choose PDF only, with the note; the reader answers `readerUnsupported` where OCR would start, not the provider before the chunk loads, so `ReceiptImportProvider.tsx` is no longer touched. |
+| L9-O1 The note's instructions are iPhone-only | Accepted: the note names the iPhone/iPad (**aA** → Website Settings) and Mac (Safari → Settings for This Website) routes; `noSimd` says a newer iOS on an iPhone or iPad. |
+| L9-O2 `WebAssembly.validate` could throw | Accepted: a throw answers `noSimd`, with a test. |
+
+### The plan amendment (revision 8 → 9, the user's request, 2026-10-04)
+
+Requested with `/request-plan-amendment` after CP6 (the work item was at
+`SELF_REVIEWING_IMPLEMENTATION`, CP1–CP6 complete). The user's reason, as
+recorded in the amendment history: *on an iPhone with Lockdown Mode,
+WebAssembly is off, so receipt reading fails with a misleading "check
+your connection" message. Add a checkpoint that detects missing
+WebAssembly up front, hides the scan button, and shows a clear message
+naming the cause; typing items in stays.* The user asked for it as
+"CP6.1"; checkpoint ids are `CP<digits>` with an optional capital letter,
+so it is **CP6A**.
+
+| Change | Where |
+|--------|-------|
+| How it was found: on the user's iPhone 13 (iOS 26.6.1) every scan failed as `assetsUnavailable`. A diagnostic page on the preview build showed `WebAssembly` undefined in the page and the worker, and ONNX Runtime's "no available backend found … WebAssembly SIMD is not supported"; the user confirmed Lockdown Mode was on. The download, the CSP and the memory reservation were ruled out on the way. | P16 |
+| The reader's support is checked up front (WebAssembly, and SIMD, which ONNX Runtime 1.30 requires); where it's missing the scan controls are replaced by a note naming the cause, the importer answers a new `readerUnsupported` code, and the editor works as before. | Goal, P16, acceptance targets, CP6A, REQ-10, a stop condition |
+| SIMD is checked as well as WebAssembly: an older browser with WebAssembly but no SIMD fails the same way today. Its note says to update the browser. | P16, CP6A |
+| No migration: error codes aren't saved. | Migration |
+| Out of scope: a reader for photos in those browsers. | Out of scope |
+| Unchanged: CP1–CP6 (complete, their sections and registry entries as approved), P1–P15, the acceptance targets already measured. | — |
 
 ### Local plan review, round 6 (`LOCAL_MODEL_PLAN_REVIEW`, revision 7 → 8), with the manual external review of revision 7
 

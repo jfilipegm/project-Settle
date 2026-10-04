@@ -2281,8 +2281,8 @@
       "registry_path": "docs/ai-workflow/registry/milestone-2-5-registry.json",
       "mapping_path": "docs/ai-workflow/requirements/milestone-2-5-mapping.json",
       "governing_workflow_version": "2.2",
-      "phase": "AMENDING_PLAN",
-      "plan_revision": 8,
+      "phase": "IMPLEMENTING",
+      "plan_revision": 10,
       "implementation_revision": null,
       "functional_review_round": null,
       "base_commit": "56a96dbdd433d048088711d21584aaebed1c55d7",
@@ -2315,70 +2315,77 @@
           "start_commit": "d257f2a8293b69342f40abaf307355e47f0cb4d0"
         }
       },
-      "current_bundle_id": "5cc5bd2297247d94426f283b2a91ff24b9ee409313656e0638af2f214f4ea22c",
+      "current_bundle_id": "16c1ba0daa3ca2ab1c9d959a01dc04117a0925c6e4062f0f3866043cbf6357ee",
       "plan_approval": {
-        "status": "SUPERSEDED",
+        "status": "CURRENT",
         "basis": "EXTERNAL_APPROVE",
-        "reviewed_bundle_id": "5cc5bd2297247d94426f283b2a91ff24b9ee409313656e0638af2f214f4ea22c",
-        "approved_review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb",
+        "reviewed_bundle_id": "16c1ba0daa3ca2ab1c9d959a01dc04117a0925c6e4062f0f3866043cbf6357ee",
+        "approved_review_content_id": "f79ec1df70c133e56ca83f5363c4e795652cde052ebdd69481ab0ca03180d5fc",
         "review_content_manifest": [
           {
             "path": "docs/ai-workflow/registry/milestone-2-5-registry.json",
             "exists": true,
             "mode": "100644",
-            "blob": "15baf056fd8604c62f8b05dd1c23ccf8154e7ff3"
+            "blob": "40f8d543e1c3bd7033247a43fae1fbfa7e777a5a"
           },
           {
             "path": "docs/ai-workflow/requirements/milestone-2-5-mapping.json",
             "exists": true,
             "mode": "100644",
-            "blob": "6457afb08afad318a2ea1a97329ea401a07811db"
+            "blob": "5d4810d1ec2976898245b19cb00376586e75e218"
           },
           {
             "path": "docs/milestones/milestone-2-5-PLAN.md",
             "exists": true,
             "mode": "100644",
-            "blob": "a38631a0c5fe8198f2a4b1b9b61ae963e4a822a6"
+            "blob": "b8852e47ca57d29b5105a5484a1c14527b2a26db"
           }
         ],
         "reviewed_content_commit": null,
         "legacy_evidence": null,
         "user_confirmation": "I approve milestone-2-5 plan",
         "waived_guarantees": [],
-        "recorded_at": "2026-10-03T21:47:41Z"
+        "recorded_at": "2026-10-04T21:59:25Z"
       },
       "technical_approval": null,
       "technical_review_block_pins": [],
       "plan_review_stages": {
-        "review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb",
+        "review_content_id": "f79ec1df70c133e56ca83f5363c4e795652cde052ebdd69481ab0ca03180d5fc",
         "LOCAL_MODEL_PLAN_REVIEW": {
-          "bundle_id": "5cc5bd2297247d94426f283b2a91ff24b9ee409313656e0638af2f214f4ea22c",
+          "bundle_id": "16c1ba0daa3ca2ab1c9d959a01dc04117a0925c6e4062f0f3866043cbf6357ee",
           "verdict": "APPROVE",
-          "round": 7,
-          "completed_at": "2026-10-03T20:45:57Z"
+          "round": 9,
+          "completed_at": "2026-10-04T18:33:02Z"
         },
         "MANUAL_EXTERNAL_PLAN_REVIEW": {
-          "bundle_id": "5cc5bd2297247d94426f283b2a91ff24b9ee409313656e0638af2f214f4ea22c",
+          "bundle_id": "16c1ba0daa3ca2ab1c9d959a01dc04117a0925c6e4062f0f3866043cbf6357ee",
           "verdict": "APPROVE",
-          "round": 5,
-          "completed_at": "2026-10-03T21:42:42Z"
+          "round": 6,
+          "completed_at": "2026-10-04T21:54:46Z"
         }
       },
       "functional_acceptance_status": null,
       "blocking_decisions": [],
-      "state_revision": 47,
-      "last_transition": "2026-10-04T18:13:00Z",
+      "state_revision": 56,
+      "last_transition": "2026-10-04T21:59:25Z",
       "feedback_layout": "scoped",
       "plan_review_binding": {
-        "status": "CONSUMED",
-        "at": "2026-10-04T18:13:00Z",
+        "status": "BOUND",
+        "at": "2026-10-04T18:30:04Z",
         "consumed": {
-          "review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb",
-          "plan_revision": 8,
+          "review_content_id": "b320ee7fb71657f6f525b30fe3b41231c42a2b9b3c7a345d2ed6c0fa80d12b6e",
+          "plan_revision": 9,
           "legacy": false
         },
-        "published": null,
-        "bound": null
+        "published": {
+          "review_content_id": "f79ec1df70c133e56ca83f5363c4e795652cde052ebdd69481ab0ca03180d5fc",
+          "plan_revision": 10
+        },
+        "bound": {
+          "review_content_id": "f79ec1df70c133e56ca83f5363c4e795652cde052ebdd69481ab0ca03180d5fc",
+          "bundle_id": "16c1ba0daa3ca2ab1c9d959a01dc04117a0925c6e4062f0f3866043cbf6357ee",
+          "plan_revision": 10
+        }
       },
       "amendment_history": [
         {
@@ -2508,7 +2515,17 @@
             }
           },
           "pre_amendment_approval_commit": "aca083d13dfc908ef1c462873fc8f6c9784f7ab7",
-          "resolved_at_plan_revision": null
+          "resolved_at_plan_revision": 10,
+          "reconciliation_outcome": {
+            "CP1": "retained",
+            "CP2": "retained",
+            "CP3": "retained",
+            "CP4": "retained",
+            "CP5": "retained",
+            "CP6": "retained",
+            "CP6A": "new"
+          },
+          "resolved_review_content_id": "f79ec1df70c133e56ca83f5363c4e795652cde052ebdd69481ab0ca03180d5fc"
         }
       ],
       "amendment_base_commit": "d8127b9fed61555ea8ccf16d37e2a41bccd3504a"
