@@ -3,16 +3,16 @@
 ## Milestone
 
 **M2.5 — Accurate receipt reading** (work item `milestone-2-5`, plan
-revision 8, `docs/milestones/milestone-2-5-PLAN.md`), on
+revision 10, `docs/milestones/milestone-2-5-PLAN.md`), on
 `feature/milestone-2.5` (PR #9). Phase `SELF_REVIEWING_IMPLEMENTATION`.
 
 ## Next action
 
-**CP6 is done**, and with it every checkpoint of plan revision 8. The
-user asked for one more change, found on the phone (see "Found on the
-phone: no WebAssembly"): it goes in as a new checkpoint through a plan
-amendment, `/request-plan-amendment milestone-2-5` (user-only), before the
-implementation review.
+**CP6A is done**, and with it every checkpoint of plan revision 10 (the
+amendment for browsers without WebAssembly, approved 2026-10-04). Still
+to do for CP6A: the user's two iPhone checks (below). Then
+`/milestone-implement milestone-2-5` again for the self-review and the
+implementation review bundle.
 
 ## Checkpoints
 
@@ -25,6 +25,46 @@ implementation review.
 - [x] **CP5** — the row-by-row review.
 - [x] **CP6** — acceptance measurement, phone, privacy, documentation
   (the phone times waived by the user).
+- [x] **CP6A** — browsers that can't run the reader (plan amendment,
+  revisions 9–10): the support check up front, Choose PDF and a note,
+  `readerUnsupported`. The user's iPhone checks are still to come.
+
+### CP6A — done
+
+**What changed.** `readerSupport.ts` (new) answers `ok`, `noWebAssembly`
+or `noSimd`, synchronously, from ONNX Runtime 1.30's own SIMD module,
+byte for byte (a test reads `onnxruntime-web`'s `wasm-factory.ts` and
+fails if an upgrade changes it; it caught a mistyped byte while this
+checkpoint was written). Where the answer isn't `ok`, "Scan a receipt"
+drops Take photo, offers Choose PDF (`application/pdf`), says "Or drop a
+PDF file here" and shows a note: for `noWebAssembly`, that WebAssembly is
+turned off, usually by Lockdown Mode on an iPhone, iPad or Mac, with
+both ways to turn it off for the site; for `noSimd`, to update the
+browser (iOS on an iPhone or iPad). Both say a PDF receipt from an app
+still works. The reader answers the new `readerUnsupported` where it
+would start OCR, without creating its worker; a text layer is parsed as
+before. `assetsUnavailable` keeps its message. The reviewers' optional
+notes were taken: the note names the capability, with Lockdown Mode as
+the usual cause (L10-O1, O-EXT-1); the probe is ONNX Runtime's own
+(L10-O2); `noSimd` comes only from the probe (O-EXT-2).
+
+**Verified.** `npm run check`: typecheck, lint, format, 52 test files,
+1083 tests passed (1 skipped, as before). `npm run build` passes. The
+existing Split page tests pass with the real check, which answers `ok`
+under jsdom. Headless Brave on the production build, a fresh profile per
+file (a one-off script, not committed):
+
+| File | `WebAssembly` deleted (page and every worker) | WebAssembly on |
+|------|------|------|
+| `sample-9.pdf` (text layer) | note, Choose PDF only; imported, 4 items | Choose file and Take photo; imported, 4 items |
+| `sample-1.jpg` | `readerUnsupported`'s message, no reader worker | imported, 5 items (`paddle-ocr` worker) |
+| `sample-6-scanned.pdf` | `readerUnsupported`'s message, no reader worker | imported, 3 items (`paddle-ocr` worker) |
+| `sample-3.heic` | `readerUnsupported`'s message, no reader worker | (not run) |
+
+**Still to come: the user's iPhone checks** (the preview build over the
+local network). With Lockdown Mode on for the site: the note and Choose
+PDF show, and an app's PDF receipt imports if there's one to hand. With
+Lockdown Mode off for the site: a photo is read as before.
 
 ### CP6 — done
 
@@ -101,8 +141,8 @@ in Safari (`WebAssembly` undefined), so ONNX Runtime has no backend and
 the reader reports `assetsUnavailable`. The message blames the
 connection, wrongly. The user asked for a clear message naming the cause,
 and the scan button hidden up front when WebAssembly is missing (typing
-the items in stays). Not in plan revision 8: it is added as a new
-checkpoint by a plan amendment.
+the items in stays). Added as CP6A by the plan amendment (revisions
+9–10).
 
 ### CP5 — done
 
@@ -694,7 +734,7 @@ None.
 
 ## Active plan
 
-`docs/milestones/milestone-2-5-PLAN.md` (revision 8). M2's plans are archived at
+`docs/milestones/milestone-2-5-PLAN.md` (revision 10). M2's plans are archived at
 `docs/milestones/completed/milestone-2-PLAN.md` and
 `docs/milestones/completed/milestone-2-remediation-1-PLAN.md` (M0's and
 M1's are in the same folder).

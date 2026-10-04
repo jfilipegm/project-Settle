@@ -229,6 +229,7 @@ describe('read error messages', () => {
       'decodeFailed',
       'ocrFailed',
       'assetsUnavailable',
+      'readerUnsupported',
       'noItems',
       'cancelled',
     ] as const) {
@@ -236,5 +237,14 @@ describe('read error messages', () => {
         / You can type the items in below\.$/,
       )
     }
+  })
+
+  it('says a browser that can’t read images isn’t a connection problem (M2.5, P16)', () => {
+    expect(readErrorMessage('readerUnsupported')).toBe(
+      'This file has to be read as an image, and this browser can’t read images. A PDF receipt with selectable text works. You can type the items in below.',
+    )
+    expect(readErrorMessage('assetsUnavailable')).toBe(
+      'The receipt reader couldn’t load. Check your connection: the first scan downloads it. You can type the items in below.',
+    )
   })
 })

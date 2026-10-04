@@ -5,15 +5,23 @@ import type { Bill } from '../../split/model.ts'
 import splitStyles from '../../split/components/split.module.css'
 import type { ImportResult } from '../importReceipt.ts'
 import { billHasContent, revokeImageUrl } from '../importUi.ts'
-import { PHOTO_ADVICE_LEAD, readErrorMessage } from '../messages.ts'
+import {
+  PHOTO_ADVICE_LEAD,
+  readErrorMessage,
+  readerSupportNote,
+} from '../messages.ts'
 import type { PhotoIssue, ReadErrorCode, ReadProgress } from '../model.ts'
 import { useReceiptImport } from '../receiptImport.ts'
+import { readerSupport, type ReaderSupport } from '../readerSupport.ts'
 import { PhotoAdvice } from './PhotoAdvice.tsx'
 import styles from './receipt.module.css'
 
 /** The file types the picker offers (D7, D6): JPEG, PNG, HEIC/HEIF, PDF. */
 export const RECEIPT_ACCEPT =
   'image/jpeg,image/png,image/heic,image/heif,.heic,.heif,application/pdf'
+
+/** M2.5, P16: what the picker offers where the reader can't run. */
+export const PDF_ACCEPT = 'application/pdf'
 
 export const REPLACE_PROMPT =
   'Replace the current items with the receipt’s? People stay as they are.'
@@ -26,6 +34,11 @@ interface Props {
   /** While a scan runs the editor is `inert` and `aria-busy` (D17). */
   onBusyChange: (busy: boolean) => void
   onImported: (imported: Imported) => void
+  /**
+   * Whether this browser can run the reader (M2.5, P16); the real check by
+   * default. The tests pass each answer.
+   */
+  support?: () => ReaderSupport
 }
 
 function phaseText({ phase, progress }: ReadProgress, region: Region): string {
@@ -52,9 +65,21 @@ function phaseText({ phase, progress }: ReadProgress, region: Region): string {
  * its message and leaves the bill as it was. The photo quality check's
  * advice (M2.5, P11) shows as soon as a page is checked, while the reading
  * goes on, so the user can cancel and take a better photo.
+ *
+ * M2.5, P16: in a browser that can't run the reader, photos aren't offered:
+ * Choose file becomes Choose PDF (a text layer needs no reader) and a note
+ * says why. A photo dropped anyway gets the reader's `readerUnsupported`.
  */
-export function ScanReceipt({ bill, region, onBusyChange, onImported }: Props) {
+export function ScanReceipt({
+  bill,
+  region,
+  onBusyChange,
+  onImported,
+  support = readerSupport,
+}: Props) {
   const importReceipt = useReceiptImport()
+  // Read once: it can't change while the page is open.
+  const [supported] = useState(support)
   const [progress, setProgress] = useState<ReadProgress>()
   const [error, setError] = useState<ReadErrorCode>()
   const [photoIssues, setPhotoIssues] = useState<PhotoIssue[]>([])
@@ -159,6 +184,11 @@ export function ScanReceipt({ bill, region, onBusyChange, onImported }: Props) {
       }}
     >
       <h2 id="receipt-scan-heading">Scan a receipt</h2>
+      {supported !== 'ok' && (
+        <p className={styles.note} role="note">
+          {readerSupportNote(supported)}
+        </p>
+      )}
       <p className={splitStyles.hint}>
         Read on this device. The receipt never leaves your browser.
       </p>
@@ -167,30 +197,34 @@ export function ScanReceipt({ bill, region, onBusyChange, onImported }: Props) {
           <input
             type="file"
             className={splitStyles.srOnly}
-            accept={RECEIPT_ACCEPT}
+            accept={supported === 'ok' ? RECEIPT_ACCEPT : PDF_ACCEPT}
             disabled={busy}
             onChange={(event) => {
               pick(event.currentTarget)
             }}
           />
-          Choose file
+          {supported === 'ok' ? 'Choose file' : 'Choose PDF'}
         </label>
-        <label className={styles.fileButton} data-disabled={busy}>
-          <input
-            type="file"
-            className={splitStyles.srOnly}
-            accept="image/*"
-            capture="environment"
-            disabled={busy}
-            onChange={(event) => {
-              pick(event.currentTarget)
-            }}
-          />
-          Take photo
-        </label>
+        {supported === 'ok' && (
+          <label className={styles.fileButton} data-disabled={busy}>
+            <input
+              type="file"
+              className={splitStyles.srOnly}
+              accept="image/*"
+              capture="environment"
+              disabled={busy}
+              onChange={(event) => {
+                pick(event.currentTarget)
+              }}
+            />
+            Take photo
+          </label>
+        )}
       </div>
       <p className={splitStyles.hint}>
-        Or drop a JPEG, PNG, HEIC or PDF file here.
+        {supported === 'ok'
+          ? 'Or drop a JPEG, PNG, HEIC or PDF file here.'
+          : 'Or drop a PDF file here.'}
       </p>
 
       <div className={styles.progress}>

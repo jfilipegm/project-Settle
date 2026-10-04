@@ -155,6 +155,12 @@ each line's role, which "Review lines" shows on the image and as a list
 machine: about 6–8 s per receipt, plus 0.2–2.6 s for the photo check; up
 to 30 s on a phone was accepted (accuracy before speed).
 
+Reading a photo needs WebAssembly with SIMD (ONNX Runtime 1.30 ships only
+its SIMD build). Safari's Lockdown Mode turns WebAssembly off. Where it's
+missing, `readerSupport.ts` says so up front: "Scan a receipt" offers
+Choose PDF only, with a note naming the cause, because a PDF with a text
+layer is parsed with no OCR; a photo answers `readerUnsupported`.
+
 ### Self-hosted reader files
 
 PaddleOCR's runtime, zxing-wasm and pdf.js load workers, wasm and data

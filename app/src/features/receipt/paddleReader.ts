@@ -16,6 +16,10 @@
  * (detection only, then `photoQuality.ts`), and the findings are passed on
  * at once, so the advice shows while the slow reading runs. A check that
  * fails is skipped: it only ever warns.
+ *
+ * P16: in a browser that can't run the reader (no WebAssembly, or no SIMD),
+ * a source that needs OCR answers `readerUnsupported` at once, with no
+ * worker started; a text layer is still parsed.
  */
 import type {
   PhotoQuality,
@@ -29,6 +33,7 @@ import type {
 } from './model.ts'
 import { assembleLines, type PaddleBox } from './paddleLines.ts'
 import { joinPages, parseReceiptText } from './parse/parseReceiptText.ts'
+import { readerSupport, type ReaderSupport } from './readerSupport.ts'
 
 /** A backend failure, with the D16 code it stands for. */
 export class PaddleFailure extends Error {
@@ -234,10 +239,13 @@ function abortable<T>(
 export interface PaddleReaderOptions {
   /** A new backend; the browser's worker by default. */
   createBackend?: () => PaddleBackend
+  /** Whether this browser can run the reader (P16); checked before OCR. */
+  support?: () => ReaderSupport
 }
 
 export function createPaddleReader({
   createBackend = () => workerBackend(),
+  support = readerSupport,
 }: PaddleReaderOptions = {}): ReceiptReader {
   let current: { backend: PaddleBackend; loaded: Promise<void> } | undefined
 
@@ -311,6 +319,11 @@ export function createPaddleReader({
       }
       if (source.pages.length === 0) {
         return Promise.resolve(failure('decodeFailed'))
+      }
+      if (support() !== 'ok') {
+        // P16: without this, ONNX Runtime would fail to load and the user
+        // would be told to check a connection that's fine.
+        return Promise.resolve(failure('readerUnsupported'))
       }
       return ocr(source.pages, options)
     },

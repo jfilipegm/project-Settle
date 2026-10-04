@@ -155,6 +155,8 @@ export type ReadErrorCode =
   | 'decodeFailed'
   | 'ocrFailed'
   | 'assetsUnavailable'
+  /** M2.5, P16: the file needs OCR, and this browser can't run the reader. */
+  | 'readerUnsupported'
   | 'noItems'
   | 'cancelled'
 

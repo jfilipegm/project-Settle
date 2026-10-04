@@ -13,6 +13,7 @@ import {
   type PaddleResponse,
   type WorkerLike,
 } from './paddleReader.ts'
+import type { ReaderSupport } from './readerSupport.ts'
 
 const page = (width = 4, height = 2): ReceiptPage => ({
   width,
@@ -91,9 +92,11 @@ const happy = (request: PaddleRequest): PaddleResponse =>
 /** A reader over fake workers, each one recorded. */
 function readerWith(
   respond: (request: PaddleRequest) => PaddleResponse | 'crash' | undefined,
+  support: () => ReaderSupport = () => 'ok',
 ) {
   const workers: FakeWorker[] = []
   const reader = createPaddleReader({
+    support,
     createBackend: () =>
       workerBackend(() => {
         const worker = new FakeWorker(respond)
@@ -397,6 +400,47 @@ describe('createPaddleReader (P6) over a worker', () => {
     if (!result.ok) throw new Error(result.error.code)
     expect(result.receipt.total).toBe(80)
     expect(workers).toHaveLength(0)
+  })
+
+  describe('in a browser that can’t run the reader (M2.5 plan, P16)', () => {
+    it.each(['noWebAssembly', 'noSimd'] as const)(
+      'answers readerUnsupported for an image with %s, starting no worker',
+      async (support) => {
+        const { reader, workers } = readerWith(happy, () => support)
+        const progress: ReadProgress[] = []
+        expect(
+          await reader.read(source([page()]), {
+            onProgress: (next) => progress.push(next),
+          }),
+        ).toEqual({ ok: false, error: { code: 'readerUnsupported' } })
+        expect(workers).toHaveLength(0)
+        expect(progress).toEqual([])
+      },
+    )
+
+    it('still parses a PDF text layer', async () => {
+      const support = vi.fn<() => ReaderSupport>(() => 'noWebAssembly')
+      const { reader, workers } = readerWith(happy, support)
+      const result = await reader.read({
+        ...source([page()]),
+        textLayer: [
+          { text: 'Bica 0,80', confidence: 100 },
+          { text: 'TOTAL 0,80', confidence: 100 },
+        ],
+      })
+      if (!result.ok) throw new Error(result.error.code)
+      expect(result.receipt.items.map((item) => item.name)).toEqual(['Bica'])
+      expect(workers).toHaveLength(0)
+      expect(support).not.toHaveBeenCalled()
+    })
+
+    it('reads as before when the check answers ok', async () => {
+      const support = vi.fn<() => ReaderSupport>(() => 'ok')
+      const { reader, workers } = readerWith(happy, support)
+      expect((await reader.read(source([page()]))).ok).toBe(true)
+      expect(workers).toHaveLength(1)
+      expect(support).toHaveBeenCalled()
+    })
   })
 
   it('fails a source with no pages as decodeFailed', async () => {
