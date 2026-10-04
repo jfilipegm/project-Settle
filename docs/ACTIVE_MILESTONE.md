@@ -81,6 +81,12 @@ local network). With Lockdown Mode on for the site: the note and Choose
 PDF show, and an app's PDF receipt imports if there's one to hand. With
 Lockdown Mode off for the site: a photo is read as before.
 
+**Deferred by the user (2026-10-05).** The external implementation review
+(round 1, B-EXT-2) required these checks before approval. The user chose
+to do them later ("push these tests for later"). They are **not run**,
+not passed: they stay owed before the milestone is accepted, and if
+either disagrees with the plan, CP6A's stop condition applies then.
+
 ### CP6 — done
 
 **The set at CP6 (the user's decision, 2026-10-04: proceed with it).** 19
