@@ -28,8 +28,21 @@ interface Props {
  * highlights its box and its bill row. An ignored line or an item detail
  * with an amount can be added as an item, and so can a line the reader
  * missed. Nothing here is stored.
+ *
+ * A new import's lines start afresh: everything here (the line selected,
+ * the lines added, a half-typed missed line and its errors) belongs to the
+ * receipt it was read from, so the review is remounted for each new
+ * `lines`.
  */
-export function ReceiptLines({
+export function ReceiptLines(props: Props) {
+  const [shown, setShown] = useState({ lines: props.lines, generation: 0 })
+  if (shown.lines !== props.lines) {
+    setShown({ lines: props.lines, generation: shown.generation + 1 })
+  }
+  return <LinesReview key={shown.generation} {...props} />
+}
+
+function LinesReview({
   lines,
   imageUrl,
   bill,
@@ -39,14 +52,6 @@ export function ReceiptLines({
 }: Props) {
   const [selected, setSelected] = useState<number>()
   const [added, setAdded] = useState<ReadonlySet<number>>(new Set())
-  // A new import's lines start afresh: what was added or selected belongs
-  // to the receipt it was read from.
-  const [linesShown, setLinesShown] = useState(lines)
-  if (linesShown !== lines) {
-    setLinesShown(lines)
-    setSelected(undefined)
-    setAdded(new Set())
-  }
   const [size, setSize] = useState<{ width: number; height: number }>()
   const boxed = lines.some((line) => line.box?.page === 0)
   const full = bill.items.length >= LIMITS.maxItems

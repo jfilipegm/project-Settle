@@ -220,6 +220,52 @@ describe('Review lines (M2.5, P15)', () => {
     ).not.toBeInTheDocument()
   })
 
+  it('starts the missed line afresh for the next receipt: nothing typed or flagged carries over', async () => {
+    const receipt = (item: string): TextLine[] => [
+      { text: item, confidence: 95, box: box(10) },
+      { text: 'TOTAL 0,80', confidence: 95, box: box(40) },
+    ]
+    const importReceipt = vi
+      .fn<ImportReceiptFn>()
+      .mockImplementationOnce(importing(receipt('Bica 0,80')))
+      .mockImplementationOnce(importing(receipt('Agua 0,80')))
+    await scanAndOpenReview(importReceipt)
+    const form = () => screen.getByRole('group', { name: 'Add a missed line' })
+    // A half-typed line for this receipt, and an error on its price.
+    fireEvent.change(within(form()).getByLabelText('Name'), {
+      target: { value: 'Pastel' },
+    })
+    fireEvent.change(within(form()).getByLabelText('Price'), {
+      target: { value: '1,234' },
+    })
+    fireEvent.click(
+      within(form()).getByRole('button', { name: 'Add the missed line' }),
+    )
+    expect(
+      within(form()).getByText('Use at most 2 decimal places'),
+    ).toBeInTheDocument()
+
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    fireEvent.change(screen.getByLabelText('Choose file'), {
+      target: { files: [new File(['r'], 'r2.jpg', { type: 'image/jpeg' })] },
+    })
+    await waitFor(
+      () => expect(screen.getByDisplayValue('Agua')).toBeInTheDocument(),
+      LOADED,
+    )
+    if (screen.queryByRole('group', { name: 'Add a missed line' }) === null) {
+      fireEvent.click(screen.getByText('Review lines'))
+    }
+    expect(within(form()).getByLabelText('Name')).toHaveValue('')
+    expect(within(form()).getByLabelText('Price')).toHaveValue('')
+    expect(within(form()).getByLabelText('Price')).not.toHaveAttribute(
+      'aria-invalid',
+    )
+    expect(
+      within(form()).queryByText('Use at most 2 decimal places'),
+    ).not.toBeInTheDocument()
+  })
+
   it('adds a missed line, checking the name and price like the bill editor', async () => {
     await scanAndOpenReview(importing())
     const form = screen.getByRole('group', { name: 'Add a missed line' })
