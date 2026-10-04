@@ -144,10 +144,16 @@ added, for real receipts:
   incomplete read called out, and lines left out by a cut shown until
   confirmed.
 
-Reading time, on the development machine (Node, one core): about 6 s for
-a 12-MP photo read in strips and for a small screenshot enlarged ×4. A
-phone is slower. The phone timing is taken with the PaddleOCR reader that
-replaces Tesseract next, and this section is corrected then.
+M2.5 replaced Tesseract.js with PaddleOCR
+([`docs/adr/0003-paddleocr-receipt-reader.md`](../docs/adr/0003-paddleocr-receipt-reader.md)):
+the engine runs single-threaded on ONNX Runtime Web's wasm build in a
+module worker (`paddle.worker.ts`). Before reading each page, the worker
+runs detection alone for the photo quality check (`photoQuality.ts`),
+whose advice is shown while reading and never saved. The parser records
+each line's role, which "Review lines" shows on the image and as a list
+(`ReceiptLines.tsx`, `lineReview.ts`). Reading time, on the development
+machine: about 6–8 s per receipt, plus 0.2–2.6 s for the photo check; up
+to 30 s on a phone was accepted (accuracy before speed).
 
 ### Self-hosted reader files
 

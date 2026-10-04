@@ -4,23 +4,24 @@ Settle reads receipts in your browser with the open-source packages below.
 Their runtime files are served from Settle's own site, under `/vendor/`,
 never from another server. Each licence text is in `/vendor/licenses/`.
 
-| Package                | Version | Licence    | Source                                      |
-| ---------------------- | ------- | ---------- | ------------------------------------------- |
-| tesseract.js           | 7.0.0   | Apache-2.0 | https://github.com/naptha/tesseract.js      |
-| tesseract.js-core      | 7.0.0   | Apache-2.0 | https://github.com/naptha/tesseract.js-core |
-| @tesseract.js-data/por | 1.0.0   | MIT        | https://github.com/naptha/tessdata          |
-| @tesseract.js-data/eng | 1.0.0   | MIT        | https://github.com/naptha/tessdata          |
-| zxing-wasm             | 3.1.4   | MIT        | https://github.com/Sec-ant/zxing-wasm       |
-| pdfjs-dist             | 6.3.289 | Apache-2.0 | https://github.com/mozilla/pdf.js           |
-| heic-to                | 1.5.2   | LGPL-3.0   | https://github.com/hoppergee/heic-to        |
+| Package                                                  | Version                   | Licence    | Source                                                                                                |
+| -------------------------------------------------------- | ------------------------- | ---------- | ----------------------------------------------------------------------------------------------------- |
+| ppu-paddle-ocr                                           | 6.6.0                     | MIT        | https://github.com/PT-Perkasa-Pilar-Utama/ppu-paddle-ocr                                              |
+| ppu-ocv                                                  | 4.0.0                     | MIT        | https://github.com/PT-Perkasa-Pilar-Utama/ppu-ocv                                                     |
+| onnxruntime-web                                          | 1.30.0                    | MIT        | https://github.com/microsoft/onnxruntime                                                              |
+| PaddleOCR models (PP-OCRv5 detection, Latin recognition) | mirror revision `bf1d5ed` | Apache-2.0 | https://github.com/PaddlePaddle/PaddleOCR, via https://huggingface.co/snowfluke/ppu-paddle-ocr-models |
+| zxing-wasm                                               | 3.1.4                     | MIT        | https://github.com/Sec-ant/zxing-wasm                                                                 |
+| pdfjs-dist                                               | 6.3.289                   | Apache-2.0 | https://github.com/mozilla/pdf.js                                                                     |
+| heic-to                                                  | 1.5.2                     | LGPL-3.0   | https://github.com/hoppergee/heic-to                                                                  |
 
 ## Licence files
 
-- tesseract.js: `/vendor/licenses/tesseract.js-LICENSE.md`
-- tesseract.js-core: `/vendor/licenses/tesseract.js-core-LICENSE.txt`
-- @tesseract.js-data/por and @tesseract.js-data/eng: the packages declare
-  the MIT licence and ship no licence file; see
-  `/vendor/licenses/tesseract.js-data-NOTICE.txt`.
+- ppu-paddle-ocr: `/vendor/licenses/ppu-paddle-ocr-LICENSE.txt`
+- ppu-ocv: `/vendor/licenses/ppu-ocv-LICENSE.txt`
+- onnxruntime-web: the package declares the MIT licence and ships no
+  licence file; see `/vendor/licenses/onnxruntime-web-NOTICE.txt`.
+- The PaddleOCR models: `/vendor/licenses/paddleocr-models-NOTICE.txt`
+  and the mirror's licence, `/vendor/licenses/ppu-paddle-ocr-models-LICENSE.txt`.
 - zxing-wasm: `/vendor/licenses/zxing-wasm-LICENSE.txt`
 - pdfjs-dist: `/vendor/licenses/pdfjs-dist-LICENSE.txt`, and the licences
   of its standard fonts (Foxit, Liberation) and wasm decoders (JBIG2,

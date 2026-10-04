@@ -2281,14 +2281,14 @@
       "registry_path": "docs/ai-workflow/registry/milestone-2-5-registry.json",
       "mapping_path": "docs/ai-workflow/requirements/milestone-2-5-mapping.json",
       "governing_workflow_version": "2.2",
-      "phase": "IMPLEMENTING",
+      "phase": "SELF_REVIEWING_IMPLEMENTATION",
       "plan_revision": 8,
       "implementation_revision": null,
       "functional_review_round": null,
       "base_commit": "56a96dbdd433d048088711d21584aaebed1c55d7",
       "reviewed_implementation_head": null,
       "current_checkpoint_id": null,
-      "last_completed_checkpoint_id": "CP5",
+      "last_completed_checkpoint_id": "CP6",
       "checkpoints": {
         "CP1": {
           "status": "COMPLETE",
@@ -2309,6 +2309,10 @@
         "CP5": {
           "status": "COMPLETE",
           "start_commit": "19dceaa55430f869c68fd329b988082cb0a969ed"
+        },
+        "CP6": {
+          "status": "COMPLETE",
+          "start_commit": "d257f2a8293b69342f40abaf307355e47f0cb4d0"
         }
       },
       "current_bundle_id": "5cc5bd2297247d94426f283b2a91ff24b9ee409313656e0638af2f214f4ea22c",
@@ -2362,8 +2366,8 @@
       },
       "functional_acceptance_status": null,
       "blocking_decisions": [],
-      "state_revision": 44,
-      "last_transition": "2026-10-04T00:23:45Z",
+      "state_revision": 46,
+      "last_transition": "2026-10-04T18:08:48Z",
       "feedback_layout": "scoped",
       "plan_review_binding": {
         "status": "BOUND",

@@ -1,6 +1,9 @@
 # ADR 0002 — In-browser receipt reading
 
-- **Status:** Accepted
+- **Status:** Accepted; **superseded in part** by
+  [ADR 0003](0003-paddleocr-receipt-reader.md) (2026-10-04): the OCR
+  engine (Tesseract.js, D4) and its download figures. The QR, PDF, HEIC,
+  self-hosting, CSP and static-only decisions below stand.
 - **Date:** 2026-09-29
 - **Milestone:** M2 — Receipt upload and built-in parsing
   (`docs/milestones/completed/milestone-2-PLAN.md`, decisions D4–D9)

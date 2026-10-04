@@ -4,13 +4,15 @@
 
 **M2.5 — Accurate receipt reading** (work item `milestone-2-5`, plan
 revision 8, `docs/milestones/milestone-2-5-PLAN.md`), on
-`feature/milestone-2.5` (PR #9). Phase `IMPLEMENTING`.
+`feature/milestone-2.5` (PR #9). Phase `SELF_REVIEWING_IMPLEMENTATION`.
 
 ## Next action
 
-**CP5 is done.** Next: 2 more new receipts (they complete CP6's set:
-20 distinct, 5 held out), then `/milestone-implement milestone-2-5` for
-CP6 (acceptance measurement, phone times, privacy, documentation).
+**CP6 is done**, and with it every checkpoint of plan revision 8. The
+user asked for one more change, found on the phone (see "Found on the
+phone: no WebAssembly"): it goes in as a new checkpoint through a plan
+amendment, `/request-plan-amendment milestone-2-5` (user-only), before the
+implementation review.
 
 ## Checkpoints
 
@@ -21,7 +23,86 @@ CP6 (acceptance measurement, phone times, privacy, documentation).
 - [x] **CP3** — tuning on the local set (plateau accepted at 83–89 %).
 - [x] **CP4** — corpus, the photo quality check, Tesseract retired.
 - [x] **CP5** — the row-by-row review.
-- [ ] CP6 — acceptance measurement, phone, privacy, documentation.
+- [x] **CP6** — acceptance measurement, phone, privacy, documentation
+  (the phone times waived by the user).
+
+### CP6 — done
+
+**The set at CP6 (the user's decision, 2026-10-04: proceed with it).** 19
+distinct receipts in 21 counted images (18 tuning, 3 held out:
+`lidl_phone1`–`3`), 3 camera originals (iPhone 13, 4032 × 3024 JPEG), no
+HEIC (email sent JPEGs); the extra set's 9 beside it. Short of the plan's
+20 distinct receipts and 5 held out: that stop condition was reported and
+the user chose to proceed, accepting a stricter held-out mark (with 3
+held-out images, at least 5 of their 6 run-results).
+
+**Acceptance measurement** (`measure-local.mjs --held-out`, browser, two
+runs of one build; names and numbers only):
+
+| | run 1 | run 2 | target |
+|---|---|---|---|
+| tuning, no edit | 15 of 18 (83.3 %) | 15 of 18 (83.3 %) | at least CP3's 15 of 18, mean of two runs: **met** |
+| held out, no edit | 3 of 3 | 2 of 3 | within 10 points of tuning: 5 of 6 run-results = 83.3 %: **met** |
+| whole set, no edit | 18 of 21 (85.7 %) | 17 of 21 (81.0 %) | 94 % the aim (reported) |
+| distinct receipts | 84.2 % | 78.9 % | reported |
+| rows (price and name) | 96.0 % | 96.5 % | reported |
+| prices | 97.5 % | 97.5 % | reported |
+| false matches | 0 | 0 | 0: **met** |
+| extra set (not counted) | 4 of 9 | 4 of 9 | reported |
+
+Beside CP3's accepted figures (Node 15 of 18, browser 16 and 14 of 18,
+rows 96 %, prices 97–98 %, 0 false matches): unchanged on the tuning
+part. Failing tuning images: boutique (its name line), doc3, doc5, as
+since CP3. Held out, per case and run: lidl_phone1 yes/yes, lidl_phone2
+yes/yes, lidl_phone3 yes/**no** (run 2: the line `KINDER BARRINHAS
+CHOCOLATE 1,79` wasn't read; flagged as a mismatch, never "Matches").
+
+**The photo quality check on the held-out images** (`measure-quality.mjs
+--held-out --runs 2`): no warning on any of the three, both runs (text
+57–59 px, sharpness 130–134, brightness 153–169, contrast 67–68,
+coverage 0.35–0.38; 2.1–2.3 s per 12-MP photo). No false warning: phone1
+and phone2 read with no edit in both runs. **Stop condition (P11):**
+phone3 failed in run 2 on a printed line not read, which P11 counts as
+"for the photo's sake", with no warning. `diag-lines.mjs` read that line
+in 3 runs of 3, and every measure of the photo is far from its threshold:
+the cause is the browser's run-to-run reading variance (recorded since
+CP3), not the photo. No threshold was changed (P14). **The user's
+decision (2026-10-04): accepted as reading variance**; the check stands
+as calibrated.
+
+**Privacy** (`docs/milestones/milestone-2-5-evidence/`):
+`check-requests.mjs page-load` (7 requests) and `scan` on `sample-1.jpg`
+and `sample-12.jpg` (19 same-origin GETs each, the bill matching its
+sample by P2 with `--expect-bill`), no CSP violation; each log passes
+`audit` offline.
+
+**Documentation.** ADR 0003 (PaddleOCR), ADR 0002 marked superseded in
+part, `THIRD_PARTY_NOTICES.md` and Settings (PaddleOCR, its models, ONNX
+Runtime; Tesseract gone; `ppu-paddle-ocr` and `ppu-ocv`'s licences now
+served), `README.md` and `app/README.md`.
+
+**Phone times (P13): not timed, the user's decision (2026-10-04).** The
+user tested the reading on their iPhone 13 (the preview build over the
+local network) and found it fast ("pretty neat"), but didn't time images
+(a), (b) and (c), and asked to skip the timings. No phone time is
+recorded, so none is reported as over P13's 30 s.
+
+**Verification.** `npm run check`: typecheck, lint and format pass; the
+tests 1066 passed, 1 skipped (50 files). A first run had one timeout in
+`SplitPage.lines.test.tsx` (the 10 s `waitFor` under the whole suite's
+load); the file passes alone (7 of 7), and the second full run passed.
+`npm run build` passes. PR #9's checks run on the push.
+
+**Found on the phone: no WebAssembly (the user's request, 2026-10-04).**
+On the user's iPhone 13 (iOS 26.6.1) every scan said "The receipt reader
+couldn't load. Check your connection". The cause, from a diagnostic page
+on the preview build: Lockdown Mode was on, and it turns WebAssembly off
+in Safari (`WebAssembly` undefined), so ONNX Runtime has no backend and
+the reader reports `assetsUnavailable`. The message blames the
+connection, wrongly. The user asked for a clear message naming the cause,
+and the scan button hidden up front when WebAssembly is missing (typing
+the items in stays). Not in plan revision 8: it is added as a new
+checkpoint by a plan amendment.
 
 ### CP5 — done
 

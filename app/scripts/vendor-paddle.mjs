@@ -71,6 +71,18 @@ export const ORT_FILES = [
   },
 ]
 
+/**
+ * The licences of the packages bundled into the app's own code (MIT): the
+ * engine wrapper and its canvas helpers (M2.5, CP6).
+ */
+export const LICENSE_FILES = [
+  {
+    from: 'ppu-paddle-ocr/LICENSE',
+    to: 'licenses/ppu-paddle-ocr-LICENSE.txt',
+  },
+  { from: 'ppu-ocv/LICENSE', to: 'licenses/ppu-ocv-LICENSE.txt' },
+]
+
 /** Licence notes for what ships no licence file. */
 export const PADDLE_NOTICES = [
   {
@@ -162,7 +174,7 @@ export async function vendorPaddle({
   fetchFile = (url) => fetch(url),
 }) {
   const missing = []
-  for (const { from } of ORT_FILES) {
+  for (const { from } of [...ORT_FILES, ...LICENSE_FILES]) {
     if (!(await isFile(path.join(nodeModules, from)))) missing.push(from)
   }
   if (missing.length > 0) {
@@ -179,7 +191,7 @@ export async function vendorPaddle({
   await rm(path.join(outDir, 'ort'), { recursive: true, force: true })
   await rm(path.join(outDir, 'paddle'), { recursive: true, force: true })
   const written = []
-  for (const { from, to } of ORT_FILES) {
+  for (const { from, to } of [...ORT_FILES, ...LICENSE_FILES]) {
     const target = path.join(outDir, to)
     await mkdir(path.dirname(target), { recursive: true })
     await copyFile(path.join(nodeModules, from), target)

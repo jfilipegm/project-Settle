@@ -157,5 +157,13 @@ describe('vendor-paddle.mjs', () => {
     )
     expect(notice).toContain('Apache-2.0')
     expect(notice).toContain(PADDLE_REVISION)
+    // The packages bundled into the app's code: their MIT licences.
+    for (const name of ['ppu-paddle-ocr', 'ppu-ocv']) {
+      const text = await readFile(
+        path.join(scratch, `out/licenses/${name}-LICENSE.txt`),
+        'utf8',
+      )
+      expect(text).toContain('MIT')
+    }
   })
 })
