@@ -176,6 +176,50 @@ describe('Review lines (M2.5, P15)', () => {
     ).toBeInTheDocument()
   })
 
+  it('starts afresh for the next receipt: nothing added or selected carries over', async () => {
+    const receipt = (extra: string): TextLine[] => [
+      { text: 'Bica 0,80', confidence: 95, box: box(10) },
+      { text: 'TOTAL 0,80', confidence: 95, box: box(40) },
+      { text: extra, confidence: 95, box: box(70) },
+    ]
+    const importReceipt = vi
+      .fn<ImportReceiptFn>()
+      .mockImplementationOnce(importing(receipt('Couvert 1,00')))
+      .mockImplementationOnce(importing(receipt('Gorjeta 2,00')))
+    await scanAndOpenReview(importReceipt)
+    fireEvent.click(lineButtons()[0] as HTMLElement)
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Add as item: Couvert 1,00' }),
+    )
+
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    fireEvent.change(screen.getByLabelText('Choose file'), {
+      target: { files: [new File(['r'], 'r2.jpg', { type: 'image/jpeg' })] },
+    })
+    await waitFor(
+      () => expect(screen.getByDisplayValue('Bica')).toBeInTheDocument(),
+      LOADED,
+    )
+    await waitFor(() => expect(importReceipt).toHaveBeenCalledTimes(2), LOADED)
+    if (
+      screen.queryByRole('list', { name: 'Lines read from the receipt' }) ===
+      null
+    ) {
+      fireEvent.click(screen.getByText('Review lines'))
+    }
+    await waitFor(
+      () =>
+        expect(within(list()).getByText('Gorjeta 2,00')).toBeInTheDocument(),
+      LOADED,
+    )
+    expect(
+      screen.getByRole('button', { name: 'Add as item: Gorjeta 2,00' }),
+    ).toBeEnabled()
+    expect(
+      within(list()).queryByRole('button', { pressed: true }),
+    ).not.toBeInTheDocument()
+  })
+
   it('adds a missed line, checking the name and price like the bill editor', async () => {
     await scanAndOpenReview(importing())
     const form = screen.getByRole('group', { name: 'Add a missed line' })

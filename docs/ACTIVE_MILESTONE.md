@@ -61,6 +61,21 @@ file (a one-off script, not committed):
 | `sample-6-scanned.pdf` | `readerUnsupported`'s message, no reader worker | imported, 3 items (`paddle-ocr` worker) |
 | `sample-3.heic` | `readerUnsupported`'s message, no reader worker | (not run) |
 
+**Self-review of the whole milestone (before the implementation
+review).** Two fixes. (1) "Review lines" kept what was added or selected
+across imports: after a second scan, the new receipt's line at the same
+position showed "Added" and couldn't be added. `ReceiptLines` now starts
+afresh when it is given a new import's lines (a test in
+`SplitPage.lines.test.tsx`). (2) The Split page tests failed now and then
+(about 1 run in 15 before CP6A, at 10 s): a bill's last draft save, a
+passive effect, could flush after a test file's own `localStorage.clear()`,
+so the next test started with that bill and its scan stopped at a replace
+prompt jsdom answers "no". The shared test setup now clears storage after
+the unmount; 20 runs of the page tests in a row passed. Then `npm run
+check` (52 files, 1084 tests passed, 1 skipped), `npm run build`,
+`check-build.mjs`, and CI's browser smoke test on samples 1 and 12 (both
+match, no receipt value in any request) in local Brave.
+
 **Still to come: the user's iPhone checks** (the preview build over the
 local network). With Lockdown Mode on for the site: the note and Choose
 PDF show, and an app's PDF receipt imports if there's one to hand. With

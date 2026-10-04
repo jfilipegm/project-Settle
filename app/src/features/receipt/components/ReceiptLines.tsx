@@ -39,6 +39,14 @@ export function ReceiptLines({
 }: Props) {
   const [selected, setSelected] = useState<number>()
   const [added, setAdded] = useState<ReadonlySet<number>>(new Set())
+  // A new import's lines start afresh: what was added or selected belongs
+  // to the receipt it was read from.
+  const [linesShown, setLinesShown] = useState(lines)
+  if (linesShown !== lines) {
+    setLinesShown(lines)
+    setSelected(undefined)
+    setAdded(new Set())
+  }
   const [size, setSize] = useState<{ width: number; height: number }>()
   const boxed = lines.some((line) => line.box?.page === 0)
   const full = bill.items.length >= LIMITS.maxItems
