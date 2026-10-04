@@ -2281,7 +2281,7 @@
       "registry_path": "docs/ai-workflow/registry/milestone-2-5-registry.json",
       "mapping_path": "docs/ai-workflow/requirements/milestone-2-5-mapping.json",
       "governing_workflow_version": "2.2",
-      "phase": "SELF_REVIEWING_IMPLEMENTATION",
+      "phase": "AMENDING_PLAN",
       "plan_revision": 8,
       "implementation_revision": null,
       "functional_review_round": null,
@@ -2317,7 +2317,7 @@
       },
       "current_bundle_id": "5cc5bd2297247d94426f283b2a91ff24b9ee409313656e0638af2f214f4ea22c",
       "plan_approval": {
-        "status": "CURRENT",
+        "status": "SUPERSEDED",
         "basis": "EXTERNAL_APPROVE",
         "reviewed_bundle_id": "5cc5bd2297247d94426f283b2a91ff24b9ee409313656e0638af2f214f4ea22c",
         "approved_review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb",
@@ -2366,26 +2366,19 @@
       },
       "functional_acceptance_status": null,
       "blocking_decisions": [],
-      "state_revision": 46,
-      "last_transition": "2026-10-04T18:08:48Z",
+      "state_revision": 47,
+      "last_transition": "2026-10-04T18:13:00Z",
       "feedback_layout": "scoped",
       "plan_review_binding": {
-        "status": "BOUND",
-        "at": "2026-10-03T20:43:51Z",
+        "status": "CONSUMED",
+        "at": "2026-10-04T18:13:00Z",
         "consumed": {
-          "review_content_id": "4fc0a267923b8008ef160abe4de70f14b77f1974d95ed9e8f59b941c7d9e2b42",
-          "plan_revision": 7,
+          "review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb",
+          "plan_revision": 8,
           "legacy": false
         },
-        "published": {
-          "review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb",
-          "plan_revision": 8
-        },
-        "bound": {
-          "review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb",
-          "bundle_id": "5cc5bd2297247d94426f283b2a91ff24b9ee409313656e0638af2f214f4ea22c",
-          "plan_revision": 8
-        }
+        "published": null,
+        "bound": null
       },
       "amendment_history": [
         {
@@ -2450,9 +2443,75 @@
             "CP6": "needs_revalidation"
           },
           "resolved_review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb"
+        },
+        {
+          "amendment_id": "1",
+          "requested_at": "2026-10-04T18:13:00Z",
+          "requested_from_phase": "SELF_REVIEWING_IMPLEMENTATION",
+          "reason": "on an iPhone with Lockdown Mode, WebAssembly is off, so receipt reading fails with a misleading \"check your connection\" message. Add a checkpoint that detects missing WebAssembly up front, hides the scan button, and shows a clear message naming the cause; typing items in stays",
+          "superseded_plan_revision": 8,
+          "superseded_plan_approval": {
+            "status": "CURRENT",
+            "basis": "EXTERNAL_APPROVE",
+            "reviewed_bundle_id": "5cc5bd2297247d94426f283b2a91ff24b9ee409313656e0638af2f214f4ea22c",
+            "approved_review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb",
+            "review_content_manifest": [
+              {
+                "path": "docs/ai-workflow/registry/milestone-2-5-registry.json",
+                "exists": true,
+                "mode": "100644",
+                "blob": "15baf056fd8604c62f8b05dd1c23ccf8154e7ff3"
+              },
+              {
+                "path": "docs/ai-workflow/requirements/milestone-2-5-mapping.json",
+                "exists": true,
+                "mode": "100644",
+                "blob": "6457afb08afad318a2ea1a97329ea401a07811db"
+              },
+              {
+                "path": "docs/milestones/milestone-2-5-PLAN.md",
+                "exists": true,
+                "mode": "100644",
+                "blob": "a38631a0c5fe8198f2a4b1b9b61ae963e4a822a6"
+              }
+            ],
+            "reviewed_content_commit": null,
+            "legacy_evidence": null,
+            "user_confirmation": "I approve milestone-2-5 plan",
+            "waived_guarantees": [],
+            "recorded_at": "2026-10-03T21:47:41Z"
+          },
+          "checkpoints_snapshot": {
+            "CP1": {
+              "status": "COMPLETE",
+              "start_commit": "676a1ea9561649013bd2d245df10a615cb6b15ab"
+            },
+            "CP2": {
+              "status": "COMPLETE",
+              "start_commit": "725d0dad20a900fdd02e82e54b5224a16b6f3171"
+            },
+            "CP3": {
+              "status": "COMPLETE",
+              "start_commit": "5b51204b9e67f756907723269ad3b67c441efea7"
+            },
+            "CP4": {
+              "status": "COMPLETE",
+              "start_commit": "aca083d13dfc908ef1c462873fc8f6c9784f7ab7"
+            },
+            "CP5": {
+              "status": "COMPLETE",
+              "start_commit": "19dceaa55430f869c68fd329b988082cb0a969ed"
+            },
+            "CP6": {
+              "status": "COMPLETE",
+              "start_commit": "d257f2a8293b69342f40abaf307355e47f0cb4d0"
+            }
+          },
+          "pre_amendment_approval_commit": "aca083d13dfc908ef1c462873fc8f6c9784f7ab7",
+          "resolved_at_plan_revision": null
         }
       ],
-      "amendment_base_commit": "07ec74a5a6eb830094a73f257a6a8a8374f763e3"
+      "amendment_base_commit": "d8127b9fed61555ea8ccf16d37e2a41bccd3504a"
     }
   }
 }
