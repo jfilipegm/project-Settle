@@ -83,8 +83,28 @@ describe('assembleLines (P7)', () => {
   it('drops empty boxes and lines', () => {
     expect(
       assembleLines([box('  ', 10, 40), box('Bica', 10, 70), box('', 60, 70)]),
-    ).toEqual([{ text: 'Bica', confidence: 95 }])
+    ).toEqual([
+      {
+        text: 'Bica',
+        confidence: 95,
+        box: { page: 0, x: 10, y: 70, width: 40, height: 20 },
+      },
+    ])
     expect(assembleLines([])).toEqual([])
+  })
+
+  it('keeps the rectangle around each line’s boxes, on its page (P15)', () => {
+    const lines = assembleLines(
+      [box('Bica', 10, 40, 40, 20), box('0,80', 300, 42, 50, 22)],
+      { page: 2 },
+    )
+    expect(lines[0]?.box).toEqual({
+      page: 2,
+      x: 10,
+      y: 40,
+      width: 340,
+      height: 24,
+    })
   })
 })
 

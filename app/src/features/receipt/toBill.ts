@@ -27,6 +27,7 @@ import type {
   ParsedReceipt,
   ReceiptSummary,
   ReceiptWarning,
+  ReviewLine,
 } from './model.ts'
 
 export interface ReceiptToBillOptions {
@@ -37,6 +38,11 @@ export interface ReceiptToBillOptions {
 export interface ReceiptToBillResult {
   bill: Bill
   summary: ReceiptSummary
+  /**
+   * P15: the receipt's lines, each item line linked to its bill row, for
+   * the row-by-row review. Present when the receipt has lines; never saved.
+   */
+  lines?: ReviewLine[]
 }
 
 const NONE: Adjustment = { kind: 'amount', value: cents(0) }
@@ -458,11 +464,15 @@ export function receiptToBill(
         : undefined,
   )
 
+  // A cut keeps a prefix of the receipt's items, in order (R22), so the
+  // kept items' indices are the receipt's.
   const kept = reconciled.items.slice(0, LIMITS.maxItems)
   const items: Item[] = []
   const flaggedItemIds: string[] = []
+  const billItemIds: (string | undefined)[] = []
   for (const parsed of kept) {
     const item = toItem(parsed, nextId(), currentBill)
+    billItemIds.push(item?.id)
     if (item !== undefined) {
       items.push(item)
       if (parsed.needsCheck) {
@@ -547,5 +557,19 @@ export function receiptToBill(
       amount: item.lineTotal,
     }))
   }
-  return { bill, summary }
+  if (receipt.lines === undefined) {
+    return { bill, summary }
+  }
+  // P15: an item line links to its bill row; one whose item a cut or the
+  // item limit left out keeps its role and is marked so.
+  const lines = receipt.lines.map((line): ReviewLine => {
+    if (line.itemIndex === undefined || receipt.items.length === 0) {
+      return { ...line }
+    }
+    const billItemId = billItemIds[line.itemIndex]
+    return billItemId === undefined
+      ? { ...line, leftOut: true }
+      : { ...line, billItemId }
+  })
+  return { bill, summary, lines }
 }

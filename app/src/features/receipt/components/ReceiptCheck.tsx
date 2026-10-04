@@ -9,6 +9,7 @@ import type {
   PhotoQuality,
   ReceiptSummary,
   RemovedLine,
+  ReviewLine,
 } from '../model.ts'
 import { checkReceipt, type ReceiptCheck as Check } from '../reconcile.ts'
 import {
@@ -19,6 +20,7 @@ import {
   readShare,
 } from '../review.ts'
 import { PhotoAdvice } from './PhotoAdvice.tsx'
+import { ReceiptLines } from './ReceiptLines.tsx'
 import styles from './receipt.module.css'
 
 interface Props {
@@ -33,6 +35,12 @@ interface Props {
    * `scripts/measure-quality.mjs` (the browser's own values). Never shown.
    */
   photoChecks?: readonly PhotoQuality[] | undefined
+  /** P15: the lines read, for "Review lines", this import only. */
+  lines?: readonly ReviewLine[] | undefined
+  /** P15: adds a line as a flagged item shared by everyone. */
+  onAddItem?: (name: string, amount: Cents) => void
+  /** P15: the bill row of the line selected in the review, or none. */
+  onSelectItem?: (itemId: string | undefined) => void
   region: Region
   headingRef?: Ref<HTMLHeadingElement>
   onDismiss: () => void
@@ -157,6 +165,9 @@ export function ReceiptCheck({
   imageUrl,
   photoIssues = [],
   photoChecks,
+  lines,
+  onAddItem,
+  onSelectItem,
   region,
   headingRef,
   onDismiss,
@@ -298,6 +309,24 @@ export function ReceiptCheck({
       )}
 
       <PhotoAdvice issues={photoIssues} lead={PHOTO_ADVICE_LEAD_DONE} />
+
+      {lines !== undefined && lines.length > 0 && (
+        <details className={splitStyles.details}>
+          <summary>Review lines</summary>
+          <ReceiptLines
+            lines={lines}
+            imageUrl={imageUrl}
+            bill={bill}
+            region={region}
+            onAddItem={(name, amount) => {
+              onAddItem?.(name, amount)
+            }}
+            onSelectItem={(itemId) => {
+              onSelectItem?.(itemId)
+            }}
+          />
+        </details>
+      )}
 
       {imageUrl !== undefined && (
         <details className={splitStyles.details}>

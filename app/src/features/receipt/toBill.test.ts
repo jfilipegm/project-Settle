@@ -970,3 +970,50 @@ describe('R10 and R14', () => {
     expect(checkReceipt(bill, summary).status).toBe('match')
   })
 })
+
+describe('P15: the review’s lines, linked to the bill', () => {
+  it('links each item line, and its detail, to its bill row', () => {
+    const { bill, lines } = receiptToBill(
+      text('BANANA', '0,535 kg x 1,99 1,06', 'Pao 1,10', 'TOTAL 2,16'),
+      undefined,
+      current(),
+      counter(),
+    )
+    const ids = bill.items.map((entry) => entry.id)
+    expect(lines?.map((line) => [line.role, line.billItemId ?? null])).toEqual([
+      ['item', ids[0]],
+      ['itemDetail', ids[0]],
+      ['item', ids[1]],
+      ['total', null],
+    ])
+  })
+
+  it('marks a line a cut left out (R24), keeping its role', () => {
+    const { bill, summary, lines } = receiptToBill(
+      text('Pao 1,10', 'Leite 0,89', 'T0TAI 1,99'),
+      ptQr('1.99'),
+      current(),
+      counter(),
+    )
+    expect(summary.removedLines).toEqual([{ name: 'T0TAI', amount: 199 }])
+    expect(bill.items).toHaveLength(2)
+    expect(lines?.at(-1)).toMatchObject({
+      text: 'T0TAI 1,99',
+      role: 'item',
+      itemIndex: 2,
+      leftOut: true,
+    })
+    expect(lines?.at(-1)).not.toHaveProperty('billItemId')
+  })
+
+  it('gives no lines for a receipt without them', () => {
+    expect(
+      receiptToBill(
+        receipt({ items: [item('Pao', 110)] }),
+        undefined,
+        current(),
+        counter(),
+      ),
+    ).not.toHaveProperty('lines')
+  })
+})

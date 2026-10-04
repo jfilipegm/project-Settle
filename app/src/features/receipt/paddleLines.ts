@@ -8,7 +8,8 @@
  * are removed (`1 ,39` → `1,39`). A box far to the right of the previous
  * one can be joined with a wide gap marker instead of a space, so the
  * parser can tell a price column from a name; whether that helps is CP3's
- * question, so it's off unless asked for.
+ * question, so it's off unless asked for. Each line keeps the rectangle
+ * around its boxes (P15's review).
  */
 import type { TextLine } from './model.ts'
 
@@ -28,6 +29,8 @@ export interface AssembleOptions {
   gapMarker?: string
   /** @default 2 */
   gapFactor?: number
+  /** P15: the page the boxes are on, for each line's box. @default 0 */
+  page?: number
 }
 
 interface Row {
@@ -158,7 +161,22 @@ function lineOf(row: Row, options: AssembleOptions): TextLine {
   const confidence = Math.round(
     100 * Math.min(...boxes.map((box) => box.confidence)),
   )
-  return { text: repairNumbers(text).trim(), confidence }
+  // P15: the rectangle around the row's boxes, in the page's pixels.
+  const left = Math.min(...boxes.map((box) => box.box.x))
+  const top = Math.min(...boxes.map((box) => box.box.y))
+  const right = Math.max(...boxes.map((box) => box.box.x + box.box.width))
+  const bottom = Math.max(...boxes.map((box) => box.box.y + box.box.height))
+  return {
+    text: repairNumbers(text).trim(),
+    confidence,
+    box: {
+      page: options.page ?? 0,
+      x: left,
+      y: top,
+      width: right - left,
+      height: bottom - top,
+    },
+  }
 }
 
 /** A page's boxes as lines, in reading order, empty lines dropped. */

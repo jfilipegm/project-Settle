@@ -19,8 +19,10 @@ import { toBillRatio } from '../../split/model.ts'
 import { isValidNif } from '../fiscalQr.ts'
 import type {
   ItemsEnd,
+  LineRole,
   ParsedItem,
   ParsedReceipt,
+  ReceiptLine,
   ReceiptWarning,
   TextLine,
 } from '../model.ts'
@@ -91,6 +93,11 @@ interface Line {
   /** Any amount on the line needed an OCR character fix. */
   fixed: boolean
   endsInAmount: boolean
+  /**
+   * P15: the input lines this line was read from, by index: one, or more
+   * when lines were merged (a quantity line, a price under its name).
+   */
+  sources: number[]
 }
 
 const MARKER = /^(?:\d+(?:[.,]\d+)?x|x|un|und|unid|uni|kg|kgs)$/
@@ -263,6 +270,15 @@ function analyse(text: string, confidence: number): Line {
     negative: last !== undefined && last < 0,
     fixed: amounts.some((amount) => amount.fixed),
     endsInAmount: tail.at(-1)?.kind === 'amount',
+    sources: [],
+  }
+}
+
+/** Two lines read as one: `text`, from both lines' sources, in this order. */
+function joined(text: string, first: Line, second: Line): Line {
+  return {
+    ...analyse(text, Math.min(first.confidence, second.confidence)),
+    sources: [...first.sources, ...second.sources],
   }
 }
 
@@ -383,7 +399,7 @@ function withQuantity(item: Line, quantity: Line): Line {
   ]
     .map((token) => token.text)
     .join(' ')
-  return analyse(text, Math.min(item.confidence, quantity.confidence))
+  return joined(text, item, quantity)
 }
 
 /**
@@ -439,10 +455,7 @@ function mergeQuantityLines(lines: readonly Line[]): Line[] {
         )
         .map((token) => token.text)
         .join(' ')
-      merged[merged.length - 1] = analyse(
-        `${name} ${line.text}`,
-        Math.min(previous.confidence, line.confidence),
-      )
+      merged[merged.length - 1] = joined(`${name} ${line.text}`, previous, line)
     } else {
       merged.push(line)
     }
@@ -477,9 +490,10 @@ function mergeTotalLines(lines: readonly Line[]): Line[] {
         hasPhrase(previous.words, SUBTOTAL) ||
         hasPhrase(previous.words, TAX_SUMMARY))
     ) {
-      merged[merged.length - 1] = analyse(
+      merged[merged.length - 1] = joined(
         `${previous.text} ${line.text}`,
-        Math.min(previous.confidence, line.confidence),
+        previous,
+        line,
       )
     } else {
       merged.push(line)
@@ -522,9 +536,10 @@ function mergePriceLines(lines: readonly Line[]): Line[] {
         .slice(lastAt)
         .map((token) => token.text)
         .join(' ')
-      merged[merged.length - 1] = analyse(
+      merged[merged.length - 1] = joined(
         `${previous.text} ${price}`,
-        Math.min(previous.confidence, line.confidence),
+        previous,
+        line,
       )
     } else {
       merged.push(line)
@@ -585,9 +600,11 @@ function mergeCodeLines(lines: readonly Line[]): Line[] {
       const amounts = rest
         .filter((token) => token.kind !== 'number')
         .map((token) => token.text)
-      merged[merged.length - 1] = analyse(
+      // The description is the item's line; the code line its detail.
+      merged[merged.length - 1] = joined(
         [...quantity, line.text, ...amounts].join(' '),
-        Math.min(previous.confidence, line.confidence),
+        line,
+        previous,
       )
     } else {
       merged.push(line)
@@ -1228,16 +1245,14 @@ export function parseReceiptText(input: readonly TextLine[]): ParsedReceipt {
 }
 
 function parse(input: readonly TextLine[]): ParsedReceipt {
+  const analysed: Line[] = input.map((entry, index) => ({
+    ...analyse(trimEdgeNoise(entry.text), entry.confidence),
+    sources: [index],
+  }))
   const lines = mergeTotalLines(
     mergePriceLines(
       mergeCodeLines(
-        mergeQuantityLines(
-          input
-            .map((entry) =>
-              analyse(trimEdgeNoise(entry.text), entry.confidence),
-            )
-            .filter((line) => line.tokens.length > 0),
-        ),
+        mergeQuantityLines(analysed.filter((line) => line.tokens.length > 0)),
       ),
     ),
   )
@@ -1308,18 +1323,36 @@ function parse(input: readonly TextLine[]): ParsedReceipt {
   // informational lines don't break the run.
   const items: ParsedItem[] = []
   const billDiscounts: Cents[] = []
+  // P15: the item each line produced or belongs to, for the review.
+  const itemOf = new Map<Classified, number>()
   let discountable: number | undefined
+  let lastItem: number | undefined
   for (const entry of classified) {
     const { line } = entry
+    if (entry.region !== 'items') {
+      lastItem = undefined
+    } else if (
+      lastItem !== undefined &&
+      entry.group !== 'item' &&
+      entry.group !== 'discount' &&
+      !isCategoryHeader(line)
+    ) {
+      itemOf.set(entry, lastItem)
+    }
     if (isCodeAndSize(line) || isInformational(line)) {
       continue
     }
     if (entry.group === 'item' && entry.region === 'items') {
       items.push(readItem(line, hasQuantityColumn))
       discountable = items.length - 1
+      lastItem = discountable
+      itemOf.set(entry, discountable)
     } else if (entry.group === 'discount' && line.last !== undefined) {
       const discount = magnitude(line.last)
       const item = discountable === undefined ? undefined : items[discountable]
+      if (entry.region === 'items' && item !== undefined) {
+        itemOf.set(entry, discountable ?? 0)
+      }
       if (entry.region === 'items' && item !== undefined && !line.negative) {
         items[discountable ?? 0] = {
           ...item,
@@ -1444,5 +1477,73 @@ function parse(input: readonly TextLine[]): ParsedReceipt {
   if (billDiscounts.length > 0) receipt.discount = sum(billDiscounts)
   if (total !== undefined) receipt.total = total
   if (itemsEndedBy !== undefined) receipt.itemsEndedBy = itemsEndedBy
+  if (input.length > 0)
+    receipt.lines = lineRoles(input, analysed, classified, itemOf)
   return receipt
+}
+
+/** P15: a classified line's role, as the parser used it. */
+function roleOf(entry: Classified, item: number | undefined): LineRole {
+  if (entry.group === 'item') {
+    return entry.region === 'items' ? 'item' : 'ignored'
+  }
+  if (entry.payment) return 'payment'
+  // A total, tax, tip or discount line counts only with its amount (a
+  // column header with a tax word is no tax line).
+  if (
+    entry.line.last === undefined &&
+    entry.group !== 'text' &&
+    entry.group !== 'ignore'
+  ) {
+    return item === undefined ? 'ignored' : 'itemDetail'
+  }
+  switch (entry.group) {
+    case 'total':
+    case 'subtotal':
+      return 'total'
+    case 'discount':
+    case 'savings':
+      return 'discount'
+    case 'tip':
+      return 'tip'
+    case 'tax':
+    case 'taxSummary':
+      return 'taxTable'
+    default:
+      // Inside the items region, under an item: its code, variant or
+      // attribute line.
+      return item === undefined ? 'ignored' : 'itemDetail'
+  }
+}
+
+/**
+ * P15: every input line in order, with the role the parser gave the line
+ * it became part of. A merged item's first line is the item; the lines
+ * merged into it (a quantity, a price, a code line) are its detail. An
+ * empty line is ignored. Recording only: nothing here changes parsing.
+ */
+function lineRoles(
+  input: readonly TextLine[],
+  read: readonly Line[],
+  classified: readonly Classified[],
+  itemOf: ReadonlyMap<Classified, number>,
+): ReceiptLine[] {
+  const lines: ReceiptLine[] = input.map((entry, index) => {
+    const line: ReceiptLine = { text: entry.text, role: 'ignored' }
+    if (entry.box !== undefined) line.box = entry.box
+    const amount = read[index]?.last
+    if (amount !== undefined) line.amount = amount
+    return line
+  })
+  for (const entry of classified) {
+    const item = itemOf.get(entry)
+    const role = roleOf(entry, item)
+    entry.line.sources.forEach((source, position) => {
+      const line = lines[source]
+      if (line === undefined) return
+      line.role = role === 'item' && position > 0 ? 'itemDetail' : role
+      if (item !== undefined) line.itemIndex = item
+    })
+  }
+  return lines
 }

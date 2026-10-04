@@ -8,9 +8,9 @@ revision 8, `docs/milestones/milestone-2-5-PLAN.md`), on
 
 ## Next action
 
-**CP4 is done.** Next: the held-out receipts (P14: at least 5 new
-distinct receipts, at least 3 camera originals), then
-`/milestone-implement milestone-2-5` for CP5 (the row-by-row review).
+**CP5 is done.** Next: 2 more new receipts (they complete CP6's set:
+20 distinct, 5 held out), then `/milestone-implement milestone-2-5` for
+CP6 (acceptance measurement, phone times, privacy, documentation).
 
 ## Checkpoints
 
@@ -20,8 +20,45 @@ distinct receipts, at least 3 camera originals), then
   still the default).
 - [x] **CP3** — tuning on the local set (plateau accepted at 83–89 %).
 - [x] **CP4** — corpus, the photo quality check, Tesseract retired.
-- [ ] CP5 — the row-by-row review.
+- [x] **CP5** — the row-by-row review.
 - [ ] CP6 — acceptance measurement, phone, privacy, documentation.
+
+### CP5 — done
+
+"Review lines" in the check panel (P15): the receipt image with a box
+over each line, coloured by its role, and the same lines as a list in
+receipt order, each with its role written, its text and its amount.
+Selecting a line highlights its box and its bill row; "Add as item" (an
+ignored line or an item detail with an amount) and "Add a missed line"
+(a name and a price, checked like the bill editor) add a flagged item
+shared by everyone through `addItems`; neither is offered at 100 items.
+A PDF read from its text layer shows the list only. The lines are kept
+in memory beside the image, never saved; a reload, Dismiss and New bill
+drop them.
+
+- The parser records each input line's role where it already decides it
+  (`lines` on `ParsedReceipt`): a merged line's sources are carried
+  through every merge, so a quantity, price or code line merged into an
+  item is that item's detail. Roles: item, item detail, discount or
+  savings, total or subtotal, **tip** (added beside P15's list: tip lines
+  exist in the parser and fit none of its roles), tax table, payment,
+  ignored. A total, tax, tip or discount line counts only with its
+  amount (a column header with a tax word is ignored). The parser suite,
+  the text fixtures and the corpus pass unchanged.
+- `paddleLines.ts` keeps each line's rectangle and page; `toBill.ts`
+  links each item line to its bill row, and marks a line whose item a
+  cut (R24) or the limit left out. `fromCrop` (a re-read tall box's parts
+  back on the page, `splitTall`) is tested on its own.
+- Checked in headless Brave at 360 px, light and dark: no horizontal
+  scroll, the boxes keep their contrast on the receipt (fixed colours
+  with a dark halo), the roles written in the list.
+- Tuning numbers with the roles recorded (browser, two runs,
+  `measure-local.mjs`; the 3 held-out cases skipped): 15 and 15 of 18 with
+  no edit, rows 96.1 %, prices 96.6 and 97.2 %, false matches 0 — as CP4
+  (16 and 15) and CP3 (16 and 14); failing: boutique (its name line, in
+  some runs), doc3, doc5. Unchanged (P14).
+- Verification: `npm run check` (`tsc -b`, ESLint, Prettier, Vitest: 50
+  files, 1066 passed, 1 skipped) and `npm run build` pass.
 
 ### CP4 — done
 
@@ -489,9 +526,10 @@ skipped where the folder is missing, as in CI.
 
 ## Receipts still needed (CP6)
 
-At least 20 distinct receipts (16 now), at least 5 held out (added after
-CP3's last change; 0 now), at least 3 camera originals (0 now), a HEIC
-one if the phone saves HEIC (plan revision 8).
+At least 20 distinct receipts (19 now), at least 5 held out (3 now:
+`lidl_phone1`–`3`, added 2026-10-04), at least 3 camera originals (3
+now, iPhone 13, 4032 × 3024 JPEG, sent by email at full size), and a
+HEIC one if the phone saves HEIC (the email sent JPEGs). Plan revision 8.
 
 ## Last completed: M2 — Receipt upload and built-in parsing
 

@@ -25,6 +25,7 @@ import type {
   ReceiptPage,
   ReceiptReader,
   ReceiptSummary,
+  ReviewLine,
 } from './model.ts'
 import { combineIssues } from './photoQuality.ts'
 import { receiptToBill } from './toBill.ts'
@@ -72,6 +73,8 @@ export type ImportResult =
        * `scripts/measure-quality.mjs`. Never saved.
        */
       photoChecks?: PhotoQuality[]
+      /** P15: the lines read, with their roles, for the review. Never saved. */
+      lines?: ReviewLine[]
     }
   | { ok: false; error: ReadError }
 
@@ -163,7 +166,7 @@ export async function importReceipt(
     stopQr()
   }
 
-  const { bill, summary } = receiptToBill(
+  const { bill, summary, lines } = receiptToBill(
     receipt,
     qr,
     currentBill,
@@ -183,5 +186,6 @@ export async function importReceipt(
     ...(imageUrl !== undefined && { imageUrl }),
     ...(photoIssues.length > 0 && { photoIssues }),
     ...(qualities.length > 0 && { photoChecks: qualities }),
+    ...(lines !== undefined && { lines }),
   }
 }

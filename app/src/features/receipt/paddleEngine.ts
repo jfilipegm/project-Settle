@@ -204,12 +204,7 @@ export async function createPaddleEngine({
         .map((part): PaddleBox => ({
           text: part.text,
           confidence: part.confidence,
-          box: {
-            x: x + part.box.x / TALL_SCALE,
-            y: y + part.box.y / TALL_SCALE,
-            width: part.box.width / TALL_SCALE,
-            height: part.box.height / TALL_SCALE,
-          },
+          box: fromCrop(part.box, { x, y }, TALL_SCALE),
         }))
         .filter(
           (part) =>
@@ -230,7 +225,25 @@ export async function createPaddleEngine({
 }
 
 /** How much a tall box is enlarged before it's read again. */
-const TALL_SCALE = 2
+export const TALL_SCALE = 2
+
+/**
+ * A box found on an enlarged crop, mapped back to the page's pixels: the
+ * crop's origin on the page, and how much it was enlarged. P15's review
+ * draws these boxes on the decoded page.
+ */
+export function fromCrop(
+  box: Rect,
+  origin: { x: number; y: number },
+  scale: number,
+): Rect {
+  return {
+    x: origin.x + box.x / scale,
+    y: origin.y + box.y / scale,
+    width: box.width / scale,
+    height: box.height / scale,
+  }
+}
 
 type Rect = PaddleBox['box']
 

@@ -176,6 +176,12 @@
   background: var(--color-surface);
 }
 
+/* The item of the line selected in the receipt review (M2.5, P15). */
+.itemRow[data-highlighted] {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .itemFields {
   display: flex;
   flex-wrap: wrap;

@@ -281,7 +281,7 @@ export function createPaddleReader({
           if (quality !== undefined) onQuality(quality)
         }
         const boxes = await abortable(backend.read(page), signal)
-        text.push(assembleLines(boxes))
+        text.push(assembleLines(boxes, { page: index }))
       }
       onProgress?.({ phase: 'reading', progress: 1 })
       return { ok: true, receipt: parseReceiptText(joinPages(text)) }

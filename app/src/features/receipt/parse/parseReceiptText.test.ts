@@ -1032,3 +1032,124 @@ describe('parseReceiptText: layouts from the local set (M2.5 CP3, P9)', () => {
     expect(receipt.discount).toBeUndefined()
   })
 })
+
+describe('parseReceiptText: each line’s role (M2.5 CP5, P15)', () => {
+  const roles = (...texts: string[]) =>
+    (parse(...texts).lines ?? []).map((line) =>
+      [line.text, line.role, line.itemIndex ?? null, line.amount ?? null].join(
+        ' | ',
+      ),
+    )
+
+  it('gives every line a role, in order, with its amount and item', () => {
+    expect(
+      roles(
+        'Restaurante A Tasquinha',
+        'Bitoque 9,50',
+        'Desc. Cartão -0,50',
+        'Imperial 1,60',
+        'Subtotal 10,60',
+        'Tip 1,00',
+        'TOTAL 11,60',
+        'Multibanco 11,60',
+        'IVA 23% 1,98',
+        'Obrigado',
+      ),
+    ).toEqual([
+      'Restaurante A Tasquinha | ignored |  | ',
+      'Bitoque 9,50 | item | 0 | 950',
+      'Desc. Cartão -0,50 | discount | 0 | -50',
+      'Imperial 1,60 | item | 1 | 160',
+      'Subtotal 10,60 | total |  | 1060',
+      'Tip 1,00 | tip |  | 100',
+      'TOTAL 11,60 | total |  | 1160',
+      'Multibanco 11,60 | payment |  | 1160',
+      'IVA 23% 1,98 | taxTable |  | 198',
+      'Obrigado | ignored |  | ',
+    ])
+  })
+
+  it('makes a quantity line, a code line and a variant line the item’s detail', () => {
+    expect(
+      roles(
+        'Codigo Qtd. IVA Preço',
+        'BANANA',
+        '0,535 kg x 1,99 1,06',
+        '1792212 1 23,0% 153,30',
+        'THW CLARK 44 GREY',
+        'Marca : TH Watches',
+        'Total 154,36',
+      ),
+    ).toEqual([
+      'Codigo Qtd. IVA Preço | ignored |  | ',
+      'BANANA | item | 0 | ',
+      '0,535 kg x 1,99 1,06 | itemDetail | 0 | 106',
+      '1792212 1 23,0% 153,30 | itemDetail | 1 | 15330',
+      'THW CLARK 44 GREY | item | 1 | ',
+      'Marca : TH Watches | itemDetail | 1 | ',
+      'Total 154,36 | total |  | 15436',
+    ])
+  })
+
+  it('marks an unsigned savings line as the item’s discount', () => {
+    expect(roles('IOGURTE 2,39', 'POUPANCA 0,60', 'TOTAL 1,79')).toEqual([
+      'IOGURTE 2,39 | item | 0 | 239',
+      'POUPANCA 0,60 | discount | 0 | 60',
+      'TOTAL 1,79 | total |  | 179',
+    ])
+  })
+
+  it('ends the items at a separator (R23): footer lines are never items', () => {
+    expect(
+      roles('Pao 1,10', 'Leite 0,89', '==========', 'MULTIBANCO 1,99'),
+    ).toEqual([
+      'Pao 1,10 | item | 0 | 110',
+      'Leite 0,89 | item | 1 | 89',
+      '========== | ignored |  | ',
+      'MULTIBANCO 1,99 | payment |  | 199',
+    ])
+  })
+
+  it('reads a card slip after the total as payment and ignored lines', () => {
+    expect(
+      roles(
+        'Pao 2,10',
+        'TOTAL A PAGAR 2,10',
+        'MULTIBANCO 2,10',
+        'TALAO CLIENTE',
+        'COMPRA',
+        'TOTAL: 2,10 EUR',
+      ),
+    ).toEqual([
+      'Pao 2,10 | item | 0 | 210',
+      'TOTAL A PAGAR 2,10 | total |  | 210',
+      'MULTIBANCO 2,10 | payment |  | 210',
+      'TALAO CLIENTE | ignored |  | ',
+      'COMPRA | ignored |  | ',
+      'TOTAL: 2,10 EUR | total |  | 210',
+    ])
+  })
+
+  it('keeps each line’s box, and ignores an empty line', () => {
+    const receipt = parseReceiptText([
+      {
+        text: 'Pao 1,10',
+        confidence: 95,
+        box: { page: 0, x: 1, y: 2, width: 3, height: 4 },
+      },
+      { text: '  ', confidence: 95 },
+      { text: 'Total 1,10', confidence: 95 },
+    ])
+    expect(receipt.lines).toEqual([
+      {
+        text: 'Pao 1,10',
+        role: 'item',
+        itemIndex: 0,
+        amount: 110,
+        box: { page: 0, x: 1, y: 2, width: 3, height: 4 },
+      },
+      { text: '  ', role: 'ignored' },
+      { text: 'Total 1,10', role: 'total', amount: 110 },
+    ])
+  })
+})

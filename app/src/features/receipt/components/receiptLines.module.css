@@ -1,0 +1,154 @@
+/*
+ * P15's review. The boxes are drawn on the receipt photo, which looks the
+ * same in both themes, so their colours are fixed and each has a dark halo
+ * to stand out on paper and on a dark table; the roles are also written in
+ * the list, never colour alone.
+ */
+.review {
+  --role-item: #1f6feb;
+  --role-itemDetail: #8250df;
+  --role-discount: #1a7f37;
+  --role-total: #bc4c00;
+  --role-tip: #9a6700;
+  --role-taxTable: #0e7490;
+  --role-payment: #cf222e;
+  --role-ignored: #6e7781;
+
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.figure {
+  position: relative;
+  max-width: 100%;
+  justify-self: start;
+}
+
+.figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.boxes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.boxes rect {
+  fill: transparent;
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+  paint-order: stroke;
+  filter: drop-shadow(0 0 1px #000);
+  cursor: pointer;
+}
+
+.boxes rect[data-role='ignored'] {
+  stroke-dasharray: 4 3;
+}
+
+.boxes rect[data-selected] {
+  stroke-width: 5;
+  fill: rgb(255 214 0 / 0.25);
+}
+
+.lines {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  border-left: 4px solid var(--line-colour, var(--color-border));
+  padding-left: var(--space-2);
+}
+
+.line[data-selected] {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+}
+
+.lineButton {
+  display: flex;
+  flex: 1 1 16rem;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-1) 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.role {
+  min-width: 9rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.text {
+  flex: 1 1 10rem;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, monospace;
+}
+
+.amount {
+  font-variant-numeric: tabular-nums;
+}
+
+.missed {
+  margin: 0;
+}
+
+.boxes rect[data-role='item'],
+.line[data-role='item'] {
+  --line-colour: var(--role-item);
+  stroke: var(--role-item);
+}
+.boxes rect[data-role='itemDetail'],
+.line[data-role='itemDetail'] {
+  --line-colour: var(--role-itemDetail);
+  stroke: var(--role-itemDetail);
+}
+.boxes rect[data-role='discount'],
+.line[data-role='discount'] {
+  --line-colour: var(--role-discount);
+  stroke: var(--role-discount);
+}
+.boxes rect[data-role='total'],
+.line[data-role='total'] {
+  --line-colour: var(--role-total);
+  stroke: var(--role-total);
+}
+.boxes rect[data-role='tip'],
+.line[data-role='tip'] {
+  --line-colour: var(--role-tip);
+  stroke: var(--role-tip);
+}
+.boxes rect[data-role='taxTable'],
+.line[data-role='taxTable'] {
+  --line-colour: var(--role-taxTable);
+  stroke: var(--role-taxTable);
+}
+.boxes rect[data-role='payment'],
+.line[data-role='payment'] {
+  --line-colour: var(--role-payment);
+  stroke: var(--role-payment);
+}
+.boxes rect[data-role='ignored'],
+.line[data-role='ignored'] {
+  --line-colour: var(--role-ignored);
+  stroke: var(--role-ignored);
+}
