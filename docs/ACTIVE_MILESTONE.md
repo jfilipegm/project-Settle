@@ -4,15 +4,16 @@
 
 **M2.5 — Accurate receipt reading** (work item `milestone-2-5`, plan
 revision 10, `docs/milestones/milestone-2-5-PLAN.md`), on
-`feature/milestone-2.5` (PR #9). Phase `SELF_REVIEWING_IMPLEMENTATION`.
+`feature/milestone-2.5` (PR #9). Phase `AWAITING_FUNCTIONAL_REVIEW`.
 
 ## Next action
 
-**CP6A is done**, and with it every checkpoint of plan revision 10 (the
-amendment for browsers without WebAssembly, approved 2026-10-04). Still
-to do for CP6A: the user's two iPhone checks (below). Then
-`/milestone-implement milestone-2-5` again for the self-review and the
-implementation review bundle.
+**Functional review (the user).** The implementation review passed
+(external round 3 APPROVE) and the technical approval is commit
+`64a2b1d`. Work through the "Functional review checklist" at the end of
+this file, including the two iPhone checks deferred on 2026-10-05, and
+write any findings to
+`.ai-review/milestone-2-5/feedback/FUNCTIONAL_REVIEW.md`.
 
 ## Checkpoints
 
@@ -762,8 +763,97 @@ M1's are in the same folder).
 
 ## Functional review checklist
 
-None. M2's round-2 checklist is in commit `e84f0f6`, the remediation
-child's in `ff03b38`, and M2's round 1 in `4b75b09`.
+M2.5, round 1 (implementation revision 2, technical approval `64a2b1d`).
+Write each finding, with the step number, to
+`.ai-review/milestone-2-5/feedback/FUNCTIONAL_REVIEW.md`.
+
+### Setup
+
+1. `npm --prefix app ci`, then `npm --prefix app run build`.
+2. Desktop: `npm --prefix app run preview` and open the address it
+   prints. Phone: `npm --prefix app run preview -- --host`, then open the
+   `Network:` address on the iPhone, on the same Wi-Fi.
+3. Start from a new bill (or clear the site's data) so no saved bill gets
+   in the way.
+
+### Test data
+
+- Committed samples in `app/src/features/receipt/fixtures/browser/`:
+  `sample-1.jpg`, `sample-12.jpg` (photos), `sample-3.heic`,
+  `sample-6-scanned.pdf` (scanned PDF, no text) and `sample-9.pdf` (text
+  layer).
+- Your own receipts: anything from
+  `app/src/features/receipt/fixtures/local/` (local only, never
+  committed), and a few **new** receipts never used in the test set:
+  straight from the phone camera, an app screenshot and an app PDF if you
+  have one.
+
+### Flows and expected results
+
+1. **First scan, desktop.** Split page → "Scan a receipt" → Choose file →
+   `sample-1.jpg`. *Expected:* progress while the reader downloads (about
+   27 MB, first time only) and reads; the items fill in; the Receipt check
+   says whether the items match the total. A second scan doesn't download
+   again.
+2. **Your real receipts.** Scan 5–10 of your own, including new ones.
+   *Expected:* most come in with no edit needed (the measured level is
+   about 8 in 10). Any receipt with a wrong or missing price **never**
+   shows "Matches"; the check flags the gap instead. Note each one that
+   needed edits and what was wrong.
+3. **Photo advice.** Scan a deliberately poor photo: blurred, dark, taken
+   from far away, cut off at an edge, or a small app screenshot.
+   *Expected:* while it's being read, a specific tip (e.g. "This photo
+   looks blurred…", "The receipt is small in this photo…"); the reading
+   still goes on, and the tip stays in that import's Receipt check. A good
+   photo shows no tip. A text-layer PDF (`sample-9.pdf`) shows none.
+   Reload the page: the tip is gone (it's never saved).
+4. **Row-by-row review.** After a photo import, Receipt check →
+   "Review lines". *Expected:* the image with a box on each read line, and
+   a list of the lines in order, each with its role written out (item,
+   total, payment, ignored, …) and its amount. Selecting a line highlights
+   its box and its bill row. On an ignored line holding an item,
+   "Add as item" adds it as a flagged, shared item and the check updates.
+   "Add a missed line" takes a name and price, checked like the bill
+   editor, and adds the item. A PDF's text layer shows the list without
+   boxes.
+5. **Review after a second scan.** Scan another receipt, open
+   "Review lines" again. *Expected:* nothing from the first receipt
+   carries over (no line already shows "Added").
+6. **Lines are temporary.** Reload, or Dismiss, or "New bill".
+   *Expected:* "Review lines" is no longer offered for the old import; the
+   bill itself and its saved receipt summary are kept as before.
+7. **HEIC and scanned PDF.** Scan `sample-3.heic` and
+   `sample-6-scanned.pdf`. *Expected:* both are read (the PDF by
+   recognition, since it has no text layer).
+8. **Phone, Lockdown Mode off for the site** (deferred CP6A check). On
+   the iPhone, Safari → aA → Website Settings → Lockdown Mode off for this
+   site. "Scan a receipt" → Take photo of a real receipt. *Expected:*
+   Choose file and Take photo are both offered; the photo is read as on
+   the desktop, in about 30 s or less after the first load.
+9. **Phone, Lockdown Mode on for the site** (deferred CP6A check). Turn it
+   back on for the site and reload. *Expected:* "Scan a receipt" offers
+   only Choose PDF, says "Or drop a PDF file here" and shows a note that
+   WebAssembly is turned off, usually by Lockdown Mode, with how to turn
+   it off for the site. If an app PDF receipt is to hand, choose it: it
+   imports. Typing the items in still works.
+10. **Settings and licences.** Settings → "Receipt reading". *Expected:*
+    PaddleOCR, its models and ONNX Runtime are named; Tesseract is gone.
+11. **Small screen and dark mode.** Repeat flow 4 on the phone (or at
+    360 px wide) in dark mode. *Expected:* nothing overflows; the boxes
+    stay visible; roles are written, not shown only by colour.
+
+### Known limitations (not findings for this milestone)
+
+- No cropping or perspective correction; handwriting isn't read.
+- In "Review lines" you can add lines but not edit a read line's text:
+  edit rows in the bill editor.
+- Corrections aren't remembered across receipts (roadmap: Future).
+- The reader isn't cached for offline use (M6); without WebAssembly or
+  SIMD only text-layer PDFs and typing work.
+- Promotion and savings lines are handled by the total; asking whether a
+  promotion comes off a price is for a later plan.
+- Portuguese and English receipts work best; other countries' layouts
+  are a later goal.
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is
