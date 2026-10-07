@@ -9,16 +9,15 @@ This is a living document. Milestones after the current one are a
 direction, not a commitment. They get re-ordered, merged or dropped as we
 learn.
 
-Last updated: 2026-09-30 (M2 complete; M2.5 added for receipt-reading
-accuracy; restructured around the free-first product strategy on
+Last updated: 2026-10-07 (M2.5 complete; M2 complete and M2.5 added for
+receipt-reading accuracy on 2026-09-30; restructured around the free-first product strategy on
 2026-09-28, see [Roadmap strategy](#roadmap-strategy))
 
 ## Current goal
 
 > **Phase 1: finish the free, local-first core.** The next milestone is
-> **M2.5 — Accurate receipt reading**: real receipts read right 94–100 %
-> of the time, still for free and entirely in the browser. After it comes
-> the shared-household core: households, an expense ledger, balances and
+> **M3 — Households, members and the expense ledger**, the start of the
+> shared-household core: households, an expense ledger, balances and
 > settling up (M3–M4).
 
 Nothing in Phases 3–8 is being built yet.
@@ -110,7 +109,7 @@ scope. Anything not listed as must-have is negotiable there.
 | M0  | Project foundation                                 | 1 · Free local-first core        | Complete    |
 | M1  | Bill splitter (manual entry)                       | 1 · Free local-first core        | Complete    |
 | M2  | Receipt upload and built-in parsing                | 1 · Free local-first core        | Complete    |
-| M2.5| Accurate receipt reading                           | 1 · Free local-first core        | Not started |
+| M2.5| Accurate receipt reading                           | 1 · Free local-first core        | Complete    |
 | M3  | Households, members and the expense ledger         | 1 · Free local-first core        | Not started |
 | M4  | Balances and settling up                           | 1 · Free local-first core        | Not started |
 | M5  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
@@ -296,8 +295,17 @@ automatically, for free and entirely in the browser.
 
 ## M2.5 — Accurate receipt reading
 
-**Status:** Not started (work item `milestone-2-5`, branch
-`feature/milestone-2.5`)
+**Status:** Complete (accepted 2026-10-07; PR #9). Plan archived at
+`docs/milestones/completed/milestone-2-5-PLAN.md`. The local route
+(PaddleOCR + our parser + the fiscal QR total check) plateaued below the
+94 % aim, and the user accepted the plateau: on a 21-image local set,
+83 % of tuning receipts and 5 of 6 held-out run-results read with no
+edit, 96 % of rows and 97.5 % of prices right, and **no false
+"Matches"**. The set was short of 30 receipts (19 distinct), and the
+phone reading times weren't measured; both by the user's decision.
+Carried forward: reaching 94 % (more receipts, then perhaps the
+[BYOK](#validation-dependent-backlog) "enhanced reading"), and
+remembering the user's corrections.
 
 **Objective:** Real receipts are read right almost every time: the goal
 is **94–100 %**, not M2's accepted floors (Continente 56 %, the Lidl app

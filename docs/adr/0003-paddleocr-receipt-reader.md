@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-10-04
 - **Milestone:** M2.5 — Accurate receipt reading
-  (`docs/milestones/milestone-2-5-PLAN.md`, decisions P4–P12)
+  (`docs/milestones/completed/milestone-2-5-PLAN.md`, decisions P4–P12)
 - **Supersedes in part:** ADR 0002's OCR engine (Tesseract.js, D4) and
   its download figures. ADR 0002's QR, PDF, HEIC, self-hosting, CSP and
   static-only decisions stand.

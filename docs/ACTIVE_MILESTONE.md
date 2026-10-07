@@ -2,753 +2,80 @@
 
 ## Milestone
 
-**M2.5 — Accurate receipt reading** (work item `milestone-2-5`, plan
-revision 10, `docs/milestones/milestone-2-5-PLAN.md`), on
-`feature/milestone-2.5` (PR #9). Phase `AWAITING_FUNCTIONAL_REVIEW`.
+None active. The last milestone, M2.5 — Accurate receipt reading (work
+item `milestone-2-5`), is `MILESTONE_COMPLETE`, accepted on 2026-10-07.
 
 ## Next action
 
-**Functional review (the user).** The implementation review passed
-(external round 3 APPROVE) and the technical approval is commit
-`64a2b1d`. Work through the "Functional review checklist" at the end of
-this file, including the two iPhone checks deferred on 2026-10-05, and
-write any findings to
-`.ai-review/milestone-2-5/feedback/FUNCTIONAL_REVIEW.md`.
-
-## Checkpoints
-
-- [x] **CP1** — the local test set (format v2) and the accuracy measure,
-  in Node and a real browser, with the Tesseract baseline.
-- [x] **CP2** — the PaddleOCR reader (behind a build flag; Tesseract is
-  still the default).
-- [x] **CP3** — tuning on the local set (plateau accepted at 83–89 %).
-- [x] **CP4** — corpus, the photo quality check, Tesseract retired.
-- [x] **CP5** — the row-by-row review.
-- [x] **CP6** — acceptance measurement, phone, privacy, documentation
-  (the phone times waived by the user).
-- [x] **CP6A** — browsers that can't run the reader (plan amendment,
-  revisions 9–10): the support check up front, Choose PDF and a note,
-  `readerUnsupported`. The user's iPhone checks are still to come.
-
-### CP6A — done
-
-**What changed.** `readerSupport.ts` (new) answers `ok`, `noWebAssembly`
-or `noSimd`, synchronously, from ONNX Runtime 1.30's own SIMD module,
-byte for byte (a test reads `onnxruntime-web`'s `wasm-factory.ts` and
-fails if an upgrade changes it; it caught a mistyped byte while this
-checkpoint was written). Where the answer isn't `ok`, "Scan a receipt"
-drops Take photo, offers Choose PDF (`application/pdf`), says "Or drop a
-PDF file here" and shows a note: for `noWebAssembly`, that WebAssembly is
-turned off, usually by Lockdown Mode on an iPhone, iPad or Mac, with
-both ways to turn it off for the site; for `noSimd`, to update the
-browser (iOS on an iPhone or iPad). Both say a PDF receipt from an app
-still works. The reader answers the new `readerUnsupported` where it
-would start OCR, without creating its worker; a text layer is parsed as
-before. `assetsUnavailable` keeps its message. The reviewers' optional
-notes were taken: the note names the capability, with Lockdown Mode as
-the usual cause (L10-O1, O-EXT-1); the probe is ONNX Runtime's own
-(L10-O2); `noSimd` comes only from the probe (O-EXT-2).
-
-**Verified.** `npm run check`: typecheck, lint, format, 52 test files,
-1083 tests passed (1 skipped, as before). `npm run build` passes. The
-existing Split page tests pass with the real check, which answers `ok`
-under jsdom. Headless Brave on the production build, a fresh profile per
-file (a one-off script, not committed):
-
-| File | `WebAssembly` deleted (page and every worker) | WebAssembly on |
-|------|------|------|
-| `sample-9.pdf` (text layer) | note, Choose PDF only; imported, 4 items | Choose file and Take photo; imported, 4 items |
-| `sample-1.jpg` | `readerUnsupported`'s message, no reader worker | imported, 5 items (`paddle-ocr` worker) |
-| `sample-6-scanned.pdf` | `readerUnsupported`'s message, no reader worker | imported, 3 items (`paddle-ocr` worker) |
-| `sample-3.heic` | `readerUnsupported`'s message, no reader worker | (not run) |
-
-**Self-review of the whole milestone (before the implementation
-review).** Two fixes. (1) "Review lines" kept what was added or selected
-across imports: after a second scan, the new receipt's line at the same
-position showed "Added" and couldn't be added. `ReceiptLines` now starts
-afresh when it is given a new import's lines (a test in
-`SplitPage.lines.test.tsx`). (2) The Split page tests failed now and then
-(about 1 run in 15 before CP6A, at 10 s): a bill's last draft save, a
-passive effect, could flush after a test file's own `localStorage.clear()`,
-so the next test started with that bill and its scan stopped at a replace
-prompt jsdom answers "no". The shared test setup now clears storage after
-the unmount; 20 runs of the page tests in a row passed. Then `npm run
-check` (52 files, 1084 tests passed, 1 skipped), `npm run build`,
-`check-build.mjs`, and CI's browser smoke test on samples 1 and 12 (both
-match, no receipt value in any request) in local Brave.
-
-**Still to come: the user's iPhone checks** (the preview build over the
-local network). With Lockdown Mode on for the site: the note and Choose
-PDF show, and an app's PDF receipt imports if there's one to hand. With
-Lockdown Mode off for the site: a photo is read as before.
-
-**Deferred by the user (2026-10-05).** The external implementation review
-(round 1, B-EXT-2) required these checks before approval. The user chose
-to do them later ("push these tests for later"). They are **not run**,
-not passed: they stay owed before the milestone is accepted, and if
-either disagrees with the plan, CP6A's stop condition applies then.
-
-### CP6 — done
-
-**The set at CP6 (the user's decision, 2026-10-04: proceed with it).** 19
-distinct receipts in 21 counted images (18 tuning, 3 held out:
-`lidl_phone1`–`3`), 3 camera originals (iPhone 13, 4032 × 3024 JPEG), no
-HEIC (email sent JPEGs); the extra set's 9 beside it. Short of the plan's
-20 distinct receipts and 5 held out: that stop condition was reported and
-the user chose to proceed, accepting a stricter held-out mark (with 3
-held-out images, at least 5 of their 6 run-results).
-
-**Acceptance measurement** (`measure-local.mjs --held-out`, browser, two
-runs of one build; names and numbers only):
-
-| | run 1 | run 2 | target |
-|---|---|---|---|
-| tuning, no edit | 15 of 18 (83.3 %) | 15 of 18 (83.3 %) | at least CP3's 15 of 18, mean of two runs: **met** |
-| held out, no edit | 3 of 3 | 2 of 3 | within 10 points of tuning: 5 of 6 run-results = 83.3 %: **met** |
-| whole set, no edit | 18 of 21 (85.7 %) | 17 of 21 (81.0 %) | 94 % the aim (reported) |
-| distinct receipts | 84.2 % | 78.9 % | reported |
-| rows (price and name) | 96.0 % | 96.5 % | reported |
-| prices | 97.5 % | 97.5 % | reported |
-| false matches | 0 | 0 | 0: **met** |
-| extra set (not counted) | 4 of 9 | 4 of 9 | reported |
-
-Beside CP3's accepted figures (Node 15 of 18, browser 16 and 14 of 18,
-rows 96 %, prices 97–98 %, 0 false matches): unchanged on the tuning
-part. Failing tuning images: boutique (its name line), doc3, doc5, as
-since CP3. Held out, per case and run: lidl_phone1 yes/yes, lidl_phone2
-yes/yes, lidl_phone3 yes/**no** (run 2: the line `KINDER BARRINHAS
-CHOCOLATE 1,79` wasn't read; flagged as a mismatch, never "Matches").
-
-**The photo quality check on the held-out images** (`measure-quality.mjs
---held-out --runs 2`): no warning on any of the three, both runs (text
-57–59 px, sharpness 130–134, brightness 153–169, contrast 67–68,
-coverage 0.35–0.38; 2.1–2.3 s per 12-MP photo). No false warning: phone1
-and phone2 read with no edit in both runs. **Stop condition (P11):**
-phone3 failed in run 2 on a printed line not read, which P11 counts as
-"for the photo's sake", with no warning. `diag-lines.mjs` read that line
-in 3 runs of 3, and every measure of the photo is far from its threshold:
-the cause is the browser's run-to-run reading variance (recorded since
-CP3), not the photo. No threshold was changed (P14). **The user's
-decision (2026-10-04): accepted as reading variance**; the check stands
-as calibrated.
-
-**Privacy** (`docs/milestones/milestone-2-5-evidence/`):
-`check-requests.mjs page-load` (7 requests) and `scan` on `sample-1.jpg`
-and `sample-12.jpg` (19 same-origin GETs each, the bill matching its
-sample by P2 with `--expect-bill`), no CSP violation; each log passes
-`audit` offline.
-
-**Documentation.** ADR 0003 (PaddleOCR), ADR 0002 marked superseded in
-part, `THIRD_PARTY_NOTICES.md` and Settings (PaddleOCR, its models, ONNX
-Runtime; Tesseract gone; `ppu-paddle-ocr` and `ppu-ocv`'s licences now
-served), `README.md` and `app/README.md`.
-
-**Phone times (P13): not timed, the user's decision (2026-10-04).** The
-user tested the reading on their iPhone 13 (the preview build over the
-local network) and found it fast ("pretty neat"), but didn't time images
-(a), (b) and (c), and asked to skip the timings. No phone time is
-recorded, so none is reported as over P13's 30 s.
-
-**Verification.** `npm run check`: typecheck, lint and format pass; the
-tests 1066 passed, 1 skipped (50 files). A first run had one timeout in
-`SplitPage.lines.test.tsx` (the 10 s `waitFor` under the whole suite's
-load); the file passes alone (7 of 7), and the second full run passed.
-`npm run build` passes. PR #9's checks run on the push.
-
-**Found on the phone: no WebAssembly (the user's request, 2026-10-04).**
-On the user's iPhone 13 (iOS 26.6.1) every scan said "The receipt reader
-couldn't load. Check your connection". The cause, from a diagnostic page
-on the preview build: Lockdown Mode was on, and it turns WebAssembly off
-in Safari (`WebAssembly` undefined), so ONNX Runtime has no backend and
-the reader reports `assetsUnavailable`. The message blames the
-connection, wrongly. The user asked for a clear message naming the cause,
-and the scan button hidden up front when WebAssembly is missing (typing
-the items in stays). Added as CP6A by the plan amendment (revisions
-9–10).
-
-### CP5 — done
-
-"Review lines" in the check panel (P15): the receipt image with a box
-over each line, coloured by its role, and the same lines as a list in
-receipt order, each with its role written, its text and its amount.
-Selecting a line highlights its box and its bill row; "Add as item" (an
-ignored line or an item detail with an amount) and "Add a missed line"
-(a name and a price, checked like the bill editor) add a flagged item
-shared by everyone through `addItems`; neither is offered at 100 items.
-A PDF read from its text layer shows the list only. The lines are kept
-in memory beside the image, never saved; a reload, Dismiss and New bill
-drop them.
-
-- The parser records each input line's role where it already decides it
-  (`lines` on `ParsedReceipt`): a merged line's sources are carried
-  through every merge, so a quantity, price or code line merged into an
-  item is that item's detail. Roles: item, item detail, discount or
-  savings, total or subtotal, **tip** (added beside P15's list: tip lines
-  exist in the parser and fit none of its roles), tax table, payment,
-  ignored. A total, tax, tip or discount line counts only with its
-  amount (a column header with a tax word is ignored). The parser suite,
-  the text fixtures and the corpus pass unchanged.
-- `paddleLines.ts` keeps each line's rectangle and page; `toBill.ts`
-  links each item line to its bill row, and marks a line whose item a
-  cut (R24) or the limit left out. `fromCrop` (a re-read tall box's parts
-  back on the page, `splitTall`) is tested on its own.
-- Checked in headless Brave at 360 px, light and dark: no horizontal
-  scroll, the boxes keep their contrast on the receipt (fixed colours
-  with a dark halo), the roles written in the list.
-- Tuning numbers with the roles recorded (browser, two runs,
-  `measure-local.mjs`; the 3 held-out cases skipped): 15 and 15 of 18 with
-  no edit, rows 96.1 %, prices 96.6 and 97.2 %, false matches 0 — as CP4
-  (16 and 15) and CP3 (16 and 14); failing: boutique (its name line, in
-  some runs), doc3, doc5. Unchanged (P14).
-- Verification: `npm run check` (`tsc -b`, ESLint, Prettier, Vitest: 50
-  files, 1066 passed, 1 skipped) and `npm run build` pass.
-
-### CP4 — done
-
-The photo quality check (P11:
-`photoQuality.ts`, a detection-only pass in the worker before reading,
-the advice in the scan status and the check panel, never saved), the
-corpus enforced with PaddleOCR and samples 14–17 (P9's four layouts),
-the CI browser smoke test (`check-requests.mjs scan --expect-bill` on
-sample 1 and sample 12, and a wrong expected bill that must fail), and
-Tesseract removed (its reader, the clean-up only it used, its vendored
-files and packages; `check-build.mjs` fails on a Tesseract file).
-
-**Tuning numbers after the removal, with the check on** (browser, two
-runs, `measure-local.mjs`): 16 and 15 of 18 with no edit, rows 96.1 and
-95.5 %, prices 97.2 and 96.6 %, false matches 0. CP3's: 16 and 14 of 18,
-rows 96 %, prices 97–98 %, 0. Unchanged; failing: doc3, doc5 and, in one
-run, boutique, as at CP3.
-
-**The photo quality check, measured** (`measure-quality.mjs --runs 2`,
-in the browser; calibration images: 18 tuning, 9 extra, 10 small copies;
-no held-out case). Per threshold, the statistic and the nearest cases:
-
-| check | statistic | threshold | flagged below/above it | nearest that reads with no edit |
-|---|---|---|---|---|
-| small text | boxes' median height | under 17 px | small copies, 12–13 px | lidl-foto1 22 px |
-| blur | Laplacian's std at text scale | under 25 | none (bauhaus 27.0 is faint) | boutique 35.7 (reads in some runs), lidl-foto1 38.0 |
-| dark | mean brightness in boxes | under 125 | real 117.5 | lidl-foto1 143.7 |
-| faint | brightness std in boxes | under 25 | bauhaus 21.8 | sushi2 29.3 |
-| glare | share of washed-out boxes | over 0.1 | none (no glare in the set) | augustiner 0.021 |
-| cut off | share of boxes at an edge | over 0.25 | none (no cut-off receipt) | it-supermarket 0.147 |
-| far away | text's share of the image | under 0.2 | harpoon 0.172 | sushi2 0.251 |
-
-Flagged, both runs: the 10 small copies (small text), real (dark),
-bauhaus (faint), harpoon (far away). No warning on any image that read
-with no edit. Added time: 0.2–0.3 s per screenshot, 0.4–1.7 s per photo,
-2.6 s on the largest (desktop).
-
-Each failure's cause (`diag-lines.mjs`): **for the photo's sake** — the
-small copies (digits misread), real (crumpled and dim, `1,70` → `6:78`),
-bauhaus (faded), **doc3 and doc5** (540 px wide, 21–23 px text, digits
-misread), **boutique** (its name line not detected, in some runs);
-**parser** — harpoon (prices a line below their labels), 99cents
-(sub-cent prices), orodinapoli (a quantity glued to the name,
-`1Margherita`).
-
-**Stop condition 1 (P11, CP4):** doc3, doc5 and boutique fail for the
-photo's sake with no warning, and no threshold separates them: doc3/doc5's
-text (21–23 px) is the size of jackjone, sushi1/2 and lidl-foto1's (22–23
-px), which read with no edit; boutique's sharpness (35.7) is just under
-lidl-foto1's (38.0) and sushi1's (38.6), and it reads with no edit in
-some runs. **The user's decision (2026-10-03): accepted as recorded
-exceptions**, the thresholds as measured; at CP6 a held-out miss or
-false warning is still a stop condition (P11).
-
-**Stop condition 2 (corpus):** with PaddleOCR, samples 03 (the weighed
-`Bananas` line is lost) and 12 (the photographed hypermarket: items
-misread, the total and payment lines read as items) miss their expected
-"match", as CP2 recorded; 02 now passes. Neither shows "Matches" (both
-are flagged as a mismatch). CP4 may not change reading (P14), so they
-can't be restored here. **The user's decision (2026-10-03): their
-expected check is now "flagged"** (the import warns, never a false
-"Matches"), recorded in `make-sample-receipts.mjs`. Sample 17 was rendered as a
-scan: photographed, two of its lines weren't detected.
-
-The local set's name check found one product with two spellings
-(`HAMBURGUER`/`HAMBURGER DE BOVINO`, which the name rule pairs); with the
-user's agreement, doc7 and the small copy lidl1 now use the PDF's exact
-`HAMBURGER DE BOVINO`. Scoring is unchanged (the rule pairs them anyway).
-
-Verification: `npm run check` (`tsc -b`, ESLint, Prettier, Vitest: 47
-files, 1043 passed, 1 skipped), `npm run build` and `check-build.mjs`
-pass; `check-requests.mjs scan --expect-bill` passes locally on sample 1
-and sample 12 (headless Brave) and fails on a wrong expected bill only.
-
-### CP3 — done
-
-**The user's decision (2026-10-03): the plateau is accepted** at Node 15
-of 18 (83.3 %), browser 16 and 14 of 18, rows 96 %, 0 false matches,
-below the 94 % target. The failures left are OCR on the narrowest images
-(doc3, doc5: 540 px) and boutique's missed name line; the photo quality
-check in the revised CP4 is the answer to the first.
-
-The set: 11 images, 10 distinct receipts, all tuning (two Lidl photos
-added on 2026-10-01, `lidl-foto1` and `lidl-foto2`, both `shared`).
-Starting point with PaddleOCR: 4 of 11 in the browser (36.4 %), rows
-41.9 %, no false match.
-
-Kept, each measured in Node and confirmed in the browser:
-
-| # | change | browser receipts | browser rows | gained |
-|---|---|---|---|---|
-| 1 | Line grouping corrected for the page's slope (a photo at an angle), rows no longer growing into their neighbours | 4 → 5 of 11 | 41.9 → 48.4 % | lidl-foto1 |
-| 2 | A VAT rate printed against the quantity (`23%3`) is two tokens | 5 → 6 of 11 (54.5 %) | 48.4 → 50.5 % (51.6 % re-scored) | sushi1 |
-| 3 | German and Italian totals, payments and tax-table words; a quantity line printed **above** its item (`6 X 0,22` / `ACQUA 1,32`, weights too, `0,5484kg`) completes it when the arithmetic agrees, and a unit-price-only line no longer replaces the price of an already priced item above it (`MERLOT 1,39` became 2,49); a later total after a bill-level discount wins (`Summe 34,97`, `-0,88`, `Summe 34,09`) | 6 of 11 (unchanged) | 51.6 → 53.8 % (lidl1/lidl2, a row or two, within the run-to-run noise) | extra set 1 → 4 of 9 |
-| 4 | A box taller than two lines is read again on its own, enlarged (`splitTall`), keeping only parts inside it that no other box covers (`1.15` over two prices → `1,15`, `1,79`) | with 5: 6 → 7 of 11 (63.6 %) | 53.8 → 55.9 % | continente (with 5) |
-| 5 | A name-only line takes the price on the line under it (`BOCADOS HEURA` / `04 8,08`) | see 4 | see 4 | continente |
-| 6 | P9's code-then-description layout (`1792212 1 23,0% 153,30` / description, attribute lines after); the first word of a longer total phrase one substitution off (`Totai do documento`) | 7 of 11 | 55.9 → 57.0 % | boutique gets its price and total; its name only when the detector sees the line (1 run in 4) |
-| 7 | A price with its tax code glued on and read as a digit, after another amount (`Deposito 0.20 0.201`) | 7 of 11, 0 false (two runs) | 57.0 / 55.9 % | removes a false match (below) |
-
-False matches: 0 throughout. Tried and not kept: per-box recognition
-(4 → 2), a larger detection input, space recovery, smaller box padding
-(each made a receipt fail), a lower confidence cut-off (no change);
-enlarging narrow screenshots and reading them in strips (P8's upscaling
-and tiling, the user's "cut it in pieces"): lines separate better, but the
-enlarged blur loses the spaces between words and some amounts, so lidl1–3
-read worse; removed. With no receipt gained in the browser: `s` → `5`
-after a number's last digit (`o,3s` → `0,35`; gains lidl3 in Node, not in
-the browser, which misreads that receipt's first price), and total and
-payment keywords misread by one letter (`NULTIBANCO`, `Totai`).
-
-**The user's decision (2026-10-01): a missing number doesn't fail a
-name.** `Deposito` is recognisable for `Deposito 0.10` (Portugal's
-deposit on bottles and cans); a *different* number still fails
-(`Deposito 0.20`). This replaces CP1's rule that every number must be
-read. Re-scored from the saved reports: no recorded receipt count changes
-(change 2's browser rows 50.5 → 51.6 %); CP1's Tesseract reports predate
-the saved rows and are re-measured at CP3's end.
-
-What still fails, and why (browser):
-- **lidl1, lidl2, lidl3**: 223–261-px-wide copies of app screenshots, too
-  small to read reliably at their size or enlarged (P11's case: the
-  advice to send a full-resolution screenshot).
-- **boutique**: the OCR drops the item's description line, and the fiscal
-  QR code isn't read from the photo.
-- **continente**: the detector draws one box over two prices, losing one
-  row, and most of a `2 X 4,04` quantity line.
-
-**An extra set (the user's decision, 2026-10-01): receipts from
-elsewhere, reported beside the set, never counted** in its totals, its
-94 % or its 30 receipts (`"part": "extra"`). Nine freely licensed photos
-from Wikimedia Commons (public domain, CC0, CC BY, CC BY-SA), local only,
-each expected file naming its source and licence: an Italian supermarket,
-four German receipts (a restaurant, a pet shop with a bill-level VAT
-discount, a supermarket with weighed items, a crumpled museum-shop
-receipt), and four from the US (a dollar store with sub-cent prices and
-sales tax, three restaurants with sales tax). None from Portugal exists
-there. First numbers (browser): 1 of 9 with no edit (Node: 2 of 9), no
-false match. Most fail because the parser doesn't know their total words
-(`Summe`, `TOTALE COMPLESSIVO`): the next general change to try. A change
-made for them is kept only if the set itself doesn't fall. After
-change 3 (2026-10-02): **4 of 9 in the browser (Node: 5 of 9)**, extra
-rows 19 → 6, no false match; augustiner, fressnapf and the Italian
-supermarket read fully. Still failing: bauhaus (crumpled, unreadable),
-99cents (sub-cent prices, `1@ .9999`), harpoon (blurred), real (the
-browser misreads `1,70` as `6:78`), orodinapoli (browser only).
-
-**Plateau (2026-10-02).** Two browser runs after change 7: **7 of 11
-(63.6 %), distinct receipts 7 of 10, rows 55.9–57.0 %, prices 72.0 %,
-check "match" 8 of 11, false matches 0**; Node the same (7 of 11). Extra
-set: 4 of 9 (Node 5 of 9), no false match. What still fails can't be
-fixed in the parser:
-- **lidl1, lidl2, lidl3**: 223–261-px-wide app screenshots; text 12 px
-  high misreads (`1,74` → `174A`, `0,35` → `0,15`, `Total` → `Toiul`).
-  P11's answer is the advice to send a full-resolution screenshot (CP4).
-- **boutique**: the detector misses the description line (and `Total a
-  pagar`, the tax table) in most runs. A smaller vertical box padding
-  (0.2) or a native-size detection input (1600) finds it, but each
-  breaks other receipts (jackjone, lidl-foto2, the Italian one; 1600 a
-  false match too), as in CP3's first attempts. Its price and total are
-  right; the name shows as `Marca : TH Watches`, to be corrected.
-
-**Seven more Lidl receipts (2026-10-02), `lidl4`–`lidl10`, tuning
-cases**, expected files drafted from the images and checked against each
-receipt's own VAT table and total (local only). Sent as WhatsApp
-documents, they are still 225–270 × ~1600 px: the files were that small
-on the phone, so WhatsApp's photo compression isn't the cause. Node: **0
-of 7**; the set falls to **7 of 18 (38.9 %)**, rows 49.4 %, prices 66.2 %,
-no false match. The parser reads their structure (quantities `1,74 x 4`,
-weights, totals, the VAT table); the OCR misreads digits at this size
-(`6,96` → `8,96`, `0,40` → `0.10`, `1,49` → `1.42`, `6,58` → `6,52`) and
-names (lidl9: every price right, `FOLHADO SALSICHA` → `FOLADO
-SAISTCIA`). Where the small images come from is open with the user.
-
-**A Lidl Plus PDF (2026-10-03), `lidl_pdf1`.** The app's PDF export
-has a full text layer (iText), so it's read with no OCR (D6): **21 of
-21 rows, total and check right, no edit, 0.4 s** in the browser, and the
-same in Node. The local set now takes PDF cases (`imageType: 'pdf'`; the
-diagnostic skips them, having no OCR to show).
-
-**The cause of the small Lidl images (2026-10-03).** The Lidl Plus
-app's "share" gives a full-size image (`lidl_as_doc1`: 892 × 5120 px);
-the small copies came from saving the received picture by hand, which
-shrank it. Full size, sent as a WhatsApp document: **no edit needed**,
-2 of 2 rows, the check matches, OCR confidence 96–100 (the small copies:
-66–90), 9.1 s in the browser. One short receipt so far; the full-size
-`lidl1`–`lidl10` are on their way.
-
-**Full-size Lidl images replace the small copies (2026-10-03).** The
-user set aside `lidl1`–`lidl10` (their expected files moved to
-`fixtures/local/small-copies/`, kept) and added `lidl_as_doc2`–`9`, the
-Lidl Plus "share" images sent as WhatsApp documents (540–892 px wide):
-doc4, doc7 and doc9 are lidl5, lidl1 and lidl2 (their expected files
-reused), doc6 is doc1 again (`sameReceiptAs`), doc2, doc3, doc5 and doc8
-are new (drafted from the images, each checked against its total). The
-crisp images showed three errors in names drafted from the small copies
-(`PASTEL DE NATA 58GR`, `PLENO TISANAS`), corrected.
-
-| # | change | Node receipts | browser receipts (two runs) | rows | gained |
-|---|---|---|---|---|---|
-| – | the set as above, before 8–9 | – | 11 of 18 (61.1 %), **1 false match** | 92.7 % | – |
-| 8 | A weighed item's weight line printed under it (`ESPETADAS 2,66` / `0,190 kg × 13,99 EUR/kg`) completes it when the arithmetic agrees, so the promotion under it is the item's, not the bill's (the false match); `EUR/kg` is a unit marker | 15 of 18 | 16 and 14 of 18 | 96.1–96.6 % | doc2 |
-| 9 | A tax code glued to the line's last price (`2,69A`) and a quote mark before a price (`'3,29`) | (with 8) | (with 8) | (with 8) | doc7 |
-
-**Now: Node 15 of 18 (83.3 %), browser 16 and 14 of 18 (88.9 %, 77.8 %),
-rows 96 %, prices 97–98 %, precision 97–98 %, false matches 0** (three
-runs). Failing: **doc3 and doc5**, the two 540-px-wide images, on digits
-the OCR misreads (`4,99` → `1,99`, `6,95` → `6,55`, `1,19` → `1,1S`,
-the total `66,51` → `65,51`); boutique (its name line, as before); doc9
-in one browser run of two.
-
-**Browser readings vary from run to run** on the small screenshots
-(lidl3: three runs, three outcomes, one fully right). One reading gave a
-**false match** that the committed parser gives too: the promotion
-`0,35` read as `0,15` exactly offset a `Deposito 0.20` line lost to a
-glued tax code, and R22's cut closed the QR total. Change 7 reads that
-line; the coincidence of two offsetting misreads remains possible in
-principle on very small images.
-
-**More numbers in the report (2026-10-02)**, after the review of an
-outside receipt-parsing proposal: beside row accuracy (price **and**
-recognisable name), the set now reports `priceRowAccuracy` (expected rows
-whose price was read, names aside), `rowPrecision` (read rows that pair
-an expected row: 1 − the false-item rate) and `checkMatches` (images
-whose check says "match"). Browser, after change 3: the set **rows 53.8 %
-but prices 68.8 %**, precision 58.8 %, check 6 of 11; extra rows 39.6 %,
-prices 43.8 %, precision 76.0 %, check 5 of 9. So about 15 points of the
-set's rows are lost to names, not amounts; the false items are mostly
-the three small Lidl screenshots. Quantities aren't scored: the expected
-files (P1) don't record them.
-
-Tools: `scripts/diag-lines.mjs` shows what the browser reads, line by
-line, for chosen cases (receipt text, so to the git-ignored
-`.ai-review/` only). `measure-local.mjs` now waits until the saved bill
-is stable before reading it (one run had read the bill before the app
-saved it).
-
-Note: two browser runs of the same build gave lidl1 and lidl2 a row or two
-apart; per-case pass/fail didn't change.
-
-### CP2 — done
-
-- `paddleEngine.ts`: PaddleOCR (`ppu-paddle-ocr` 6.6.0, its `web` entry)
-  on ONNX Runtime Web 1.30.0's plain wasm build, single-threaded
-  (`numThreads = 1`, `executionProviders: ['wasm']`, no WebGPU), the
-  result cache off (`noCache`). It takes the models as same-origin URLs,
-  which the library fetches (the app's code still opens no network
-  channel), or as bytes in Node.
-- `paddle.worker.ts` (a module worker) and `paddleReader.ts` (id
-  `paddle`): the models load once, on the first scan (`loadingReader`),
-  pages go to the worker as transferred copies, progress per page; a
-  failed load is `assetsUnavailable`, a failed read `ocrFailed`;
-  cancelling or any failure terminates the worker and the next scan
-  starts a new one; a PDF text layer is parsed with no OCR.
-- `paddleLines.ts` (P7, pure): boxes into lines by vertical overlap, left
-  to right, the weakest confidence, number repair, and an optional wide-gap
-  marker (off; CP3 decides).
-- `browserImport.ts`: `VITE_RECEIPT_READER=paddle` builds with PaddleOCR;
-  Tesseract stays the default (P10).
-- `vite.config.ts`: `onnxruntime-web` resolves to its wasm-only build in
-  the app build, and workers are ES modules. `scripts/check-build.mjs`
-  (in CI after both builds): `dist/` holds exactly one ONNX Runtime wasm,
-  `vendor/ort/ort-wasm-simd-threaded.wasm`.
-- `scripts/vendor-paddle.mjs` (after `vendor-assets.mjs`, and as
-  `pretest`): copies only ONNX Runtime's plain SIMD `.mjs` and `.wasm`;
-  downloads the PP-OCRv5 mobile detection model, the PP-OCRv5 Latin
-  recognition model, its dictionary and the mirror's licence, pinned to
-  revision `bf1d5edb0335d3262be7caf13f766ba274b4cadd` and a SHA-256 each,
-  cached in the git-ignored `app/.paddle-models/` (and by
-  `actions/cache` in CI, keyed on the script). Licence notices for ONNX
-  Runtime and the models go to `vendor/licenses/`
-  (`THIRD_PARTY_NOTICES.md` is CP6's).
-- Node route (`importDeps.node.ts`): the same engine in-process, the
-  models from `public/vendor/paddle/`, `@napi-rs/canvas` (dev dependency,
-  MIT) as ppu-ocv's canvas, still offline. The local test and
-  `measure-node.mjs` read with PaddleOCR (`--reader tesseract` to
-  compare); `measure-local.mjs` gained `--warm` and `--time`.
-- The corpus is also read with PaddleOCR in Node, recorded and not yet
-  enforced: **10 of 13** meet their expected check (02, 03 and 12 miss).
-
-**Licences (for CP6's ADR).** ppu-paddle-ocr 6.6.0 MIT; ppu-ocv 4.0.0
-MIT (its canvas-only entry in the browser: OpenCV.js, which it installs,
-is never bundled); onnxruntime-web 1.30.0 MIT (no licence file in the
-package: a generated notice); the models are PaddleOCR's (Apache-2.0),
-converted to ONNX and served by the ppu-paddle-ocr mirror on Hugging
-Face, whose licence is Apache-2.0 (its `LICENSE` at the pinned revision
-is vendored). Dev only: @napi-rs/canvas 1.0.9 MIT, jpeg-js BSD-3-Clause.
-All permissive.
-
-**Download (P12).** A first scan fetches 27.18 MB raw (15.57 MB
-gzipped): the runtime wasm 14.24 MB, the detection model 4.75 MB, the
-recognition model 8.07 MB, and about 0.1 MB of loader, dictionary and
-JS. Within the 30 MB budget.
-
-**Privacy and CSP.** With the flag on, `check-requests.mjs scan` passes on
-`sample-1.jpg` (5 items, QR total) and `sample-12.jpg` (6 items, QR
-total): 19 same-origin GETs each, the models and runtime fetched from the
-worker, no CSP violation, under the production policy unchanged. Logs in
-the git-ignored `.ai-review/cp2/`.
-
-**PaddleOCR's first numbers (no tuning)**, all 9 tuning cases:
-
-| case | Node: rows paired / expected (extra) | Node: no edit | browser: rows paired (extra) | browser: check | browser: no edit |
-|---|---|---|---|---|---|
-| boutique | 0 / 1 (1) | no | 0 / 1 (1) | no total | no |
-| continente | 9 / 14 (3) | no | 9 / 14 (3) | mismatch | no |
-| jackjone | 1 / 1 | **yes** | 1 / 1 | match | **yes** |
-| lidl1 | 5 / 25 (17) | no | 6 / 25 (16) | mismatch | no |
-| lidl2 | 7 / 29 (13) | no | 8 / 29 (14) | mismatch | no |
-| lidl3 | 2 / 5 (4) | no | 2 / 5 (3) | mismatch | no |
-| sushi1 | 2 / 3 (1) | no | 2 / 3 (1) | match | no |
-| sushi2 (= sushi1) | 3 / 3 | **yes** | 3 / 3 | match | **yes** |
-| tiffosi | 5 / 5 | **yes** | 5 / 5 | match | **yes** |
-
-| measure | Tesseract (browser) | PaddleOCR, Node | PaddleOCR, browser |
-|---|---|---|---|
-| receipt accuracy | 0 / 9 | 3 / 9 (33 %) | 3 / 9 (33 %) |
-| distinct-receipt accuracy | 0 / 8 | 2 / 8 | 2 / 8 |
-| row accuracy | 14.0 % | 39.5 % | 41.9 % |
-| extra rows | 55 | 39 | 38 |
-| name accuracy | 75.0 % | 64.7 % | 58.3 % |
-| false matches | 0 | 0 | 0 |
-
-**Node against the browser.** The browser can't expose the worker's
-lines, so the comparison is of the imported rows (name and price, in
-order), the parser's output from those lines: identical on 5 cases
-(boutique, jackjone, sushi1, sushi2, tiffosi), different on 4 (continente
-3 rows, lidl1 13, lidl2 20, lidl3 4). **Cause found: canvas resampling.**
-On the lossless PNG copies of those four the rows still differ, so it
-isn't JPEG decoding; changing Node's canvas smoothing changes what is
-read, so the scale-downs PaddleOCR does with `drawImage` (the detector's
-input, every 48-px-high crop) feed recognition, and `@napi-rs/canvas`'s
-resampling isn't Chromium's (no smoothing setting matches). It shows on
-the 223–261-px screenshots and the one creased photo. The totals agree
-(3 of 9 either way), but per case the Node test can't stand in for the
-browser: the browser stays the reference (P3), and CP3 confirms every
-kept change in the browser, as planned.
-
-**Speed (P13): over the engineering gate.** Times from choosing the file
-to the check panel, desktop headless Brave, the reader already loaded:
-
-| image | warm | first scan (models loaded) |
-|---|---|---|
-| (a) no camera original in the set yet; a 12-MP proxy (Tiffosi upscaled to 3000 × 4000) | **8.0 s** (gate 5 s) | 9.0 s |
-| (b) Tiffosi as received, 3.1 MP | 6.3 s | 7.1 s |
-| (c) lidl1, 223 × 1600 | 7.5 s | 8.1 s |
-
-Almost all of it is recognition: about 50 ms per text box on one thread
-(lidl1 has 160 boxes: detection 0.2 s, recognition about 8 s); decoding,
-the QR scan and the conversion take milliseconds. Batched recognition and
-the cross-line strategy didn't help. The spike's 0.5–2 s most likely ran
-on WebGPU, which P4 rules out. A phone typically 3–8× slower would put
-(c) well over its 10 s. This is a stop condition (P13): the user decides.
-
-**The user's decision (2026-10-01): accuracy before speed.** Reading
-every item and its price correctly (P2's 94–100 %) matters more than
-speed; a receipt taking **20–30 s** to read is acceptable. So:
-- P13's desktop engineering gate (5 s) is waived, and the phone
-  thresholds become **up to 30 s** for the whole import, for images (a),
-  (b) and (c) alike (instead of 20 s and 10 s). CP6 still measures and
-  reports them, with the first load separately.
-- CP3 may keep a change that makes reading slower when it raises
-  accuracy, as long as the phone stays within 30 s. Speed-ups (threads,
-  a lighter model, WebGPU) aren't pursued now.
-- Unchanged: P12's 30 MB download budget, single-threaded ONNX Runtime
-  with no WebGPU (P4), and the accuracy targets.
-
-### CP1 — done
-
-- `accuracy.ts` (pure): P2's measure. Recognisable product
-  (`nameMatches`), maximum one-to-one pairing (receipt order breaks ties),
-  the adjustments as amounts, the total and the check, false matches on
-  money only, distinct-receipt accuracy, strict name accuracy, and R19's
-  coverage kept as `amountCoverage`. `matchedCoverage.ts` is gone (folded
-  in). An import that fails (`noItems`, …) is scored as every row
-  missing, never a false match.
-- Format v2 (P1) in `localFixtures.node.ts`: loading, validation (each
-  error names the case), `sameReceiptAs` linking, distinct receipts, and
-  P14's held-out selection. R17's guards unchanged.
-- `decodeImage.node.ts`: JPEG in Node with `jpeg-js` (dev dependency,
-  **BSD-3-Clause**, not MIT as the plan guessed; still permissive) and
-  EXIF orientation applied as the browser does. HEIC is browser-only.
-- `receipts.local.ocr.test.ts` reads v2 cases (JPEG or PNG), scores them,
-  checks `minRowAccuracy`, logs numbers only and writes the full report to
-  the git-ignored `.ai-review/local-measure/`. `scripts/measure-node.mjs
-  [--held-out]` runs it (Vitest rejects unknown flags, so the flag goes
-  through `SETTLE_HELD_OUT`).
-- `scripts/measure-local.mjs [--held-out]`: P3's browser run on the
-  production build in headless Brave, scoring the bill and summary read
-  from `localStorage`. The DevTools client, `vite preview` and Brave
-  start-up moved to `scripts/browser.mjs`, shared with
-  `check-requests.mjs` (behaviour unchanged: `page-load` and `scan` on
-  `sample-1.jpg` pass).
-- `app/README.md`, "Local real-receipt fixtures": format v2 and both
-  measurements.
-- The nine local expected files are drafted (git-ignored, never
-  committed): the five M2 cases converted (the image is now the original
-  JPEG; names added; prices after each row's own promotion), the four new
-  ones drafted. While drafting, **lidl1's M2 file was wrong**: the Monster
-  line is 1,74 × 7 = 12,18, not 12,16 (the tax table confirms it).
-
-**The name rule, checked on the set's own names (P2 allows tightening
-only, with a reason).** Of 3 624 pairs of different expected names, the
-plan's thresholds paired 14. Two tightenings, applied before the
-baseline:
-- **Numbers must be read exactly** (after look-alike folding): two
-  deposit lines differing only in their amount were one edit apart.
-- **The whole-name allowance is ⌊n/4⌋, not ⌊n/3⌋** (names over 5
-  characters): a product paired with its longer, different variant.
-  No right-price row Tesseract read needed more than ⌊n/4⌋.
-
-After them: **0 collisions**. 31 identical products appear on several
-receipts (listed, not counted), and 1 pair is one name printed cut short
-(most likely the same product, two croissant lines; listed, for the user
-to confirm).
-
-**The user's decisions (2026-10-01).** The expected files stand as
-drafted: prices after each row's own promotion, the description (not the
-code column) as the name, and the two croissant lines are the same
-product. The name rule **stays strict**: a row's name must be one a
-person can recognise, so the distinctive-word allowance (max(1,
-⌊length/4⌋)) is kept even where it rejects 2-error OCR noise on a 6–7
-letter word. Captures confirmed: the Lidl cases are app screenshots; all
-the others are phone photos sent through WhatsApp (`shared`).
-
-**Floors (`minRowAccuracy`)**, the lower of Tesseract's row accuracy in
-Node and the M2 coverage floor: continente 0.55, lidl1 0.10, lidl2 0,
-lidl3 0, tiffosi 0.40. The four new cases have none.
-
-**Tesseract's baseline** (9 images, 8 distinct receipts, all tuning, all
-`shared` or `screenshot`; no camera original yet):
-
-| case | capture | rows paired / expected | extra rows | exact names | check | no edit | browser: rows paired | browser: check | browser: s |
-|---|---|---|---|---|---|---|---|---|---|
-| boutique | shared | import failed (`noItems`) | – | – | – | no | import failed | – | 9.5 |
-| continente | shared | 9 / 14 | 4 | 7 | mismatch | no | 9 / 14 (5 extra) | mismatch | 9.1 |
-| jackjone | shared | import failed (`noItems`) | – | – | – | no | import failed | – | 10.6 |
-| lidl1 | screenshot | 3 / 25 | 19 | 1 | mismatch | no | 1 / 25 (19 extra) | mismatch | 7.5 |
-| lidl2 | screenshot | 0 / 29 | 23 | 0 | mismatch | no | 0 / 29 (23 extra) | mismatch | 7.7 |
-| lidl3 | screenshot | 0 / 5 | 4 | 0 | mismatch | no | 0 / 5 (3 extra) | mismatch | 5.9 |
-| sushi1 | shared | 0 / 3 | 0 | 0 | match (stand-in item) | no | 0 / 3 (1 extra) | mismatch | 5.4 |
-| sushi2 (= sushi1) | shared | 0 / 3 | 0 | 0 | match (stand-in item) | no | 0 / 3 (1 extra) | mismatch | 12.2 |
-| tiffosi | shared | 2 / 5 | 3 | 2 | match | no | 2 / 5 (3 extra) | match | 7.7 |
-
-Totals:
-
-| measure | Node | browser (reference) |
-|---|---|---|
-| receipt accuracy | 0 / 9 (0 %) | 0 / 9 (0 %) |
-| distinct-receipt accuracy | 0 / 8 | 0 / 8 |
-| row accuracy | 16.3 % | 14.0 % |
-| extra rows | 53 | 55 |
-| name accuracy (paired rows) | 71.4 % | 75.0 % |
-| false matches | 2 | 0 |
-
-Node's two false matches are sushi1 and sushi2: no row was read, the
-bill holds only the "Not read from the receipt" stand-in at the QR total,
-so the check says "match" while the rows are wrong. In the browser those
-two read a different total, so the check doesn't match. Tiffosi's
-"match" isn't false: every price is right; three names aren't
-recognisable (two carry the barcode column).
-
-Verification: `npm run check` (`tsc -b`, ESLint, Prettier, Vitest: 43
-files, 989 passed, 1 skipped) and `npm run build` pass; the local test is
-skipped where the folder is missing, as in CI.
-
-## Receipts still needed (CP6)
-
-At least 20 distinct receipts (19 now), at least 5 held out (3 now:
-`lidl_phone1`–`3`, added 2026-10-04), at least 3 camera originals (3
-now, iPhone 13, 4032 × 3024 JPEG, sent by email at full size), and a
-HEIC one if the phone saves HEIC (the email sent JPEGs). Plan revision 8.
-
-## Last completed: M2 — Receipt upload and built-in parsing
-
-Upload a photo or PDF of a receipt and get M1's item list filled in,
-entirely in the browser:
-
-- **CP1:** pure receipt logic: the `ReceiptReader` interface, the
-  rule-based parser, the Portuguese fiscal QR code, the bill conversion
-  and the receipt check.
-- **CP2:** file intake (JPEG, PNG, HEIC, PDF, with size limits), the image
-  pipeline, the self-hosted reader assets and the Content-Security-Policy.
-- **CP3:** the built-in reader (Tesseract.js in a worker), QR scanning
-  (zxing-wasm), the import pipeline and the sample corpus.
-- **CP4:** the review step: the "Receipt check" panel, "⚠ Check" markers,
-  and the fallback to typing on every failure.
-- **CP5:** the READMEs, Settings' "Receipt reading" section and the
-  licence notices, and the end-to-end scans.
-
-Remediation child `milestone-2-remediation-1` (M2's functional review,
-round 1: real receipts read badly):
-
-- **M2R1-CP1:** image clean-up scaled by text size, flattening of photo
-  backgrounds, one channel, and reading tall pages in strips.
-- **M2R1-CP2:** parser and bill-conversion rules for real Portuguese
-  supermarket, app and shop layouts.
-- **M2R1-CP3:** invented real-layout corpus receipts (11–13), and the
-  user's five real receipts as **local-only** fixtures, git-ignored and
-  guarded against ever being committed.
-- **M2R1-CP4:** a gap from the receipt's total can't be missed (the check
-  panel and the result), "Add the difference" closes it in one click,
-  and lines left out to match the total are shown until confirmed.
+Plan **M3 — Households, members and the expense ledger**
+(`docs/ROADMAP.md`) with `/milestone-plan`: turn one-off bills into a
+household's running expense history.
+
+Before planning, and after the user merges PR #9 (M2.5) into `master`
+(see CLAUDE.md, "Git and GitHub workflow"): run
+`git switch master && git pull && git switch -c feature/milestone-3`.
+After the first commit, open the M3 PR.
+
+## Last completed: M2.5 — Accurate receipt reading
+
+Receipts are read by PaddleOCR instead of Tesseract.js, still for free
+and entirely in the browser:
+
+- **CP1:** the local test set (format v2, real receipts kept local only,
+  never committed) and one accuracy measure, in Node and a real browser,
+  with the Tesseract baseline.
+- **CP2:** the PaddleOCR reader (`ppu-paddle-ocr` on ONNX Runtime Web,
+  PP-OCRv5 mobile models) behind M2's `ReceiptReader` interface, in a
+  worker, its assets self-hosted under the existing CSP.
+- **CP3:** image clean-up and parser tuning on the local set.
+- **CP4:** the committed corpus moved to PaddleOCR, the photo quality
+  check (tips for blurred, dark, small or cut-off photos), and Tesseract
+  retired.
+- **CP5:** the row-by-row review ("Review lines"): the image with a box
+  per read line, each line's role, "Add as item" and "Add a missed line".
+- **CP6:** the acceptance measurement, privacy scans, ADR 0003, the
+  licence notices, Settings and the READMEs.
+- **CP6A** (plan amendment, revisions 9–10): browsers that can't run the
+  reader (no WebAssembly, e.g. Lockdown Mode, or no SIMD) get a note
+  naming the cause, Choose PDF only, and `readerUnsupported` instead of
+  a wrong "check your connection".
+
+Measured (browser, two runs, 21 local images, 18 tuning and 3 held out):
+tuning receipts with no edit 15 of 18 (83.3 %) in both runs; held out 5
+of 6 run-results; rows 96.0–96.5 %; prices 97.5 %; **0 false
+"Matches"**. Below the roadmap's 94 % aim: the plateau was accepted by
+the user at CP3 (2026-10-03) and the measurement at CP6 (2026-10-04).
 
 Verification:
-- `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`,
-  `vitest run` (913 tests, 1 skipped) and `npm run build` pass; the
-  request-privacy scans (`check-requests.mjs`) pass, with logs in
-  `docs/milestones/milestone-2-evidence/` and
-  `docs/milestones/milestone-2-remediation-1-evidence/`.
+- `npm run check` (typecheck, lint, format, 52 test files: 1084 passed,
+  1 skipped) and `npm run build` pass; the request-privacy scans
+  (`check-requests.mjs`) pass, with logs in
+  `docs/milestones/milestone-2-5-evidence/`.
 - `app`, `workflow-conformance` and `pr-title` are green on GitHub
-  (PR #6).
-- M2: implementation review round 1 REVISE, round 2 APPROVE; technical
-  approval `24e8227`. The child: two REVISE rounds, then APPROVE;
-  technical approval `ca2bf35`.
-- Functional review: M2 round 1 found four real-receipt defects (F-I-1 to
-  F-I-4), deferred to the child. The child's checklist (`ff03b38`) and
-  M2's round 2 (`e84f0f6`) passed; the user accepted both.
+  (PR #9).
+- Implementation review: three external rounds (REVISE, REVISE, then
+  APPROVE); technical approval `64a2b1d`.
+- Functional review: round 1 checklist `f1727fe`; no findings were
+  written; the user accepted the milestone on 2026-10-07.
 
 Carried forward (not blockers):
-- **Promotion lines, for a later plan** (the user, 2026-10-01): when a
-  receipt prints a promotion or savings line, the row-by-row review could
-  ask whether it's only informative or should come off the item's price.
-  Today R8 decides with the trusted total. Not in M2.5's plan.
-- **Switch the built-in reader to PaddleOCR** (the user's decision,
-  2026-09-29). It was meant to be M2's next remediation child; it's now
-  M2.5. A local spike (branch `spike/paddleocr`, not pushed:
-  `ppu-paddle-ocr` with ONNX Runtime Web, PP-OCRv5 mobile models, about
-  13 MB, MIT and Apache-2.0) scored lidl1 44 %, lidl2 73 %, lidl3 all 5
-  items, Continente 94 % and Tiffosi 100 %, against Tesseract's accepted
-  floors (Continente 56 %, Lidl 11–22 %; the plan's targets were 75 % and
-  60 %), with cleaner names and 0.5–2 s per read on the desktop.
-- Two requests from the same session, for later: a row-by-row review of
-  what the reader found (the receipt image with each line's role, and
-  adding a missed line), and remembering the user's corrections on the
-  device.
-- Workflow defect: `request_plan_amendment` accepts only checkpoint ids
-  shaped `CP<digits>[A-Z]?`, so a remediation child's `M2R1-CP*`
-  checkpoints can't be amended (also in workflow 2.6.0).
-- **The phone reading time** (R21: a 12.6-MP photo within 60 s, a small
-  screenshot within 20 s) was waived for Tesseract, to be measured on
-  PaddleOCR's reader.
-- O-EXT-1 (M2's review): the saved receipt summary isn't bound to the
-  bill it came from; future hardening.
-- "Matches after leaving out N lines…" and its buttons aren't reached by
-  any sample receipt; they're covered by `SplitPage.review.test.tsx`.
-- Not in M2: cropping and perspective correction, handwriting, currency
-  conversion, offline caching of the reader (M6).
+- **The 94 % aim.** More real receipts first (the set has 19 distinct
+  receipts, 3 held out, against the plan's 20 and 5; the roadmap's 30),
+  then, if the local route stays short, the opt-in "enhanced reading"
+  with the user's own AI key (the user's decision; it changes a guiding
+  principle).
+- **The phone reading times** (P13) were not timed, the user's decision
+  (2026-10-04); the reading was found fast on the iPhone 13.
+- **The CP6A iPhone checks** (Lockdown Mode on and off for the site,
+  checklist flows 8–9) were deferred by the user on 2026-10-05; no
+  result for them is recorded here. The behaviour is covered by the
+  headless-Brave runs with WebAssembly removed.
+- Remembering the user's corrections on the device (roadmap: Future).
+- Receipts from other countries: prefer general parser rules; revisit
+  now that M2.5 is done.
+- Not in M2.5: cropping and perspective correction, handwriting, editing
+  a read line's text in "Review lines", offline caching of the reader
+  (M6).
 
 ## Current blockers
 
@@ -756,104 +83,13 @@ None.
 
 ## Active plan
 
-`docs/milestones/milestone-2-5-PLAN.md` (revision 10). M2's plans are archived at
-`docs/milestones/completed/milestone-2-PLAN.md` and
-`docs/milestones/completed/milestone-2-remediation-1-PLAN.md` (M0's and
-M1's are in the same folder).
+None. M2.5's plan is archived at
+`docs/milestones/completed/milestone-2-5-PLAN.md` (M0's, M1's, M2's and
+M2's remediation child's are in the same folder).
 
 ## Functional review checklist
 
-M2.5, round 1 (implementation revision 2, technical approval `64a2b1d`).
-Write each finding, with the step number, to
-`.ai-review/milestone-2-5/feedback/FUNCTIONAL_REVIEW.md`.
-
-### Setup
-
-1. `npm --prefix app ci`, then `npm --prefix app run build`.
-2. Desktop: `npm --prefix app run preview` and open the address it
-   prints. Phone: `npm --prefix app run preview -- --host`, then open the
-   `Network:` address on the iPhone, on the same Wi-Fi.
-3. Start from a new bill (or clear the site's data) so no saved bill gets
-   in the way.
-
-### Test data
-
-- Committed samples in `app/src/features/receipt/fixtures/browser/`:
-  `sample-1.jpg`, `sample-12.jpg` (photos), `sample-3.heic`,
-  `sample-6-scanned.pdf` (scanned PDF, no text) and `sample-9.pdf` (text
-  layer).
-- Your own receipts: anything from
-  `app/src/features/receipt/fixtures/local/` (local only, never
-  committed), and a few **new** receipts never used in the test set:
-  straight from the phone camera, an app screenshot and an app PDF if you
-  have one.
-
-### Flows and expected results
-
-1. **First scan, desktop.** Split page → "Scan a receipt" → Choose file →
-   `sample-1.jpg`. *Expected:* progress while the reader downloads (about
-   27 MB, first time only) and reads; the items fill in; the Receipt check
-   says whether the items match the total. A second scan doesn't download
-   again.
-2. **Your real receipts.** Scan 5–10 of your own, including new ones.
-   *Expected:* most come in with no edit needed (the measured level is
-   about 8 in 10). Any receipt with a wrong or missing price **never**
-   shows "Matches"; the check flags the gap instead. Note each one that
-   needed edits and what was wrong.
-3. **Photo advice.** Scan a deliberately poor photo: blurred, dark, taken
-   from far away, cut off at an edge, or a small app screenshot.
-   *Expected:* while it's being read, a specific tip (e.g. "This photo
-   looks blurred…", "The receipt is small in this photo…"); the reading
-   still goes on, and the tip stays in that import's Receipt check. A good
-   photo shows no tip. A text-layer PDF (`sample-9.pdf`) shows none.
-   Reload the page: the tip is gone (it's never saved).
-4. **Row-by-row review.** After a photo import, Receipt check →
-   "Review lines". *Expected:* the image with a box on each read line, and
-   a list of the lines in order, each with its role written out (item,
-   total, payment, ignored, …) and its amount. Selecting a line highlights
-   its box and its bill row. On an ignored line holding an item,
-   "Add as item" adds it as a flagged, shared item and the check updates.
-   "Add a missed line" takes a name and price, checked like the bill
-   editor, and adds the item. A PDF's text layer shows the list without
-   boxes.
-5. **Review after a second scan.** Scan another receipt, open
-   "Review lines" again. *Expected:* nothing from the first receipt
-   carries over (no line already shows "Added").
-6. **Lines are temporary.** Reload, or Dismiss, or "New bill".
-   *Expected:* "Review lines" is no longer offered for the old import; the
-   bill itself and its saved receipt summary are kept as before.
-7. **HEIC and scanned PDF.** Scan `sample-3.heic` and
-   `sample-6-scanned.pdf`. *Expected:* both are read (the PDF by
-   recognition, since it has no text layer).
-8. **Phone, Lockdown Mode off for the site** (deferred CP6A check). On
-   the iPhone, Safari → aA → Website Settings → Lockdown Mode off for this
-   site. "Scan a receipt" → Take photo of a real receipt. *Expected:*
-   Choose file and Take photo are both offered; the photo is read as on
-   the desktop, in about 30 s or less after the first load.
-9. **Phone, Lockdown Mode on for the site** (deferred CP6A check). Turn it
-   back on for the site and reload. *Expected:* "Scan a receipt" offers
-   only Choose PDF, says "Or drop a PDF file here" and shows a note that
-   WebAssembly is turned off, usually by Lockdown Mode, with how to turn
-   it off for the site. If an app PDF receipt is to hand, choose it: it
-   imports. Typing the items in still works.
-10. **Settings and licences.** Settings → "Receipt reading". *Expected:*
-    PaddleOCR, its models and ONNX Runtime are named; Tesseract is gone.
-11. **Small screen and dark mode.** Repeat flow 4 on the phone (or at
-    360 px wide) in dark mode. *Expected:* nothing overflows; the boxes
-    stay visible; roles are written, not shown only by colour.
-
-### Known limitations (not findings for this milestone)
-
-- No cropping or perspective correction; handwriting isn't read.
-- In "Review lines" you can add lines but not edit a read line's text:
-  edit rows in the bill editor.
-- Corrections aren't remembered across receipts (roadmap: Future).
-- The reader isn't cached for offline use (M6); without WebAssembly or
-  SIMD only text-layer PDFs and typing work.
-- Promotion and savings lines are handled by the total; asking whether a
-  promotion comes off a price is for a later plan.
-- Portuguese and English receipts work best; other countries' layouts
-  are a later goal.
+None. M2.5's round-1 checklist is in commit `f1727fe`.
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is
