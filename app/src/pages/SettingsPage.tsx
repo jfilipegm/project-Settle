@@ -89,7 +89,11 @@ export function SettingsPage() {
 
       <section className={styles.section} aria-labelledby="receipts-heading">
         <h2 id="receipts-heading">Receipt reading</h2>
-        <p>Built-in: read on this device.</p>
+        <p>Built-in: read on this device with PaddleOCR.</p>
+        <p className={styles.hint}>
+          The first scan downloads the reader (about 27 MB) from this site; your
+          browser keeps it for the next scans. Receipts never leave your device.
+        </p>
       </section>
 
       <section className={styles.section} aria-labelledby="about-heading">

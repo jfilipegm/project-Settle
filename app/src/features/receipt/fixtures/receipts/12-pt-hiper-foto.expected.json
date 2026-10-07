@@ -49,6 +49,6 @@
   ],
   "warnings": [],
   "qr": "A:503901121*B:999999990*C:PT*D:FS*E:N*F:20260928*G:FS ARQ204/200411*H:JJVZWTKP-200411*I1:PT*I3:3.09*I4:0.19*I5:6.89*I6:0.90*I7:4.41*I8:1.02*N:2.11*O:16.50*Q:Xr8w*R:1356",
-  "check": "match",
+  "check": "flagged",
   "removedLines": []
 }

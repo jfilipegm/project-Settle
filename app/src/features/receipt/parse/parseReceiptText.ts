@@ -9,6 +9,7 @@ import {
   negate,
   parseRatio,
   percentOf,
+  subtract,
   sum,
   type Cents,
   type MoneyCurrency,
@@ -18,8 +19,10 @@ import { toBillRatio } from '../../split/model.ts'
 import { isValidNif } from '../fiscalQr.ts'
 import type {
   ItemsEnd,
+  LineRole,
   ParsedItem,
   ParsedReceipt,
+  ReceiptLine,
   ReceiptWarning,
   TextLine,
 } from '../model.ts'
@@ -44,6 +47,7 @@ import {
   TAX_TABLE_WORDS,
   TIP,
   TOTAL,
+  findPhrase,
   hasPhrase,
   startsWithPhrase,
 } from './keywords.ts'
@@ -89,6 +93,11 @@ interface Line {
   /** Any amount on the line needed an OCR character fix. */
   fixed: boolean
   endsInAmount: boolean
+  /**
+   * P15: the input lines this line was read from, by index: one, or more
+   * when lines were merged (a quantity line, a price under its name).
+   */
+  sources: number[]
 }
 
 const MARKER = /^(?:\d+(?:[.,]\d+)?x|x|un|und|unid|uni|kg|kgs)$/
@@ -98,6 +107,12 @@ const MARKER = /^(?:\d+(?:[.,]\d+)?x|x|un|und|unid|uni|kg|kgs)$/
  * quantity line still completes its item, as 1 × its line total.
  */
 const GARBLED_QUANTITY = /^\d{1,2}[x×]\d+(?:[.,]\d*)?$/i
+
+/** A unit price's unit on its own, `EUR/kg`, `€/kg`. */
+const UNIT_OF_PRICE = /^(?:eur|€)?\/(?:kg|un|und|uni)$/i
+
+/** A weight run together with its unit, `0,5484kg`. */
+const JOINED_WEIGHT = /^(\d+[.,]\d{1,4})kgs?$/i
 
 /** At most this many noise tokens are dropped from each end of a line. */
 const MAX_EDGE_NOISE = 2
@@ -120,6 +135,9 @@ function isLeadingNoise(token: string): boolean {
     (/\P{ASCII}/u.test(letters) || letters === letters.toLowerCase())
   )
 }
+
+/** A price and one more digit, `0.201`: a glued, misread tax code. */
+const GLUED_CODE = /^\d+[.,]\d{3}$/
 
 /** At most this many tokens before a quantity are dropped as noise. */
 const MAX_QUANTITY_NOISE = 3
@@ -181,6 +199,15 @@ export function trimEdgeNoise(text: string): string {
     }
     tokens = tokens.slice(start)
   }
+  // A price with its tax code glued on and read as a digit, after another
+  // amount (`Deposito 0.20 0.201` for `0,20 F`): the price.
+  const final = tokens.at(-1) ?? ''
+  if (
+    GLUED_CODE.test(final) &&
+    tokenizeLine(tokens.at(-2) ?? '')[0]?.kind === 'amount'
+  ) {
+    tokens = [...tokens.slice(0, -1), final.slice(0, -1)]
+  }
   const kinds = tokens.map((token) => tokenizeLine(token)[0]?.kind)
   const lastAmount = kinds.lastIndexOf('amount')
   const tail = tokens.slice(lastAmount + 1)
@@ -211,7 +238,12 @@ function analyse(text: string, confidence: number): Line {
     if (token.kind === 'word' || token.kind === 'currency') {
       const parts = splitWords(token.text)
       words.push(...parts)
-      if (token.kind === 'word' && !GARBLED_QUANTITY.test(token.text)) {
+      if (
+        token.kind === 'word' &&
+        !GARBLED_QUANTITY.test(token.text) &&
+        !JOINED_WEIGHT.test(token.text) &&
+        !UNIT_OF_PRICE.test(token.text)
+      ) {
         desc.push(...parts.filter((part) => !MARKER.test(part)))
       }
     }
@@ -238,6 +270,15 @@ function analyse(text: string, confidence: number): Line {
     negative: last !== undefined && last < 0,
     fixed: amounts.some((amount) => amount.fixed),
     endsInAmount: tail.at(-1)?.kind === 'amount',
+    sources: [],
+  }
+}
+
+/** Two lines read as one: `text`, from both lines' sources, in this order. */
+function joined(text: string, first: Line, second: Line): Line {
+  return {
+    ...analyse(text, Math.min(first.confidence, second.confidence)),
+    sources: [...first.sources, ...second.sources],
   }
 }
 
@@ -285,20 +326,124 @@ function isCategoryHeader(line: Line): boolean {
 }
 
 /**
+ * A quantity line that prints only the unit price, `6 X 0,22` or
+ * `0,720 KG × 11,49`: one amount, after its `x`. The line total is on
+ * another line.
+ */
+function isUnitPriceOnly(line: Line): boolean {
+  const x = line.tokens.findIndex((token) => isXMarker(token))
+  const amountAt = line.tokens.findIndex((token) => token.kind === 'amount')
+  return x !== -1 && line.amounts.length === 1 && amountAt > x
+}
+
+/** An item line a quantity line can complete. */
+function isPlainItemLine(line: Line): boolean {
+  return (
+    line.endsInAmount &&
+    line.letters >= 2 &&
+    !line.negative &&
+    !isCategoryHeader(line) &&
+    !hasAnyKeyword(line)
+  )
+}
+
+/**
+ * CP3: a unit-price-only quantity line printed above its item (`6 X 0,22`
+ * / `ACQUA 1,32`, `0,720 KG × 11,49` / `GULASCH 8,27`), as German and
+ * Italian receipts do: the next line, when its total is the quantity times
+ * the unit price (to the cent, a weight's rounding allowed).
+ */
+function completesNext(line: Line, next: Line | undefined): boolean {
+  if (next === undefined || !isUnitPriceOnly(line) || !isPlainItemLine(next)) {
+    return false
+  }
+  return closesItem(line, next)
+}
+
+/**
+ * CP3: the same line printed under its item (Lidl's weighed items,
+ * `ESPETADAS 2,66` / `0,190 kg × 13,99`), so a promotion under it still
+ * belongs to the item.
+ */
+function completesPrevious(line: Line, previous: Line | undefined): boolean {
+  return (
+    previous !== undefined &&
+    isUnitPriceOnly(line) &&
+    isPlainItemLine(previous) &&
+    closesItem(line, previous)
+  )
+}
+
+/** The quantity line's quantity times its unit price is the item's total. */
+function closesItem(line: Line, item: Line): boolean {
+  const lastAt = line.tokens.findLastIndex((token) => token.kind === 'amount')
+  const found = readQuantity(line, lastAt, false)
+  if (found === undefined || item.last === undefined) {
+    return false
+  }
+  const product = multiplyRatio(
+    found.unitPrice,
+    found.quantity.numerator,
+    found.quantity.denominator,
+  )
+  return Math.abs(product - item.last) <= 1
+}
+
+/** The item line with the quantity line's tokens before its line total. */
+function withQuantity(item: Line, quantity: Line): Line {
+  const lastAt = item.tokens.findLastIndex((token) => token.kind === 'amount')
+  const text = [
+    ...item.tokens.slice(0, lastAt),
+    ...quantity.tokens,
+    ...item.tokens.slice(lastAt),
+  ]
+    .map((token) => token.text)
+    .join(' ')
+  return joined(text, item, quantity)
+}
+
+/**
  * Rule 6's last form, and R4: a quantity-only line completes the item line
- * just before it, or the name-only line that holds its description.
+ * just before it, or the name-only line that holds its description. CP3:
+ * one that prints only the unit price completes the item after it when the
+ * arithmetic says so, and never replaces the price of an item line before
+ * it that already has one.
  */
 function mergeQuantityLines(lines: readonly Line[]): Line[] {
   const merged: Line[] = []
-  for (const line of lines) {
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i] as Line
     const previous = merged.at(-1)
+    const next = lines[i + 1]
+    // A name-only line above keeps its quantity line (rule 6, R4).
+    const nameAbove =
+      previous !== undefined &&
+      previous.amounts.length === 0 &&
+      previous.letters >= 2 &&
+      !isCategoryHeader(previous) &&
+      !hasAnyKeyword(previous)
     if (
+      isQuantityOnly(line) &&
+      !nameAbove &&
+      next !== undefined &&
+      completesNext(line, next)
+    ) {
+      merged.push(withQuantity(next, line))
+      i += 1
+    } else if (
+      previous !== undefined &&
+      isQuantityOnly(line) &&
+      completesPrevious(line, previous)
+    ) {
+      merged[merged.length - 1] = withQuantity(previous, line)
+    } else if (
       previous !== undefined &&
       isQuantityOnly(line) &&
       previous.letters >= 2 &&
       !previous.negative &&
       !isCategoryHeader(previous) &&
-      !hasAnyKeyword(previous)
+      !hasAnyKeyword(previous) &&
+      !(isUnitPriceOnly(line) && previous.endsInAmount)
     ) {
       const name = previous.tokens
         .filter(
@@ -310,10 +455,7 @@ function mergeQuantityLines(lines: readonly Line[]): Line[] {
         )
         .map((token) => token.text)
         .join(' ')
-      merged[merged.length - 1] = analyse(
-        `${name} ${line.text}`,
-        Math.min(previous.confidence, line.confidence),
-      )
+      merged[merged.length - 1] = joined(`${name} ${line.text}`, previous, line)
     } else {
       merged.push(line)
     }
@@ -348,9 +490,121 @@ function mergeTotalLines(lines: readonly Line[]): Line[] {
         hasPhrase(previous.words, SUBTOTAL) ||
         hasPhrase(previous.words, TAX_SUMMARY))
     ) {
-      merged[merged.length - 1] = analyse(
+      merged[merged.length - 1] = joined(
         `${previous.text} ${line.text}`,
-        Math.min(previous.confidence, line.confidence),
+        previous,
+        line,
+      )
+    } else {
+      merged.push(line)
+    }
+  }
+  return merged
+}
+
+/**
+ * CP3: a name-only item line whose price is on the next line, alone or
+ * after what's left of a quantity the reader lost (`BOCADOS HEURA` /
+ * `04 8,08`): the name takes the line's last amount.
+ */
+function mergePriceLines(lines: readonly Line[]): Line[] {
+  const merged: Line[] = []
+  for (const line of lines) {
+    const previous = merged.at(-1)
+    if (
+      previous !== undefined &&
+      previous.amounts.length === 0 &&
+      previous.letters >= 2 &&
+      !isCategoryHeader(previous) &&
+      !hasAnyKeyword(previous) &&
+      line.letters === 0 &&
+      line.endsInAmount &&
+      !line.negative &&
+      !isQuantityOnly(line) &&
+      line.tokens.every(
+        (token) =>
+          token.kind === 'number' ||
+          token.kind === 'amount' ||
+          token.kind === 'currency' ||
+          token.kind === 'taxCode',
+      )
+    ) {
+      const lastAt = line.tokens.findLastIndex(
+        (token) => token.kind === 'amount',
+      )
+      const price = line.tokens
+        .slice(lastAt)
+        .map((token) => token.text)
+        .join(' ')
+      merged[merged.length - 1] = joined(
+        `${previous.text} ${price}`,
+        previous,
+        line,
+      )
+    } else {
+      merged.push(line)
+    }
+  }
+  return merged
+}
+
+/** An article code: 6–14 digits. */
+const ARTICLE_CODE = /^\d{6,14}$/
+
+/**
+ * A line with no description that starts with an article code and ends in
+ * the price: `1792212 1 23,0% 153,30` (code, quantity, VAT, price).
+ */
+function isCodeAndPrice(line: Line): boolean {
+  const [first] = line.tokens
+  return (
+    first?.kind === 'number' &&
+    ARTICLE_CODE.test(first.text) &&
+    line.letters === 0 &&
+    line.endsInAmount &&
+    !line.negative &&
+    line.tokens.every(
+      (token) =>
+        token.kind === 'number' ||
+        token.kind === 'amount' ||
+        token.kind === 'rate' ||
+        token.kind === 'taxCode' ||
+        token.kind === 'currency',
+    )
+  )
+}
+
+/**
+ * CP3, P9's code-then-description layout: a code line carrying the
+ * quantity and price, then the description under it (`1792212 1 23,0%
+ * 153,30` / `THW CLARK 44 GREY`). The description becomes the item, with
+ * the code line's quantity first and its amounts last; the code is left
+ * out.
+ */
+function mergeCodeLines(lines: readonly Line[]): Line[] {
+  const merged: Line[] = []
+  for (const line of lines) {
+    const previous = merged.at(-1)
+    if (
+      previous !== undefined &&
+      isCodeAndPrice(previous) &&
+      line.amounts.length === 0 &&
+      line.letters >= 2 &&
+      !isCategoryHeader(line) &&
+      !hasAnyKeyword(line)
+    ) {
+      const rest = previous.tokens.slice(1)
+      const quantity = rest
+        .filter((token) => token.kind === 'number')
+        .map((token) => token.text)
+      const amounts = rest
+        .filter((token) => token.kind !== 'number')
+        .map((token) => token.text)
+      // The description is the item's line; the code line its detail.
+      merged[merged.length - 1] = joined(
+        [...quantity, line.text, ...amounts].join(' '),
+        line,
+        previous,
       )
     } else {
       merged.push(line)
@@ -461,11 +715,21 @@ function soleLabel(line: Line): string | undefined {
  */
 function isFuzzyTotal(line: Line): boolean {
   const label = soleLabel(line)
+  if (line.last === undefined || line.negative) {
+    return false
+  }
+  if (label !== undefined) {
+    return substitutions(label, 'total') === 1
+  }
+  // CP3: or the first word of a longer total phrase (`Totai do documento`).
+  const [first, ...rest] = line.desc
   return (
-    line.last !== undefined &&
-    !line.negative &&
-    label !== undefined &&
-    substitutions(label, 'total') === 1
+    first !== undefined &&
+    substitutions(first, 'total') === 1 &&
+    TOTAL.some(
+      (phrase) =>
+        phrase.includes(' ') && findPhrase(['total', ...rest], phrase) === 0,
+    )
   )
 }
 
@@ -684,12 +948,16 @@ function readQuantity(
       quantityAt -= 1
     }
     const quantityToken = tokens[quantityAt]
+    const weight = JOINED_WEIGHT.exec(quantityToken?.text ?? '')
     const priceAt = amountAt.find((i) => i > x)
     if (
       priceAt !== undefined &&
-      (quantityToken?.kind === 'number' || quantityToken?.kind === 'amount')
+      quantityToken !== undefined &&
+      (quantityToken.kind === 'number' ||
+        quantityToken.kind === 'amount' ||
+        (quantityToken.kind === 'word' && weight !== null))
     ) {
-      const quantity = ratioOf(joined?.[1] ?? quantityToken.text)
+      const quantity = ratioOf(joined?.[1] ?? weight?.[1] ?? quantityToken.text)
       const price = tokens[priceAt]
       if (quantity !== undefined && price?.kind === 'amount') {
         const used = [quantityAt, x, priceAt]
@@ -977,11 +1245,15 @@ export function parseReceiptText(input: readonly TextLine[]): ParsedReceipt {
 }
 
 function parse(input: readonly TextLine[]): ParsedReceipt {
+  const analysed: Line[] = input.map((entry, index) => ({
+    ...analyse(trimEdgeNoise(entry.text), entry.confidence),
+    sources: [index],
+  }))
   const lines = mergeTotalLines(
-    mergeQuantityLines(
-      input
-        .map((entry) => analyse(trimEdgeNoise(entry.text), entry.confidence))
-        .filter((line) => line.tokens.length > 0),
+    mergePriceLines(
+      mergeCodeLines(
+        mergeQuantityLines(analysed.filter((line) => line.tokens.length > 0)),
+      ),
     ),
   )
 
@@ -1051,18 +1323,36 @@ function parse(input: readonly TextLine[]): ParsedReceipt {
   // informational lines don't break the run.
   const items: ParsedItem[] = []
   const billDiscounts: Cents[] = []
+  // P15: the item each line produced or belongs to, for the review.
+  const itemOf = new Map<Classified, number>()
   let discountable: number | undefined
+  let lastItem: number | undefined
   for (const entry of classified) {
     const { line } = entry
+    if (entry.region !== 'items') {
+      lastItem = undefined
+    } else if (
+      lastItem !== undefined &&
+      entry.group !== 'item' &&
+      entry.group !== 'discount' &&
+      !isCategoryHeader(line)
+    ) {
+      itemOf.set(entry, lastItem)
+    }
     if (isCodeAndSize(line) || isInformational(line)) {
       continue
     }
     if (entry.group === 'item' && entry.region === 'items') {
       items.push(readItem(line, hasQuantityColumn))
       discountable = items.length - 1
+      lastItem = discountable
+      itemOf.set(entry, discountable)
     } else if (entry.group === 'discount' && line.last !== undefined) {
       const discount = magnitude(line.last)
       const item = discountable === undefined ? undefined : items[discountable]
+      if (entry.region === 'items' && item !== undefined) {
+        itemOf.set(entry, discountable ?? 0)
+      }
       if (entry.region === 'items' && item !== undefined && !line.negative) {
         items[discountable ?? 0] = {
           ...item,
@@ -1132,9 +1422,23 @@ function parse(input: readonly TextLine[]): ParsedReceipt {
     const tipBetween = classified
       .slice(from + 1, next.i)
       .some((_, offset) => eligibleTip(from + 1 + offset))
+    // CP3: a total, a bill-level discount, then the total after it
+    // (`Summe 34,97`, `MwSt-Senkung -0,88`, `Summe 34,09`).
+    const discountsBetween = classified
+      .slice(from + 1, next.i)
+      .filter(
+        (entry) => entry.group === 'discount' && entry.line.last !== undefined,
+      )
+      .map((entry) => magnitude(entry.line.last ?? cents(0)))
+    const discountedTotal =
+      discountsBetween.length > 0 &&
+      chosen.entry.line.last !== undefined &&
+      subtract(chosen.entry.line.last, sum(discountsBetween)) ===
+        next.entry.line.last
     if (
       (isSpecific(next.entry.line) && !isSpecific(chosen.entry.line)) ||
-      tipBetween
+      tipBetween ||
+      discountedTotal
     ) {
       chosen = next
     }
@@ -1173,5 +1477,73 @@ function parse(input: readonly TextLine[]): ParsedReceipt {
   if (billDiscounts.length > 0) receipt.discount = sum(billDiscounts)
   if (total !== undefined) receipt.total = total
   if (itemsEndedBy !== undefined) receipt.itemsEndedBy = itemsEndedBy
+  if (input.length > 0)
+    receipt.lines = lineRoles(input, analysed, classified, itemOf)
   return receipt
+}
+
+/** P15: a classified line's role, as the parser used it. */
+function roleOf(entry: Classified, item: number | undefined): LineRole {
+  if (entry.group === 'item') {
+    return entry.region === 'items' ? 'item' : 'ignored'
+  }
+  if (entry.payment) return 'payment'
+  // A total, tax, tip or discount line counts only with its amount (a
+  // column header with a tax word is no tax line).
+  if (
+    entry.line.last === undefined &&
+    entry.group !== 'text' &&
+    entry.group !== 'ignore'
+  ) {
+    return item === undefined ? 'ignored' : 'itemDetail'
+  }
+  switch (entry.group) {
+    case 'total':
+    case 'subtotal':
+      return 'total'
+    case 'discount':
+    case 'savings':
+      return 'discount'
+    case 'tip':
+      return 'tip'
+    case 'tax':
+    case 'taxSummary':
+      return 'taxTable'
+    default:
+      // Inside the items region, under an item: its code, variant or
+      // attribute line.
+      return item === undefined ? 'ignored' : 'itemDetail'
+  }
+}
+
+/**
+ * P15: every input line in order, with the role the parser gave the line
+ * it became part of. A merged item's first line is the item; the lines
+ * merged into it (a quantity, a price, a code line) are its detail. An
+ * empty line is ignored. Recording only: nothing here changes parsing.
+ */
+function lineRoles(
+  input: readonly TextLine[],
+  read: readonly Line[],
+  classified: readonly Classified[],
+  itemOf: ReadonlyMap<Classified, number>,
+): ReceiptLine[] {
+  const lines: ReceiptLine[] = input.map((entry, index) => {
+    const line: ReceiptLine = { text: entry.text, role: 'ignored' }
+    if (entry.box !== undefined) line.box = entry.box
+    const amount = read[index]?.last
+    if (amount !== undefined) line.amount = amount
+    return line
+  })
+  for (const entry of classified) {
+    const item = itemOf.get(entry)
+    const role = roleOf(entry, item)
+    entry.line.sources.forEach((source, position) => {
+      const line = lines[source]
+      if (line === undefined) return
+      line.role = role === 'item' && position > 0 ? 'itemDetail' : role
+      if (item !== undefined) line.itemIndex = item
+    })
+  }
+  return lines
 }

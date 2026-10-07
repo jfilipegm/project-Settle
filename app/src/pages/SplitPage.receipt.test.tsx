@@ -17,7 +17,7 @@ import type {
   ImportOptions,
   ImportResult,
 } from '../features/receipt/importReceipt.ts'
-import { readErrorMessage } from '../features/receipt/messages.ts'
+import { photoAdvice, readErrorMessage } from '../features/receipt/messages.ts'
 import type { ParsedReceipt, ReadErrorCode } from '../features/receipt/model.ts'
 import {
   ReceiptImportContext,
@@ -259,6 +259,73 @@ describe('Scanning a receipt on the Split page', () => {
     expect(screen.getByRole('heading', { name: 'Items' })).toBeVisible()
     expect(
       screen.queryByRole('button', { name: 'Cancel' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows the photo advice while reading, keeps it in the check panel, and never saves it (M2.5, P11)', async () => {
+    let finish: (() => void) | undefined
+    const importReceipt = vi.fn<ImportReceiptFn>(
+      (_file, options) =>
+        new Promise((resolve) => {
+          options.onProgress?.({ phase: 'reading', progress: 0 })
+          options.onQuality?.(['smallText', 'blurred'])
+          finish = () => {
+            const { bill, summary } = receiptToBill(
+              RECEIPT,
+              undefined,
+              options.currentBill,
+              options.nextId,
+            )
+            resolve({
+              ok: true,
+              bill,
+              summary,
+              photoIssues: ['smallText', 'blurred'],
+            })
+          }
+        }),
+    )
+    const view = renderPage(importReceipt)
+    choose()
+
+    // While reading: the specific advice, and the reading goes on.
+    const scan = screen.getByRole('region', { name: 'Scan a receipt' })
+    const advice = await within(scan).findByRole('list', {
+      name: 'Photo advice',
+    })
+    expect(
+      within(advice)
+        .getAllByRole('listitem')
+        .map((item) => item.textContent),
+    ).toEqual([photoAdvice('smallText'), photoAdvice('blurred')])
+    expect(plain(within(scan).getByRole('status').textContent)).toBe(
+      'Reading the text… 0%',
+    )
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled()
+
+    await act(async () => {
+      finish?.()
+      await Promise.resolve()
+    })
+    await waitFor(() => expect(queryPanel()).toBeInTheDocument(), LOADED)
+
+    // Moved to the check panel, for this import only.
+    expect(
+      within(scan).queryByRole('list', { name: 'Photo advice' }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(panel()).getByRole('list', { name: 'Photo advice' }),
+    ).toHaveTextContent(photoAdvice('smallText'))
+    const saved = JSON.stringify({ ...localStorage })
+    expect(saved).not.toContain('smallText')
+    expect(saved).not.toContain(photoAdvice('smallText'))
+
+    // Never saved: a reload shows the panel without it.
+    view.unmount()
+    renderPage(importing())
+    expect(queryPanel()).toBeInTheDocument()
+    expect(
+      screen.queryByRole('list', { name: 'Photo advice' }),
     ).not.toBeInTheDocument()
   })
 

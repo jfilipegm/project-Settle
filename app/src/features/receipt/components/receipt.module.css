@@ -64,6 +64,29 @@
   color: var(--color-error);
 }
 
+/* M2.5, P16: why photos aren't offered in this browser. */
+.note {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3);
+  border-left: 3px solid var(--color-warning, var(--color-border));
+}
+
+/* P11: the photo quality check's advice. */
+.photoAdvice {
+  margin: var(--space-3) 0;
+  padding: var(--space-3);
+  border-left: 3px solid var(--color-warning, var(--color-border));
+}
+
+.photoAdvice p {
+  margin: 0 0 var(--space-2);
+}
+
+.photoAdvice ul {
+  margin: 0;
+  padding-left: var(--space-5);
+}
+
 .check {
   margin-bottom: var(--space-6);
   padding: var(--space-4);

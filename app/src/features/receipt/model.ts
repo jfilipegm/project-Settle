@@ -5,11 +5,50 @@
  */
 import type { Cents, MoneyCurrency, Ratio } from '../../lib/money.ts'
 
+/** M2.5 plan, P15: where a line is on the decoded pages, in pixels. */
+export interface LineBox {
+  /** The page's index, from 0. */
+  page: number
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
 /** One line of text, from OCR or a PDF text layer. */
 export interface TextLine {
   text: string
   /** 0–100. A PDF text layer's lines are 100. */
   confidence: number
+  /** Where OCR found it (P15); a PDF text layer's lines have none. */
+  box?: LineBox
+}
+
+/**
+ * P15: the role the parser gave a line. `itemDetail` is a line that
+ * belongs to an item without being it (a quantity, code or variant line);
+ * `discount` covers savings; `total` covers subtotals.
+ */
+export type LineRole =
+  | 'item'
+  | 'itemDetail'
+  | 'discount'
+  | 'total'
+  | 'tip'
+  | 'taxTable'
+  | 'payment'
+  | 'ignored'
+
+/** P15: one input line, as the parser read it. */
+export interface ReceiptLine {
+  /** The line as read. */
+  text: string
+  box?: LineBox
+  /** The line's last amount, when it has one. */
+  amount?: Cents
+  role: LineRole
+  /** The parsed item it produced or belongs to (`ParsedReceipt.items`). */
+  itemIndex?: number
 }
 
 export interface ParsedItem {
@@ -73,6 +112,18 @@ export interface ParsedReceipt {
   /** R23: the footer line that ended the items region, if one did. */
   itemsEndedBy?: ItemsEnd
   warnings: ReceiptWarning[]
+  /** P15: every input line in order, with its role. */
+  lines?: ReceiptLine[]
+}
+
+/**
+ * P15: a line for the row-by-row review, linked to the bill row its item
+ * became. Kept in memory for the import that produced it, never saved.
+ */
+export interface ReviewLine extends ReceiptLine {
+  billItemId?: string
+  /** Its item was left out of the bill: a cut (R23, R24) or the limit. */
+  leftOut?: boolean
 }
 
 /** R24: a line the import left out to match the receipt's total. */
@@ -104,6 +155,8 @@ export type ReadErrorCode =
   | 'decodeFailed'
   | 'ocrFailed'
   | 'assetsUnavailable'
+  /** M2.5, P16: the file needs OCR, and this browser can't run the reader. */
+  | 'readerUnsupported'
   | 'noItems'
   | 'cancelled'
 
@@ -123,9 +176,60 @@ export interface ReadProgress {
   progress?: number
 }
 
+/**
+ * M2.5 plan, P11: what the photo quality check found on a page. Each has
+ * its own advice (`messages.ts`).
+ */
+export type PhotoIssue =
+  /** No text was detected at all. */
+  | 'noText'
+  /** The text is too small to read reliably. */
+  | 'smallText'
+  | 'blurred'
+  | 'dark'
+  /** Faint, washed-out text: too much light, or too little contrast. */
+  | 'faint'
+  | 'glare'
+  /** Text runs into an edge of the image: the receipt is cut off. */
+  | 'cutOff'
+  /** The text covers a small part of the image: taken from too far away. */
+  | 'farAway'
+
+/** P11's measurements on one page; absent when there was no text box. */
+export interface PhotoMeasures {
+  boxes: number
+  /** The detection boxes' median height, in the page's pixels. */
+  textHeight?: number
+  /** The Laplacian's standard deviation (0–255 scale), at text scale. */
+  sharpness?: number
+  /** Mean brightness inside the boxes, 0–255. */
+  brightness?: number
+  /** Standard deviation of the brightness inside the boxes, 0–255. */
+  contrast?: number
+  /** The share of boxes washed out white. */
+  glare?: number
+  /** The share of boxes touching an edge of the image. */
+  edgeShare?: number
+  /** The share of the image inside the rectangle around the text. */
+  coverage?: number
+}
+
+/** P11: one page's check, shown for the import and never stored. */
+export interface PhotoQuality {
+  issues: PhotoIssue[]
+  measures: PhotoMeasures
+  /** How long the check took (detection included), for the measurements. */
+  milliseconds?: number
+}
+
 export interface ReadOptions {
   signal?: AbortSignal
   onProgress?: (progress: ReadProgress) => void
+  /**
+   * P11: called with each page's photo quality check, before that page is
+   * read. Without it, no check runs; the reading is the same either way.
+   */
+  onQuality?: (quality: PhotoQuality) => void
 }
 
 /**

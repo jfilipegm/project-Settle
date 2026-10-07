@@ -3,8 +3,14 @@ import type { Region } from '../../../app/region.ts'
 import { formatAmount, negate, type Cents } from '../../../lib/money.ts'
 import { LIMITS, type Bill } from '../../split/model.ts'
 import splitStyles from '../../split/components/split.module.css'
-import { warningMessage } from '../messages.ts'
-import type { ReceiptSummary, RemovedLine } from '../model.ts'
+import { PHOTO_ADVICE_LEAD_DONE, warningMessage } from '../messages.ts'
+import type {
+  PhotoIssue,
+  PhotoQuality,
+  ReceiptSummary,
+  RemovedLine,
+  ReviewLine,
+} from '../model.ts'
 import { checkReceipt, type ReceiptCheck as Check } from '../reconcile.ts'
 import {
   INCOMPLETE_BELOW,
@@ -13,6 +19,8 @@ import {
   linesCount,
   readShare,
 } from '../review.ts'
+import { PhotoAdvice } from './PhotoAdvice.tsx'
+import { ReceiptLines } from './ReceiptLines.tsx'
 import styles from './receipt.module.css'
 
 interface Props {
@@ -20,6 +28,19 @@ interface Props {
   summary: ReceiptSummary
   /** The receipt image's object URL, while this page holds it (D14). */
   imageUrl?: string | undefined
+  /** P11: the photo quality check's issues, for this import only. */
+  photoIssues?: readonly PhotoIssue[] | undefined
+  /**
+   * P11: each page's measurements, as numbers in a `data-` attribute for
+   * `scripts/measure-quality.mjs` (the browser's own values). Never shown.
+   */
+  photoChecks?: readonly PhotoQuality[] | undefined
+  /** P15: the lines read, for "Review lines", this import only. */
+  lines?: readonly ReviewLine[] | undefined
+  /** P15: adds a line as a flagged item shared by everyone. */
+  onAddItem?: (name: string, amount: Cents) => void
+  /** P15: the bill row of the line selected in the review, or none. */
+  onSelectItem?: (itemId: string | undefined) => void
   region: Region
   headingRef?: Ref<HTMLHeadingElement>
   onDismiss: () => void
@@ -142,6 +163,11 @@ export function ReceiptCheck({
   bill,
   summary,
   imageUrl,
+  photoIssues = [],
+  photoChecks,
+  lines,
+  onAddItem,
+  onSelectItem,
   region,
   headingRef,
   onDismiss,
@@ -158,6 +184,9 @@ export function ReceiptCheck({
       className={styles.check}
       aria-labelledby="receipt-check-heading"
       data-receipt-check=""
+      data-photo-checks={
+        photoChecks === undefined ? undefined : JSON.stringify(photoChecks)
+      }
     >
       <h2 id="receipt-check-heading" tabIndex={-1} ref={headingRef}>
         Receipt check
@@ -277,6 +306,26 @@ export function ReceiptCheck({
             <li key={warning}>{warningMessage(warning, summary.currency)}</li>
           ))}
         </ul>
+      )}
+
+      <PhotoAdvice issues={photoIssues} lead={PHOTO_ADVICE_LEAD_DONE} />
+
+      {lines !== undefined && lines.length > 0 && (
+        <details className={splitStyles.details}>
+          <summary>Review lines</summary>
+          <ReceiptLines
+            lines={lines}
+            imageUrl={imageUrl}
+            bill={bill}
+            region={region}
+            onAddItem={(name, amount) => {
+              onAddItem?.(name, amount)
+            }}
+            onSelectItem={(itemId) => {
+              onSelectItem?.(itemId)
+            }}
+          />
+        </details>
       )}
 
       {imageUrl !== undefined && (

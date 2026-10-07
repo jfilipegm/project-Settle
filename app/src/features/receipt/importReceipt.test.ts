@@ -408,4 +408,42 @@ describe('importReceipt', () => {
       summary: { warnings: ['currencyDiffers'] },
     })
   })
+
+  it('passes the photo check’s issues on as they come, and returns them, never in the summary (P11)', async () => {
+    const seen: string[][] = []
+    const result = await importReceipt(
+      file(),
+      deps({
+        reader: reader((_source, { onQuality } = {}) => {
+          onQuality?.({ issues: ['farAway'], measures: { boxes: 4 } })
+          onQuality?.({ issues: ['smallText'], measures: { boxes: 4 } })
+          return Promise.resolve({ ok: true, receipt: RECEIPT })
+        }),
+      }),
+      { ...options(), onQuality: (issues) => seen.push(issues) },
+    )
+    expect(seen).toEqual([['farAway'], ['smallText', 'farAway']])
+    expect(result).toMatchObject({
+      ok: true,
+      photoIssues: ['smallText', 'farAway'],
+    })
+    if (!result.ok) throw new Error('not imported')
+    expect(result.photoChecks).toHaveLength(2)
+    expect(JSON.stringify(result.summary)).not.toMatch(/small|far/i)
+  })
+
+  it('returns no photo issues when the check found none', async () => {
+    const result = await importReceipt(
+      file(),
+      deps({
+        reader: reader((_source, { onQuality } = {}) => {
+          onQuality?.({ issues: [], measures: { boxes: 4 } })
+          return Promise.resolve({ ok: true, receipt: RECEIPT })
+        }),
+      }),
+      options(),
+    )
+    expect(result.ok).toBe(true)
+    expect(result).not.toHaveProperty('photoIssues')
+  })
 })

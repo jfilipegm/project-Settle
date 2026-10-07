@@ -2271,6 +2271,943 @@
       "blocking_decisions": [],
       "state_revision": 55,
       "last_transition": "2026-09-30T18:11:18Z"
+    },
+    "milestone-2-5": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-2-5",
+      "parent_work_item_id": null,
+      "plan_path": "docs/milestones/milestone-2-5-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-2-5-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-2-5-mapping.json",
+      "governing_workflow_version": "2.2",
+      "phase": "MILESTONE_COMPLETE",
+      "plan_revision": 10,
+      "implementation_revision": 2,
+      "functional_review_round": null,
+      "base_commit": "56a96dbdd433d048088711d21584aaebed1c55d7",
+      "reviewed_implementation_head": "f2ad84d72726318d0d6b4246a9c80673373e16e9",
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": "CP6A",
+      "checkpoints": {
+        "CP1": {
+          "status": "COMPLETE",
+          "start_commit": "676a1ea9561649013bd2d245df10a615cb6b15ab"
+        },
+        "CP2": {
+          "status": "COMPLETE",
+          "start_commit": "725d0dad20a900fdd02e82e54b5224a16b6f3171"
+        },
+        "CP3": {
+          "status": "COMPLETE",
+          "start_commit": "5b51204b9e67f756907723269ad3b67c441efea7"
+        },
+        "CP4": {
+          "status": "COMPLETE",
+          "start_commit": "aca083d13dfc908ef1c462873fc8f6c9784f7ab7"
+        },
+        "CP5": {
+          "status": "COMPLETE",
+          "start_commit": "19dceaa55430f869c68fd329b988082cb0a969ed"
+        },
+        "CP6": {
+          "status": "COMPLETE",
+          "start_commit": "d257f2a8293b69342f40abaf307355e47f0cb4d0"
+        },
+        "CP6A": {
+          "status": "COMPLETE",
+          "start_commit": "9145f5205f5423b08576851838e084e4c8fb6fa5"
+        }
+      },
+      "current_bundle_id": "16c1ba0daa3ca2ab1c9d959a01dc04117a0925c6e4062f0f3866043cbf6357ee",
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "16c1ba0daa3ca2ab1c9d959a01dc04117a0925c6e4062f0f3866043cbf6357ee",
+        "approved_review_content_id": "f79ec1df70c133e56ca83f5363c4e795652cde052ebdd69481ab0ca03180d5fc",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-2-5-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "40f8d543e1c3bd7033247a43fae1fbfa7e777a5a"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-2-5-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5d4810d1ec2976898245b19cb00376586e75e218"
+          },
+          {
+            "path": "docs/milestones/milestone-2-5-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b8852e47ca57d29b5105a5484a1c14527b2a26db"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-2-5 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-10-04T21:59:25Z"
+      },
+      "technical_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "0bf97e99be595214b214315885c68a621fe203a715d2c612d55787f590b607a3",
+        "approved_review_content_id": "b955ec50d4b9990c1ad56ea465bd61fffa2e1154eab68b30b7628492b3c7d741",
+        "review_content_manifest": [
+          {
+            "path": ".github/workflows/app-ci.yml",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4aa841d5a6a324c3d758fdc7e7b62747c60afd9f"
+          },
+          {
+            "path": "README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4cd5f719daacdf45f22c0f0546bbddd7ffd1c7d7"
+          },
+          {
+            "path": "app/.gitignore",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f80a1778bbf234811de8287db9ed12ca826237c0"
+          },
+          {
+            "path": "app/README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7f2edbb992f0dfb0152263a57cb2f18e0edc7652"
+          },
+          {
+            "path": "app/package-lock.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a9e477cd754bfaed86f65e204aec68bea2e6c589"
+          },
+          {
+            "path": "app/package.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c97ec9a0ee8a803867276f4a5260ddd5c02d86d5"
+          },
+          {
+            "path": "app/public/THIRD_PARTY_NOTICES.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a37e47cd7e2be40d65ba64af0a9162e3a3528b61"
+          },
+          {
+            "path": "app/scripts/browser.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bab11cd165b6061ca8b6665d15a25d36d8eb6eee"
+          },
+          {
+            "path": "app/scripts/check-build.d.mts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3a8a51673d547cad3aa9e361841dc72244af64a0"
+          },
+          {
+            "path": "app/scripts/check-build.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "17d6a68628aaa76bf5e992406247cac3f535d219"
+          },
+          {
+            "path": "app/scripts/check-requests.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ad71289a152bbdcc33cfa9ee29192a847330a6ec"
+          },
+          {
+            "path": "app/scripts/diag-lines.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ef44eac8d4fa4d98587de375643f308598ca9754"
+          },
+          {
+            "path": "app/scripts/local-scan.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "00ad2bd2fa1a5b0dc7cfe1fb6d016700adec905b"
+          },
+          {
+            "path": "app/scripts/make-sample-receipts.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "efb693aa0f9bba89995b02d825b85f4a7e7750a1"
+          },
+          {
+            "path": "app/scripts/measure-local.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5d7beebce9f5e5588ddd1f7d74140e5912f9d969"
+          },
+          {
+            "path": "app/scripts/measure-node.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "747900ddb2842d1686dbda42810900cbb1f7da7c"
+          },
+          {
+            "path": "app/scripts/measure-quality.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "419fe61f470c21a650155e5dc8fdd1fb87a30164"
+          },
+          {
+            "path": "app/scripts/vendor-assets.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d999f60bccdaa6c370e830cda3db3a2a13b5eff6"
+          },
+          {
+            "path": "app/scripts/vendor-paddle.d.mts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d3866e8b57360cbc1b55db7d2238d7614f537b97"
+          },
+          {
+            "path": "app/scripts/vendor-paddle.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d17e057e31fae5aaae6c2458d24b2a6add4a8072"
+          },
+          {
+            "path": "app/src/features/receipt/accuracy.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a034a25208e4e3cd24d4d2259ae6df31a39bbee6"
+          },
+          {
+            "path": "app/src/features/receipt/accuracy.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "61a146d0187fdd9ac4d7c93e1e68bbdd21c22bca"
+          },
+          {
+            "path": "app/src/features/receipt/assets.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "090c0b605a24449ae6eadd2d393cc5441278ce23"
+          },
+          {
+            "path": "app/src/features/receipt/assets.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2bf07a317d025db04b6f251304019c513c42e1b5"
+          },
+          {
+            "path": "app/src/features/receipt/browserImport.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d6929964e5856bd859a2ea06c9ec158893090d2b"
+          },
+          {
+            "path": "app/src/features/receipt/builtInReader.test.ts",
+            "exists": false,
+            "mode": null,
+            "blob": null
+          },
+          {
+            "path": "app/src/features/receipt/builtInReader.ts",
+            "exists": false,
+            "mode": null,
+            "blob": null
+          },
+          {
+            "path": "app/src/features/receipt/checkBuild.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0bda51220431cc8e81f7818e30247fd0ac9edc27"
+          },
+          {
+            "path": "app/src/features/receipt/components/PhotoAdvice.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f1cc2d1d52459ed5feef21d1713a5d6ef453f72c"
+          },
+          {
+            "path": "app/src/features/receipt/components/ReceiptCheck.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "977be48e2e61e08b500e90b9f30583dbfd82a18d"
+          },
+          {
+            "path": "app/src/features/receipt/components/ReceiptLines.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3eee53f7cae08014a8f4c419a2819778dc7b52fa"
+          },
+          {
+            "path": "app/src/features/receipt/components/ScanReceipt.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "71eb74acfdbfdf6641858c39b510aca6785e0217"
+          },
+          {
+            "path": "app/src/features/receipt/components/ScanReceipt.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "80be707a87085751425ebf489a7f1b96d85e41b1"
+          },
+          {
+            "path": "app/src/features/receipt/components/receipt.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "74c4689fe6e30bbff0884e20dc2fd6f6594939dc"
+          },
+          {
+            "path": "app/src/features/receipt/components/receiptLines.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0756c8a58bba5ad7431a351e1f58345861aa8d3c"
+          },
+          {
+            "path": "app/src/features/receipt/decodeImage.node.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "502ebb8c501729f20cd87e001f5cbef4f6760159"
+          },
+          {
+            "path": "app/src/features/receipt/decodeImage.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0f6aef7ee8f9cece10cb3b5a171084cac7ecf2d9"
+          },
+          {
+            "path": "app/src/features/receipt/encodePage.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1a08b4de048c46254e5057bf6f67318a167aa7bf"
+          },
+          {
+            "path": "app/src/features/receipt/encodePage.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f8599eb201d045c2fa9daf0078bbac03cecf9682"
+          },
+          {
+            "path": "app/src/features/receipt/expectedBill.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "fc440b53fe8bff58afd9ab5ccdcde20774510e46"
+          },
+          {
+            "path": "app/src/features/receipt/expectedBill.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ae601a2eb959c3193d47cc9e3fbf2c228c0276d3"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/03-pt-supermercado-qr.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ffd0071ee8aaaa6ff930d6c76e4619c8ef53840b"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/12-pt-hiper-foto.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "891b853672f06619751d0aea19c2cc7f61082c25"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/14-pt-restaurante-iva-qtd.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f2c4619a6bd03c9361cadb779789cff34cdc4f94"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/14-pt-restaurante-iva-qtd.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6fc95885d125a48c6341c644da1b2d46e97edb6f"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/14-pt-restaurante-iva-qtd.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b29f3f6b323d5be7187bfdc0b0c1bc4314d13697"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/15-pt-loja-codigo-atributos.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "29bb46d3a8f2275acb407bf46b75734665e8062e"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/15-pt-loja-codigo-atributos.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2be7aeb60f985f85903698555c70c86204259b54"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/15-pt-loja-codigo-atributos.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2221efbc8ec1a42b8ce1d61654aedf06aebd517d"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/16-pt-loja-variantes.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3fbb26383c115fd65119e33aa561baf60f2b5b35"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/16-pt-loja-variantes.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2659a5f91fd035d0c9156619e2f9959cca120a31"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/16-pt-loja-variantes.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "06d110897501bbf5a48d052ac4969608ba0f6a5c"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/17-pt-supermercado-cartao.expected.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f0a1307b285d8ca1d62f83b37cb295c0e569a25f"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/17-pt-supermercado-cartao.png",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2ae3d6eae7998782b367cd74ef7abd1b089b6b05"
+          },
+          {
+            "path": "app/src/features/receipt/fixtures/receipts/17-pt-supermercado-cartao.svg",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a8f50b1fcca59fc280c99ba25c0476d35aae7f84"
+          },
+          {
+            "path": "app/src/features/receipt/importDeps.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c15c3e19dbbe7fecd637c7dc0f107cfb50ed8f1c"
+          },
+          {
+            "path": "app/src/features/receipt/importReceipt.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bff74dfd4ff34734e36aa052a34946783dd81c1d"
+          },
+          {
+            "path": "app/src/features/receipt/importReceipt.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c6a41cd623230718a00f5b548237c1094581a786"
+          },
+          {
+            "path": "app/src/features/receipt/intake.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "fade9c9e5874adffba35e51e00824e4191afea6c"
+          },
+          {
+            "path": "app/src/features/receipt/lineReview.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "adddb3cc518c4999184dcc2bac54ce2bb17fc6e2"
+          },
+          {
+            "path": "app/src/features/receipt/lineReview.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "e27c323242d3d9bdd0932d3cbf56968a793cd27b"
+          },
+          {
+            "path": "app/src/features/receipt/localFixtures.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "13d741d384bad4b68ac0c249f0dcda6454889e44"
+          },
+          {
+            "path": "app/src/features/receipt/localFixtures.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "395eeb90b1f21991019176850257abd8c69d43fc"
+          },
+          {
+            "path": "app/src/features/receipt/localReport.node.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6edb34c8b45e4613434c4e3671c3384ca7e866db"
+          },
+          {
+            "path": "app/src/features/receipt/matchedCoverage.test.ts",
+            "exists": false,
+            "mode": null,
+            "blob": null
+          },
+          {
+            "path": "app/src/features/receipt/matchedCoverage.ts",
+            "exists": false,
+            "mode": null,
+            "blob": null
+          },
+          {
+            "path": "app/src/features/receipt/messages.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "10ad739829f96f13167055169001ec472b45b4dd"
+          },
+          {
+            "path": "app/src/features/receipt/model.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b1d71b1eee086f849c80695f84d3f03a8370529d"
+          },
+          {
+            "path": "app/src/features/receipt/paddle.worker.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c102a1e507dd5dc1f02d959c2677cc071da34d38"
+          },
+          {
+            "path": "app/src/features/receipt/paddleEngine.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ead4993fec6c054f65c46dbaec13f997edeed3bc"
+          },
+          {
+            "path": "app/src/features/receipt/paddleEngine.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c979a7755ac46611e4f9e8a1d8a4a19662db4aaf"
+          },
+          {
+            "path": "app/src/features/receipt/paddleLines.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8b0be71249fc04e28005e47f68c55ec5b66ae8a1"
+          },
+          {
+            "path": "app/src/features/receipt/paddleLines.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a233a66b082b5cd68dd06645b8eb7d8e982136da"
+          },
+          {
+            "path": "app/src/features/receipt/paddleReader.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "56e50915c6fd2a75e05ac20f9de2102f6781fca3"
+          },
+          {
+            "path": "app/src/features/receipt/paddleReader.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9c4b9ed4ccff4f3d86951370df791e9ae275eb43"
+          },
+          {
+            "path": "app/src/features/receipt/parse/amounts.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1ca723c4e740fca31b75540208250449e035cec6"
+          },
+          {
+            "path": "app/src/features/receipt/parse/keywords.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bf19e1e3b41b2cfc1dc17fbcd494751cdc8ad435"
+          },
+          {
+            "path": "app/src/features/receipt/parse/parseReceiptText.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5a8135dc00fdbc97d7c8dd339b068a34c18edda4"
+          },
+          {
+            "path": "app/src/features/receipt/parse/parseReceiptText.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "dcccba21854dd70ea0afccf1036afabd5a263962"
+          },
+          {
+            "path": "app/src/features/receipt/photoQuality.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "408537c93eeede732d8c30a32d0627a5dfc0cb2e"
+          },
+          {
+            "path": "app/src/features/receipt/photoQuality.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "15bc8a31ca3c1f7748936ea6a54521e83adf4ca7"
+          },
+          {
+            "path": "app/src/features/receipt/preprocess.test.ts",
+            "exists": false,
+            "mode": null,
+            "blob": null
+          },
+          {
+            "path": "app/src/features/receipt/preprocess.ts",
+            "exists": false,
+            "mode": null,
+            "blob": null
+          },
+          {
+            "path": "app/src/features/receipt/qrScanner.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "003a00ee258b6ede7f0e8d2f6d8e35e6743de4f4"
+          },
+          {
+            "path": "app/src/features/receipt/readerSupport.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "87d6a2ed55397966da48d0bd556236b9a9f6fc98"
+          },
+          {
+            "path": "app/src/features/receipt/readerSupport.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "36fd52d82da9de563675a4c44570552be0bebc39"
+          },
+          {
+            "path": "app/src/features/receipt/receipts.local.ocr.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "750f3825ce23be8110746a2018121a2721276aa9"
+          },
+          {
+            "path": "app/src/features/receipt/receipts.ocr.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "e37e26ff0f4d5ddb6d16d48d95f314b99a636afc"
+          },
+          {
+            "path": "app/src/features/receipt/resize.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "813e5e0fb905159f70b099a1ac068d1edb659753"
+          },
+          {
+            "path": "app/src/features/receipt/resize.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "072e5a277209b8bd4f5304ab85c1aa0f666f42c9"
+          },
+          {
+            "path": "app/src/features/receipt/strips.test.ts",
+            "exists": false,
+            "mode": null,
+            "blob": null
+          },
+          {
+            "path": "app/src/features/receipt/strips.ts",
+            "exists": false,
+            "mode": null,
+            "blob": null
+          },
+          {
+            "path": "app/src/features/receipt/toBill.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "fe00567876cc60013a57909cf2d79a1dac38db2d"
+          },
+          {
+            "path": "app/src/features/receipt/toBill.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "de9575a99275906bf93fce6e2d94ee061395e08f"
+          },
+          {
+            "path": "app/src/features/receipt/vendorPaddle.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "26f6e2be62f96ab2420cbe4967bb1c864239835b"
+          },
+          {
+            "path": "app/src/features/split/components/ItemsSection.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "90ee158b02f714650754bfbb901756f296f1ab42"
+          },
+          {
+            "path": "app/src/features/split/components/split.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "876e6ef7843909521422c88dfd506ad721fb6810"
+          },
+          {
+            "path": "app/src/pages/SettingsPage.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "af2cffc0d06ef24c59d82252c74c5c40a6d0e758"
+          },
+          {
+            "path": "app/src/pages/SettingsPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6fd86fafa38947880cbbdd943a73fa400f248128"
+          },
+          {
+            "path": "app/src/pages/SplitPage.e2e.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8d37ed5ad2c3a255c52f559353194ad05b17cd4c"
+          },
+          {
+            "path": "app/src/pages/SplitPage.lines.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3fc55539a5e174db1f48953c7dde5d879184cfc0"
+          },
+          {
+            "path": "app/src/pages/SplitPage.receipt.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c79cd021e87869a27ea44817fc50e0284081a2ce"
+          },
+          {
+            "path": "app/src/pages/SplitPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6f96979977c0e0fd67641074d6b8896cdda48de1"
+          },
+          {
+            "path": "app/src/test/setup.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c3d42c339cc6e49692b74f54f3b2ff1a2842fde2"
+          },
+          {
+            "path": "app/vite.config.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9f6154b502fec0171c89584e21a3cc5432522666"
+          },
+          {
+            "path": "docs/adr/0002-in-browser-receipt-reading.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c3d1f3958e9903198119fddc32d8f2e9d0c63bc4"
+          },
+          {
+            "path": "docs/adr/0003-paddleocr-receipt-reader.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1cee0153eab5f5b94bf948205548c36cfc4451eb"
+          },
+          {
+            "path": "docs/ai-workflow/registry/milestone-2-5-artifacts.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9aa47ff9230a4392e7b8b09e7887c6620a010a40"
+          }
+        ],
+        "reviewed_content_commit": "f2ad84d72726318d0d6b4246a9c80673373e16e9",
+        "legacy_evidence": null,
+        "user_confirmation": "approve milestone-2-5 implementation",
+        "waived_guarantees": [],
+        "recorded_at": "2026-10-05T07:57:40Z"
+      },
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "f79ec1df70c133e56ca83f5363c4e795652cde052ebdd69481ab0ca03180d5fc",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "16c1ba0daa3ca2ab1c9d959a01dc04117a0925c6e4062f0f3866043cbf6357ee",
+          "verdict": "APPROVE",
+          "round": 9,
+          "completed_at": "2026-10-04T18:33:02Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "16c1ba0daa3ca2ab1c9d959a01dc04117a0925c6e4062f0f3866043cbf6357ee",
+          "verdict": "APPROVE",
+          "round": 6,
+          "completed_at": "2026-10-04T21:54:46Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 69,
+      "last_transition": "2026-10-07T20:25:21Z",
+      "feedback_layout": "scoped",
+      "plan_review_binding": {
+        "status": "BOUND",
+        "at": "2026-10-04T18:30:04Z",
+        "consumed": {
+          "review_content_id": "b320ee7fb71657f6f525b30fe3b41231c42a2b9b3c7a345d2ed6c0fa80d12b6e",
+          "plan_revision": 9,
+          "legacy": false
+        },
+        "published": {
+          "review_content_id": "f79ec1df70c133e56ca83f5363c4e795652cde052ebdd69481ab0ca03180d5fc",
+          "plan_revision": 10
+        },
+        "bound": {
+          "review_content_id": "f79ec1df70c133e56ca83f5363c4e795652cde052ebdd69481ab0ca03180d5fc",
+          "bundle_id": "16c1ba0daa3ca2ab1c9d959a01dc04117a0925c6e4062f0f3866043cbf6357ee",
+          "plan_revision": 10
+        }
+      },
+      "amendment_history": [
+        {
+          "amendment_id": "0",
+          "requested_at": "2026-10-03T12:15:48Z",
+          "requested_from_phase": "IMPLEMENTING",
+          "reason": "CP4's small-image advice becomes a photo quality check (text height from detection boxes before the slow reading step, then blur, lighting and framing, with specific warnings that don't block and thresholds set from measurements). CP6's acceptance targets are reset to the receipts collected (count, held-out set) plus the CP3 numbers. CP3 stays complete as it stands",
+          "superseded_plan_revision": 6,
+          "superseded_plan_approval": {
+            "status": "CURRENT",
+            "basis": "EXTERNAL_APPROVE",
+            "reviewed_bundle_id": "5ead1dd3561ad27c68a666fe2c73b2d80d75d8e4a70f49732995b6f50fdf82cb",
+            "approved_review_content_id": "1671fe280c5745394c5c8ea0d87d2bd59f8d840b3f792aa8dcc383b521992db0",
+            "review_content_manifest": [
+              {
+                "path": "docs/ai-workflow/registry/milestone-2-5-registry.json",
+                "exists": true,
+                "mode": "100644",
+                "blob": "3d9f91ca39d749bd9139b0b358530757b50937d0"
+              },
+              {
+                "path": "docs/ai-workflow/requirements/milestone-2-5-mapping.json",
+                "exists": true,
+                "mode": "100644",
+                "blob": "972c13bcbd7f060717cb091fb45a4e93f4610237"
+              },
+              {
+                "path": "docs/milestones/milestone-2-5-PLAN.md",
+                "exists": true,
+                "mode": "100644",
+                "blob": "38a32f547ea1ecee8bfd280db8de0f56d4623452"
+              }
+            ],
+            "reviewed_content_commit": null,
+            "legacy_evidence": null,
+            "user_confirmation": "I approve milestone-2-5 plan",
+            "waived_guarantees": [],
+            "recorded_at": "2026-10-01T00:42:36Z"
+          },
+          "checkpoints_snapshot": {
+            "CP1": {
+              "status": "COMPLETE",
+              "start_commit": "676a1ea9561649013bd2d245df10a615cb6b15ab"
+            },
+            "CP2": {
+              "status": "COMPLETE",
+              "start_commit": "725d0dad20a900fdd02e82e54b5224a16b6f3171"
+            },
+            "CP3": {
+              "status": "COMPLETE",
+              "start_commit": "5b51204b9e67f756907723269ad3b67c441efea7"
+            }
+          },
+          "pre_amendment_approval_commit": "676a1ea9561649013bd2d245df10a615cb6b15ab",
+          "resolved_at_plan_revision": 8,
+          "reconciliation_outcome": {
+            "CP1": "retained",
+            "CP2": "retained",
+            "CP3": "retained",
+            "CP4": "needs_revalidation",
+            "CP5": "needs_revalidation",
+            "CP6": "needs_revalidation"
+          },
+          "resolved_review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb"
+        },
+        {
+          "amendment_id": "1",
+          "requested_at": "2026-10-04T18:13:00Z",
+          "requested_from_phase": "SELF_REVIEWING_IMPLEMENTATION",
+          "reason": "on an iPhone with Lockdown Mode, WebAssembly is off, so receipt reading fails with a misleading \"check your connection\" message. Add a checkpoint that detects missing WebAssembly up front, hides the scan button, and shows a clear message naming the cause; typing items in stays",
+          "superseded_plan_revision": 8,
+          "superseded_plan_approval": {
+            "status": "CURRENT",
+            "basis": "EXTERNAL_APPROVE",
+            "reviewed_bundle_id": "5cc5bd2297247d94426f283b2a91ff24b9ee409313656e0638af2f214f4ea22c",
+            "approved_review_content_id": "444440930d2d44f0b0ab619248da648ee055bbfd14bb687f318f8360e653c0eb",
+            "review_content_manifest": [
+              {
+                "path": "docs/ai-workflow/registry/milestone-2-5-registry.json",
+                "exists": true,
+                "mode": "100644",
+                "blob": "15baf056fd8604c62f8b05dd1c23ccf8154e7ff3"
+              },
+              {
+                "path": "docs/ai-workflow/requirements/milestone-2-5-mapping.json",
+                "exists": true,
+                "mode": "100644",
+                "blob": "6457afb08afad318a2ea1a97329ea401a07811db"
+              },
+              {
+                "path": "docs/milestones/milestone-2-5-PLAN.md",
+                "exists": true,
+                "mode": "100644",
+                "blob": "a38631a0c5fe8198f2a4b1b9b61ae963e4a822a6"
+              }
+            ],
+            "reviewed_content_commit": null,
+            "legacy_evidence": null,
+            "user_confirmation": "I approve milestone-2-5 plan",
+            "waived_guarantees": [],
+            "recorded_at": "2026-10-03T21:47:41Z"
+          },
+          "checkpoints_snapshot": {
+            "CP1": {
+              "status": "COMPLETE",
+              "start_commit": "676a1ea9561649013bd2d245df10a615cb6b15ab"
+            },
+            "CP2": {
+              "status": "COMPLETE",
+              "start_commit": "725d0dad20a900fdd02e82e54b5224a16b6f3171"
+            },
+            "CP3": {
+              "status": "COMPLETE",
+              "start_commit": "5b51204b9e67f756907723269ad3b67c441efea7"
+            },
+            "CP4": {
+              "status": "COMPLETE",
+              "start_commit": "aca083d13dfc908ef1c462873fc8f6c9784f7ab7"
+            },
+            "CP5": {
+              "status": "COMPLETE",
+              "start_commit": "19dceaa55430f869c68fd329b988082cb0a969ed"
+            },
+            "CP6": {
+              "status": "COMPLETE",
+              "start_commit": "d257f2a8293b69342f40abaf307355e47f0cb4d0"
+            }
+          },
+          "pre_amendment_approval_commit": "aca083d13dfc908ef1c462873fc8f6c9784f7ab7",
+          "resolved_at_plan_revision": 10,
+          "reconciliation_outcome": {
+            "CP1": "retained",
+            "CP2": "retained",
+            "CP3": "retained",
+            "CP4": "retained",
+            "CP5": "retained",
+            "CP6": "retained",
+            "CP6A": "new"
+          },
+          "resolved_review_content_id": "f79ec1df70c133e56ca83f5363c4e795652cde052ebdd69481ab0ca03180d5fc"
+        }
+      ],
+      "amendment_base_commit": "d8127b9fed61555ea8ccf16d37e2a41bccd3504a",
+      "implementation_review_stages": {
+        "review_content_id": "b955ec50d4b9990c1ad56ea465bd61fffa2e1154eab68b30b7628492b3c7d741",
+        "LOCAL_MODEL_IMPLEMENTATION_REVIEW": {
+          "bundle_id": "0bf97e99be595214b214315885c68a621fe203a715d2c612d55787f590b607a3",
+          "verdict": "APPROVE",
+          "round": 3,
+          "completed_at": "2026-10-05T00:52:00Z"
+        },
+        "MANUAL_EXTERNAL_IMPLEMENTATION_REVIEW": {
+          "bundle_id": "0bf97e99be595214b214315885c68a621fe203a715d2c612d55787f590b607a3",
+          "verdict": "APPROVE",
+          "round": 3,
+          "completed_at": "2026-10-05T07:55:52Z"
+        }
+      }
     }
   }
 }

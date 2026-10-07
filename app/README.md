@@ -104,9 +104,10 @@ default:
 
 `settle.receipt` holds what the check panel shows (merchant, date, NIF,
 total, warnings, the ids of items still marked "Check"), never the image.
-New bill and Dismiss remove it. Tesseract.js also keeps its two language
-models in IndexedDB (`keyval-store`) after the first scan, so later scans
-don't download them again. They're public data, not personal data.
+New bill and Dismiss remove it. The photo quality check's advice is never
+saved: it stays with the import that produced it. PaddleOCR's runtime and
+models are kept by the browser's HTTP cache after the first scan, so later
+scans don't download them again. They're public data, not personal data.
 
 ## Receipt reading
 
@@ -118,10 +119,12 @@ and the dependencies are recorded in
 
 - Pure modules: `model.ts` (the `ReceiptReader` interface, the plug-in
   point for later readers), `parse/` (the rule-based parser), `fiscalQr.ts`,
-  `preprocess.ts` (image clean-up), `toBill.ts` and `reconcile.ts`.
+  `paddleLines.ts` (PaddleOCR's boxes as lines), `photoQuality.ts` (the
+  photo quality check), `toBill.ts` and `reconcile.ts`.
 - Browser adapters: `intake.ts` and `decode.ts` (type sniffing, limits,
-  raster/HEIC/PDF decoding), `builtInReader.ts` (Tesseract.js in a worker),
-  `qrScanner.ts` (zxing-wasm), `encodePage.ts`.
+  raster/HEIC/PDF decoding), `paddleReader.ts` with `paddle.worker.ts` and
+  `paddleEngine.ts` (PaddleOCR in a worker), `qrScanner.ts` (zxing-wasm),
+  `encodePage.ts`.
 - `importReceipt.ts` ties them together with injected dependencies.
   `browserImport.ts` gives it the real ones and is loaded on the first
   scan, so none of the reader code is in the main bundle.
@@ -130,10 +133,9 @@ The remediation of M2's functional review
 ([`docs/milestones/completed/milestone-2-remediation-1-PLAN.md`](../docs/milestones/completed/milestone-2-remediation-1-PLAN.md))
 added, for real receipts:
 
-- Clean-up by text size (`preprocess.ts`, `strips.ts`): a page is
-  scaled so its characters are about 32 px tall, flattened when its
-  background is uneven (a photo on a table), and read in overlapping
-  strips when it's over 6 MP.
+- Clean-up by text size: a page scaled so its characters were about
+  32 px tall, flattened, and read in strips. It was tuned for Tesseract
+  and left with it in M2.5: PaddleOCR reads the decoded page.
 - Parser rules for Portuguese app and shop layouts, and
   `reconcileWithTrustedTotal` in `toBill.ts`, which makes every decision
   that needs the fiscal QR code's total in one stage.
@@ -142,20 +144,32 @@ added, for real receipts:
   incomplete read called out, and lines left out by a cut shown until
   confirmed.
 
-Reading time, on the development machine (Node, one core): about 6 s for
-a 12-MP photo read in strips and for a small screenshot enlarged ×4. A
-phone is slower. The phone timing is taken with the PaddleOCR reader that
-replaces Tesseract next, and this section is corrected then.
+M2.5 replaced Tesseract.js with PaddleOCR
+([`docs/adr/0003-paddleocr-receipt-reader.md`](../docs/adr/0003-paddleocr-receipt-reader.md)):
+the engine runs single-threaded on ONNX Runtime Web's wasm build in a
+module worker (`paddle.worker.ts`). Before reading each page, the worker
+runs detection alone for the photo quality check (`photoQuality.ts`),
+whose advice is shown while reading and never saved. The parser records
+each line's role, which "Review lines" shows on the image and as a list
+(`ReceiptLines.tsx`, `lineReview.ts`). Reading time, on the development
+machine: about 6–8 s per receipt, plus 0.2–2.6 s for the photo check; up
+to 30 s on a phone was accepted (accuracy before speed).
+
+Reading a photo needs WebAssembly with SIMD (ONNX Runtime 1.30 ships only
+its SIMD build). Safari's Lockdown Mode turns WebAssembly off. Where it's
+missing, `readerSupport.ts` says so up front: "Scan a receipt" offers
+Choose PDF only, with a note naming the cause, because a PDF with a text
+layer is parsed with no OCR; a photo answers `readerUnsupported`.
 
 ### Self-hosted reader files
 
-Tesseract.js, zxing-wasm and pdf.js load workers, wasm and data from a CDN
-by default. Settle points every one of those paths at its own origin
-(`assets.ts` is the one list), so receipts are read without contacting
-anyone else. `scripts/vendor-assets.mjs` copies the files from
-`node_modules` into `public/vendor/` (git-ignored, about 23 MB, of which a
-scan uses about 9 MB). It runs before `dev`, `build` and `preview`, and
-fails if a file is missing.
+PaddleOCR's runtime, zxing-wasm and pdf.js load workers, wasm and data
+from a CDN by default. Settle points every one of those paths at its own
+origin (`assets.ts` and `paddleReader.ts`'s `PADDLE_ASSETS`), so receipts
+are read without contacting anyone else. `scripts/vendor-assets.mjs` and
+`scripts/vendor-paddle.mjs` copy the files into `public/vendor/`
+(git-ignored). They run before `dev`, `build` and `preview`, and fail if a
+file is missing.
 
 ### Content security policy
 
@@ -194,7 +208,7 @@ node scripts/check-requests.mjs scan \
 `src/features/receipt/fixtures/receipts/` holds thirteen sample receipts
 (SVG source, PNG or PDF, and `.expected.json`; 11–13 are invented receipts
 in the layouts of real Portuguese app receipts and phone photos, in
-Liberation Mono), read by the real Tesseract,
+Liberation Mono), read by the real PaddleOCR,
 zxing-wasm and pdf.js in `receipts.ocr.test.ts`, offline. `fixtures/browser/`
 holds the JPEG, HEIC and PDF files the real-browser check scans. Both are
 generated by `scripts/make-sample-receipts.mjs`, which defines each receipt
@@ -218,27 +232,80 @@ Real receipts are the best regression test, and they carry personal data
 **only on your own machine**, in `src/features/receipt/fixtures/local/`,
 which is git-ignored, and they are **never committed**.
 
-To add one, convert it to PNG (the Node tests decode PNG only) and write
-its `.expected.json` next to it:
-
-```sh
-magick receipt.jpeg -auto-orient src/features/receipt/fixtures/local/shop.png
-```
+To add one, copy the image in **as the phone made it** (a camera original,
+a shared copy, a screenshot: JPEG, PNG or HEIC, no conversion) and write a
+`<case>.expected.json` next to it (format v2):
 
 ```json
 {
-  "qrTotal": "12.40",
-  "items": ["1.74", "2.39", "8.27"],
-  "minCoverage": 0.75
+  "image": "cafe.jpg",
+  "total": "12.40",
+  "totalSource": "qr",
+  "items": [
+    { "name": "Bica", "price": "0.80" },
+    { "name": "Tosta mista", "price": "3.20" }
+  ],
+  "tip": "1.00",
+  "capture": "camera",
+  "part": "tuning"
 }
 ```
 
-`items` are the prices printed on the receipt, one per item line.
-`receipts.local.ocr.test.ts` reads each receipt with the real OCR and
-checks its target: `minCoverage` (the share of the total read as items at
-their right price), `itemsAllRight` (every item read has its right price)
-or `"check": "match"`. It prints each receipt's numbers only. Where the
-folder is empty or missing, as in CI, the test is skipped.
+- `total` is the total as printed; `totalSource` is what the receipt
+  offers: `qr` (a fiscal QR code) or `printed`.
+- `items` has one row per item a correct bill holds: the name as printed
+  on the item's first line, and the price the row should carry (its
+  printed line total after its own savings or discount lines). `2 X 4,04
+… 8,08` is one row priced `8.08`.
+- `discount`, `tip` and `tax` (optional) are the bill-level adjustments
+  the bill should hold, as amounts. A tax already in the prices, as
+  Portuguese VAT is, isn't a `tax` here.
+- `capture` is `camera` (a full-resolution original, as the phone saved
+  it), `shared` (a compressed copy, e.g. sent through a messaging app),
+  `screenshot` or `scan`.
+- `part` is `tuning`, or `heldOut` for the receipts kept aside until the
+  final measurement (M2.5 plan, P14).
+- `sameReceiptAs` (optional) names another case when this is a second
+  photo of the same receipt, so it counts as one distinct receipt.
+- `minRowAccuracy` (optional) is the case's floor in the Node test: the
+  share of its rows that must be read.
+
+Amounts are decimal strings with a dot. A missing image, a bad amount or
+an unknown `sameReceiptAs` fails the run with the case's name.
+
+Two measurements score the set with one accuracy measure
+(`accuracy.ts`): an image needs **no edit** when the rows read are
+exactly the rows bought, each at its price and recognisable as its
+product, the adjustments are right and the check says "Matches".
+
+```sh
+npm run build && node scripts/measure-local.mjs  # in headless Brave: the reference
+node scripts/measure-node.mjs                     # in Node: faster, for iteration
+```
+
+Both read with PaddleOCR. `--warm` also times a second scan of each case
+with the reader already loaded, and `--time <image>` only times the named
+images.
+
+The photo quality check (M2.5, P11) is measured the same way, in the
+browser, on the calibration images (the set's tuning and extra cases and
+the small copies in `fixtures/local/small-copies/`, never a held-out
+case unless `--held-out`):
+
+```sh
+npm run build && node scripts/measure-quality.mjs --runs 2
+```
+
+It prints each image's measurements (text size, sharpness, brightness,
+contrast, glare, edge share, coverage), the issues found and whether the
+image read with no edit; `photoQuality.ts`'s thresholds are set from it.
+
+Both print numbers and case names only (receipt accuracy, distinct-receipt,
+row and name accuracy, false matches) and write their full report, which
+holds receipt text, to the git-ignored `.ai-review/local-measure/`.
+Held-out cases are skipped unless you pass `--held-out`. HEIC cases are
+read by the browser run only (Node has no HEIC decoder). Where the folder
+is empty or missing, as in CI, the Node test is skipped.
 
 `.gitignore` stops an ordinary `git add`. It can't stop `git add -f`, or a
 file tracked before the rule, so `localFixtures.test.ts` checks, locally

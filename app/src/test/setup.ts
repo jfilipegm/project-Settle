@@ -6,6 +6,11 @@ import { afterEach } from 'vitest'
 // cleanup. Unmount rendered trees between tests here instead.
 afterEach(() => {
   cleanup()
+  // After the unmount, not before: a bill's last draft save is a passive
+  // effect that can flush after a test file's own clear, and the next test
+  // would start with that bill (and, scanning, a replace prompt jsdom
+  // answers "no"). Unmounting flushes it, so clearing now leaves nothing.
+  if (typeof localStorage !== 'undefined') localStorage.clear()
 })
 
 // jsdom has no matchMedia, and `system` theme mode depends on media

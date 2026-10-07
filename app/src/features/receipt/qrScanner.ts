@@ -7,7 +7,7 @@
 import { zxingLocateFile } from './assets.ts'
 import { parseFiscalQr, type FiscalQr } from './fiscalQr.ts'
 import type { ReceiptPage } from './model.ts'
-import { resize } from './preprocess.ts'
+import { resize } from './resize.ts'
 
 /** zxing-wasm's `readBarcodes`, as far as this module uses it. */
 export type ReadBarcodes = (

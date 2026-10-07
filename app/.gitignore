@@ -7,3 +7,6 @@ public/vendor/
 # R17: the real receipts used as local regression fixtures. Personal data:
 # never committed (the tests in localFixtures.test.ts detect it if one is).
 src/features/receipt/fixtures/local/
+
+# PaddleOCR models downloaded by scripts/vendor-paddle.mjs (M2.5, P5)
+.paddle-models/

@@ -47,21 +47,31 @@
  *   node scripts/check-requests.mjs scan --file <receipt> --values <expected.json>
  *       [--qr <payload>] [--expect <url part>]... [--input <selector>]
  *       (--qr defaults to the `.expected.json`'s own `qr`)
- *       [--wait <selector>]
+ *       [--wait <selector>] [--expect-bill <expected.json>]
+ *       (--expect-bill: the run also fails unless the imported bill matches
+ *       that sample's expected bill by P2's measure, no edit needed: the
+ *       CI browser smoke test of M2.5's CP4)
  * Common: [--out <log.json>] [--brave <path>] [--path <route>] [--port <n>]
  *   [--probe-csp yes] (triggers one CSP violation, so the run must fail)
  *   (the proxy listens on --port, default 4179; vite preview on the next)
  *
  * Run `npm run build` first. Exit code 0 is a pass, 1 a failure.
  */
-import { spawn } from 'node:child_process'
 import http from 'node:http'
-import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
+import { readFile, rm, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { scoreImage } from '../src/features/receipt/accuracy.ts'
+import { expectedBillOf } from '../src/features/receipt/expectedBill.ts'
+import {
+  APP_DIR,
+  Cdp,
+  sleep,
+  startBrave,
+  startPreview,
+  waitFor,
+} from './browser.mjs'
 
-const APP_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const DIST = path.join(APP_DIR, 'dist')
 
 /**
@@ -261,88 +271,6 @@ export function contentFailures(request, values) {
   ]
 }
 
-// --- DevTools protocol -------------------------------------------------
-
-class Cdp {
-  constructor(socket) {
-    this.socket = socket
-    this.nextId = 1
-    this.pending = new Map()
-    this.listeners = []
-    socket.addEventListener('message', (event) => {
-      const message = JSON.parse(String(event.data))
-      if (message.id !== undefined) {
-        const waiter = this.pending.get(message.id)
-        this.pending.delete(message.id)
-        if (message.error) waiter?.reject(new Error(`${message.error.message}`))
-        else waiter?.resolve(message.result)
-      } else {
-        for (const listener of this.listeners) listener(message)
-      }
-    })
-  }
-
-  static async connect(url) {
-    const socket = new WebSocket(url)
-    await new Promise((resolve, reject) => {
-      socket.addEventListener('open', resolve, { once: true })
-      socket.addEventListener('error', reject, { once: true })
-    })
-    return new Cdp(socket)
-  }
-
-  send(method, params = {}, sessionId) {
-    const id = this.nextId++
-    const message = { id, method, params }
-    if (sessionId) message.sessionId = sessionId
-    this.socket.send(JSON.stringify(message))
-    return new Promise((resolve, reject) =>
-      this.pending.set(id, { resolve, reject }),
-    )
-  }
-
-  on(listener) {
-    this.listeners.push(listener)
-  }
-
-  close() {
-    this.socket.close()
-  }
-}
-
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-async function waitFor(check, timeoutMs, what) {
-  const start = Date.now()
-  while (Date.now() - start < timeoutMs) {
-    const value = await check()
-    if (value) return value
-    await sleep(200)
-  }
-  throw new Error(`Timed out waiting for ${what}`)
-}
-
-async function startPreview(port) {
-  const child = spawn(
-    path.join(APP_DIR, 'node_modules', '.bin', 'vite'),
-    ['preview', '--port', String(port), '--strictPort', '--host', '127.0.0.1'],
-    { cwd: APP_DIR, stdio: ['ignore', 'pipe', 'pipe'] },
-  )
-  const origin = `http://127.0.0.1:${port}`
-  await waitFor(
-    async () => {
-      try {
-        return (await fetch(`${origin}/`)).ok
-      } catch {
-        return false
-      }
-    },
-    20_000,
-    'vite preview',
-  )
-  return { child, origin }
-}
-
 /**
  * The logging proxy: every request that reaches the origin, with its
  * method, path, raw headers and body, is recorded before it's passed on
@@ -391,40 +319,6 @@ async function startProxy(port, target) {
     server.listen(port, '127.0.0.1', resolve)
   })
   return { server, received, origin: `http://127.0.0.1:${port}` }
-}
-
-async function startBrave(bravePath) {
-  const profile = await mkdtemp(path.join(tmpdir(), 'settle-brave-'))
-  const child = spawn(
-    bravePath,
-    [
-      '--headless=new',
-      '--remote-debugging-port=0',
-      `--user-data-dir=${profile}`,
-      '--no-first-run',
-      '--no-default-browser-check',
-      '--disable-extensions',
-      '--disable-background-networking',
-      '--disable-component-update',
-      '--disable-sync',
-      'about:blank',
-    ],
-    { stdio: 'ignore' },
-  )
-  const portFile = path.join(profile, 'DevToolsActivePort')
-  const [port, browserPath] = await waitFor(
-    async () => {
-      try {
-        const lines = (await readFile(portFile, 'utf8')).trim().split('\n')
-        return lines.length >= 2 ? lines : undefined
-      } catch {
-        return undefined
-      }
-    },
-    20_000,
-    'Brave to start',
-  )
-  return { child, profile, ws: `ws://127.0.0.1:${port}${browserPath}` }
 }
 
 // --- The run -----------------------------------------------------------
@@ -763,6 +657,26 @@ export async function run(options) {
         proxyFailures.push({ path: entry.path, problems })
     }
 
+    // M2.5 CP4's smoke test: the bill as P2 scores it against the sample.
+    let billCheck
+    if (options['expect-bill'] !== undefined) {
+      const expectedBill = expectedBillOf(
+        JSON.parse(await readFile(options['expect-bill'], 'utf8')),
+      )
+      const score =
+        read.bill?.bill !== undefined && read.receipt?.receipt !== undefined
+          ? scoreImage(read.bill.bill, read.receipt.receipt, expectedBill)
+          : undefined
+      billCheck = {
+        file: path.basename(options['expect-bill']),
+        noEditNeeded: score?.noEditNeeded ?? false,
+        rows: score?.rowsRight ?? false,
+        adjustments: score?.adjustmentsRight ?? false,
+        total: score?.totalRight ?? false,
+        check: score?.check ?? 'importFailed',
+      }
+    }
+
     const expectations = options.expect.map((part) => ({
       part,
       found: network
@@ -780,7 +694,8 @@ export async function run(options) {
       failures.length === 0 &&
       proxyFailures.length === 0 &&
       csp.length === 0 &&
-      expectations.every((expectation) => expectation.found.length > 0)
+      expectations.every((expectation) => expectation.found.length > 0) &&
+      (billCheck === undefined || billCheck.noEditNeeded)
 
     const report = {
       mode,
@@ -794,6 +709,7 @@ export async function run(options) {
       proxyFailures,
       cspViolations: csp,
       workerExpectations: expectations,
+      expectBill: billCheck,
       valueSetSize: values.length,
       // The exact values searched for, so `audit` can repeat the search.
       valueSet: values,
@@ -895,6 +811,7 @@ if (
     workerExpectations: report.workerExpectations,
     sessions: report.sessions,
     appRead: report.appRead,
+    expectBill: report.expectBill,
   }
   console.log(JSON.stringify(summary, null, 2))
   process.exit(report.pass ? 0 : 1)

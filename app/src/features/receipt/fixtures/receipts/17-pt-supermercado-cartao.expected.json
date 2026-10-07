@@ -1,0 +1,47 @@
+{
+  "merchant": "MINIMERCADO ESTRELA",
+  "merchantTaxId": "509914365",
+  "date": "2026-09-19",
+  "total": "13.82",
+  "items": [
+    {
+      "name": "Pao Alentejano",
+      "quantity": "1",
+      "unitPrice": "2.10",
+      "lineTotal": "2.10",
+      "needsCheck": false
+    },
+    {
+      "name": "Manteiga 250g",
+      "quantity": "1",
+      "unitPrice": "2.39",
+      "lineTotal": "2.39",
+      "needsCheck": false
+    },
+    {
+      "name": "Ovos Classe M x12",
+      "quantity": "1",
+      "unitPrice": "3.29",
+      "lineTotal": "3.29",
+      "needsCheck": false
+    },
+    {
+      "name": "Sumo Laranja 1L",
+      "quantity": "1",
+      "unitPrice": "1.89",
+      "lineTotal": "1.89",
+      "needsCheck": false
+    },
+    {
+      "name": "Cafe Moido 250g",
+      "quantity": "1",
+      "unitPrice": "4.15",
+      "lineTotal": "4.15",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "qr": "A:509914365*B:999999990*C:PT*D:FS*E:N*F:20260919*G:FS ME01/7702*H:JE7T3R9W-7702*I1:PT*I3:7.34*I4:0.44*I7:4.91*I8:1.13*N:1.57*O:13.82*Q:Es8k*R:0912",
+  "check": "match",
+  "removedLines": []
+}

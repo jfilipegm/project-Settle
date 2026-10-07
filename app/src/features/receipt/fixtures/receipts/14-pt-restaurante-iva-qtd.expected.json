@@ -1,0 +1,47 @@
+{
+  "merchant": "Sushi Mare",
+  "merchantTaxId": "516940287",
+  "date": "2026-09-14",
+  "total": "32.10",
+  "items": [
+    {
+      "name": "Menu Almoço",
+      "quantity": "2",
+      "unitPrice": "9.50",
+      "lineTotal": "19.00",
+      "needsCheck": false
+    },
+    {
+      "name": "Gyoza",
+      "quantity": "1",
+      "unitPrice": "4.80",
+      "lineTotal": "4.80",
+      "needsCheck": false
+    },
+    {
+      "name": "Agua 50cl",
+      "quantity": "3",
+      "unitPrice": "1.20",
+      "lineTotal": "3.60",
+      "needsCheck": false
+    },
+    {
+      "name": "Cha Verde",
+      "quantity": "2",
+      "unitPrice": "1.90",
+      "lineTotal": "3.80",
+      "needsCheck": false
+    },
+    {
+      "name": "Cafe",
+      "quantity": "1",
+      "unitPrice": "0.90",
+      "lineTotal": "0.90",
+      "needsCheck": false
+    }
+  ],
+  "warnings": [],
+  "qr": "A:516940287*B:999999990*C:PT*D:FS*E:N*F:20260914*G:FS 2026/0977*H:JS9W2K4M-0977*I1:PT*I5:21.06*I6:2.74*I7:6.75*I8:1.55*N:4.29*O:32.10*Q:Su7m*R:2210",
+  "check": "match",
+  "removedLines": []
+}

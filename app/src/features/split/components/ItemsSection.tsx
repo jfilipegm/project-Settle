@@ -24,6 +24,8 @@ interface Props {
   flaggedItemIds?: ReadonlySet<string>
   /** Any edit to an item's name, quantity or unit price. */
   onItemEdited?: (itemId: string) => void
+  /** The item of the line selected in the receipt review (M2.5, P15). */
+  highlightedItemId?: string | undefined
 }
 
 export function ItemsSection({
@@ -33,6 +35,7 @@ export function ItemsSection({
   region,
   flaggedItemIds,
   onItemEdited,
+  highlightedItemId,
 }: Props) {
   const nameInputs = useRef(new Map<string, HTMLInputElement>())
   const focusItemId = useRef<string>(undefined)
@@ -59,6 +62,7 @@ export function ItemsSection({
             errors={errors}
             region={region}
             flagged={flaggedItemIds?.has(item.id) ?? false}
+            highlighted={item.id === highlightedItemId}
             onItemEdited={onItemEdited}
             nameRef={(element) => {
               if (element) {
@@ -92,10 +96,11 @@ export function ItemsSection({
   )
 }
 
-interface RowProps extends Omit<Props, 'flaggedItemIds'> {
+interface RowProps extends Omit<Props, 'flaggedItemIds' | 'highlightedItemId'> {
   item: Item
   index: number
   flagged: boolean
+  highlighted: boolean
   nameRef: (element: HTMLInputElement | null) => void
 }
 
@@ -107,6 +112,7 @@ function ItemRow({
   errors,
   region,
   flagged,
+  highlighted,
   onItemEdited,
   nameRef,
 }: RowProps) {
@@ -125,7 +131,11 @@ function ItemRow({
   )
 
   return (
-    <li className={styles.itemRow}>
+    <li
+      className={styles.itemRow}
+      data-highlighted={highlighted || undefined}
+      aria-current={highlighted || undefined}
+    >
       {flagged && (
         <p className={styles.checkMarker}>
           <span aria-hidden="true">⚠ Check</span>

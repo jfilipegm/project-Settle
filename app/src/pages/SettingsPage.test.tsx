@@ -87,7 +87,10 @@ describe('settings: receipts and licences', () => {
     renderSettings()
 
     expect(
-      screen.getByText('Built-in: read on this device.'),
+      screen.getByText('Built-in: read on this device with PaddleOCR.'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/Receipts never leave your device/),
     ).toBeInTheDocument()
     expect(screen.queryByText(/M3|coming/i)).not.toBeInTheDocument()
   })

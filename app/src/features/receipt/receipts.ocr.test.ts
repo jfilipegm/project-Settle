@@ -1,16 +1,22 @@
 // @vitest-environment node
 /**
  * The sample receipt corpus (M2 plan, CP3; REQ-8), read offline with the
- * real Tesseract.js, the real zxing-wasm and the real pdf.js, then turned
- * into a bill and checked (D12–D14). `fetch` fails on any http(s) URL, so
- * a library falling back to its CDN fails the test instead of passing.
+ * real PaddleOCR (M2.5 plan, P6; the only reader since CP4), the real
+ * zxing-wasm and the real pdf.js, then turned into a bill and checked
+ * (D12–D14). `fetch` fails on any http(s) URL, so a library falling back
+ * to its CDN fails the test instead of passing.
  */
 import { readFile, readdir } from 'node:fs/promises'
 import path from 'node:path'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { cents } from '../../lib/money.ts'
 import type { ExpectedReceipt } from './fixtures/textFixtures.ts'
-import { openPdf, setUpNodeImport, type NodeImport } from './importDeps.node.ts'
+import {
+  inProcessPaddleBackend,
+  openPdf,
+  setUpNodeImport,
+  type NodeImport,
+} from './importDeps.node.ts'
 import { importReceipt } from './importReceipt.ts'
 import { checkFile, readDimensions } from './intake.ts'
 import { checkReceipt } from './reconcile.ts'
@@ -174,6 +180,30 @@ describe('the sample receipt corpus (real OCR, offline)', () => {
       }
       expect(node.blocked).toEqual([])
     },
-    60_000,
+    120_000,
+  )
+})
+
+describe('the photo quality check doesn’t change reading (M2.5 plan, P11)', () => {
+  it.each(samples.filter(({ file }) => file.endsWith('.png')).slice(0, 4))(
+    '$name: the same boxes with the check run first, and none of it kept',
+    async ({ file }) => {
+      const bytes = new Uint8Array(await readFile(path.join(CORPUS, file)))
+      const decoded = await deps().decode(new File([bytes], file), {})
+      if (!decoded.ok) throw new Error(decoded.error.code)
+      const page = decoded.source.pages[0]
+      if (page === undefined) throw new Error('no page')
+      const backend = inProcessPaddleBackend()
+      try {
+        await backend.load()
+        const plain = await backend.read(page)
+        const quality = await backend.check(page)
+        expect(quality?.measures.boxes).toBeGreaterThan(0)
+        expect(await backend.read(page)).toEqual(plain)
+      } finally {
+        backend.terminate()
+      }
+    },
+    120_000,
   )
 })

@@ -2,10 +2,8 @@
 
 ## Milestone
 
-None active. The last milestone, M2 — Receipt upload and built-in
-parsing (work item `milestone-2`), is `MILESTONE_COMPLETE`, accepted on
-2026-09-30, with its remediation child `milestone-2-remediation-1`
-(accepted the same day).
+None active. The last milestone, M2.5 — Accurate receipt reading (work
+item `milestone-2-5`), is `MILESTONE_COMPLETE`, accepted on 2026-10-07.
 
 ## Next action
 
@@ -13,82 +11,71 @@ Plan **M3 — Households, members and the expense ledger**
 (`docs/ROADMAP.md`) with `/milestone-plan`: turn one-off bills into a
 household's running expense history.
 
-Before planning, and after the user merges PR #6 (M2) into `master` (see
-CLAUDE.md, "Git and GitHub workflow"): run
+Before planning, and after the user merges PR #9 (M2.5) into `master`
+(see CLAUDE.md, "Git and GitHub workflow"): run
 `git switch master && git pull && git switch -c feature/milestone-3`.
 After the first commit, open the M3 PR.
 
-## Last completed: M2 — Receipt upload and built-in parsing
+## Last completed: M2.5 — Accurate receipt reading
 
-Upload a photo or PDF of a receipt and get M1's item list filled in,
-entirely in the browser:
+Receipts are read by PaddleOCR instead of Tesseract.js, still for free
+and entirely in the browser:
 
-- **CP1:** pure receipt logic: the `ReceiptReader` interface, the
-  rule-based parser, the Portuguese fiscal QR code, the bill conversion
-  and the receipt check.
-- **CP2:** file intake (JPEG, PNG, HEIC, PDF, with size limits), the image
-  pipeline, the self-hosted reader assets and the Content-Security-Policy.
-- **CP3:** the built-in reader (Tesseract.js in a worker), QR scanning
-  (zxing-wasm), the import pipeline and the sample corpus.
-- **CP4:** the review step: the "Receipt check" panel, "⚠ Check" markers,
-  and the fallback to typing on every failure.
-- **CP5:** the READMEs, Settings' "Receipt reading" section and the
-  licence notices, and the end-to-end scans.
+- **CP1:** the local test set (format v2, real receipts kept local only,
+  never committed) and one accuracy measure, in Node and a real browser,
+  with the Tesseract baseline.
+- **CP2:** the PaddleOCR reader (`ppu-paddle-ocr` on ONNX Runtime Web,
+  PP-OCRv5 mobile models) behind M2's `ReceiptReader` interface, in a
+  worker, its assets self-hosted under the existing CSP.
+- **CP3:** image clean-up and parser tuning on the local set.
+- **CP4:** the committed corpus moved to PaddleOCR, the photo quality
+  check (tips for blurred, dark, small or cut-off photos), and Tesseract
+  retired.
+- **CP5:** the row-by-row review ("Review lines"): the image with a box
+  per read line, each line's role, "Add as item" and "Add a missed line".
+- **CP6:** the acceptance measurement, privacy scans, ADR 0003, the
+  licence notices, Settings and the READMEs.
+- **CP6A** (plan amendment, revisions 9–10): browsers that can't run the
+  reader (no WebAssembly, e.g. Lockdown Mode, or no SIMD) get a note
+  naming the cause, Choose PDF only, and `readerUnsupported` instead of
+  a wrong "check your connection".
 
-Remediation child `milestone-2-remediation-1` (M2's functional review,
-round 1: real receipts read badly):
-
-- **M2R1-CP1:** image clean-up scaled by text size, flattening of photo
-  backgrounds, one channel, and reading tall pages in strips.
-- **M2R1-CP2:** parser and bill-conversion rules for real Portuguese
-  supermarket, app and shop layouts.
-- **M2R1-CP3:** invented real-layout corpus receipts (11–13), and the
-  user's five real receipts as **local-only** fixtures, git-ignored and
-  guarded against ever being committed.
-- **M2R1-CP4:** a gap from the receipt's total can't be missed (the check
-  panel and the result), "Add the difference" closes it in one click,
-  and lines left out to match the total are shown until confirmed.
+Measured (browser, two runs, 21 local images, 18 tuning and 3 held out):
+tuning receipts with no edit 15 of 18 (83.3 %) in both runs; held out 5
+of 6 run-results; rows 96.0–96.5 %; prices 97.5 %; **0 false
+"Matches"**. Below the roadmap's 94 % aim: the plateau was accepted by
+the user at CP3 (2026-10-03) and the measurement at CP6 (2026-10-04).
 
 Verification:
-- `tsc -b`, `eslint . --max-warnings=0`, `prettier --check .`,
-  `vitest run` (913 tests, 1 skipped) and `npm run build` pass; the
-  request-privacy scans (`check-requests.mjs`) pass, with logs in
-  `docs/milestones/milestone-2-evidence/` and
-  `docs/milestones/milestone-2-remediation-1-evidence/`.
+- `npm run check` (typecheck, lint, format, 52 test files: 1084 passed,
+  1 skipped) and `npm run build` pass; the request-privacy scans
+  (`check-requests.mjs`) pass, with logs in
+  `docs/milestones/milestone-2-5-evidence/`.
 - `app`, `workflow-conformance` and `pr-title` are green on GitHub
-  (PR #6).
-- M2: implementation review round 1 REVISE, round 2 APPROVE; technical
-  approval `24e8227`. The child: two REVISE rounds, then APPROVE;
-  technical approval `ca2bf35`.
-- Functional review: M2 round 1 found four real-receipt defects (F-I-1 to
-  F-I-4), deferred to the child. The child's checklist (`ff03b38`) and
-  M2's round 2 (`e84f0f6`) passed; the user accepted both.
+  (PR #9).
+- Implementation review: three external rounds (REVISE, REVISE, then
+  APPROVE); technical approval `64a2b1d`.
+- Functional review: round 1 checklist `f1727fe`; no findings were
+  written; the user accepted the milestone on 2026-10-07.
 
 Carried forward (not blockers):
-- **Switch the built-in reader to PaddleOCR** (the user's decision,
-  2026-09-29). It was meant to be M2's next remediation child; it has no
-  milestone yet. A local spike (branch `spike/paddleocr`, not pushed:
-  `ppu-paddle-ocr` with ONNX Runtime Web, PP-OCRv5 mobile models, about
-  13 MB, MIT and Apache-2.0) scored lidl1 44 %, lidl2 73 %, lidl3 all 5
-  items, Continente 94 % and Tiffosi 100 %, against Tesseract's accepted
-  floors (Continente 56 %, Lidl 11–22 %; the plan's targets were 75 % and
-  60 %), with cleaner names and 0.5–2 s per read on the desktop.
-- Two requests from the same session, for later: a row-by-row review of
-  what the reader found (the receipt image with each line's role, and
-  adding a missed line), and remembering the user's corrections on the
-  device.
-- Workflow defect: `request_plan_amendment` accepts only checkpoint ids
-  shaped `CP<digits>[A-Z]?`, so a remediation child's `M2R1-CP*`
-  checkpoints can't be amended (also in workflow 2.6.0).
-- **The phone reading time** (R21: a 12.6-MP photo within 60 s, a small
-  screenshot within 20 s) was waived for Tesseract, to be measured on
-  PaddleOCR's reader.
-- O-EXT-1 (M2's review): the saved receipt summary isn't bound to the
-  bill it came from; future hardening.
-- "Matches after leaving out N lines…" and its buttons aren't reached by
-  any sample receipt; they're covered by `SplitPage.review.test.tsx`.
-- Not in M2: cropping and perspective correction, handwriting, currency
-  conversion, offline caching of the reader (M6).
+- **The 94 % aim.** More real receipts first (the set has 19 distinct
+  receipts, 3 held out, against the plan's 20 and 5; the roadmap's 30),
+  then, if the local route stays short, the opt-in "enhanced reading"
+  with the user's own AI key (the user's decision; it changes a guiding
+  principle).
+- **The phone reading times** (P13) were not timed, the user's decision
+  (2026-10-04); the reading was found fast on the iPhone 13.
+- **The CP6A iPhone checks** (Lockdown Mode on and off for the site,
+  checklist flows 8–9) were deferred by the user on 2026-10-05; no
+  result for them is recorded here. The behaviour is covered by the
+  headless-Brave runs with WebAssembly removed.
+- Remembering the user's corrections on the device (roadmap: Future).
+- Receipts from other countries: prefer general parser rules; revisit
+  now that M2.5 is done.
+- Not in M2.5: cropping and perspective correction, handwriting, editing
+  a read line's text in "Review lines", offline caching of the reader
+  (M6).
 
 ## Current blockers
 
@@ -96,15 +83,13 @@ None.
 
 ## Active plan
 
-None. M2's plans are archived at
-`docs/milestones/completed/milestone-2-PLAN.md` and
-`docs/milestones/completed/milestone-2-remediation-1-PLAN.md` (M0's and
-M1's are in the same folder).
+None. M2.5's plan is archived at
+`docs/milestones/completed/milestone-2-5-PLAN.md` (M0's, M1's, M2's and
+M2's remediation child's are in the same folder).
 
 ## Functional review checklist
 
-None. M2's round-2 checklist is in commit `e84f0f6`, the remediation
-child's in `ff03b38`, and M2's round 1 in `4b75b09`.
+None. M2.5's round-1 checklist is in commit `f1727fe`.
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is

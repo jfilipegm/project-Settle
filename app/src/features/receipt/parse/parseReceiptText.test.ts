@@ -824,3 +824,332 @@ describe('trimEdgeNoise (CP3: a photo’s background at the line ends)', () => {
     expect(receipt.total).toBe(263)
   })
 })
+
+describe('parseReceiptText: layouts from the local set (M2.5 CP3, P9)', () => {
+  it('reads a VAT rate printed against the quantity (`13%3`)', () => {
+    const receipt = parse(
+      'Descrição IVA Qtd Preço Valor',
+      'Menu almoço 13%2 9.50 19.00',
+      'Agua 50cl 23%3 1.20 3.60',
+      'Cafe 23%1 0.90 0.90',
+      'Total 23.50',
+    )
+    expect(receipt.items).toEqual([
+      expect.objectContaining(item('Menu almoço', '2', 950, 1900)),
+      expect.objectContaining(item('Agua 50cl', '3', 120, 360)),
+      expect.objectContaining(item('Cafe', '1', 90, 90)),
+    ])
+    expect(receipt.total).toBe(2350)
+  })
+
+  it('reads a quantity line printed above its item, when the arithmetic agrees', () => {
+    const receipt = parse(
+      'DESCRIZIONE IVA PREZZO',
+      '6 X 0,22',
+      'ACQUA NATURALE 22,00% 1,32',
+      '0,720 KG × 11,49',
+      'GULASCH 8,27 E',
+      '0,5484kg x E 2,79/kg',
+      'MELE GRANNY SMITH 4,00% 1,53',
+      'TOTALE COMPLESSIVO 11,12',
+    )
+    expect(receipt.items).toEqual([
+      expect.objectContaining(item('ACQUA NATURALE', '6', 22, 132)),
+      expect.objectContaining(item('GULASCH', '0.72', 1149, 827)),
+      expect.objectContaining({ name: 'MELE GRANNY SMITH', lineTotal: 153 }),
+    ])
+    expect(receipt.total).toBe(1112)
+  })
+
+  it('never lets a unit-price-only line replace the price of the item above it', () => {
+    const receipt = parse(
+      'Pao 1,10',
+      'MERLOT 1,39 V',
+      '0.682 KG × 2,49',
+      'KARTOFFELN L0SE 6:78',
+      'SUMME EUR 2,49',
+    )
+    expect(receipt.items).toEqual([
+      expect.objectContaining(item('Pao', '1', 110, 110)),
+      expect.objectContaining(item('MERLOT', '1', 139, 139)),
+    ])
+  })
+
+  it('still completes a name-only line with the quantity line under it', () => {
+    const receipt = parse('Pao 1,10', 'BANANA', '0,535 kg x 1,99', 'Total 2,16')
+    expect(receipt.items.map((entry) => entry.name)).toEqual(['Pao', 'BANANA'])
+  })
+
+  it('keeps a quantity line with the name-only line above, whatever follows', () => {
+    const receipt = parse('BANANA', '1 X 0,99', 'LEITE 0,99', 'Total 1,98')
+    expect(receipt.items).toEqual([
+      expect.objectContaining(item('BANANA', '1', 99, 99)),
+      expect.objectContaining(item('LEITE', '1', 99, 99)),
+    ])
+  })
+
+  it('takes the total after a bill-level discount between two totals', () => {
+    const receipt = parse(
+      'Ersatzfilter 9,99',
+      'Ersatzpumpe 9,99',
+      'Multicat 14,99',
+      'Summe [ 3] Eur 34,97',
+      'MwSt. -Senkung -0,88',
+      'Summe EUR 34,09',
+      'Bar Euro EUR 50,09',
+      'Rückgeld EU -16,00',
+    )
+    expect(receipt.items).toHaveLength(3)
+    expect(receipt.total).toBe(3409)
+    expect(receipt.discount).toBe(88)
+  })
+
+  it('knows German and Italian totals, payments and tax tables', () => {
+    expect(group('Summe 23.50 EUR', 'items')).toBe('total')
+    expect(group('TOTALE COMPLESSIVO 11,85', 'items')).toBe('total')
+    expect(group('Zwischensumme 10,00', 'items')).toBe('subtotal')
+    expect(classifyLine('BAR GEGEBEN: 23.50 EUR', 'after').payment).toBe(true)
+    expect(classifyLine('Importo pagato 11,85', 'after').payment).toBe(true)
+    expect(group('Rückgeld EUR -16,00', 'after')).toBe('ignore')
+    expect(group('MwSt D 16,00% 29,39 4,70', 'items')).toBe('tax')
+    const receipt = parse(
+      '1 0,4 Schorle 3.60 3.60',
+      '1 T-RINDERSTEAK 19.90 19.90',
+      'MWST Netto Steuer Brutto',
+      '16.00% 3.10 0.50 3.60',
+      'Summe 23.50 EUR',
+      'BAR GEGEBEN: 23.50 EUR',
+    )
+    expect(receipt.items.map((entry) => entry.lineTotal)).toEqual([360, 1990])
+    expect(receipt.itemsEndedBy).toBe('taxTableHeader')
+    expect(receipt.total).toBe(2350)
+  })
+
+  it('gives a name-only line the price on the line under it', () => {
+    const receipt = parse(
+      '(C) BOCADOS MEDITERRANEOS HEURA',
+      '04 8,08',
+      'POUPANCA 0,90',
+      'PAO 1,10',
+      'TOTAL A PAGAR 9,18',
+    )
+    expect(receipt.items).toEqual([
+      expect.objectContaining({
+        name: 'BOCADOS MEDITERRANEOS HEURA',
+        lineTotal: 808,
+        savingsCandidate: 90,
+      }),
+      expect.objectContaining(item('PAO', '1', 110, 110)),
+    ])
+  })
+
+  it('never gives a price line to a category header or a keyword line', () => {
+    expect(parse('Padaria:', '1,10', 'Total 1,10').items).toEqual([])
+    expect(parse('PAO 1,10', 'Total', '1,10').total).toBe(110)
+  })
+
+  it('reads the code-then-description layout with attribute lines (P9)', () => {
+    const receipt = parse(
+      'Codigo Qtd. IVA Preço',
+      '1792212 1 23,0% 153,30',
+      'THW CLARK 44 GREY IP BLUE/GREY IP',
+      'Marca : TH Watches',
+      'Classificação AT : Joias e Relógios',
+      'Total do documento 153,30',
+      'Total a pagar 153,30',
+    )
+    expect(receipt.items).toEqual([
+      expect.objectContaining(
+        item('THW CLARK 44 GREY IP BLUE/GREY IP', '1', 15330, 15330),
+      ),
+    ])
+    expect(receipt.total).toBe(15330)
+  })
+
+  it('takes a quantity from the code line', () => {
+    const receipt = parse(
+      'Codigo Qtd. IVA Preço',
+      '1792212 2 23,0% 30,00',
+      'MEIAS ALGODAO',
+      'Total 30,00',
+    )
+    expect(receipt.items).toEqual([
+      expect.objectContaining(item('MEIAS ALGODAO', '2', 1500, 3000)),
+    ])
+  })
+
+  it('reads a misread first word of a longer total phrase as a total', () => {
+    expect(group('Totai do documento 153.30', 'items')).toBe('total')
+    expect(group('T0TAL A PAGAR 9,10', 'items')).toBe('total')
+    // A product that only starts like one stays a product.
+    expect(group('Tonal do cabelo 4,99', 'items')).toBe('item')
+    expect(group('Totai 4,99', 'items')).toBe('total')
+  })
+
+  it('reads a price whose tax code was glued on as a digit, after another amount', () => {
+    expect(trimEdgeNoise('Deposito 0.20 0.201')).toBe('Deposito 0.20 0.20')
+    const receipt = parse(
+      'Cola Zero 3,69 A',
+      'Deposito 0.20 0.201',
+      'Total 3,89',
+    )
+    expect(receipt.items.map((entry) => entry.lineTotal)).toEqual([369, 20])
+    // Alone, a three-decimal number is a weight, not a price.
+    expect(trimEdgeNoise('BANANA 0,535')).toBe('BANANA 0,535')
+  })
+
+  it('reads a price with its tax code or a stray quote glued on', () => {
+    const receipt = parse(
+      "Gelado Morango com Chocolat '3,29 A",
+      'PANQUÉCAS SIMPLES 2,69A',
+      'AGUA 1,50L 0,45 A',
+      'Total 6,43',
+    )
+    expect(receipt.items).toEqual([
+      expect.objectContaining(
+        item('Gelado Morango com Chocolat', '1', 329, 329),
+      ),
+      expect.objectContaining(item('PANQUÉCAS SIMPLES', '1', 269, 269)),
+      expect.objectContaining({ name: 'AGUA 1,50L', lineTotal: 45 }),
+    ])
+  })
+
+  it('attaches a promotion under a weighed item’s weight line to that item', () => {
+    const receipt = parse(
+      'ESPETADAS FRANGO MARINADAS 2,66 C',
+      '0,190 kg × 13,99 EUR/kg',
+      'Promocao Happy hour -0,80',
+      'AGUA 0,96 C',
+      'Total 2,82',
+    )
+    expect(receipt.items).toEqual([
+      expect.objectContaining({
+        name: 'ESPETADAS FRANGO MARINADAS',
+        lineTotal: 186,
+      }),
+      expect.objectContaining(item('AGUA', '1', 96, 96)),
+    ])
+    expect(receipt.discount).toBeUndefined()
+  })
+})
+
+describe('parseReceiptText: each line’s role (M2.5 CP5, P15)', () => {
+  const roles = (...texts: string[]) =>
+    (parse(...texts).lines ?? []).map((line) =>
+      [line.text, line.role, line.itemIndex ?? null, line.amount ?? null].join(
+        ' | ',
+      ),
+    )
+
+  it('gives every line a role, in order, with its amount and item', () => {
+    expect(
+      roles(
+        'Restaurante A Tasquinha',
+        'Bitoque 9,50',
+        'Desc. Cartão -0,50',
+        'Imperial 1,60',
+        'Subtotal 10,60',
+        'Tip 1,00',
+        'TOTAL 11,60',
+        'Multibanco 11,60',
+        'IVA 23% 1,98',
+        'Obrigado',
+      ),
+    ).toEqual([
+      'Restaurante A Tasquinha | ignored |  | ',
+      'Bitoque 9,50 | item | 0 | 950',
+      'Desc. Cartão -0,50 | discount | 0 | -50',
+      'Imperial 1,60 | item | 1 | 160',
+      'Subtotal 10,60 | total |  | 1060',
+      'Tip 1,00 | tip |  | 100',
+      'TOTAL 11,60 | total |  | 1160',
+      'Multibanco 11,60 | payment |  | 1160',
+      'IVA 23% 1,98 | taxTable |  | 198',
+      'Obrigado | ignored |  | ',
+    ])
+  })
+
+  it('makes a quantity line, a code line and a variant line the item’s detail', () => {
+    expect(
+      roles(
+        'Codigo Qtd. IVA Preço',
+        'BANANA',
+        '0,535 kg x 1,99 1,06',
+        '1792212 1 23,0% 153,30',
+        'THW CLARK 44 GREY',
+        'Marca : TH Watches',
+        'Total 154,36',
+      ),
+    ).toEqual([
+      'Codigo Qtd. IVA Preço | ignored |  | ',
+      'BANANA | item | 0 | ',
+      '0,535 kg x 1,99 1,06 | itemDetail | 0 | 106',
+      '1792212 1 23,0% 153,30 | itemDetail | 1 | 15330',
+      'THW CLARK 44 GREY | item | 1 | ',
+      'Marca : TH Watches | itemDetail | 1 | ',
+      'Total 154,36 | total |  | 15436',
+    ])
+  })
+
+  it('marks an unsigned savings line as the item’s discount', () => {
+    expect(roles('IOGURTE 2,39', 'POUPANCA 0,60', 'TOTAL 1,79')).toEqual([
+      'IOGURTE 2,39 | item | 0 | 239',
+      'POUPANCA 0,60 | discount | 0 | 60',
+      'TOTAL 1,79 | total |  | 179',
+    ])
+  })
+
+  it('ends the items at a separator (R23): footer lines are never items', () => {
+    expect(
+      roles('Pao 1,10', 'Leite 0,89', '==========', 'MULTIBANCO 1,99'),
+    ).toEqual([
+      'Pao 1,10 | item | 0 | 110',
+      'Leite 0,89 | item | 1 | 89',
+      '========== | ignored |  | ',
+      'MULTIBANCO 1,99 | payment |  | 199',
+    ])
+  })
+
+  it('reads a card slip after the total as payment and ignored lines', () => {
+    expect(
+      roles(
+        'Pao 2,10',
+        'TOTAL A PAGAR 2,10',
+        'MULTIBANCO 2,10',
+        'TALAO CLIENTE',
+        'COMPRA',
+        'TOTAL: 2,10 EUR',
+      ),
+    ).toEqual([
+      'Pao 2,10 | item | 0 | 210',
+      'TOTAL A PAGAR 2,10 | total |  | 210',
+      'MULTIBANCO 2,10 | payment |  | 210',
+      'TALAO CLIENTE | ignored |  | ',
+      'COMPRA | ignored |  | ',
+      'TOTAL: 2,10 EUR | total |  | 210',
+    ])
+  })
+
+  it('keeps each line’s box, and ignores an empty line', () => {
+    const receipt = parseReceiptText([
+      {
+        text: 'Pao 1,10',
+        confidence: 95,
+        box: { page: 0, x: 1, y: 2, width: 3, height: 4 },
+      },
+      { text: '  ', confidence: 95 },
+      { text: 'Total 1,10', confidence: 95 },
+    ])
+    expect(receipt.lines).toEqual([
+      {
+        text: 'Pao 1,10',
+        role: 'item',
+        itemIndex: 0,
+        amount: 110,
+        box: { page: 0, x: 1, y: 2, width: 3, height: 4 },
+      },
+      { text: '  ', role: 'ignored' },
+      { text: 'Total 1,10', role: 'total', amount: 110 },
+    ])
+  })
+})
