@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "active_work_item_id": null,
+  "active_work_item_id": "milestone-3",
   "work_items": {
     "milestone-0": {
       "work_item_type": "product",
@@ -3206,6 +3206,97 @@
           "verdict": "APPROVE",
           "round": 3,
           "completed_at": "2026-10-05T07:55:52Z"
+        }
+      }
+    },
+    "milestone-3": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-3",
+      "parent_work_item_id": null,
+      "plan_path": "docs/milestones/milestone-3-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-3-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-3-mapping.json",
+      "governing_workflow_version": "2.2",
+      "phase": "IMPLEMENTING",
+      "plan_revision": 5,
+      "implementation_revision": null,
+      "functional_review_round": null,
+      "base_commit": "391708bea6a8c1531c6f4d71e6539338bbfd5f07",
+      "reviewed_implementation_head": null,
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": null,
+      "checkpoints": {},
+      "current_bundle_id": "229fcb89feb176ac5c1ca1affa8b3c71f9b144a8f445f7fb26cb11b4ac994613",
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "229fcb89feb176ac5c1ca1affa8b3c71f9b144a8f445f7fb26cb11b4ac994613",
+        "approved_review_content_id": "648ffbbfbbc095c4cf81c1addd878f830ccf1ea858b665984ffa99da77469b86",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-3-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "246222ac4ab85b074163be8916f65a0cb1258105"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-3-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1a7d3baad9180d67004a0d08659083d4bc009fb3"
+          },
+          {
+            "path": "docs/milestones/milestone-3-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "eaf074b2aeaa11864cc360d00e9c3a018f0aa458"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-3 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-10-08T20:52:49Z"
+      },
+      "technical_approval": null,
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "648ffbbfbbc095c4cf81c1addd878f830ccf1ea858b665984ffa99da77469b86",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "229fcb89feb176ac5c1ca1affa8b3c71f9b144a8f445f7fb26cb11b4ac994613",
+          "verdict": "APPROVE",
+          "round": 5,
+          "completed_at": "2026-10-08T20:07:25Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "229fcb89feb176ac5c1ca1affa8b3c71f9b144a8f445f7fb26cb11b4ac994613",
+          "verdict": "APPROVE",
+          "round": 2,
+          "completed_at": "2026-10-08T20:41:05Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 21,
+      "last_transition": "2026-10-08T20:52:49Z",
+      "feedback_layout": "scoped",
+      "plan_review_binding": {
+        "status": "BOUND",
+        "at": "2026-10-08T20:02:22Z",
+        "consumed": {
+          "review_content_id": "7e1f59abf133cc08b57ea89ce491f25be8c87a656e9e901cc6facb1bbdfd3357",
+          "plan_revision": 4,
+          "legacy": false
+        },
+        "published": {
+          "review_content_id": "648ffbbfbbc095c4cf81c1addd878f830ccf1ea858b665984ffa99da77469b86",
+          "plan_revision": 5
+        },
+        "bound": {
+          "review_content_id": "648ffbbfbbc095c4cf81c1addd878f830ccf1ea858b665984ffa99da77469b86",
+          "bundle_id": "229fcb89feb176ac5c1ca1affa8b3c71f9b144a8f445f7fb26cb11b4ac994613",
+          "plan_revision": 5
         }
       }
     }

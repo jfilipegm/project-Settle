@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-3",
+  "requirements": {
+    "REQ-1": {
+      "description": "Design tokens from the approved canvas: slate neutrals and one rust accent, light and dark palettes with identical roles, six people colours per theme, receipt-check state colours, a type scale, three corner radii and motion tokens, every text pair checked for WCAG AA contrast by tests.",
+      "checkpoint_ids": [
+        "CP1",
+        "CP6"
+      ]
+    },
+    "REQ-2": {
+      "description": "Unbounded, JetBrains Mono and Source Sans 3 served from the app itself, and one icon set (Tabler) at one stroke weight, with no request leaving the app and their licences in the notices.",
+      "checkpoint_ids": [
+        "CP1",
+        "CP6"
+      ]
+    },
+    "REQ-3": {
+      "description": "The whole interface in English and European Portuguese from one typed catalogue, chosen by a Language setting that follows the browser until the user picks one, with <html lang> kept in step and catalogue parity tested.",
+      "checkpoint_ids": [
+        "CP2",
+        "CP4",
+        "CP5"
+      ]
+    },
+    "REQ-4": {
+      "description": "A reusable component kit (button, icon button, text and select fields, card, status chip, person badge, amount, steps, icon) built on the tokens, keyboard and screen-reader usable, tested, and shown in a development-only gallery.",
+      "checkpoint_ids": [
+        "CP3"
+      ]
+    },
+    "REQ-5": {
+      "description": "One responsive web app: a header with a desktop menu, a bottom tab bar under 640 px (Split, Household, Settings), a Home start page, Settings restyled with Language added, a Household placeholder replacing the outdated Finances page, and Not found.",
+      "checkpoint_ids": [
+        "CP4"
+      ]
+    },
+    "REQ-6": {
+      "description": "The split flow redesigned: Receipt, Who had what and The split as steps the browser Back button moves through, person-first assignment with the per-item editor kept, the split shown beside the items on wide screens, and the receipt check, photo advice and Review lines restyled, with no behaviour lost.",
+      "checkpoint_ids": [
+        "CP5"
+      ]
+    },
+    "REQ-7": {
+      "description": "Quality gates: screenshots of every screen at 390 and 1440 px in both themes, no horizontal scroll at 360 px, the Impeccable detector and the ux-lint rules clean or each exception justified, keyboard focus and reduced motion checked, and the request-privacy checks still passing.",
+      "checkpoint_ids": [
+        "CP6"
+      ]
+    },
+    "REQ-8": {
+      "description": "Documentation: docs/DESIGN.md (tokens, components, house rules), ADR 0004, PRODUCT.md, the roadmap renumbered with Design foundations as M3, THIRD_PARTY_NOTICES, README.md and app/README.md, and the design canvas brought in line with what shipped.",
+      "checkpoint_ids": [
+        "CP1",
+        "CP6"
+      ]
+    }
+  }
+}
