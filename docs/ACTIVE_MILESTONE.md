@@ -2,19 +2,56 @@
 
 ## Milestone
 
-None active. The last milestone, M2.5 — Accurate receipt reading (work
-item `milestone-2-5`), is `MILESTONE_COMPLETE`, accepted on 2026-10-07.
+**M3 — Design foundations** (work item `milestone-3`, a new milestone
+the user inserted on 2026-10-07; households and every later milestone
+moved down one in `docs/ROADMAP.md`). Plan revision 5,
+`docs/milestones/milestone-3-PLAN.md`, approved on 2026-10-08 (both plan
+reviews APPROVE; approval commit `ced7c3b`), on `feature/milestone-3`,
+PR #10. Phase `IMPLEMENTING`.
 
 ## Next action
 
-Plan **M3 — Households, members and the expense ledger**
-(`docs/ROADMAP.md`) with `/milestone-plan`: turn one-off bills into a
-household's running expense history.
+**CP2 — English and Portuguese.** Run `/milestone-implement milestone-3`.
 
-Before planning, and after the user merges PR #9 (M2.5) into `master`
-(see CLAUDE.md, "Git and GitHub workflow"): run
-`git switch master && git pull && git switch -c feature/milestone-3`.
-After the first commit, open the M3 PR.
+## Progress
+
+- **CP1 — Foundations: complete.**
+  - `docs/ROADMAP.md`: M3 Design foundations inserted after M2.5, every
+    later milestone moved down one (M17 is now the last) with every
+    cross-reference; the old design pass (now M11) keeps the logo and
+    the polish informed by real use; Phase 1's "Not yet" reworded.
+  - `PRODUCT.md` committed at the root.
+  - `app/src/styles/tokens.css`: the S1 palette, S2's six people colours
+    with their initials, S3's faces and type scale, S6's radii, shadow
+    and motion, in both themes. Today's token names stay as aliases until
+    CP5.
+  - Fonts bundled from `@fontsource` (Unbounded 500/600, JetBrains Mono
+    400/500, Source Sans 3 400/600/700; latin and latin-ext with their
+    unicode ranges, woff2 only) through `src/styles/fonts.css`;
+    `@tabler/icons-react` and `src/ui/Icon.tsx` (stroke 1.75; 16, 20 or
+    24 px; always `aria-hidden`).
+  - `global.css`: the new body, title faces, tabular figures for
+    `.amount`/`<data>`/`<time>`, the rust focus ring, selection, caret,
+    `accent-color`, scrollbars, reduced motion.
+  - Header colours: `THEME_COLORS` `#ffffff`/`#1c1f2b`, in `theme-init.js`,
+    `index.html` and the manifest (background `#eceef1`).
+  - Tests: contrast (every text and fill pair at least 4.5:1, people
+    colours and the focus ring at least 3:1 on card and ground, both
+    themes), every role in both palettes, `fonts.css` against the build
+    check, and `scripts/check-build.mjs`'s new font check (14 same-origin
+    woff2 files, no remote URL, the budgets).
+  - Verified: `npm run check` (54 files, 1173 passed, 1 skipped);
+    `npm run build` and `check-build.mjs` (fonts 343,772 bytes in all,
+    131,652 for a first view, against 400 kB and 250 kB); the page-load
+    request check in headless Brave passes (12 same-origin requests, the
+    five fonts used included, no CSP violation).
+  - Notes for later checkpoints: the lowest text pair is rust on the
+    light ground (4.79:1). Control borders (`#C9CED6`/`#3A3F4E`) are about
+    1.6:1 on the card, as the approved canvas has them; every field keeps
+    a visible label, and CP3's fields should not rely on the border alone.
+    Until CP5, the receipt panels' warning edge now shows amber (the old
+    fallback token is now defined); CP5 restyles them without the stripe
+    (S7). The licence notices for the fonts and Tabler land in CP6.
 
 ## Last completed: M2.5 — Accurate receipt reading
 
@@ -75,7 +112,7 @@ Carried forward (not blockers):
   now that M2.5 is done.
 - Not in M2.5: cropping and perspective correction, handwriting, editing
   a read line's text in "Review lines", offline caching of the reader
-  (M6).
+  (M7, after the M3 renumbering).
 
 ## Current blockers
 
@@ -83,7 +120,7 @@ None.
 
 ## Active plan
 
-None. M2.5's plan is archived at
+`docs/milestones/milestone-3-PLAN.md` (revision 5). M2.5's plan is archived at
 `docs/milestones/completed/milestone-2-5-PLAN.md` (M0's, M1's, M2's and
 M2's remediation child's are in the same folder).
 

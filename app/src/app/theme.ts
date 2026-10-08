@@ -11,13 +11,13 @@ export type ThemeMode = 'system' | 'light' | 'dark'
 export const THEME_STORAGE_KEY = 'settle.theme'
 
 /**
- * Each palette's `theme-color`: its `--color-surface` token, the colour of
+ * Each palette’s `theme-color`: its `--color-card` token, the colour of
  * the header next to the browser's own UI. public/theme-init.js repeats
  * these values; tokens.test.ts and theme-init.test.ts keep them in step.
  */
 export const THEME_COLORS = {
   light: '#ffffff',
-  dark: '#1b1e25',
+  dark: '#1c1f2b',
 } as const
 
 const NEXT_MODE: Record<ThemeMode, ThemeMode> = {

@@ -50,8 +50,8 @@ describe('manifest.webmanifest', () => {
 
   it('uses the light palette’s colours from tokens.css', () => {
     expect(manifest.theme_color).toBe(THEME_COLORS.light)
-    expect(manifest.theme_color).toBe(lightToken('--color-surface'))
-    expect(manifest.background_color).toBe(lightToken('--color-bg'))
+    expect(manifest.theme_color).toBe(lightToken('--color-card'))
+    expect(manifest.background_color).toBe(lightToken('--color-ground'))
   })
 
   it('has 192 and 512 px icons and a maskable one', () => {

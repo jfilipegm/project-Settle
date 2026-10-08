@@ -10,7 +10,7 @@
 // before the rename to Settle, which src/app/legacyStorage.ts moves only
 // once the app starts, after this script has run.
 ;(function () {
-  const colors = { light: '#ffffff', dark: '#1b1e25' }
+  const colors = { light: '#ffffff', dark: '#1c1f2b' }
 
   let mode = null
   try {

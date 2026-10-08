@@ -2,3 +2,6 @@
 .ai-review/
 __pycache__/
 *.pyc
+
+# Design references from the user (local only, never committed)
+design-ideas/
