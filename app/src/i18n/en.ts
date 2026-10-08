@@ -101,7 +101,18 @@ export const en = {
 
   split: {
     title: 'Split a bill',
-    seeResult: 'See result',
+    steps: {
+      label: 'Steps',
+      receipt: 'Receipt',
+      items: 'Who had what',
+      split: 'The split',
+    },
+    typeItIn: {
+      heading: 'No receipt?',
+      hint: 'Add the people and the items yourself.',
+      button: 'Type it in',
+    },
+    seeSplit: 'See the split',
     newBill: 'New bill',
     newBillConfirm: 'Start a new bill? This clears the current one.',
     savedHint: 'This bill is saved on this device until you start a new one.',
@@ -119,6 +130,17 @@ export const en = {
 
     items: {
       heading: 'Items',
+      assignTo: 'Assign to',
+      assignHint: 'Choose a person, then tap the items they had.',
+      everyone: 'Everyone',
+      everyoneFor: 'for {item}',
+      edit: 'Edit',
+      done: 'Done',
+      sharers: 'Shared by {people}',
+      nobody: 'Nobody shares this item yet',
+      personAdded: '{person} now shares {item}',
+      personRemoved: '{person} no longer shares {item}',
+      everyoneAdded: 'Everyone shares {item}',
       add: 'Add item',
       defaultName: 'Item {n}',
       check: 'Check',

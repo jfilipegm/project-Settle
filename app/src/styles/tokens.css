@@ -95,28 +95,6 @@
   --content-max-width: 60rem;
   --header-height: 3.5rem;
   --tab-bar-height: 3.5rem;
-
-  /*
-   * Old names, kept as aliases so today's CSS modules keep rendering until
-   * CP5 moves the last of them onto the names above. Defined once, here:
-   * each resolves against whichever palette is active.
-   */
-  --color-bg: var(--color-ground);
-  --color-surface: var(--color-card);
-  --color-text: var(--color-ink);
-  --color-text-muted: var(--color-quiet);
-  --color-border: var(--color-control-border);
-  --radius-sm: var(--radius-chip);
-  --radius-md: var(--radius-control);
-  --radius-full: 999px;
-  --font-family-base: var(--font-body);
-  --font-size-sm: var(--text-14);
-  --font-size-base: var(--text-16);
-  --font-size-lg: var(--text-19);
-  --font-size-xl: var(--text-22);
-  --font-size-2xl: var(--text-28);
-  --line-height-tight: var(--leading-title);
-  --line-height-base: var(--leading-text);
 }
 
 @media (prefers-color-scheme: dark) {

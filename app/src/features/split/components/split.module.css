@@ -1,22 +1,78 @@
 /*
- * The Split page: one column at every width (360 px first), with nothing
- * wider than the viewport. Tokens only.
+ * The split (M3 plan, S1 to S10): three steps at every width from 360 px,
+ * one column, and from 1024 px the split beside the items on Who had what.
+ * Cards sit flat on a 1 px line (S6), and there's no coloured card edge
+ * (S7). Tokens only.
  */
 
 .page {
-  max-width: 40rem;
+  display: grid;
+  gap: var(--space-4);
+  max-width: 44rem;
 }
 
-.pageActions {
-  margin-bottom: var(--space-5);
+.page h1 {
+  margin-bottom: 0;
+}
+
+/* The steps. Each panel is `hidden` when its step isn't shown. */
+.stepPanels {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.stepPanel {
+  display: grid;
+  gap: var(--space-4);
+  align-content: start;
+  min-width: 0;
+}
+
+.stepPanel[hidden] {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .page:has([data-layout='beside']) {
+    max-width: none;
+  }
+
+  .stepPanels[data-layout='beside'] {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: start;
+  }
+
+  /* The live split stays in view while the items scroll. */
+  .stepPanels[data-layout='beside'] .resultPanel {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-4));
+  }
+}
+
+.editorSections {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.stepNext {
+  margin: 0;
+}
+
+.stepNext button {
+  width: 100%;
 }
 
 .section {
-  margin-bottom: var(--space-6);
+  margin: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
   scroll-margin-top: calc(var(--header-height) + var(--space-4));
 }
 
-.section:focus {
+.section:focus,
+.section h2:focus {
   outline: none;
 }
 
@@ -33,10 +89,11 @@
 }
 
 .hint {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  color: var(--color-quiet);
+  font-size: var(--text-14);
 }
 
+/* Today's fields, on the kit's look (S12). */
 .field {
   display: flex;
   flex: 1 1 8rem;
@@ -47,33 +104,38 @@
   scroll-margin-top: calc(var(--header-height) + var(--space-4));
 }
 
+.field label {
+  font-weight: 600;
+  font-size: var(--text-15);
+}
+
 .input {
   width: 100%;
   min-height: 2.75rem;
   padding: 0 var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-card);
+  color: var(--color-ink);
   scroll-margin-top: calc(var(--header-height) + var(--space-5));
 }
 
 .input[aria-invalid='true'] {
-  border-color: var(--color-error);
-  border-width: 2px;
+  border: 2px solid var(--color-error);
 }
 
 .fieldError {
   margin: 0;
   color: var(--color-error);
-  font-size: var(--font-size-sm);
+  font-size: var(--text-14);
 }
 
 .fieldset {
   min-width: 0;
   margin: 0 0 var(--space-4);
   padding: var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
   scroll-margin-top: calc(var(--header-height) + var(--space-4));
 }
 
@@ -96,28 +158,44 @@
   min-height: 2.75rem;
 }
 
+/* Buttons the receipt panels share, the kit's secondary and primary. */
 .primaryButton,
 .secondaryButton,
 .stepperButton,
 .chip {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
   min-height: 2.75rem;
   padding: 0 var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-card);
+  color: var(--color-ink);
+  font-weight: 600;
   cursor: pointer;
+  transition: transform var(--duration-press) var(--ease-out);
 }
 
 .primaryButton {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  font-weight: 600;
+  border-color: transparent;
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+.primaryButton:active:not(:disabled),
+.secondaryButton:active:not(:disabled),
+.stepperButton:active:not(:disabled),
+.chip:active {
+  transform: scale(var(--press-scale));
 }
 
 .primaryButton:disabled,
+.secondaryButton:disabled,
 .stepperButton:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.55;
 }
 
 .stepperGroup {
@@ -128,6 +206,7 @@
 .stepperLabel {
   display: block;
   margin-bottom: var(--space-1);
+  font-weight: 600;
 }
 
 .stepper {
@@ -139,13 +218,14 @@
 .stepperButton {
   min-width: 2.75rem;
   padding: 0;
-  font-size: var(--font-size-lg);
 }
 
 .stepperValue {
   min-width: 2.5rem;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
   text-align: center;
-  font-weight: 600;
 }
 
 .peopleList,
@@ -164,22 +244,157 @@
   gap: var(--space-2);
 }
 
-.personRow .secondaryButton {
+.personRow .secondaryButton,
+.personRow button {
   margin-bottom: var(--space-3);
 }
 
+/* S10: the person picker, a radio group of person chips. */
+.picker {
+  min-width: 0;
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  border: 0;
+}
+
+.picker legend {
+  padding: 0;
+  font-weight: 600;
+}
+
+.picker .hint {
+  margin: 0 0 var(--space-2);
+}
+
+.pickerChoices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.pickerChoice {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-card);
+  cursor: pointer;
+}
+
+/* The chosen person: a thicker border in ink and bold, not colour alone. */
+.pickerChoice:has(:checked) {
+  border: 2px solid var(--color-ink);
+  font-weight: 700;
+}
+
+.pickerChoice:has(:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.pickerInput {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .itemRow {
-  margin-bottom: var(--space-4);
-  padding: var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  /* S6: the 200 ms flash when the row gains or loses a person. */
+  --row-flash: color-mix(in srgb, var(--color-accent) 14%, var(--color-card));
+
+  margin-bottom: var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  background: var(--color-card);
 }
 
 /* The item of the line selected in the receipt review (M2.5, P15). */
 .itemRow[data-highlighted] {
-  outline: 3px solid var(--color-accent);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+.itemMain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* S10: the row toggles the chosen person; pressed is a 2 px ink border. */
+.itemToggle {
+  display: grid;
+  flex: 1 1 14rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+  min-width: 0;
+  min-height: 3rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-card);
+  color: var(--color-ink);
+  text-align: start;
+  cursor: pointer;
+  transition: transform var(--duration-press) var(--ease-out);
+}
+
+.itemToggle:active:not(:disabled) {
+  transform: scale(var(--press-scale));
+}
+
+.itemToggle[aria-pressed='true'] {
+  border: 2px solid var(--color-ink);
+}
+
+.itemName {
+  min-width: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.itemPrice {
+  justify-self: end;
+}
+
+.sharers {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  gap: var(--space-1);
+  min-height: 1.5rem;
+}
+
+.sharer {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: var(--person-color);
+  color: var(--person-on);
+  font-size: var(--text-12);
+  font-weight: 700;
+}
+
+.itemActions {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.editor {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-line);
+}
+
+.editor[hidden] {
+  display: none;
 }
 
 .itemFields {
@@ -201,16 +416,9 @@
   margin: 0;
 }
 
-/* An item read from a receipt that needs checking (M2, D14). */
+/* An item read from a receipt that needs checking (M2, D14): a chip. */
 .checkMarker {
-  display: inline-block;
   margin: 0 0 var(--space-2);
-  padding: 0 var(--space-2);
-  border: 1px solid var(--color-error);
-  border-radius: var(--radius-sm);
-  color: var(--color-error);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
 }
 
 .chips {
@@ -220,24 +428,23 @@
 }
 
 .chip {
-  border-radius: var(--radius-full);
-  color: var(--color-text-muted);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-chip);
+  color: var(--color-quiet);
+  font-weight: 400;
 }
 
-/* Not colour alone: a pressed chip is also bold, with a check mark. */
+/* Not colour alone: a pressed chip is also bold, with a check icon. */
 .chip[aria-pressed='true'] {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  font-weight: 600;
-}
-
-.chip[aria-pressed='true']::before {
-  content: '✓ ';
+  border: 2px solid var(--color-ink);
+  color: var(--color-ink);
+  font-weight: 700;
 }
 
 .details summary {
   min-height: 2.75rem;
   padding: var(--space-2) 0;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -250,8 +457,16 @@
 .summary {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: var(--space-1) var(--space-4);
+  gap: var(--space-1) 0;
   margin: 0 0 var(--space-5);
+}
+
+.summary dd {
+  padding-left: var(--space-4);
+}
+
+.summary dt {
+  color: var(--color-quiet);
 }
 
 .summary dd {
@@ -261,25 +476,74 @@
 
 .summaryTotal {
   padding-top: var(--space-2);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-line);
   font-weight: 700;
+}
+
+dt.summaryTotal {
+  color: var(--color-ink);
+}
+
+dd.summaryTotal {
+  font-family: var(--font-display);
+  font-size: var(--text-22);
+  font-weight: 600;
+}
+
+dd.summaryTotal data {
+  font-family: inherit;
 }
 
 .personCard {
   margin-bottom: var(--space-3);
   padding: var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  background: var(--color-card);
+}
+
+.personCardHeader {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.personDisc {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--person-color);
+  color: var(--person-on);
+  font-weight: 700;
 }
 
 .personCardHeading {
   display: flex;
+  flex: 1;
   flex-wrap: wrap;
   justify-content: space-between;
   gap: var(--space-2);
   margin: 0;
-  font-size: var(--font-size-lg);
+  font-family: var(--font-body);
+  font-size: var(--text-17);
+}
+
+/* S9: each share as a bar in the person's colour (3:1 on the card). */
+.shareBar {
+  height: 0.5rem;
+  margin: var(--space-2) 0 0;
+  border-radius: var(--radius-chip);
+  background: var(--color-ground);
+  overflow: hidden;
+}
+
+.shareFill {
+  width: var(--share, 0%);
+  height: 100%;
+  background: var(--person-color);
 }
 
 .breakdown li {
@@ -287,13 +551,18 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-1) 0;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-line);
 }
 
 .errorSummary {
   padding: var(--space-3) var(--space-4);
-  border: 2px solid var(--color-error);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-control);
+  background: var(--color-error-fill);
+  color: var(--color-error);
+}
+
+.errorSummary a {
+  color: inherit;
 }
 
 .errorSummary ul {
@@ -314,7 +583,7 @@
 
 .newBill {
   padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--color-line);
 }
 
 .newBill .hint {
@@ -322,11 +591,24 @@
 }
 
 /* A scanned receipt's notice above the totals (M2 remediation, R12, R24):
-   text first, the icon only decoration. */
+   amber, an icon and words. */
 .receiptNotice {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
   margin: 0 0 var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  border: 2px solid var(--color-error);
-  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--color-warning-fill);
+  color: var(--color-warning);
   font-weight: 600;
+}
+
+.receiptNotice svg {
+  flex: none;
+  margin-top: 0.1em;
+}
+
+.receiptNotice a {
+  color: inherit;
 }

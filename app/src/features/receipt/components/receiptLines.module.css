@@ -2,7 +2,8 @@
  * P15's review. The boxes are drawn on the receipt photo, which looks the
  * same in both themes, so their colours are fixed and each has a dark halo
  * to stand out on paper and on a dark table; the roles are also written in
- * the list, never colour alone.
+ * the list, never colour alone. In the list a small swatch matches each
+ * box, rather than a coloured edge (M3 plan, S7).
  */
 .review {
   --role-item: #1f6feb;
@@ -69,8 +70,18 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  border-left: 4px solid var(--line-colour, var(--color-border));
-  padding-left: var(--space-2);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-chip);
+}
+
+.swatch {
+  display: inline-block;
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  margin-right: var(--space-2);
+  border-radius: 2px;
+  background: var(--line-colour, var(--color-quiet));
 }
 
 .line[data-selected] {
@@ -93,18 +104,22 @@
 }
 
 .role {
+  display: inline-flex;
+  align-items: center;
   min-width: 9rem;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  color: var(--color-quiet);
+  font-size: var(--text-14);
 }
 
 .text {
   flex: 1 1 10rem;
   overflow-wrap: anywhere;
-  font-family: ui-monospace, monospace;
+  font-family: var(--font-mono);
+  font-size: var(--text-14);
 }
 
 .amount {
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 

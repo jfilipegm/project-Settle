@@ -1,19 +1,25 @@
 /*
- * The receipt scan section and check panel on the Split page (M2 plan,
- * CP4). Tokens only; the shared controls come from split.module.css.
+ * The receipt scan section and check panel (M2 plan, CP4; M3 plan, CP5):
+ * cards flat on a line, green, amber and red only with an icon and words
+ * (S1), no coloured edges (S7). Tokens only; the shared controls come from
+ * split.module.css.
  */
 
 .scan {
-  margin-bottom: var(--space-6);
+  margin: 0;
   padding: var(--space-4);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+}
+
+.scan h2:focus {
+  outline: none;
 }
 
 /* While a file is dragged over the section: a visible outline. */
 .scan[data-dragging='true'] {
-  border-color: var(--color-accent);
-  outline: 2px solid var(--color-accent);
+  outline: 2px dashed var(--color-accent);
   outline-offset: 2px;
 }
 
@@ -24,18 +30,29 @@
   margin-bottom: var(--space-3);
 }
 
-/* A file input's label, styled as a button; the input is visually hidden. */
+/* A file input's label, styled as the kit's primary button. */
 .fileButton {
   display: inline-flex;
+  gap: var(--space-2);
   align-items: center;
-  min-height: 2.75rem;
+  min-height: 3rem;
   padding: 0 var(--space-4);
-  border: 1px solid var(--color-accent);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-accent);
+  border-radius: var(--radius-control);
+  background: var(--color-ink);
+  color: var(--color-on-ink);
   font-weight: 600;
   cursor: pointer;
+  transition: transform var(--duration-press) var(--ease-out);
+}
+
+.fileButton + .fileButton {
+  border: 1px solid var(--color-control-border);
+  background: var(--color-card);
+  color: var(--color-ink);
+}
+
+.fileButton:active {
+  transform: scale(var(--press-scale));
 }
 
 .fileButton:focus-within {
@@ -45,7 +62,7 @@
 
 .fileButton[data-disabled='true'] {
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.55;
 }
 
 .progress {
@@ -61,25 +78,30 @@
 
 .error {
   margin: var(--space-3) 0 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--color-error-fill);
   color: var(--color-error);
 }
 
 /* M2.5, P16: why photos aren't offered in this browser. */
-.note {
+.note,
+.photoAdvice {
   margin: 0 0 var(--space-3);
   padding: var(--space-3);
-  border-left: 3px solid var(--color-warning, var(--color-border));
+  border-radius: var(--radius-control);
+  background: var(--color-warning-fill);
+  color: var(--color-warning);
 }
 
 /* P11: the photo quality check's advice. */
 .photoAdvice {
-  margin: var(--space-3) 0;
-  padding: var(--space-3);
-  border-left: 3px solid var(--color-warning, var(--color-border));
+  margin-top: var(--space-3);
 }
 
 .photoAdvice p {
   margin: 0 0 var(--space-2);
+  font-weight: 600;
 }
 
 .photoAdvice ul {
@@ -88,11 +110,11 @@
 }
 
 .check {
-  margin-bottom: var(--space-6);
+  margin: 0;
   padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
   scroll-margin-top: calc(var(--header-height) + var(--space-4));
 }
 
@@ -108,7 +130,7 @@
 }
 
 .facts dt {
-  color: var(--color-text-muted);
+  color: var(--color-quiet);
 }
 
 .facts dd {
@@ -116,19 +138,31 @@
   overflow-wrap: anywhere;
 }
 
-/* The status is text as well as an icon and a colour. */
+/* The status is words with an icon, never a colour alone. */
 .match,
 .mismatch {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
   margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
   font-weight: 600;
 }
 
 .match {
-  color: var(--color-accent);
+  background: var(--color-success-fill);
+  color: var(--color-success);
 }
 
 .mismatch {
-  color: var(--color-error);
+  background: var(--color-warning-fill);
+  color: var(--color-warning);
+}
+
+.statusIcon {
+  flex: none;
+  margin-top: 0.1em;
 }
 
 .warnings {
@@ -141,7 +175,8 @@
   max-width: 100%;
   height: auto;
   margin-top: var(--space-2);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-chip);
 }
 
 /* R24: the lines a cut left out, and what to do about them. */

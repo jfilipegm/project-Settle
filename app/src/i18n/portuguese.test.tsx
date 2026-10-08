@@ -207,7 +207,7 @@ describe('Settings in Portuguese', () => {
 
 describe('the split page in Portuguese', () => {
   it('names the adjustments and their hints exactly', () => {
-    renderAt('/split')
+    renderAt('/split?step=items')
 
     expect(screen.getByRole('group', { name: 'Imposto' })).toHaveTextContent(
       'Só o imposto que ainda não está incluído nos preços. Os preços em Portugal já incluem o IVA.',

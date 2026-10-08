@@ -1,6 +1,12 @@
+import {
+  IconAlertTriangle,
+  IconCircleCheck,
+  type Icon as TablerIcon,
+} from '@tabler/icons-react'
 import { useMemo, type Ref } from 'react'
 import type { Region } from '../../../app/region.ts'
 import { useT } from '../../../i18n/language.ts'
+import { Icon } from '../../../ui/Icon.tsx'
 import { formatAmount, negate, type Cents } from '../../../lib/money.ts'
 import { LIMITS, type Bill } from '../../split/model.ts'
 import splitStyles from '../../split/components/split.module.css'
@@ -62,6 +68,11 @@ function formatDate(iso: string, region: Region): string {
       }).format(date)
 }
 
+/** A status line's icon: decoration, the words carry the state (S5). */
+function StatusIcon({ icon }: { icon: TablerIcon }) {
+  return <Icon icon={icon} size={20} className={styles.statusIcon} />
+}
+
 /** The live comparison, as text; the icon is only decoration. */
 function CheckStatus({ check, region }: { check: Check; region: Region }) {
   const t = useT()
@@ -71,7 +82,7 @@ function CheckStatus({ check, region }: { check: Check; region: Region }) {
     case 'match':
       return (
         <p className={styles.match}>
-          <span aria-hidden="true">✓ </span>
+          <StatusIcon icon={IconCircleCheck} />
           {t('receipt.check.matches')}
         </p>
       )
@@ -83,7 +94,7 @@ function CheckStatus({ check, region }: { check: Check; region: Region }) {
       }
       return (
         <p className={styles.mismatch}>
-          <span aria-hidden="true">⚠ </span>
+          <StatusIcon icon={IconAlertTriangle} />
           {less
             ? t('receipt.check.mismatchLess', params)
             : t('receipt.check.mismatchMore', params)}
@@ -93,14 +104,14 @@ function CheckStatus({ check, region }: { check: Check; region: Region }) {
     case 'noTotal':
       return (
         <p className={styles.mismatch}>
-          <span aria-hidden="true">⚠ </span>
+          <StatusIcon icon={IconAlertTriangle} />
           {t('receipt.check.noTotal')}
         </p>
       )
     case 'billInvalid':
       return (
         <p className={styles.mismatch}>
-          <span aria-hidden="true">⚠ </span>
+          <StatusIcon icon={IconAlertTriangle} />
           {t('receipt.check.billInvalid')}
         </p>
       )
@@ -128,7 +139,7 @@ function StatusLine({
   if (check.status === 'match' && removed > 0) {
     return (
       <p className={styles.mismatch}>
-        <span aria-hidden="true">⚠ </span>
+        <StatusIcon icon={IconAlertTriangle} />
         {t('receipt.check.matchesAfterCut', { count: removed })}
       </p>
     )
@@ -136,7 +147,7 @@ function StatusLine({
   if (check.status === 'match' && isUnreadImport(bill, summary)) {
     return (
       <p className={styles.mismatch}>
-        <span aria-hidden="true">⚠ </span>
+        <StatusIcon icon={IconAlertTriangle} />
         {t('receipt.check.unread')}
       </p>
     )
@@ -148,7 +159,7 @@ function StatusLine({
   ) {
     return (
       <p className={styles.mismatch}>
-        <span aria-hidden="true">⚠ </span>
+        <StatusIcon icon={IconAlertTriangle} />
         {t('receipt.check.incomplete', {
           read: formatAmount(share.read, region),
           total: formatAmount(check.receiptTotal, region),

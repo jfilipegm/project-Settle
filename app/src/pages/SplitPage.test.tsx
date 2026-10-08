@@ -12,6 +12,12 @@ import { ReceiptImportProvider } from '../features/receipt/ReceiptImportProvider
 import { createBill } from '../features/split/billReducer.ts'
 import { DRAFT_STORAGE_KEY, saveDraft } from '../features/split/draft.ts'
 import { SplitPage } from './SplitPage.tsx'
+import {
+  inRouter,
+  openEditors,
+  showStep,
+  wideScreen,
+} from '../test/splitSteps.tsx'
 
 afterEach(() => {
   vi.restoreAllMocks()
@@ -31,13 +37,19 @@ function renderSplit(region?: Region) {
   if (region) {
     localStorage.setItem(REGION_STORAGE_KEY, JSON.stringify(region))
   }
-  return render(
-    <RegionProvider>
-      <ReceiptImportProvider>
-        <SplitPage />
-      </ReceiptImportProvider>
-    </RegionProvider>,
+  // The split beside the items, on Who had what (harness, L4-I2).
+  wideScreen(vi.spyOn)
+  const view = render(
+    inRouter(
+      <RegionProvider>
+        <ReceiptImportProvider>
+          <SplitPage />
+        </ReceiptImportProvider>
+      </RegionProvider>,
+    ),
   )
+  showStep('Who had what')
+  return view
 }
 
 /** Intl separates the amount and symbol with a no-break space. */
@@ -46,6 +58,8 @@ function plain(text: string | null): string {
 }
 
 function resultSection() {
+  // Beside the items on a wide screen (harness, L4-I2).
+  showStep('Who had what')
   return screen.getByRole('region', { name: 'Who owes what' })
 }
 
@@ -64,6 +78,7 @@ function totals(): string[] {
 }
 
 function textbox(name: string) {
+  openEditors()
   return screen.getByRole('textbox', { name })
 }
 
@@ -72,6 +87,7 @@ function type(name: string, value: string) {
 }
 
 function chip(name: string, item = 1) {
+  openEditors()
   const group = screen.getByRole('group', { name: `Item ${item}: Shared by` })
   return within(group).getByRole('button', { name })
 }
@@ -208,7 +224,12 @@ describe('Split page', () => {
       )
     expect(settleUp()).toBe('Person 2 owes Ana 5,00 €')
 
-    fireEvent.click(screen.getByRole('radio', { name: 'Person 2' }))
+    fireEvent.click(
+      within(screen.getByRole('group', { name: 'Who paid?' })).getByRole(
+        'radio',
+        { name: 'Person 2' },
+      ),
+    )
     expect(settleUp()).toBe('Ana owes Person 2 5,00 €')
   })
 
@@ -308,6 +329,7 @@ describe('Split page', () => {
       /Enter an amount from 0 to/,
     )
 
+    openEditors()
     fireEvent.click(screen.getByText('Shares', { selector: 'summary' }))
     fireEvent.click(
       screen.getByRole('button', {
@@ -415,9 +437,5 @@ describe('Split page', () => {
     ).getAllByRole('button')) {
       expect(button).toHaveAttribute('aria-pressed')
     }
-    expect(screen.getByRole('link', { name: 'See result' })).toHaveAttribute(
-      'href',
-      '#result',
-    )
   })
 })

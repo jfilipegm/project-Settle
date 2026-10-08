@@ -1,4 +1,4 @@
-import type { Dispatch } from 'react'
+import type { Dispatch, Ref } from 'react'
 import type { Region } from '../../../app/region.ts'
 import { useT } from '../../../i18n/language.ts'
 import { newId, type BillAction } from '../billReducer.ts'
@@ -12,16 +12,26 @@ interface Props {
   dispatch: Dispatch<BillAction>
   errors: readonly BillError[]
   region: Region
+  /** Who had what's first heading: the step's focus target (S9). */
+  headingRef?: Ref<HTMLHeadingElement>
 }
 
-export function PeopleSection({ bill, dispatch, errors, region }: Props) {
+export function PeopleSection({
+  bill,
+  dispatch,
+  errors,
+  region,
+  headingRef,
+}: Props) {
   const t = useT()
   const error = (field: Parameters<typeof fieldError>[2]) =>
     fieldError(t, errors, field, bill, region)
 
   return (
     <section className={styles.section} aria-labelledby="split-people-heading">
-      <h2 id="split-people-heading">{t('split.people.heading')}</h2>
+      <h2 id="split-people-heading" tabIndex={-1} ref={headingRef}>
+        {t('split.people.heading')}
+      </h2>
 
       <Stepper
         id={fieldId({ kind: 'people' })}

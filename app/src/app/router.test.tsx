@@ -100,6 +100,8 @@ describe('routes', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'Split a bill' }),
     ).toBeInTheDocument()
+    // The result is the third step (M3 plan, S9).
+    fireEvent.click(screen.getByRole('link', { name: 'The split' }))
     expect(
       screen.getByRole('heading', { level: 2, name: 'Who owes what' }),
     ).toBeInTheDocument()

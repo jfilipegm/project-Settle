@@ -11,7 +11,7 @@ PR #10. Phase `IMPLEMENTING`.
 
 ## Next action
 
-**CP5 — The split flow.**
+**CP6 — Quality pass and documentation.**
 
 ## Progress
 
@@ -137,6 +137,59 @@ PR #10. Phase `IMPLEMENTING`.
   - Design check (S14): the shell and pages follow the canvas's navigation
     map; the Settings screen (Language and Theme) goes onto the canvas
     with CP6's update.
+- **CP5 — The split flow: complete.**
+  - Three steps, Receipt, Who had what and The split, named in a steps
+    indicator and kept in the URL (`/split?step=`): Back, Forward and a
+    reload keep the step. With no step, a bill without content
+    (`billHasContent`) opens on Receipt and one with content on Who had
+    what, and the step is written into the URL. All three stay mounted,
+    the others `hidden`, so switching loses nothing typed. Each step's
+    heading takes focus when the step changes.
+  - Receipt: the scan, and "Type it in". An import ends on Who had what
+    with the check's heading focused (the CI smoke contract). From
+    1024 px (`useMediaQuery`, narrow without `matchMedia`) Who had what
+    shows The split beside the items, live; under it, "See the split".
+    The result's error and notice links go to their field or panel on
+    Who had what.
+  - Person-first assignment: a person picker (native radios as person
+    chips), item rows that toggle the chosen person (`aria-pressed`, the
+    sharers as a description, each change announced), "Everyone", and
+    today's editor behind Edit (open at first for an empty item, and for
+    an item with an error). Both ways dispatch `toggleAssignee`. A row
+    that gains or loses a person flashes for 200 ms (reduced motion: no
+    flash).
+  - New bill on every step, with today's confirmation and hint; it
+    resets everything and replaces the history entry with
+    `?step=receipt`, focusing the Receipt heading.
+  - The receipt panels and the result on the kit and tokens: icons
+    instead of the ⚠/✓ glyphs, amber notices with an icon, a swatch
+    instead of a coloured edge in Review lines, the share bars in each
+    person's colour, `Amount` with the true minus sign. The CP1 token
+    aliases are gone.
+  - Existing suites: harness, selector and navigation changes only
+    (`src/test/splitSteps.tsx`: a router, `showStep`, `openEditors`, and a
+    wide screen so the result sits beside the items). One judgment call:
+    one receipt test asserted the status text with its decorative "⚠ "
+    glyph, which S5 replaces with an icon; it now asserts the same words
+    and the hidden icon. The "See result" link it checked is replaced by
+    "See the split", tested in the new suite.
+  - New tests (`SplitPage.steps.test.tsx`, 23): the step names, the
+    default step (no draft, a saved fresh bill, a priced item), reload,
+    Back and Forward with focus, "Type it in", both layouts, the error
+    link across steps, the smoke contract in jsdom, person-first
+    assignment (pointer, keyboard elements, Everyone, the editor agreeing,
+    the flag), New bill from Who had what and The split (cancel, confirm,
+    the fresh bill, the replace by one Back).
+  - The three CI smoke steps, locally in headless Brave on the production
+    build: samples 1 and 12 pass (27 clean requests, no CSP violation,
+    the bill as expected), and the wrong expected bill fails on the bill
+    alone.
+  - Verified: `npm run check` (69 files, 1370 passed, 1 skipped);
+    `npm run build` and `check-build.mjs`.
+  - Design check (S14): checked in Brave at 390 px (Receipt, Who had
+    what, The split) and 1280 px (beside, light and dark); the canvas's
+    split screens get the shipped details (the Edit button, "Type it in")
+    in CP6.
 
 ## Last completed: M2.5 — Accurate receipt reading
 

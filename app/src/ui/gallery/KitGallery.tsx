@@ -71,7 +71,7 @@ export default function KitGallery() {
             {t('receipt.scan.takePhoto')}
           </Button>
           <Button>{t('split.newBill')}</Button>
-          <Button variant="quiet">{t('split.seeResult')}</Button>
+          <Button variant="quiet">{t('split.seeSplit')}</Button>
           <Button disabled>{t('receipt.scan.cancel')}</Button>
         </div>
         <div className={styles.row}>

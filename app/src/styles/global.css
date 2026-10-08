@@ -103,3 +103,8 @@ a {
     scroll-behavior: auto !important;
   }
 }
+
+/* `hidden` always hides, whatever display a class sets. */
+[hidden] {
+  display: none !important;
+}

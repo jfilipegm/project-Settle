@@ -24,6 +24,12 @@ import type { TextLine } from '../features/receipt/model.ts'
 import { ReceiptImportContext } from '../features/receipt/receiptImport.ts'
 import { ReceiptImportProvider } from '../features/receipt/ReceiptImportProvider.tsx'
 import { SplitPage } from './SplitPage.tsx'
+import {
+  inRouter,
+  openEditors,
+  showStep,
+  wideScreen,
+} from '../test/splitSteps.tsx'
 
 afterEach(() => {
   vi.restoreAllMocks()
@@ -55,12 +61,14 @@ function plain(text: string | null | undefined): string {
 }
 
 function type(name: string, value: string) {
+  openEditors()
   fireEvent.change(screen.getByRole('textbox', { name }), {
     target: { value },
   })
 }
 
 function setSharedBy(item: number, who: readonly Who[]) {
+  openEditors()
   const group = screen.getByRole('group', { name: `Item ${item}: Shared by` })
   for (const person of PEOPLE) {
     const chip = within(group).getByRole('button', { name: person })
@@ -84,13 +92,18 @@ describe('Split page, end to end', () => {
         configurable: true,
         value: { writeText },
       })
+      // The split beside the items, on Who had what (harness, L4-I2).
+      wideScreen(vi.spyOn)
       render(
-        <RegionProvider>
-          <ReceiptImportProvider>
-            <SplitPage />
-          </ReceiptImportProvider>
-        </RegionProvider>,
+        inRouter(
+          <RegionProvider>
+            <ReceiptImportProvider>
+              <SplitPage />
+            </ReceiptImportProvider>
+          </RegionProvider>,
+        ),
       )
+      showStep('Who had what')
 
       // Three people; Ana (the first) paid.
       fireEvent.click(screen.getByRole('button', { name: 'Add a person' }))
@@ -229,14 +242,17 @@ describe('Scan to split, end to end (M2)', () => {
         }),
         scanQr: () => Promise.resolve(qr.qr),
       }
+      wideScreen(vi.spyOn)
       render(
-        <RegionProvider>
-          <ReceiptImportContext
-            value={(file, options) => importReceipt(file, deps, options)}
-          >
-            <SplitPage />
-          </ReceiptImportContext>
-        </RegionProvider>,
+        inRouter(
+          <RegionProvider>
+            <ReceiptImportContext
+              value={(file, options) => importReceipt(file, deps, options)}
+            >
+              <SplitPage />
+            </ReceiptImportContext>
+          </RegionProvider>,
+        ),
       )
 
       fireEvent.change(screen.getByLabelText('Choose file'), {
@@ -252,6 +268,7 @@ describe('Scan to split, end to end (M2)', () => {
       expect(plain(check.textContent)).toContain(
         '20,00 € (from the fiscal QR code)',
       )
+      openEditors()
       const items = screen
         .getAllByRole('textbox', { name: /^Item \d+ Name$/ })
         .map((input) => (input as HTMLInputElement).value)

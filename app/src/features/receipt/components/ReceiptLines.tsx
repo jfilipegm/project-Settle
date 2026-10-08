@@ -124,6 +124,7 @@ function LinesReview({
               }}
             >
               <span className={styles.role}>
+                <span className={styles.swatch} aria-hidden="true" />
                 {t(ROLE_KEYS[line.role])}
                 {line.leftOut === true &&
                   ` ${t('receipt.lines.leftOutOfBill')}`}

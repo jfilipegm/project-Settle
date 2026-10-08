@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState, type DragEvent } from 'react'
+import { IconCamera, IconFileUpload } from '@tabler/icons-react'
+import { useEffect, useRef, useState, type DragEvent, type Ref } from 'react'
 import type { Region } from '../../../app/region.ts'
 import { useT } from '../../../i18n/language.ts'
+import { Icon } from '../../../ui/Icon.tsx'
 import type { Translate } from '../../../i18n/t.ts'
 import { newId } from '../../split/billReducer.ts'
 import type { Bill } from '../../split/model.ts'
@@ -34,6 +36,8 @@ interface Props {
    * default. The tests pass each answer.
    */
   support?: () => ReaderSupport
+  /** The Receipt step's focus target (M3 plan, S9). */
+  headingRef?: Ref<HTMLHeadingElement>
 }
 
 function phaseText(
@@ -77,6 +81,7 @@ export function ScanReceipt({
   onBusyChange,
   onImported,
   support = readerSupport,
+  headingRef,
 }: Props) {
   const t = useT()
   const importReceipt = useReceiptImport()
@@ -189,7 +194,9 @@ export function ScanReceipt({
         }
       }}
     >
-      <h2 id="receipt-scan-heading">{t('receipt.scan.heading')}</h2>
+      <h2 id="receipt-scan-heading" tabIndex={-1} ref={headingRef}>
+        {t('receipt.scan.heading')}
+      </h2>
       {supported !== 'ok' && (
         <p className={styles.note} role="note">
           {readerSupportNote(t, supported)}
@@ -207,6 +214,7 @@ export function ScanReceipt({
               pick(event.currentTarget)
             }}
           />
+          <Icon icon={IconFileUpload} />
           {supported === 'ok'
             ? t('receipt.scan.chooseFile')
             : t('receipt.scan.choosePdf')}
@@ -223,6 +231,7 @@ export function ScanReceipt({
                 pick(event.currentTarget)
               }}
             />
+            <Icon icon={IconCamera} />
             {t('receipt.scan.takePhoto')}
           </label>
         )}

@@ -99,7 +99,18 @@ export const pt: Catalogue = {
 
   split: {
     title: 'Dividir uma conta',
-    seeResult: 'Ver resultado',
+    steps: {
+      label: 'Passos',
+      receipt: 'Talão',
+      items: 'Quem consumiu o quê',
+      split: 'A divisão',
+    },
+    typeItIn: {
+      heading: 'Sem talão?',
+      hint: 'Adicione as pessoas e os artigos.',
+      button: 'Introduzir à mão',
+    },
+    seeSplit: 'Ver a divisão',
     newBill: 'Nova conta',
     newBillConfirm: 'Começar uma nova conta? A conta atual é apagada.',
     savedHint:
@@ -118,6 +129,17 @@ export const pt: Catalogue = {
 
     items: {
       heading: 'Artigos',
+      assignTo: 'Atribuir a',
+      assignHint: 'Escolha uma pessoa e toque nos artigos que consumiu.',
+      everyone: 'Todos',
+      everyoneFor: 'em {item}',
+      edit: 'Editar',
+      done: 'Concluir',
+      sharers: 'Partilhado por {people}',
+      nobody: 'Ainda ninguém partilha este artigo',
+      personAdded: '{person} passa a partilhar {item}',
+      personRemoved: '{person} deixa de partilhar {item}',
+      everyoneAdded: 'Todos partilham {item}',
       add: 'Adicionar artigo',
       defaultName: 'Artigo {n}',
       check: 'Verificar',

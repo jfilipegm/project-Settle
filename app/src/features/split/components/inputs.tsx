@@ -1,6 +1,8 @@
+import { IconMinus, IconPlus } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useRegion } from '../../../app/region.ts'
 import { useT } from '../../../i18n/language.ts'
+import { Icon } from '../../../ui/Icon.tsx'
 import { parseAmount, type Cents, type Ratio } from '../../../lib/money.ts'
 import { LIMITS, toBillRatio } from '../model.ts'
 import {
@@ -251,7 +253,7 @@ export function Stepper({
             onChange(clamp(whole - 1))
           }}
         >
-          −
+          <Icon icon={IconMinus} />
         </button>
         <output id={id} className={styles.stepperValue} aria-live="polite">
           {format(value)}
@@ -265,7 +267,7 @@ export function Stepper({
             onChange(clamp(whole + 1))
           }}
         >
-          +
+          <Icon icon={IconPlus} />
         </button>
       </div>
       {error && (

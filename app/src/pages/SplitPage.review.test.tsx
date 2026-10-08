@@ -29,6 +29,12 @@ import {
 import { RECEIPT_STORAGE_KEY } from '../features/receipt/receiptStore.ts'
 import { receiptToBill } from '../features/receipt/toBill.ts'
 import { SplitPage } from './SplitPage.tsx'
+import {
+  inRouter,
+  openEditors,
+  showStep,
+  wideScreen,
+} from '../test/splitSteps.tsx'
 
 /**
  * The waits' limit: the fake import is instant, but when the real-OCR
@@ -109,12 +115,16 @@ const CUT = parseReceiptText(
 )
 
 function renderPage(importReceipt: ImportReceiptFn) {
+  // The split beside the items, on Who had what (harness, L4-I2).
+  wideScreen(vi.spyOn)
   return render(
-    <RegionProvider>
-      <ReceiptImportContext value={importReceipt}>
-        <SplitPage />
-      </ReceiptImportContext>
-    </RegionProvider>,
+    inRouter(
+      <RegionProvider>
+        <ReceiptImportContext value={importReceipt}>
+          <SplitPage />
+        </ReceiptImportContext>
+      </RegionProvider>,
+    ),
   )
 }
 
@@ -140,12 +150,18 @@ const status = () =>
     within(panel()).getByRole('status').querySelectorAll('p'),
     (paragraph) => plain(paragraph.textContent).replace(/^[✓⚠]\s*/, ''),
   ).join(' ')
-const result = () => screen.getByRole('region', { name: 'Who owes what' })
-const prices = () =>
-  screen
+const result = () => {
+  showStep('Who had what')
+  return screen.getByRole('region', { name: 'Who owes what' })
+}
+const prices = () => {
+  openEditors()
+  return screen
     .getAllByRole('textbox', { name: /^Item \d+ Unit price$/ })
     .map((input) => (input as HTMLInputElement).value)
+}
 const price = (n: number, value: string) => {
+  openEditors()
   fireEvent.change(
     screen.getByRole('textbox', { name: `Item ${String(n)} Unit price` }),
     { target: { value } },
@@ -190,6 +206,7 @@ describe('R13: add the difference in one click', () => {
       }),
     )
     expect(prices()).toEqual(['5,00', '2,60', '12,40'])
+    openEditors()
     expect(screen.getByRole('textbox', { name: 'Item 3 Name' })).toHaveValue(
       'Not read from the receipt',
     )
@@ -256,6 +273,7 @@ describe('R14: no item read, but a QR total', () => {
       'None of the items could be read. The receipt’s total was added as one item: split it as it is, or type the items in.',
     )
     expect(screen.getByText('Item 1: check this line')).toBeInTheDocument()
+    openEditors()
     fireEvent.change(screen.getByRole('textbox', { name: 'Item 1 Name' }), {
       target: { value: 'Jantar' },
     })
@@ -317,6 +335,7 @@ describe('R24: lines left out by a cut', () => {
     expect(plain(await copy())).toContain(LEFT_OUT)
 
     // It survives an edit to an item, and a reload.
+    openEditors()
     fireEvent.change(screen.getByRole('textbox', { name: 'Item 1 Name' }), {
       target: { value: 'Pão de forma' },
     })
@@ -400,6 +419,7 @@ describe('R24: lines left out by a cut', () => {
     ).toBeInTheDocument()
 
     // An item nobody shares: the bill can't be split.
+    openEditors()
     const sharedBy = () =>
       screen.getByRole('group', { name: 'Item 2: Shared by' })
     for (const person of ['Person 1', 'Person 2']) {
