@@ -7,10 +7,10 @@ import {
   useState,
 } from 'react'
 import { useRegion } from '../app/region.ts'
+import { useT } from '../i18n/language.ts'
 import { ReceiptCheck } from '../features/receipt/components/ReceiptCheck.tsx'
 import { ScanReceipt } from '../features/receipt/components/ScanReceipt.tsx'
 import { revokeImageUrl } from '../features/receipt/importUi.ts'
-import { NOT_READ_ITEM_NAME } from '../features/receipt/messages.ts'
 import type {
   PhotoIssue,
   PhotoQuality,
@@ -30,13 +30,18 @@ import { PeopleSection } from '../features/split/components/PeopleSection.tsx'
 import { ResultSection } from '../features/split/components/ResultSection.tsx'
 import styles from '../features/split/components/split.module.css'
 import { newId } from '../features/split/billReducer.ts'
+import { displayName } from '../features/split/model.ts'
 import { computeSplit } from '../features/split/split.ts'
 import { newBillIds, useBill } from '../features/split/useBill.ts'
 
 export function SplitPage() {
   const { region } = useRegion()
+  const t = useT()
   const [bill, dispatch] = useBill()
-  const outcome = useMemo(() => computeSplit(bill), [bill])
+  const outcome = useMemo(
+    () => computeSplit(bill, (person, index) => displayName(t, person, index)),
+    [bill, t],
+  )
   const errors = outcome.ok ? [] : outcome.errors
   const sectionProps = { bill, dispatch, errors, region }
   // Inputs keep their own text while it's invalid, and only read the bill
@@ -86,8 +91,8 @@ export function SplitPage() {
     () =>
       summary === null
         ? []
-        : receiptNotices(checkReceipt(bill, summary), summary, region),
-    [bill, summary, region],
+        : receiptNotices(t, checkReceipt(bill, summary), summary, region),
+    [bill, summary, region, t],
   )
 
   /** Adds items, flagged "Check", and records their flags (R13, R24). */
@@ -119,9 +124,9 @@ export function SplitPage() {
 
   return (
     <div className={styles.page}>
-      <h1>Split a bill</h1>
+      <h1>{t('split.title')}</h1>
       <p className={styles.pageActions}>
-        <a href="#result">See result</a>
+        <a href="#result">{t('split.seeResult')}</a>
       </p>
 
       <ScanReceipt
@@ -164,7 +169,9 @@ export function SplitPage() {
             setHighlightedItemId(undefined)
           }}
           onAddDifference={(amount) => {
-            addFlaggedItems(summary, [{ name: NOT_READ_ITEM_NAME, amount }])
+            addFlaggedItems(summary, [
+              { name: t('receipt.notReadItem'), amount },
+            ])
           }}
           onConfirmRemoved={() => {
             updateSummary(withoutRemovedLines(summary))
@@ -211,9 +218,7 @@ export function SplitPage() {
           className={styles.secondaryButton}
           disabled={scanning}
           onClick={() => {
-            if (
-              window.confirm('Start a new bill? This clears the current one.')
-            ) {
+            if (window.confirm(t('split.newBillConfirm'))) {
               dispatch({ type: 'newBill', ids: newBillIds() })
               updateSummary(null)
               setImageUrl(undefined)
@@ -225,11 +230,9 @@ export function SplitPage() {
             }
           }}
         >
-          New bill
+          {t('split.newBill')}
         </button>
-        <p className={styles.hint}>
-          This bill is saved on this device until you start a new one.
-        </p>
+        <p className={styles.hint}>{t('split.savedHint')}</p>
       </div>
     </div>
   )

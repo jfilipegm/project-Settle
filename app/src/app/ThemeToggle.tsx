@@ -1,14 +1,10 @@
-import { useTheme, type ThemeMode } from './theme.ts'
+import { useT } from '../i18n/language.ts'
+import { useTheme } from './theme.ts'
 import styles from './ThemeToggle.module.css'
-
-const LABELS: Record<ThemeMode, string> = {
-  system: 'System',
-  light: 'Light',
-  dark: 'Dark',
-}
 
 /** One button that cycles the theme mode: system → light → dark. */
 export function ThemeToggle() {
+  const t = useT()
   const { mode, nextMode, cycleMode } = useTheme()
 
   return (
@@ -17,10 +13,13 @@ export function ThemeToggle() {
       className={styles.toggle}
       // The name starts with the visible text, so voice control users can
       // say what they see.
-      aria-label={`Theme: ${mode}. Switch to ${nextMode}.`}
+      aria-label={t('theme.toggleName', {
+        mode: t(`theme.mode.${mode}`),
+        next: t(`theme.mode.${nextMode}`),
+      })}
       onClick={cycleMode}
     >
-      Theme: {LABELS[mode]}
+      {t('theme.toggle', { mode: t(`theme.label.${mode}`) })}
     </button>
   )
 }

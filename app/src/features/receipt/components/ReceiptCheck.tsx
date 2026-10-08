@@ -1,9 +1,10 @@
 import { useMemo, type Ref } from 'react'
 import type { Region } from '../../../app/region.ts'
+import { useT } from '../../../i18n/language.ts'
 import { formatAmount, negate, type Cents } from '../../../lib/money.ts'
 import { LIMITS, type Bill } from '../../split/model.ts'
 import splitStyles from '../../split/components/split.module.css'
-import { PHOTO_ADVICE_LEAD_DONE, warningMessage } from '../messages.ts'
+import { warningMessage } from '../messages.ts'
 import type {
   PhotoIssue,
   PhotoQuality,
@@ -16,7 +17,6 @@ import {
   INCOMPLETE_BELOW,
   differenceOffer,
   isUnreadImport,
-  linesCount,
   readShare,
 } from '../review.ts'
 import { PhotoAdvice } from './PhotoAdvice.tsx'
@@ -64,38 +64,44 @@ function formatDate(iso: string, region: Region): string {
 
 /** The live comparison, as text; the icon is only decoration. */
 function CheckStatus({ check, region }: { check: Check; region: Region }) {
+  const t = useT()
   const amount = (value: Parameters<typeof formatAmount>[0]) =>
     formatAmount(value, region)
   switch (check.status) {
     case 'match':
       return (
         <p className={styles.match}>
-          <span aria-hidden="true">✓ </span>Matches the receipt total.
+          <span aria-hidden="true">✓ </span>
+          {t('receipt.check.matches')}
         </p>
       )
     case 'mismatch': {
       const less = check.difference < 0
-      const gap = amount(less ? negate(check.difference) : check.difference)
+      const params = {
+        total: amount(check.billTotal),
+        gap: amount(less ? negate(check.difference) : check.difference),
+      }
       return (
         <p className={styles.mismatch}>
-          <span aria-hidden="true">⚠ </span>Items add up to{' '}
-          {amount(check.billTotal)}, {gap} {less ? 'less' : 'more'} than the
-          receipt.
+          <span aria-hidden="true">⚠ </span>
+          {less
+            ? t('receipt.check.mismatchLess', params)
+            : t('receipt.check.mismatchMore', params)}
         </p>
       )
     }
     case 'noTotal':
       return (
         <p className={styles.mismatch}>
-          <span aria-hidden="true">⚠ </span>No receipt total to compare the
-          items with.
+          <span aria-hidden="true">⚠ </span>
+          {t('receipt.check.noTotal')}
         </p>
       )
     case 'billInvalid':
       return (
         <p className={styles.mismatch}>
-          <span aria-hidden="true">⚠ </span>Fix the bill’s errors to compare it
-          with the receipt.
+          <span aria-hidden="true">⚠ </span>
+          {t('receipt.check.billInvalid')}
         </p>
       )
   }
@@ -116,23 +122,22 @@ function StatusLine({
   check: Check
   region: Region
 }) {
+  const t = useT()
   const removed = summary.removedLines?.length ?? 0
   const share = readShare(bill, summary)
   if (check.status === 'match' && removed > 0) {
     return (
       <p className={styles.mismatch}>
-        <span aria-hidden="true">⚠ </span>Matches after leaving out{' '}
-        {linesCount(removed)} read below the items as the receipt’s footer.
-        Check they aren’t items:
+        <span aria-hidden="true">⚠ </span>
+        {t('receipt.check.matchesAfterCut', { count: removed })}
       </p>
     )
   }
   if (check.status === 'match' && isUnreadImport(bill, summary)) {
     return (
       <p className={styles.mismatch}>
-        <span aria-hidden="true">⚠ </span>None of the items could be read. The
-        receipt’s total was added as one item: split it as it is, or type the
-        items in.
+        <span aria-hidden="true">⚠ </span>
+        {t('receipt.check.unread')}
       </p>
     )
   }
@@ -143,10 +148,11 @@ function StatusLine({
   ) {
     return (
       <p className={styles.mismatch}>
-        <span aria-hidden="true">⚠ </span>Only{' '}
-        {formatAmount(share.read, region)} of the receipt’s{' '}
-        {formatAmount(check.receiptTotal, region)} was read. Add the missing
-        items, or add the difference as one item.
+        <span aria-hidden="true">⚠ </span>
+        {t('receipt.check.incomplete', {
+          read: formatAmount(share.read, region),
+          total: formatAmount(check.receiptTotal, region),
+        })}
       </p>
     )
   }
@@ -175,6 +181,7 @@ export function ReceiptCheck({
   onConfirmRemoved,
   onPutBack,
 }: Props) {
+  const t = useT()
   const check = useMemo(() => checkReceipt(bill, summary), [bill, summary])
   const offer = differenceOffer(bill, check)
   const removed = summary.removedLines ?? []
@@ -189,43 +196,43 @@ export function ReceiptCheck({
       }
     >
       <h2 id="receipt-check-heading" tabIndex={-1} ref={headingRef}>
-        Receipt check
+        {t('receipt.check.heading')}
       </h2>
       <dl className={styles.facts}>
         {summary.merchant !== undefined && (
           <>
-            <dt>Merchant</dt>
+            <dt>{t('receipt.check.merchant')}</dt>
             <dd>{summary.merchant}</dd>
           </>
         )}
         {summary.date !== undefined && (
           <>
-            <dt>Date</dt>
+            <dt>{t('receipt.check.date')}</dt>
             <dd>{formatDate(summary.date, region)}</dd>
           </>
         )}
         {summary.merchantTaxId !== undefined && (
           <>
-            <dt>NIF</dt>
+            <dt>{t('receipt.check.taxId')}</dt>
             <dd>{summary.merchantTaxId}</dd>
           </>
         )}
         {summary.total !== undefined && (
           <>
-            <dt>Receipt total</dt>
+            <dt>{t('receipt.check.total')}</dt>
             <dd>
               {formatAmount(summary.total, region)}{' '}
               <span className={splitStyles.hint}>
                 {summary.totalSource === 'qr'
-                  ? '(from the fiscal QR code)'
-                  : '(read from the receipt)'}
+                  ? t('receipt.check.fromQr')
+                  : t('receipt.check.fromText')}
               </span>
             </dd>
           </>
         )}
         {summary.ivaTotal !== undefined && (
           <>
-            <dt>IVA included</dt>
+            <dt>{t('receipt.check.ivaIncluded')}</dt>
             <dd>{formatAmount(summary.ivaTotal, region)}</dd>
           </>
         )}
@@ -240,16 +247,14 @@ export function ReceiptCheck({
         />
         {removed.length > 0 && check.status !== 'match' && (
           <p className={styles.mismatch}>
-            {linesCount(removed.length)} {removed.length === 1 ? 'was' : 'were'}{' '}
-            left out below the items as the receipt’s footer. Check they aren’t
-            items:
+            {t('receipt.check.leftOut', { count: removed.length })}
           </p>
         )}
       </div>
 
       {removed.length > 0 && (
         <div className={styles.removed}>
-          <ul aria-label="Lines left out">
+          <ul aria-label={t('receipt.check.leftOutList')}>
             {removed.map((line, index) => (
               <li key={index}>
                 <span>{line.name}</span>{' '}
@@ -263,7 +268,7 @@ export function ReceiptCheck({
               className={splitStyles.secondaryButton}
               onClick={onConfirmRemoved}
             >
-              They aren’t items
+              {t('receipt.check.notItems')}
             </button>
             {bill.items.length + removed.length <= LIMITS.maxItems && (
               <button
@@ -273,7 +278,7 @@ export function ReceiptCheck({
                   onPutBack(removed)
                 }}
               >
-                Put them back
+                {t('receipt.check.putBack')}
               </button>
             )}
           </div>
@@ -289,30 +294,34 @@ export function ReceiptCheck({
               onAddDifference(offer.amount)
             }}
           >
-            Add the difference ({formatAmount(offer.amount, region)}) as an item
+            {t('receipt.check.addDifference', {
+              amount: formatAmount(offer.amount, region),
+            })}
           </button>
         </p>
       )}
       {offer.kind === 'percentage' && (
-        <p>
-          Add the missing items, or change the tax or tip to an amount, to match
-          the receipt.
-        </p>
+        <p>{t('receipt.check.percentageHint')}</p>
       )}
 
       {summary.warnings.length > 0 && (
-        <ul className={styles.warnings} aria-label="Warnings">
+        <ul
+          className={styles.warnings}
+          aria-label={t('receipt.check.warnings')}
+        >
           {summary.warnings.map((warning) => (
-            <li key={warning}>{warningMessage(warning, summary.currency)}</li>
+            <li key={warning}>
+              {warningMessage(t, warning, summary.currency)}
+            </li>
           ))}
         </ul>
       )}
 
-      <PhotoAdvice issues={photoIssues} lead={PHOTO_ADVICE_LEAD_DONE} />
+      <PhotoAdvice issues={photoIssues} lead={t('receipt.photo.leadDone')} />
 
       {lines !== undefined && lines.length > 0 && (
         <details className={splitStyles.details}>
-          <summary>Review lines</summary>
+          <summary>{t('receipt.check.reviewLines')}</summary>
           <ReceiptLines
             lines={lines}
             imageUrl={imageUrl}
@@ -330,11 +339,11 @@ export function ReceiptCheck({
 
       {imageUrl !== undefined && (
         <details className={splitStyles.details}>
-          <summary>Show receipt image</summary>
+          <summary>{t('receipt.check.showImage')}</summary>
           <img
             className={styles.receiptImage}
             src={imageUrl}
-            alt="The scanned receipt"
+            alt={t('receipt.check.imageAlt')}
           />
         </details>
       )}
@@ -344,7 +353,7 @@ export function ReceiptCheck({
         className={splitStyles.secondaryButton}
         onClick={onDismiss}
       >
-        Dismiss
+        {t('receipt.check.dismiss')}
       </button>
     </section>
   )

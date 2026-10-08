@@ -11,7 +11,7 @@ PR #10. Phase `IMPLEMENTING`.
 
 ## Next action
 
-**CP2 — English and Portuguese.** Run `/milestone-implement milestone-3`.
+**CP3 — The component kit.**
 
 ## Progress
 
@@ -52,6 +52,41 @@ PR #10. Phase `IMPLEMENTING`.
     Until CP5, the receipt panels' warning edge now shows amber (the old
     fallback token is now defined); CP5 restyles them without the stripe
     (S7). The licence notices for the fonts and Tabler land in CP6.
+- **CP2 — English and Portuguese: complete.**
+  - `app/src/i18n/`: `en.ts` (the source catalogue), `pt.ts` (European
+    Portuguese, typed against it), `t.ts` (lookup, `{name}` parameters,
+    `Intl.PluralRules` plurals), `language.ts` and `LanguageProvider.tsx`
+    (System, English or Português under `settle.language`; System takes
+    the first `pt`/`en` browser language, else English; `<html lang>` is
+    `en` or `pt-PT`), `notRead.ts` (`isNotReadItemName`, either language).
+  - Every interface text moved: the components, the plain modules (which
+    now take `t`: `fields.ts`, `messages.ts`, `review.ts`, `format.ts`;
+    `lineReview.ts` maps roles to keys), the display maps and both
+    `window.confirm` prompts. `model.ts`'s `displayName` takes `t`;
+    `computeSplit` takes an optional name function, so the maths is
+    unchanged. The stand-in name reaches `toBill.ts` as an import option,
+    English by default, so `readRows`, `localReport.node.ts` and the CI
+    expected-bill check are untouched.
+  - Settings has a Language field next to Region; switching re-renders
+    without a reload.
+  - Tests: key, plural and parameter parity, and every Portuguese text
+    translated apart from six named exceptions; the literal-text guard
+    (TypeScript compiler API, all of `src/` by default, one exclusion:
+    the parser and its keywords; the allowlist: the wordmark, `'Files'`,
+    one developer-only error detail and the key names) with its own
+    negative and positive snippets; every page in Portuguese with no
+    English sentinel; Settings' options, the navigation and theme
+    labels, the adjustment names and hints asserted exactly; every
+    validation message, read error, warning, photo advice, line role,
+    notice and the copied summary in Portuguese; the stand-in in both
+    languages through `review.ts` and `accuracy.ts`, renamed and
+    price-only, and "Add the difference" in Portuguese next to an English
+    stand-in.
+  - The existing suites kept their results with only harness changes:
+    tests that call a message function pass an English translator.
+  - Verified: `npm run check` (59 files, 1291 passed, 1 skipped).
+  - Design check (S14): the new Language field in Settings goes onto the
+    canvas with CP6's update; nothing else changed visually.
 
 ## Last completed: M2.5 — Accurate receipt reading
 

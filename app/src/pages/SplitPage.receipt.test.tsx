@@ -28,6 +28,9 @@ import { receiptToBill } from '../features/receipt/toBill.ts'
 import { createBill } from '../features/split/billReducer.ts'
 import { DRAFT_STORAGE_KEY, saveDraft } from '../features/split/draft.ts'
 import { SplitPage } from './SplitPage.tsx'
+import { translator } from '../i18n/t.ts'
+
+const en = translator('en')
 
 /**
  * The waits' limit: the fake import is instant, but when the real-OCR
@@ -183,9 +186,11 @@ describe('Scanning a receipt on the Split page', () => {
     choose()
 
     expect(await screen.findByRole('alert')).toHaveTextContent(
-      readErrorMessage(code),
+      readErrorMessage(en, code),
     )
-    expect(readErrorMessage(code)).toMatch(/You can type the items in below\.$/)
+    expect(readErrorMessage(en, code)).toMatch(
+      /You can type the items in below\.$/,
+    )
     expect(localStorage.getItem(DRAFT_STORAGE_KEY)).toBe(before)
     expect(queryPanel()).not.toBeInTheDocument()
   })
@@ -297,7 +302,7 @@ describe('Scanning a receipt on the Split page', () => {
       within(advice)
         .getAllByRole('listitem')
         .map((item) => item.textContent),
-    ).toEqual([photoAdvice('smallText'), photoAdvice('blurred')])
+    ).toEqual([photoAdvice(en, 'smallText'), photoAdvice(en, 'blurred')])
     expect(plain(within(scan).getByRole('status').textContent)).toBe(
       'Reading the text… 0%',
     )
@@ -315,10 +320,10 @@ describe('Scanning a receipt on the Split page', () => {
     ).not.toBeInTheDocument()
     expect(
       within(panel()).getByRole('list', { name: 'Photo advice' }),
-    ).toHaveTextContent(photoAdvice('smallText'))
+    ).toHaveTextContent(photoAdvice(en, 'smallText'))
     const saved = JSON.stringify({ ...localStorage })
     expect(saved).not.toContain('smallText')
-    expect(saved).not.toContain(photoAdvice('smallText'))
+    expect(saved).not.toContain(photoAdvice(en, 'smallText'))
 
     // Never saved: a reload shows the panel without it.
     view.unmount()

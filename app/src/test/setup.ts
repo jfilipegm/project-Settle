@@ -13,6 +13,11 @@ afterEach(() => {
   if (typeof localStorage !== 'undefined') localStorage.clear()
 })
 
+// Existing tests read English (M3 plan, S11): a component outside a
+// LanguageProvider reads the English catalogue, and inside one, System
+// follows jsdom's navigator.languages, which is ['en-US']. A test that needs
+// Portuguese stores `settle.language` or mocks navigator.languages.
+
 // jsdom has no matchMedia, and `system` theme mode depends on media
 // queries. The stub matches nothing, like a light-scheme browser; a test
 // that needs a match replaces it with vi.spyOn(window, 'matchMedia').

@@ -1,5 +1,6 @@
 import { useEffect, useRef, type Dispatch } from 'react'
 import type { Region } from '../../../app/region.ts'
+import { useT } from '../../../i18n/language.ts'
 import { formatAmount } from '../../../lib/money.ts'
 import { newId, type BillAction } from '../billReducer.ts'
 import {
@@ -37,6 +38,7 @@ export function ItemsSection({
   onItemEdited,
   highlightedItemId,
 }: Props) {
+  const t = useT()
   const nameInputs = useRef(new Map<string, HTMLInputElement>())
   const focusItemId = useRef<string>(undefined)
 
@@ -50,7 +52,7 @@ export function ItemsSection({
 
   return (
     <section className={styles.section} aria-labelledby="split-items-heading">
-      <h2 id="split-items-heading">Items</h2>
+      <h2 id="split-items-heading">{t('split.items.heading')}</h2>
       <ol className={styles.itemList}>
         {bill.items.map((item, index) => (
           <ItemRow
@@ -85,11 +87,11 @@ export function ItemsSection({
           focusItemId.current = id
         }}
       >
-        Add item
+        {t('split.items.add')}
       </button>
-      {fieldError(errors, { kind: 'items' }, bill, region) && (
+      {fieldError(t, errors, { kind: 'items' }, bill, region) && (
         <p className={styles.fieldError}>
-          {fieldError(errors, { kind: 'items' }, bill, region)}
+          {fieldError(t, errors, { kind: 'items' }, bill, region)}
         </p>
       )}
     </section>
@@ -116,10 +118,11 @@ function ItemRow({
   onItemEdited,
   nameRef,
 }: RowProps) {
-  const label = `Item ${index + 1}`
+  const t = useT()
+  const label = t('split.items.defaultName', { n: index + 1 })
   const at = (part: 'name' | 'quantity' | 'unitPrice' | 'assignees') =>
     ({ kind: 'item', itemId: item.id, part }) as const
-  const error = (field: BillField) => fieldError(errors, field, bill, region)
+  const error = (field: BillField) => fieldError(t, errors, field, bill, region)
   const assignedIds = new Set(item.assignees.map((a) => a.personId))
   // validateBill always range-checks both fields, so with no error on
   // either the line total is safe to compute.
@@ -138,8 +141,10 @@ function ItemRow({
     >
       {flagged && (
         <p className={styles.checkMarker}>
-          <span aria-hidden="true">⚠ Check</span>
-          <span className={styles.srOnly}>{label}: check this line</span>
+          <span aria-hidden="true">⚠ {t('split.items.check')}</span>
+          <span className={styles.srOnly}>
+            {t('split.items.checkLine', { item: label })}
+          </span>
         </p>
       )}
       {/* The first edit to one of these fields clears the marker (D14). */}
@@ -151,7 +156,7 @@ function ItemRow({
       >
         <TextInput
           id={fieldId(at('name'))}
-          label="Name"
+          label={t('split.items.name')}
           srPrefix={label}
           placeholder={label}
           maxLength={LIMITS.maxNameLength}
@@ -166,7 +171,7 @@ function ItemRow({
           key={`quantity-${region.locale}`}
           id={fieldId(at('quantity'))}
           kind="quantity"
-          label="Quantity"
+          label={t('split.items.quantity')}
           srPrefix={label}
           value={item.quantity}
           error={error(at('quantity'))}
@@ -181,7 +186,7 @@ function ItemRow({
         <AmountInput
           key={`price-${region.locale}-${region.currency}`}
           id={fieldId(at('unitPrice'))}
-          label="Unit price"
+          label={t('split.items.unitPrice')}
           srPrefix={label}
           value={item.unitPrice}
           error={error(at('unitPrice'))}
@@ -197,7 +202,8 @@ function ItemRow({
 
       <div className={styles.itemFooter}>
         <p className={styles.lineTotal}>
-          <span className={styles.srOnly}>{label}</span> Line total{' '}
+          <span className={styles.srOnly}>{label}</span>{' '}
+          {t('split.items.lineTotal')}{' '}
           <strong>
             {lineIsValid ? formatAmount(lineTotal(item), region) : '—'}
           </strong>
@@ -209,13 +215,15 @@ function ItemRow({
             dispatch({ type: 'removeItem', itemId: item.id })
           }}
         >
-          Remove <span className={styles.srOnly}>{itemName(item, index)}</span>
+          {t('split.items.remove')}{' '}
+          <span className={styles.srOnly}>{itemName(t, item, index)}</span>
         </button>
       </div>
 
       <fieldset className={styles.fieldset} id={fieldId(at('assignees'))}>
         <legend>
-          <span className={styles.srOnly}>{label}:</span> Shared by
+          <span className={styles.srOnly}>{label}:</span>{' '}
+          {t('split.items.sharedBy')}
         </legend>
         <div className={styles.chips}>
           {bill.people.map((person, personIndex) => (
@@ -232,7 +240,7 @@ function ItemRow({
                 })
               }}
             >
-              {displayName(person, personIndex)}
+              {displayName(t, person, personIndex)}
             </button>
           ))}
         </div>
@@ -244,8 +252,10 @@ function ItemRow({
       {item.assignees.length > 0 && (
         <details className={styles.details}>
           <summary>
-            Shares{' '}
-            <span className={styles.srOnly}>for {itemName(item, index)}</span>
+            {t('split.items.shares')}{' '}
+            <span className={styles.srOnly}>
+              {t('split.items.sharesFor', { item: itemName(t, item, index) })}
+            </span>
           </summary>
           <div className={styles.shares}>
             {item.assignees.map((assignment) => {
@@ -254,8 +264,9 @@ function ItemRow({
               )
               const person = bill.people[personIndex]
               const who = person
-                ? displayName(person, personIndex)
-                : 'Unknown person'
+                ? displayName(t, person, personIndex)
+                : t('split.items.unknownPerson')
+              const what = itemName(t, item, index)
               const field: BillField = {
                 kind: 'share',
                 itemId: item.id,
@@ -265,12 +276,18 @@ function ItemRow({
                 <Stepper
                   key={assignment.personId}
                   id={fieldId(field)}
-                  label={`${who}'s share`}
+                  label={t('split.items.shareOf', { person: who })}
                   value={assignment.weight}
                   min={1}
                   max={LIMITS.maxShare}
-                  decreaseLabel={`Decrease ${who}'s share of ${itemName(item, index)}`}
-                  increaseLabel={`Increase ${who}'s share of ${itemName(item, index)}`}
+                  decreaseLabel={t('split.items.decreaseShare', {
+                    person: who,
+                    item: what,
+                  })}
+                  increaseLabel={t('split.items.increaseShare', {
+                    person: who,
+                    item: what,
+                  })}
                   error={error(field)}
                   onChange={(weight) => {
                     dispatch({

@@ -4,6 +4,9 @@ import { createBill } from '../split/billReducer.ts'
 import type { Bill } from '../split/model.ts'
 import { billHasContent } from './importUi.ts'
 import { warningMessage } from './messages.ts'
+import { translator } from '../../i18n/t.ts'
+
+const en = translator('en')
 
 const fresh = (): Bill => createBill(['p1', 'p2', 'i1'])
 
@@ -51,10 +54,10 @@ describe('warningMessage', () => {
       'creditNote',
       'lowConfidence',
     ] as const) {
-      expect(warningMessage(warning).length).toBeGreaterThan(20)
+      expect(warningMessage(en, warning).length).toBeGreaterThan(20)
     }
-    expect(warningMessage('currencyDiffers', 'GBP')).toContain('in GBP')
-    expect(warningMessage('currencyDiffers', 'GBP')).toContain(
+    expect(warningMessage(en, 'currencyDiffers', 'GBP')).toContain('in GBP')
+    expect(warningMessage(en, 'currencyDiffers', 'GBP')).toContain(
       'Settings → Region',
     )
   })

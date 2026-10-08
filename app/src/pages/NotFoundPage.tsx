@@ -1,12 +1,14 @@
 import { Link } from 'react-router'
+import { useT } from '../i18n/language.ts'
 
 export function NotFoundPage() {
+  const t = useT()
   return (
     <>
-      <h1>Page not found</h1>
-      <p>There is nothing at this address.</p>
+      <h1>{t('notFound.title')}</h1>
+      <p>{t('notFound.body')}</p>
       <p>
-        <Link to="/">Go to the home page</Link>
+        <Link to="/">{t('notFound.home')}</Link>
       </p>
     </>
   )

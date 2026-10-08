@@ -1,3 +1,5 @@
+import { useT } from '../i18n/language.ts'
+
 interface PlaceholderPageProps {
   title: string
   /** What the page will do, in one sentence. */
@@ -15,13 +17,12 @@ export function PlaceholderPage({
   milestone,
   milestoneName,
 }: PlaceholderPageProps) {
+  const t = useT()
   return (
     <>
       <h1>{title}</h1>
       <p>{summary}</p>
-      <p>
-        Coming in {milestone}: {milestoneName}.
-      </p>
+      <p>{t('placeholder.comingIn', { milestone, name: milestoneName })}</p>
     </>
   )
 }

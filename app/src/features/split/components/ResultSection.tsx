@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Region } from '../../../app/region.ts'
+import { useT } from '../../../i18n/language.ts'
 import { formatAmount, type Cents } from '../../../lib/money.ts'
 import { resultAsText } from '../format.ts'
 import type { Bill } from '../model.ts'
@@ -33,6 +34,7 @@ export function ResultSection({
   notices = [],
   noticeTarget,
 }: Props) {
+  const t = useT()
   return (
     <section
       id="result"
@@ -40,7 +42,7 @@ export function ResultSection({
       aria-labelledby="split-result-heading"
       tabIndex={-1}
     >
-      <h2 id="split-result-heading">Who owes what</h2>
+      <h2 id="split-result-heading">{t('split.result.heading')}</h2>
       {outcome.ok ? (
         <Result
           bill={bill}
@@ -52,15 +54,15 @@ export function ResultSection({
       ) : (
         <div className={styles.errorSummary}>
           <p>
-            <strong>Fix these to see the split:</strong>
+            <strong>{t('split.result.fixThese')}</strong>
           </p>
           <ul>
             {outcome.errors.map((error, index) => (
               <li key={index}>
                 <a href={`#${fieldId(error.field)}`}>
-                  {billErrorFieldLabel(error, bill)}
+                  {billErrorFieldLabel(t, error, bill)}
                 </a>
-                : {billErrorMessage(error, bill, region)}
+                : {billErrorMessage(t, error, bill, region)}
               </li>
             ))}
           </ul>
@@ -83,6 +85,7 @@ function Result({
   notices: readonly string[]
   noticeTarget: string | undefined
 }) {
+  const t = useT()
   const money = (value: Cents) => formatAmount(value, region)
   const [copyStatus, setCopyStatus] = useState('')
   const names = new Map(
@@ -91,11 +94,11 @@ function Result({
 
   function lineLabel(line: BreakdownLine): string {
     if (line.kind !== 'item') {
-      return adjustmentLabel(line.kind)
+      return adjustmentLabel(t, line.kind)
     }
     const index = bill.items.findIndex((item) => item.id === line.itemId)
     const item = bill.items[index]
-    return item ? itemName(item, index) : 'Item'
+    return item ? itemName(t, item, index) : t('split.errors.fieldItem')
   }
 
   return (
@@ -107,33 +110,33 @@ function Result({
           {noticeTarget !== undefined && (
             <>
               {' '}
-              <a href={`#${noticeTarget}`}>Go to the receipt check</a>
+              <a href={`#${noticeTarget}`}>{t('split.result.goToCheck')}</a>
             </>
           )}
         </p>
       ))}
       <dl className={styles.summary}>
-        <dt>Items subtotal</dt>
+        <dt>{t('split.result.itemsSubtotal')}</dt>
         <dd>{money(result.itemsSubtotal)}</dd>
         {result.tax > 0 && (
           <>
-            <dt>Tax</dt>
+            <dt>{t('split.adjustments.tax.name')}</dt>
             <dd>{money(result.tax)}</dd>
           </>
         )}
         {result.tip > 0 && (
           <>
-            <dt>Tip</dt>
+            <dt>{t('split.adjustments.tip.name')}</dt>
             <dd>{money(result.tip)}</dd>
           </>
         )}
         {result.discount > 0 && (
           <>
-            <dt>Discount</dt>
+            <dt>{t('split.adjustments.discount.name')}</dt>
             <dd>−{money(result.discount)}</dd>
           </>
         )}
-        <dt className={styles.summaryTotal}>Bill total</dt>
+        <dt className={styles.summaryTotal}>{t('split.result.billTotal')}</dt>
         <dd className={styles.summaryTotal}>{money(result.total)}</dd>
       </dl>
 
@@ -147,13 +150,12 @@ function Result({
             {share.lines.length > 0 && (
               <details className={styles.details}>
                 <summary>
-                  Breakdown{' '}
-                  <span className={styles.srOnly}>for {share.name}</span>
+                  {t('split.result.breakdown')}{' '}
+                  <span className={styles.srOnly}>
+                    {t('split.result.breakdownFor', { name: share.name })}
+                  </span>
                 </summary>
-                <p className={styles.hint}>
-                  Lines are rounded within your total, so one item&apos;s shares
-                  can add up to a cent or two more or less than its price.
-                </p>
+                <p className={styles.hint}>{t('split.result.roundingHint')}</p>
                 <ul className={styles.breakdown}>
                   {share.lines.map((line, index) => (
                     <li key={index}>
@@ -168,18 +170,21 @@ function Result({
         ))}
       </ul>
 
-      <h3>Settle up</h3>
+      <h3>{t('split.result.settleUp')}</h3>
       {result.settlements.length > 0 ? (
         <ul className={styles.settlements}>
           {result.settlements.map(({ fromId, toId, amount }) => (
             <li key={fromId}>
-              {names.get(fromId)} owes {names.get(toId)}{' '}
+              {t('split.result.owes', {
+                from: names.get(fromId) ?? '',
+                to: names.get(toId) ?? '',
+              })}{' '}
               <strong>{money(amount)}</strong>
             </li>
           ))}
         </ul>
       ) : (
-        <p>Nobody owes anything.</p>
+        <p>{t('split.result.nobodyOwes')}</p>
       )}
 
       <div className={styles.copyRow}>
@@ -187,7 +192,7 @@ function Result({
           type="button"
           className={styles.primaryButton}
           onClick={() => {
-            const text = resultAsText(result, region, notices)
+            const text = resultAsText(t, result, region, notices)
             setCopyStatus('')
             // `navigator.clipboard` is missing outside secure contexts, so
             // call it inside the promise chain: a throw becomes a rejection.
@@ -195,15 +200,15 @@ function Result({
               .then(() => navigator.clipboard.writeText(text))
               .then(
                 () => {
-                  setCopyStatus('Copied.')
+                  setCopyStatus(t('split.result.copied'))
                 },
                 () => {
-                  setCopyStatus("Couldn't copy. Your browser blocked it.")
+                  setCopyStatus(t('split.result.copyFailed'))
                 },
               )
           }}
         >
-          Copy as text
+          {t('split.result.copy')}
         </button>
         <p role="status" className={styles.copyStatus}>
           {copyStatus}

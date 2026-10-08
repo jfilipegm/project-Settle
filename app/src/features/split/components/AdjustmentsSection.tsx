@@ -1,5 +1,6 @@
 import type { Dispatch } from 'react'
 import type { Region } from '../../../app/region.ts'
+import { useT } from '../../../i18n/language.ts'
 import { cents } from '../../../lib/money.ts'
 import type { BillAction } from '../billReducer.ts'
 import type {
@@ -20,21 +21,15 @@ interface Props {
   region: Region
 }
 
-const HINTS: Partial<Record<AdjustmentName, string>> = {
-  tax: 'Only tax not already included in the prices. Portuguese prices already include IVA.',
-  discount: 'Split in proportion to what each person had.',
-}
-
 export function AdjustmentsSection(props: Props) {
+  const t = useT()
   return (
     <section
       className={styles.section}
       aria-labelledby="split-adjustments-heading"
     >
-      <h2 id="split-adjustments-heading">Tax, tip and discount</h2>
-      <p className={styles.hint}>
-        Percentages are taken from the items subtotal.
-      </p>
+      <h2 id="split-adjustments-heading">{t('split.adjustments.heading')}</h2>
+      <p className={styles.hint}>{t('split.adjustments.percentHint')}</p>
       <AdjustmentFields {...props} name="tax" />
       <AdjustmentFields {...props} name="tip" />
       <AdjustmentFields {...props} name="discount" />
@@ -49,11 +44,13 @@ function AdjustmentFields({
   region,
   name,
 }: Props & { name: AdjustmentName }) {
-  const label = adjustmentLabel(name)
+  const t = useT()
+  const label = adjustmentLabel(t, name)
+  const hint = t(`split.adjustments.${name}.hint`)
   const adjustment = bill[name]
   const field = { kind: 'adjustment', adjustment: name } as const
   const id = fieldId(field)
-  const error = fieldError(errors, field, bill, region)
+  const error = fieldError(t, errors, field, bill, region)
   const set = (next: Adjustment) => {
     dispatch({ type: 'setAdjustment', name, adjustment: next })
   }
@@ -63,12 +60,12 @@ function AdjustmentFields({
   return (
     <fieldset className={styles.fieldset}>
       <legend>{label}</legend>
-      {HINTS[name] && <p className={styles.hint}>{HINTS[name]}</p>}
+      {hint !== '' && <p className={styles.hint}>{hint}</p>}
 
       <div
         className={styles.choices}
         role="radiogroup"
-        aria-label={`${label} as`}
+        aria-label={t(`split.adjustments.${name}.as`)}
       >
         <label className={styles.choice}>
           <input
@@ -79,7 +76,7 @@ function AdjustmentFields({
               set({ kind: 'amount', value: cents(0) })
             }}
           />
-          Amount
+          {t('split.adjustments.amount')}
         </label>
         <label className={styles.choice}>
           <input
@@ -90,7 +87,7 @@ function AdjustmentFields({
               set({ kind: 'percent', ratio: { numerator: 0, denominator: 1 } })
             }}
           />
-          Percentage
+          {t('split.adjustments.percentage')}
         </label>
       </div>
 
@@ -98,7 +95,7 @@ function AdjustmentFields({
         <AmountInput
           key={`amount-${region.locale}-${region.currency}`}
           id={id}
-          label={`${label} amount`}
+          label={t(`split.adjustments.${name}.amountLabel`)}
           value={adjustment.value}
           error={error}
           onChange={(value) => {
@@ -110,7 +107,7 @@ function AdjustmentFields({
           key={`percent-${region.locale}`}
           id={id}
           kind="percent"
-          label={`${label} percentage (%)`}
+          label={t(`split.adjustments.${name}.percentLabel`)}
           value={adjustment.ratio}
           error={error}
           onChange={(ratio) => {
@@ -123,7 +120,7 @@ function AdjustmentFields({
         <div
           className={styles.choices}
           role="radiogroup"
-          aria-label={`Split the ${label.toLowerCase()}`}
+          aria-label={t(`split.adjustments.${name}.splitThe`)}
         >
           <label className={styles.choice}>
             <input
@@ -138,7 +135,7 @@ function AdjustmentFields({
                 })
               }}
             />
-            By what each person had
+            {t('split.adjustments.proportional')}
           </label>
           <label className={styles.choice}>
             <input
@@ -149,7 +146,7 @@ function AdjustmentFields({
                 dispatch({ type: 'setAdjustmentMode', name, mode: 'equal' })
               }}
             />
-            Equally
+            {t('split.adjustments.equally')}
           </label>
         </div>
       )}

@@ -15,7 +15,7 @@ import {
   type ExpectedBill,
   type ImageScore,
 } from './accuracy.ts'
-import { NOT_READ_ITEM_NAME } from './messages.ts'
+import { catalogue } from '../../i18n/t.ts'
 import type { ReceiptSummary } from './model.ts'
 
 const none: Adjustment = { kind: 'amount', value: cents(0) }
@@ -535,7 +535,7 @@ describe('scoreImage (P2)', () => {
     const score = scoreImage(
       bill([
         ['Coffee', 250],
-        [NOT_READ_ITEM_NAME, 750],
+        [catalogue('en').receipt.notReadItem, 750],
       ]),
       summary(1000),
       expected(1000, [

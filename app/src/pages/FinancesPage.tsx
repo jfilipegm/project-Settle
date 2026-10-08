@@ -1,12 +1,14 @@
+import { useT } from '../i18n/language.ts'
 import { PlaceholderPage } from './PlaceholderPage.tsx'
 
 export function FinancesPage() {
+  const t = useT()
   return (
     <PlaceholderPage
-      title="Finances"
-      summary="Open your finance file and see dashboards of your spending."
+      title={t('placeholder.finances.title')}
+      summary={t('placeholder.finances.summary')}
       milestone="M5"
-      milestoneName="Finance file import and dashboards"
+      milestoneName={t('placeholder.finances.milestoneName')}
     />
   )
 }

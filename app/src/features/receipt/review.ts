@@ -4,9 +4,10 @@
  * items don't match its total, and what they offer to fix it.
  */
 import type { Region } from '../../app/region.ts'
+import { isNotReadItemName } from '../../i18n/notRead.ts'
+import type { Translate } from '../../i18n/t.ts'
 import { formatAmount, negate, sum, type Cents } from '../../lib/money.ts'
 import { LIMITS, lineTotal, type Bill } from '../split/model.ts'
-import { NOT_READ_ITEM_NAME } from './messages.ts'
 import type { ReceiptSummary } from './model.ts'
 import type { ReceiptCheck } from './reconcile.ts'
 
@@ -27,7 +28,7 @@ export function readShare(
   }
   const read = sum(
     bill.items
-      .filter((item) => item.name !== NOT_READ_ITEM_NAME)
+      .filter((item) => !isNotReadItemName(item.name))
       .map((item) => lineTotal(item)),
   )
   return { read, share: read / summary.total }
@@ -70,14 +71,9 @@ export function isUnreadImport(bill: Bill, summary: ReceiptSummary): boolean {
   return (
     bill.items.length === 1 &&
     only !== undefined &&
-    only.name === NOT_READ_ITEM_NAME &&
+    isNotReadItemName(only.name) &&
     summary.flaggedItemIds.includes(only.id)
   )
-}
-
-/** "1 line" or "N lines". */
-export function linesCount(count: number): string {
-  return count === 1 ? '1 line' : `${String(count)} lines`
 }
 
 /**
@@ -86,6 +82,7 @@ export function linesCount(count: number): string {
  * text" adds.
  */
 export function receiptNotices(
+  t: Translate,
   check: ReceiptCheck,
   summary: ReceiptSummary,
   region: Region,
@@ -94,16 +91,21 @@ export function receiptNotices(
   const notices: string[] = []
   if (check.status === 'mismatch') {
     const less = check.difference < 0
-    const gap = money(less ? negate(check.difference) : check.difference)
+    const params = {
+      total: money(check.billTotal),
+      gap: money(less ? negate(check.difference) : check.difference),
+      receiptTotal: money(check.receiptTotal),
+    }
     notices.push(
-      `These totals don’t match the receipt: the items add up to ${money(check.billTotal)}, ${gap} ${less ? 'less' : 'more'} than the receipt’s ${money(check.receiptTotal)}.`,
+      t(
+        less ? 'receipt.notice.mismatchLess' : 'receipt.notice.mismatchMore',
+        params,
+      ),
     )
   }
   const removed = summary.removedLines?.length ?? 0
   if (removed > 0) {
-    notices.push(
-      `${linesCount(removed)} ${removed === 1 ? 'was' : 'were'} left out of this receipt to match its total. Check them before settling up.`,
-    )
+    notices.push(t('receipt.notice.leftOut', { count: removed }))
   }
   return notices
 }
