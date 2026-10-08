@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react'
-import type { RouteObject } from 'react-router'
-import { FinancesPage } from '../pages/FinancesPage.tsx'
+import { Navigate, type RouteObject } from 'react-router'
 import { HomePage } from '../pages/HomePage.tsx'
+import { HouseholdPage } from '../pages/HouseholdPage.tsx'
 import { NotFoundPage } from '../pages/NotFoundPage.tsx'
 import { SettingsPage } from '../pages/SettingsPage.tsx'
 import { SplitPage } from '../pages/SplitPage.tsx'
@@ -28,7 +28,10 @@ export function routeTable({ dev }: { dev: boolean }): RouteObject[] {
   const pages: RouteObject[] = [
     { index: true, element: <HomePage /> },
     { path: 'split', element: <SplitPage /> },
-    { path: 'finances', element: <FinancesPage /> },
+    { path: 'household', element: <HouseholdPage /> },
+    // The old Finances page promised a milestone the 2026-09-28 roadmap
+    // dropped (M3 plan, S8): a bookmark lands on the Household page.
+    { path: 'finances', element: <Navigate to="/household" replace /> },
     { path: 'settings', element: <SettingsPage /> },
   ]
   if (dev && KitGallery !== undefined) {

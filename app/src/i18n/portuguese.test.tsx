@@ -155,7 +155,7 @@ describe('the English sentinels', () => {
 })
 
 describe('every page in Portuguese', () => {
-  it.each(['/', '/split', '/finances', '/settings', '/nowhere'])(
+  it.each(['/', '/split', '/household', '/settings', '/nowhere'])(
     '%s shows no English',
     (path) => {
       const { container } = renderAt(path)
@@ -175,6 +175,7 @@ describe('Settings in Portuguese', () => {
     renderAt('/settings')
 
     expect(options('Idioma')).toEqual(['Sistema', 'English', 'Português'])
+    expect(options('Tema')).toEqual(['Sistema', 'Claro', 'Escuro'])
     expect(options('Formato dos números')).toEqual([
       'Português (Portugal)',
       'Inglês (Reino Unido)',
@@ -195,7 +196,7 @@ describe('Settings in Portuguese', () => {
       within(nav)
         .getAllByRole('link')
         .map((link) => link.textContent),
-    ).toEqual(['Início', 'Dividir', 'Finanças', 'Definições'])
+    ).toEqual(['Dividir', 'Casa', 'Definições'])
     expect(
       screen.getByRole('button', {
         name: 'Tema: sistema. Mudar para claro.',

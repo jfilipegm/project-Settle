@@ -11,9 +11,9 @@ export const en = {
   nav: {
     main: 'Main',
     skip: 'Skip to content',
-    home: 'Home',
+    home: 'Settle, home',
     split: 'Split',
-    finances: 'Finances',
+    household: 'Household',
     settings: 'Settings',
   },
 
@@ -33,26 +33,25 @@ export const en = {
     toggleName: 'Theme: {mode}. Switch to {next}.',
   },
 
+  household: {
+    title: 'Household',
+    coming: 'Coming in M4: households, members and the expense ledger.',
+    split: 'Split a bill',
+  },
+
   home: {
     tagline: 'Split bills. Settle up. Stay private.',
     intro:
-      "Type in a bill's items, say who had what, and see who owes what, down to the cent. Everything stays on this device.",
+      'Scan a receipt or type in the items, say who had what, and see who owes what, down to the cent.',
     splitBill: 'Split a bill',
+    continueBill: 'Continue your bill',
+    privacy: 'No account. Your bills stay on this device.',
   },
 
   notFound: {
     title: 'Page not found',
     body: 'There is nothing at this address.',
     home: 'Go to the home page',
-  },
-
-  placeholder: {
-    comingIn: 'Coming in {milestone}: {name}.',
-    finances: {
-      title: 'Finances',
-      summary: 'Open your finance file and see dashboards of your spending.',
-      milestoneName: 'Finance file import and dashboards',
-    },
   },
 
   settings: {
@@ -66,6 +65,11 @@ export const en = {
         en: 'English',
         pt: 'Português',
       },
+    },
+    theme: {
+      heading: 'Theme',
+      label: 'Theme',
+      hint: 'System follows your device’s light or dark setting.',
     },
     region: {
       heading: 'Region',
@@ -90,7 +94,6 @@ export const en = {
       hint: 'The first scan downloads the reader (about 27 MB) from this site; your browser keeps it for the next scans. Receipts never leave your device.',
     },
     about: {
-      heading: 'About',
       licences: 'Third-party licences',
       hint: 'The open-source libraries that read receipts, and their licences.',
     },

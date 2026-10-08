@@ -11,7 +11,7 @@ PR #10. Phase `IMPLEMENTING`.
 
 ## Next action
 
-**CP4 — The shell and the simple pages.**
+**CP5 — The split flow.**
 
 ## Progress
 
@@ -110,6 +110,33 @@ PR #10. Phase `IMPLEMENTING`.
     `npm run build` and `check-build.mjs` (no gallery in `dist/`).
   - Design check (S14): the kit matches the canvas's foundations sheet;
     nothing to update yet.
+  - A flaky timing in the gallery's route test (a lazy import over the
+    default 1 s wait under a full run) slipped into the CP3 commit; CP4's
+    commit raises that wait to 10 s.
+- **CP4 — The shell and the simple pages: complete.**
+  - The shell: the wordmark links to Home; Split, Household and Settings
+    are a bottom tab bar with icons and words under 640 px and a header
+    menu from 640 px, the active one bold and underlined in rust, next to
+    the compact theme toggle. One theme state for the app
+    (`ThemeProvider`), so the toggle and Settings agree.
+  - Home: two lines, then "Split a bill", or "Continue your bill" when the
+    saved draft has content (`billHasContent`), and the privacy line.
+  - `/household`: the placeholder ("Coming in M4: households, members and
+    the expense ledger.", a link to the split), no household state.
+    `/finances` redirects there; `FinancesPage` and `PlaceholderPage` are
+    gone.
+  - Settings on the kit: Language, Theme (System, Light, Dark), Region
+    (the example as an `Amount`), Receipt reading with the licences.
+  - Not found on the kit.
+  - Tests: the routes, the redirect, the tabs' `aria-current`, icons and
+    words, the wordmark link; Home's button with no draft, a saved fresh
+    bill and a draft with content; Settings' Theme field driving the
+    header toggle; Portuguese labels for the tabs and the Theme options.
+  - Checked in headless Brave: Home at 390 px, Settings at 1280 px.
+  - Verified: `npm run check` (68 files, 1347 passed, 1 skipped).
+  - Design check (S14): the shell and pages follow the canvas's navigation
+    map; the Settings screen (Language and Theme) goes onto the canvas
+    with CP6's update.
 
 ## Last completed: M2.5 — Accurate receipt reading
 

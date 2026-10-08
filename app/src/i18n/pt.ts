@@ -10,9 +10,9 @@ export const pt: Catalogue = {
   nav: {
     main: 'Principal',
     skip: 'Saltar para o conteúdo',
-    home: 'Início',
+    home: 'Settle, início',
     split: 'Dividir',
-    finances: 'Finanças',
+    household: 'Casa',
     settings: 'Definições',
   },
 
@@ -31,27 +31,25 @@ export const pt: Catalogue = {
     toggleName: 'Tema: {mode}. Mudar para {next}.',
   },
 
+  household: {
+    title: 'Casa',
+    coming: 'Chega no M4: casas, membros e o registo de despesas.',
+    split: 'Dividir uma conta',
+  },
+
   home: {
     tagline: 'Dividir contas. Acertar contas. Sem expor nada.',
     intro:
-      'Introduza os artigos de uma conta, diga quem consumiu o quê e veja quem deve quanto, ao cêntimo. Tudo fica neste dispositivo.',
+      'Leia um talão ou introduza os artigos, diga quem consumiu o quê e veja quem deve quanto, ao cêntimo.',
     splitBill: 'Dividir uma conta',
+    continueBill: 'Continuar a sua conta',
+    privacy: 'Sem conta. As suas contas ficam neste dispositivo.',
   },
 
   notFound: {
     title: 'Página não encontrada',
     body: 'Não existe nada neste endereço.',
     home: 'Ir para a página inicial',
-  },
-
-  placeholder: {
-    comingIn: 'Chega no {milestone}: {name}.',
-    finances: {
-      title: 'Finanças',
-      summary:
-        'Abrir o seu ficheiro de finanças e ver painéis com os seus gastos.',
-      milestoneName: 'Importação do ficheiro de finanças e painéis',
-    },
   },
 
   settings: {
@@ -65,6 +63,11 @@ export const pt: Catalogue = {
         en: 'English',
         pt: 'Português',
       },
+    },
+    theme: {
+      heading: 'Tema',
+      label: 'Tema',
+      hint: 'Sistema segue a definição de claro ou escuro do dispositivo.',
     },
     region: {
       heading: 'Região',
@@ -89,7 +92,6 @@ export const pt: Catalogue = {
       hint: 'A primeira leitura descarrega o leitor (cerca de 27 MB) deste site; o navegador guarda-o para as leituras seguintes. Os talões nunca saem do seu dispositivo.',
     },
     about: {
-      heading: 'Acerca',
       licences: 'Licenças de terceiros',
       hint: 'As bibliotecas de código aberto que leem os talões, e as suas licenças.',
     },
