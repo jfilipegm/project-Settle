@@ -8,3 +8,5 @@ export function checkFonts(dist: string): Promise<string[]>
 export function fontSizes(
   dist: string,
 ): Promise<{ all: number; firstView: number }>
+export const GALLERY_MARKER: string
+export function checkNoGallery(dist: string): Promise<string[]>

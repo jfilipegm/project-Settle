@@ -18,6 +18,10 @@ const EXCLUDED: readonly [prefix: string, reason: string][] = [
   ['i18n/', 'the catalogue itself'],
   ['test/', 'test helpers, never shipped'],
   [
+    'ui/gallery/',
+    'the development-only component gallery, never in a production build',
+  ],
+  [
     'features/receipt/parse/',
     'the receipt parser and its keywords: data read from receipts, not interface text',
   ],

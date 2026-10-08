@@ -1,0 +1,93 @@
+/*
+ * Buttons (M3 plan, S12): primary (ink), secondary (card with a border)
+ * and quiet (a link-style text button). Sizes 40, 44, 48 and 52 px. A
+ * pressed button scales to 0.97 (S6); reduced motion makes it instant.
+ */
+
+.button {
+  display: inline-flex;
+  flex: none;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-family: var(--font-body);
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  transition: transform var(--duration-press) var(--ease-out);
+}
+
+.button:active:not(:disabled) {
+  transform: scale(var(--press-scale));
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.primary {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+.secondary {
+  border-color: var(--color-control-border);
+  background: var(--color-card);
+  color: var(--color-ink);
+}
+
+.quiet {
+  padding: 0 var(--space-2);
+  background: transparent;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.size40 {
+  min-height: 2.5rem;
+  font-size: var(--text-15);
+}
+
+.size44 {
+  min-height: 2.75rem;
+  font-size: var(--text-16);
+}
+
+.size48 {
+  min-height: 3rem;
+  font-size: var(--text-16);
+}
+
+.size52 {
+  min-height: 3.25rem;
+  padding: 0 var(--space-5);
+  font-size: var(--text-17);
+}
+
+/* IconButton: square, the icon alone. */
+.iconOnly {
+  padding: 0;
+  aspect-ratio: 1;
+}
+
+.iconOnly.size40 {
+  width: 2.5rem;
+}
+
+.iconOnly.size44 {
+  width: 2.75rem;
+}
+
+.iconOnly.size48 {
+  width: 3rem;
+}
+
+.iconOnly.size52 {
+  width: 3.25rem;
+}

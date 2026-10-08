@@ -11,6 +11,9 @@
  * all a first view can download, under 250 kB. Runs after `npm run build`
  * (in CI too).
  *
+ * And the gallery check (M3 plan, S12): the component gallery is
+ * development only, so no built file carries its code.
+ *
  *   node scripts/check-build.mjs [<dist>]
  *
  * Exit code 0 is a pass, 1 a failure.
@@ -123,6 +126,25 @@ export async function checkFonts(dist) {
   return problems
 }
 
+/** The `data-` attribute only the gallery renders (ui/gallery/KitGallery.tsx). */
+export const GALLERY_MARKER = 'data-kit-gallery'
+
+/** The problems with the gallery in `dist`: any built file that carries it. */
+export async function checkNoGallery(dist) {
+  const problems = []
+  for (const file of await filesUnder(dist)) {
+    if (/kitgallery/i.test(file)) {
+      problems.push(`a gallery file: ${file}`)
+    } else if (/\.(js|mjs|html)$/.test(file)) {
+      const text = await readFile(path.join(dist, file), 'utf8')
+      if (text.includes(GALLERY_MARKER)) {
+        problems.push(`gallery code in ${file}`)
+      }
+    }
+  }
+  return problems
+}
+
 /** The woff2 totals, for the report: all files and the latin ones. */
 export async function fontSizes(dist) {
   const woff2 = (await filesUnder(dist)).filter((f) => f.endsWith('.woff2'))
@@ -140,7 +162,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const dist =
     process.argv[2] ??
     path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist')
-  const problems = [...(await checkBuild(dist)), ...(await checkFonts(dist))]
+  const problems = [
+    ...(await checkBuild(dist)),
+    ...(await checkFonts(dist)),
+    ...(await checkNoGallery(dist)),
+  ]
   if (problems.length > 0) {
     console.error(`check-build: ${problems.join('; ')}`)
     process.exit(1)
@@ -149,6 +175,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   console.log(
     `check-build: one ONNX Runtime wasm, ${EXPECTED_ORT_WASM}; no Tesseract file; ` +
       `${EXPECTED_FONTS.length} same-origin woff2 fonts, ${fonts.all} bytes ` +
-      `(${fonts.firstView} for a first view)`,
+      `(${fonts.firstView} for a first view); no gallery`,
   )
 }

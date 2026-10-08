@@ -7,8 +7,10 @@ import path from 'node:path'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   checkFonts,
+  checkNoGallery,
   EXPECTED_FONTS,
   FONT_BUDGET,
+  GALLERY_MARKER,
 } from '../../scripts/check-build.mjs'
 
 // From disk: Vitest stubs CSS imports, `?raw` included, to an empty string.
@@ -115,5 +117,21 @@ describe('check-build.mjs fonts', () => {
     expect(problems[1]).toMatch(
       /^first-view fonts total \d+ bytes, over 250000$/,
     )
+  })
+})
+
+describe('check-build.mjs gallery (S12)', () => {
+  it('passes a build without the gallery', async () => {
+    await file('assets/index-abc.js', 'export const a = 1')
+    expect(await checkNoGallery(dist)).toEqual([])
+  })
+
+  it('fails gallery code in a chunk, or a gallery file', async () => {
+    await file('assets/index-abc.js', `x.setAttribute("${GALLERY_MARKER}", "")`)
+    await file('assets/KitGallery-AbC-12_x.js', 'export {}')
+    expect(await checkNoGallery(dist)).toEqual([
+      'a gallery file: assets/KitGallery-AbC-12_x.js',
+      'gallery code in assets/index-abc.js',
+    ])
   })
 })

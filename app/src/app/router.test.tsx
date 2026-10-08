@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { ReceiptImportProvider } from '../features/receipt/ReceiptImportProvider.tsx'
 import { RegionProvider } from './RegionProvider.tsx'
 import { AppRoutes } from './router.tsx'
+import { routeTable } from './routes.tsx'
 
 function renderAt(path: string) {
   return render(
@@ -170,5 +171,43 @@ describe('shell accessibility', () => {
     expect(main).toHaveAttribute('id', 'main')
     // Focusable by script, so following the skip link moves focus there.
     expect(main).toHaveAttribute('tabindex', '-1')
+  })
+})
+
+describe('the route table (M3 plan, S12)', () => {
+  const paths = (dev: boolean) =>
+    (routeTable({ dev })[0]?.children ?? []).map(
+      (route) => route.path ?? (route.index === true ? '(index)' : ''),
+    )
+
+  it('has no gallery in production', () => {
+    expect(paths(false)).toEqual([
+      '(index)',
+      'split',
+      'finances',
+      'settings',
+      '*',
+    ])
+  })
+
+  it('adds the gallery at /_kit in development, before not found', () => {
+    expect(paths(true)).toEqual([
+      '(index)',
+      'split',
+      'finances',
+      'settings',
+      '_kit',
+      '*',
+    ])
+  })
+
+  it('renders the gallery at /_kit in development', async () => {
+    renderAt('/_kit')
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Kit' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('region', { name: 'PersonBadge' }),
+    ).toHaveTextContent('Person 8')
   })
 })

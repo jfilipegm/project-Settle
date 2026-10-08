@@ -11,7 +11,7 @@ PR #10. Phase `IMPLEMENTING`.
 
 ## Next action
 
-**CP3 — The component kit.**
+**CP4 — The shell and the simple pages.**
 
 ## Progress
 
@@ -87,6 +87,29 @@ PR #10. Phase `IMPLEMENTING`.
   - Verified: `npm run check` (59 files, 1291 passed, 1 skipped).
   - Design check (S14): the new Language field in Settings goes onto the
     canvas with CP6's update; nothing else changed visually.
+- **CP3 — The component kit: complete.**
+  - `app/src/ui/`: `Button` (primary ink, secondary, quiet; 40 to 52 px;
+    optional icon; the 0.97 press), `IconButton` (required label),
+    `TextField` and `SelectField` (label above, hint and error below,
+    both in `aria-describedby`, `aria-invalid`, the error with an icon),
+    `Card` (flat on a 1 px line; a title makes it a named section),
+    `StatusChip` (success, warning, error: an icon and words), `PersonBadge`
+    (S2's colour by position through CSS custom properties in the
+    `style` prop, the initial or the person's number, the name shown or
+    read out), `Amount` (a `<data>` in cents, the region's format, the
+    minus sign U+2212, an optional plus), `Steps` (named step links,
+    `aria-current="step"`), and `Icon` from CP1.
+  - The gallery at `/_kit`: `routeTable({ dev })` in `app/routes.tsx`, the
+    gallery a lazy import behind `import.meta.env.DEV`; tests for both
+    `dev` values; `check-build.mjs` now also fails any built file carrying
+    the gallery. It shows every component, with switches for light and
+    dark and for English and Portuguese. Checked in headless Brave in
+    both themes and both languages.
+  - The literal-text guard excludes `ui/gallery/` (development only).
+  - Verified: `npm run check` (66 files, 1339 passed, 1 skipped);
+    `npm run build` and `check-build.mjs` (no gallery in `dist/`).
+  - Design check (S14): the kit matches the canvas's foundations sheet;
+    nothing to update yet.
 
 ## Last completed: M2.5 — Accurate receipt reading
 

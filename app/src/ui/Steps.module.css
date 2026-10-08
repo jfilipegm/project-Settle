@@ -1,0 +1,35 @@
+/*
+ * The named steps (M3 plan, S9, S12): links to each step, the current one
+ * marked with weight, a rust underline and `aria-current`, never with
+ * colour alone. Not "Step 1 of 3".
+ */
+
+.steps {
+  display: flex;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  border-bottom: 2px solid transparent;
+  color: var(--color-quiet);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.link:hover {
+  color: var(--color-ink);
+}
+
+.link[aria-current='step'] {
+  border-bottom-color: var(--color-accent);
+  color: var(--color-ink);
+}
