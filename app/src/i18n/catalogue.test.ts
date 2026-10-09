@@ -51,6 +51,7 @@ const SAME_IN_BOTH = new Map([
   ['split.copyText.person', 'a format: name and amount'],
   ['split.adjustments.tip.hint', 'empty: the tip has no hint'],
   ['categories.internet', '“Internet” is the Portuguese word too'],
+  ['saveToHousehold.duplicate.body', 'a format: what, when and how much'],
 ])
 
 describe('the catalogues', () => {

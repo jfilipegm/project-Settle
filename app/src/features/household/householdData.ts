@@ -52,21 +52,29 @@ export type Loaded<T> =
  */
 export function useLoaded<T>(load: (db: IDBDatabase) => Promise<T>): Loaded<T> {
   const { db, revision } = useHouseholdData()
-  const [loaded, setLoaded] = useState<Loaded<T>>({ state: 'loading' })
+  // The value, with the load that produced it: a new `load` (another
+  // household, say) reads as loading until its own value arrives, never
+  // as the previous one's.
+  const [loaded, setLoaded] = useState<{
+    load: (db: IDBDatabase) => Promise<T>
+    value: Loaded<T>
+  } | null>(null)
   useEffect(() => {
     if (db === null) return
     let current = true
     load(db).then(
       (value) => {
-        if (current) setLoaded({ state: 'ready', value })
+        if (current) setLoaded({ load, value: { state: 'ready', value } })
       },
       (error: unknown) => {
-        if (current) setLoaded({ state: 'error', error })
+        if (current) setLoaded({ load, value: { state: 'error', error } })
       },
     )
     return () => {
       current = false
     }
   }, [db, load, revision])
-  return loaded
+  return loaded !== null && loaded.load === load
+    ? loaded.value
+    : { state: 'loading' }
 }

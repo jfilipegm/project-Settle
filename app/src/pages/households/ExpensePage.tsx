@@ -1,9 +1,12 @@
-import { IconPencil, IconTrash } from '@tabler/icons-react'
+import { IconListDetails, IconPencil, IconTrash } from '@tabler/icons-react'
 import { useCallback, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { useRegion } from '../../app/region.ts'
 import { deleteExpense, getExpense } from '../../data/repository.ts'
 import { CATEGORY_ICONS } from '../../features/household/categories.ts'
+import { SaveToHouseholdDialog } from '../../features/household/components/SaveToHouseholdDialog.tsx'
+import { isoDate } from '../../features/household/model.ts'
+import { lineTotal } from '../../features/split/model.ts'
 import { dateLocale, formatDate } from '../../features/household/format.ts'
 import {
   useHouseholdData,
@@ -36,6 +39,7 @@ export function ExpensePage() {
   const { household, members } = useHouseholdContext()
   const { db, changed } = useHouseholdData()
   const [deleting, setDeleting] = useState(false)
+  const [editingDetails, setEditingDetails] = useState(false)
   const [failed, setFailed] = useState(false)
   const loaded = useLoaded(useCallback((d) => getExpense(d, eid), [eid]))
   const base = `/households/${household.id}`
@@ -85,6 +89,34 @@ export function ExpensePage() {
           </dd>
         </dl>
       </Card>
+      {expense.split.kind === 'itemised' && (
+        <Card title={t('itemised.items')}>
+          <ul className={styles.list}>
+            {expense.split.bill.items.map((item) => (
+              <li key={item.id} className={styles.row}>
+                <span className={styles.rowMain}>
+                  <span className={styles.rowTitle}>{item.name}</span>
+                  <span className={styles.rowMeta}>
+                    {item.assignees
+                      .map((a) => {
+                        const mapped =
+                          expense.split.kind === 'itemised'
+                            ? expense.split.members.find(
+                                (m) => m.personId === a.personId,
+                              )
+                            : undefined
+                        return byId.get(mapped?.memberId ?? '')?.name ?? ''
+                      })
+                      .filter(Boolean)
+                      .join(', ')}
+                  </span>
+                </span>
+                <Amount value={lineTotal(item)} region={region} />
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
       <Card title={t('expense.sharedBy')}>
         <ul className={styles.list}>
           {[...(shares ?? new Map<string, never>())].map(
@@ -110,16 +142,42 @@ export function ExpensePage() {
         </p>
       )}
       <div className={styles.actions}>
-        <Button
-          icon={IconPencil}
-          onClick={() => void navigate(`${base}/expenses/${expense.id}/edit`)}
-        >
-          {t('expense.edit')}
-        </Button>
+        {expense.split.kind === 'itemised' ? (
+          <>
+            <Button
+              icon={IconListDetails}
+              onClick={() =>
+                void navigate(`/split?expense=${expense.id}&step=items`)
+              }
+            >
+              {t('itemised.editItems')}
+            </Button>
+            <Button icon={IconPencil} onClick={() => setEditingDetails(true)}>
+              {t('itemised.editDetails')}
+            </Button>
+          </>
+        ) : (
+          <Button
+            icon={IconPencil}
+            onClick={() => void navigate(`${base}/expenses/${expense.id}/edit`)}
+          >
+            {t('expense.edit')}
+          </Button>
+        )}
         <Button icon={IconTrash} onClick={() => setDeleting(true)}>
           {t('expense.delete')}
         </Button>
       </div>
+      {editingDetails && expense.split.kind === 'itemised' && (
+        <SaveToHouseholdDialog
+          bill={expense.split.bill}
+          summary={null}
+          editing={expense}
+          today={isoDate(new Date())}
+          onClose={() => setEditingDetails(false)}
+          onSaved={() => setEditingDetails(false)}
+        />
+      )}
       <Dialog
         open={deleting}
         title={t('expense.deleteTitle', { name: expense.description })}

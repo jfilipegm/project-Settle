@@ -548,6 +548,49 @@ export const en = {
     itemCount: { one: '({count} item)', other: '({count} items)' },
   },
 
+  saveToHousehold: {
+    open: 'Save to a household',
+    title: 'Save to a household',
+    household: 'Household',
+    noHouseholds: 'There is no household yet.',
+    createOne: 'Create a household',
+    whoIs: 'Who is {name}?',
+    choose: 'Choose…',
+    newMember: 'Add as a new member',
+    moves:
+      'The bill moves into the household. The split starts fresh after saving.',
+    save: 'Save to household',
+    errors: {
+      household: 'Choose a household.',
+      choose: 'Choose who this is.',
+      same: 'Two people can’t be the same member.',
+    },
+    duplicate: {
+      title: 'This receipt looks already saved',
+      body: '{description}, {date}, {amount}.',
+      hint: 'A different receipt can match too, such as two purchases of the same total on one day.',
+      saveAnyway: 'Save anyway',
+      open: 'Open that expense',
+    },
+  },
+
+  editingExpense: {
+    banner:
+      'Editing {name}. Changes are saved only with Save changes; reloading the page discards them.',
+    save: 'Save changes',
+    cancel: 'Cancel',
+  },
+
+  itemised: {
+    items: 'Items',
+    editItems: 'Edit items',
+    editDetails: 'Edit details',
+    adjustments: 'Tax, tip and discount',
+    splitBill: 'Split a bill',
+    splitBillHint:
+      'Item by item, with a receipt scan or typed in. The household’s people are added for you.',
+  },
+
   categories: {
     groceries: 'Groceries',
     eatingOut: 'Eating out',

@@ -1,6 +1,12 @@
-import { IconFilePlus, IconKeyboard } from '@tabler/icons-react'
+import {
+  IconDeviceFloppy,
+  IconFilePlus,
+  IconHomePlus,
+  IconKeyboard,
+} from '@tabler/icons-react'
 import {
   Fragment,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -8,11 +14,25 @@ import {
   useState,
 } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
+import { writeHouseholdPointer } from '../data/pointer.ts'
+import { getExpense, listMembers } from '../data/repository.ts'
+import { SaveToHouseholdDialog } from '../features/household/components/SaveToHouseholdDialog.tsx'
+import {
+  useHouseholdData,
+  useLoaded,
+} from '../features/household/householdData.ts'
+import { billForMembers } from '../features/household/itemised.ts'
+import {
+  activeMembers,
+  isoDate,
+  type Expense,
+  type Member,
+} from '../features/household/model.ts'
 import { useRegion } from '../app/region.ts'
 import { useMediaQuery } from '../app/useMediaQuery.ts'
 import { ReceiptCheck } from '../features/receipt/components/ReceiptCheck.tsx'
 import { ScanReceipt } from '../features/receipt/components/ScanReceipt.tsx'
-import { revokeImageUrl } from '../features/receipt/importUi.ts'
+import { billHasContent, revokeImageUrl } from '../features/receipt/importUi.ts'
 import type {
   PhotoIssue,
   PhotoQuality,
@@ -32,7 +52,7 @@ import { PeopleSection } from '../features/split/components/PeopleSection.tsx'
 import { ResultSection } from '../features/split/components/ResultSection.tsx'
 import styles from '../features/split/components/split.module.css'
 import { newId } from '../features/split/billReducer.ts'
-import { displayName } from '../features/split/model.ts'
+import { displayName, type Bill } from '../features/split/model.ts'
 import { computeSplit } from '../features/split/split.ts'
 import {
   defaultStep,
@@ -59,9 +79,89 @@ type FocusTarget = SplitStep | 'check' | { id: string }
  * beside the items.
  */
 export function SplitPage() {
+  const [params] = useSearchParams()
+  const expenseId = params.get('expense')
+  return expenseId === null ? (
+    <SplitEditor />
+  ) : (
+    <ExpenseSplit expenseId={expenseId} />
+  )
+}
+
+/**
+ * An itemised expense's items, edited in the split (M4 plan, H10): a
+ * working copy in memory, never the draft, saved only with "Save changes".
+ */
+function ExpenseSplit({ expenseId }: { expenseId: string }) {
+  const t = useT()
+  const loaded = useLoaded(
+    useCallback((db: IDBDatabase) => getExpense(db, expenseId), [expenseId]),
+  )
+  if (loaded.state !== 'ready') return null
+  const expense = loaded.value
+  if (expense === null || expense.split.kind !== 'itemised') {
+    return (
+      <Card>
+        <p>{t('expense.notFound')}</p>
+      </Card>
+    )
+  }
+  return (
+    <SplitEditor
+      key={expense.id}
+      editing={{ expense, bill: expense.split.bill }}
+    />
+  )
+}
+
+/**
+ * `/split?household=:hid` (M4 plan, H10): reads the household's active
+ * members once, for the split to start from.
+ */
+function HouseholdSeeder({
+  householdId,
+  onLoaded,
+}: {
+  householdId: string
+  onLoaded: (members: Member[]) => void
+}) {
+  const { status } = useHouseholdData()
+  const loaded = useLoaded(
+    useCallback(
+      (db: IDBDatabase) => listMembers(db, householdId),
+      [householdId],
+    ),
+  )
+  const done = useRef(false)
+  useEffect(() => {
+    if (done.current) return
+    if (loaded.state === 'ready') {
+      done.current = true
+      onLoaded(activeMembers(loaded.value.items, isoDate(new Date())))
+    } else if (
+      loaded.state === 'error' ||
+      status === 'unavailable' ||
+      status === 'outdated'
+    ) {
+      done.current = true
+      onLoaded([])
+    }
+  }, [loaded, status, onLoaded])
+  return null
+}
+
+function SplitEditor({
+  editing,
+}: {
+  editing?: { expense: Expense; bill: Bill }
+}) {
   const { region } = useRegion()
   const t = useT()
-  const [bill, dispatch] = useBill()
+  const [bill, dispatch] = useBill(
+    editing === undefined
+      ? undefined
+      : { kind: 'memory', initial: editing.bill },
+  )
   const outcome = useMemo(
     () => computeSplit(bill, (person, index) => displayName(t, person, index)),
     [bill, t],
@@ -83,21 +183,31 @@ export function SplitPage() {
   const requested = parseStep(params.get('step'))
   const step = requested ?? defaultStep(bill)
   const beside = useMediaQuery(BESIDE)
-  const goTo = (next: SplitStep, replace = false) => {
-    void navigate({ search: `?step=${next}` }, { replace })
+  // The step's search keeps the URL's other parameters (`expense`).
+  const stepSearch = (next: SplitStep) => {
+    const search = new URLSearchParams(params)
+    search.set('step', next)
+    return `?${search.toString()}`
   }
+  const goTo = (next: SplitStep, replace = false) => {
+    void navigate({ search: stepSearch(next) }, { replace })
+  }
+  const stepless = requested === undefined ? stepSearch(step) : null
   useEffect(() => {
-    if (requested === undefined) {
-      void navigate({ search: `?step=${step}` }, { replace: true })
+    if (stepless !== null) {
+      void navigate({ search: stepless }, { replace: true })
     }
-  }, [requested, step, navigate])
+  }, [stepless, navigate])
 
   // The receipt check (M2, D14, D15): the summary is saved next to the
   // bill; the image's object URL lives in memory only, and so does the
   // photo quality check's advice (M2.5, P11).
-  const [summary, setSummary] = useState<ReceiptSummary | null>(
-    loadReceiptSummary,
+  // An expense being edited has no draft summary (H10).
+  const [summary, setSummary] = useState<ReceiptSummary | null>(() =>
+    editing === undefined ? loadReceiptSummary() : null,
   )
+  const [saving, setSaving] = useState(false)
+  const [linkedHousehold, setLinkedHousehold] = useState<string | null>(null)
   const [imageUrl, setImageUrl] = useState<string>()
   const [photoIssues, setPhotoIssues] = useState<PhotoIssue[]>()
   const [photoChecks, setPhotoChecks] = useState<PhotoQuality[]>()
@@ -144,7 +254,7 @@ export function SplitPage() {
 
   const updateSummary = (next: ReceiptSummary | null) => {
     setSummary(next)
-    saveReceiptSummary(next)
+    if (editing === undefined) saveReceiptSummary(next)
   }
   // A replaced image, or one still held when leaving the page, is freed.
   useEffect(() => () => revokeImageUrl(imageUrl), [imageUrl])
@@ -197,6 +307,29 @@ export function SplitPage() {
     setHighlightedItemId(undefined)
   }
 
+  // `/split?household=:hid` (H10): start from the household's active
+  // members, after asking to replace a bill with content; then drop the
+  // parameter, keeping the household for the save dialog.
+  const seedFor = editing === undefined ? params.get('household') : null
+  const seed = (members: Member[]) => {
+    if (seedFor === null) return
+    const proceed =
+      members.length > 0 &&
+      (!billHasContent(bill) || window.confirm(t('split.newBillConfirm')))
+    const search = new URLSearchParams(params)
+    search.delete('household')
+    if (proceed) {
+      dispatch({ type: 'replaceBill', bill: billForMembers(members) })
+      clearReceipt()
+      setEditorSession((session) => session + 1)
+      setLinkedHousehold(seedFor)
+      writeHouseholdPointer(seedFor)
+      pendingFocus.current = 'items'
+      search.set('step', 'items')
+    }
+    void navigate({ search: `?${search.toString()}` }, { replace: true })
+  }
+
   const stepLabels: Record<SplitStep, string> = {
     receipt: t('split.steps.receipt'),
     items: t('split.steps.items'),
@@ -207,13 +340,42 @@ export function SplitPage() {
   return (
     <div className={styles.page}>
       <h1>{t('split.title')}</h1>
+      {editing !== undefined && (
+        <Card role="status">
+          <p>
+            {t('editingExpense.banner', { name: editing.expense.description })}
+          </p>
+          <p className={styles.actionsRow}>
+            <Button
+              variant="primary"
+              icon={IconDeviceFloppy}
+              disabled={!outcome.ok}
+              onClick={() => setSaving(true)}
+            >
+              {t('editingExpense.save')}
+            </Button>
+            <Button
+              onClick={() =>
+                void navigate(
+                  `/households/${editing.expense.householdId}/expenses/${editing.expense.id}`,
+                )
+              }
+            >
+              {t('editingExpense.cancel')}
+            </Button>
+          </p>
+        </Card>
+      )}
+      {seedFor !== null && (
+        <HouseholdSeeder householdId={seedFor} onLoaded={seed} />
+      )}
       <Steps
         label={t('split.steps.label')}
         current={step}
         steps={(['receipt', 'items', 'split'] as const).map((id) => ({
           id,
           label: stepLabels[id],
-          to: `?step=${id}`,
+          to: stepSearch(id),
         }))}
         onSelect={(id) => {
           // The current step's own link changes nothing: a request left
@@ -354,10 +516,39 @@ export function SplitPage() {
                   }
             }
           />
+          {editing === undefined && outcome.ok && (
+            <p className={styles.stepNext}>
+              <Button icon={IconHomePlus} onClick={() => setSaving(true)}>
+                {t('saveToHousehold.open')}
+              </Button>
+            </p>
+          )}
         </div>
       </div>
 
-      <div className={styles.newBill}>
+      {saving && (
+        <SaveToHouseholdDialog
+          bill={bill}
+          summary={summary}
+          editing={editing?.expense}
+          preferredHouseholdId={linkedHousehold}
+          today={isoDate(new Date())}
+          onClose={() => setSaving(false)}
+          onSaved={(householdId, expenseId) => {
+            setSaving(false)
+            if (editing === undefined) {
+              // The bill has become the expense (H10): the draft clears
+              // only now, after the write committed (L1-O1).
+              dispatch({ type: 'newBill', ids: newBillIds() })
+              clearReceipt()
+              setEditorSession((session) => session + 1)
+            }
+            void navigate(`/households/${householdId}/expenses/${expenseId}`)
+          }}
+        />
+      )}
+
+      <div className={styles.newBill} hidden={editing !== undefined}>
         <Button
           icon={IconFilePlus}
           disabled={scanning}

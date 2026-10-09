@@ -179,6 +179,15 @@ export function OverviewPage() {
               {t('overview.quickExpenseHint')}
             </span>
           </Link>
+          <Link
+            className={styles.choice}
+            to={`/split?household=${household.id}`}
+          >
+            <span className={styles.choiceTitle}>
+              {t('itemised.splitBill')}
+            </span>
+            <span className={styles.hint}>{t('itemised.splitBillHint')}</span>
+          </Link>
         </div>
       </Dialog>
     </>

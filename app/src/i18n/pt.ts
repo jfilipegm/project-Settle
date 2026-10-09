@@ -547,6 +547,49 @@ export const pt: Catalogue = {
     itemCount: { one: '({count} artigo)', other: '({count} artigos)' },
   },
 
+  saveToHousehold: {
+    open: 'Guardar numa casa',
+    title: 'Guardar numa casa',
+    household: 'Casa',
+    noHouseholds: 'Ainda não há nenhuma casa.',
+    createOne: 'Criar uma casa',
+    whoIs: 'Quem é {name}?',
+    choose: 'Escolha…',
+    newMember: 'Adicionar como novo membro',
+    moves:
+      'A conta passa para a casa. A divisão recomeça do zero depois de guardar.',
+    save: 'Guardar na casa',
+    errors: {
+      household: 'Escolha uma casa.',
+      choose: 'Escolha quem é.',
+      same: 'Duas pessoas não podem ser o mesmo membro.',
+    },
+    duplicate: {
+      title: 'Este talão parece já estar guardado',
+      body: '{description}, {date}, {amount}.',
+      hint: 'Um talão diferente também pode coincidir, como duas compras com o mesmo total no mesmo dia.',
+      saveAnyway: 'Guardar mesmo assim',
+      open: 'Abrir essa despesa',
+    },
+  },
+
+  editingExpense: {
+    banner:
+      'A editar {name}. As alterações só ficam guardadas com Guardar as alterações; recarregar a página descarta-as.',
+    save: 'Guardar as alterações',
+    cancel: 'Cancelar',
+  },
+
+  itemised: {
+    items: 'Artigos',
+    editItems: 'Editar os artigos',
+    editDetails: 'Editar os detalhes',
+    adjustments: 'Imposto, gorjeta e desconto',
+    splitBill: 'Dividir uma conta',
+    splitBillHint:
+      'Artigo a artigo, com um talão lido ou introduzido à mão. As pessoas da casa são adicionadas por si.',
+  },
+
   categories: {
     groceries: 'Supermercado',
     eatingOut: 'Refeições fora',

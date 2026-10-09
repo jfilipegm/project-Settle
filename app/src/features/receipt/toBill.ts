@@ -21,6 +21,7 @@ import {
   type Item,
 } from '../split/model.ts'
 import type { FiscalQr } from './fiscalQr.ts'
+import { keyFromQr, keyFromSummary } from './receiptKey.ts'
 import { catalogue } from '../../i18n/t.ts'
 import type {
   ParsedItem,
@@ -555,6 +556,9 @@ export function receiptToBill(
     summary.totalSource = qr !== undefined ? 'qr' : 'printed'
   }
   if (qr?.totalTax !== undefined) summary.ivaTotal = qr.totalTax
+  // H11: the duplicate-receipt key, while the QR code is in hand (M-I-1).
+  const receiptKey = qr !== undefined ? keyFromQr(qr) : keyFromSummary(summary)
+  if (receiptKey !== undefined) summary.receiptKey = receiptKey
   // R24: a cut is shown, with what it left out, until it's confirmed.
   if (reconciled.removed.length > 0) {
     summary.removedLines = reconciled.removed.map((item) => ({

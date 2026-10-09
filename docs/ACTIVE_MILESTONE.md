@@ -107,6 +107,66 @@ implementation reviews.
     and the pages end to end (each method saved, the payer outside the
     split, refusing a split that doesn't add up, edit, delete, the
     overview, the previous month, Portuguese).
+- **CP4 — Itemised expenses: complete.**
+  - The duplicate key (H11, M-I-1): `features/receipt/receiptKey.ts`
+    (rules 1 to 3, folding, validation).
+    - `toBill.ts` computes it at import, while the QR code is in hand, and
+      stores it as `ReceiptSummary.receiptKey`. The store's reader keeps a
+      valid key and reads an invalid one as absent; `RECEIPT_VERSION`
+      stays 1.
+    - One existing receipt test (`toBill.test.ts`, "uses the printed total
+      without a QR") compares the whole summary. It gained the planned
+      field, `receiptKey: 'm:tasca:2026-09-28:950'`; its other values are
+      unchanged.
+  - "Save to a household" (H10): on The split once the bill is valid. The
+    dialog (`SaveToHouseholdDialog`) asks for:
+    - the household: the one the split came from, the last used, or the
+      only one;
+    - who each person is: matched by member id, then by name ignoring case
+      and accents; else "Choose", with "Add as a new member";
+    - who paid: anyone, in the bill or not;
+    - what, when and the category, from the receipt when there is one;
+    - then the duplicate check (H11, O-EXT-1).
+
+    The expense and any new members are written in one transaction
+    (R3-O1). The draft and its receipt clear only after that commits
+    (L1-O1, O-EXT-2: the text says so before saving, and Cancel changes
+    nothing). Save is disabled until the household's members have loaded.
+  - Splitting a bill from a household: `/split?household=:hid` (the
+    overview's Add expense has a "Split a bill" choice).
+    - It asks before replacing a bill with content.
+    - Otherwise it starts a bill of the active members, with their member
+      ids as person ids (`billForMembers`), then drops the parameter.
+    - With no active member it starts nothing, and Add expense is disabled
+      (M-I-2). One member is a valid bill.
+  - Editing items (H10, L1-O2): `/split?expense=:eid`.
+    - `useBill` takes a source: the draft (the default, unchanged) or a
+      working copy in memory.
+    - `SplitPage` is now a wrapper around `SplitEditor`.
+    - A banner offers Save changes (the same dialog, the household fixed)
+      and Cancel. New bill is hidden. The receipt summary isn't the
+      draft's and isn't saved.
+    - Step links keep the URL's other parameters.
+  - The expense page for an itemised expense: its items with who shares
+    them, the shares, "Edit items", "Edit details" (the dialog) and Delete.
+  - `useLoaded` now reads as loading when what it loads changes. Before,
+    a household switch briefly showed the previous household's members;
+    the save dialog's tests found it.
+  - Tests:
+    - receipt keys, and the summary store with a key, without one and with
+      an invalid one;
+    - saving a typed bill and a scanned one, then the duplicate warning
+      and "Save anyway";
+    - an unknown person and "Add as a new member"; two people refused as
+      one member; a payer outside the bill;
+    - the draft kept on Cancel and after a save that fails because a
+      member was deleted elsewhere;
+    - a split started from a household, the replace prompt answered No,
+      one member and no active member;
+    - editing items, with Save changes and Cancel, the draft untouched.
+
+    The existing split suites pass unchanged (208 tests), and so do the
+    receipt suites (651).
 
 ## Last completed: M3 — Design foundations
 
