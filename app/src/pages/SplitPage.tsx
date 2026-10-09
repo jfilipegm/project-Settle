@@ -215,7 +215,9 @@ export function SplitPage() {
           to: `?step=${id}`,
         }))}
         onSelect={(id) => {
-          pendingFocus.current = id
+          // The current step's own link changes nothing: a request left
+          // pending would take focus on some later, unrelated render.
+          if (id !== step) pendingFocus.current = id
         }}
       />
 

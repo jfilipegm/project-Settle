@@ -407,6 +407,33 @@ describe('person-first assignment (S10)', () => {
     expect(flag).toHaveTextContent('Check')
     expect(flag?.querySelector('svg')).toHaveAttribute('aria-hidden', 'true')
   })
+
+  it('keeps focus in a field after the current step’s own link is chosen', async () => {
+    renderAt(
+      ['/split'],
+      importing({
+        ...RECEIPT,
+        items: RECEIPT.items.map((item, i) => ({
+          ...item,
+          needsCheck: i === 1,
+        })),
+      }),
+    )
+    await scan()
+    fireEvent.click(
+      within(screen.getByRole('navigation', { name: 'Steps' })).getByRole(
+        'link',
+        { name: 'Who had what' },
+      ),
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Edit Tosta' }))
+    const name = screen.getByRole('textbox', { name: 'Item 2 Name' })
+    name.focus()
+    // The first edit clears the flag, which changes the receipt summary.
+    fireEvent.change(name, { target: { value: 'Tosta mista' } })
+    expect(screen.queryByText('Item 2: check this line')).toBeNull()
+    expect(name).toHaveFocus()
+  })
 })
 
 describe('New bill on every step (S9, M-I-1)', () => {
