@@ -2,7 +2,7 @@
  * The European Portuguese catalogue (M3 plan, S11): pt-PT spelling and
  * vocabulary, the impersonal "you" where Portuguese allows it, and the
  * voice of PRODUCT.md. Typed against the English catalogue, so a missing
- * or extra key fails `tsc`; `i18n.test.ts` checks the parameters match.
+ * or extra key fails `tsc`; `catalogue.test.ts` checks the parameters match.
  */
 import type { Catalogue } from './t.ts'
 
@@ -43,7 +43,7 @@ export const pt: Catalogue = {
       'Leia um talão ou introduza os artigos, diga quem consumiu o quê e veja quem deve quanto, ao cêntimo.',
     splitBill: 'Dividir uma conta',
     continueBill: 'Continuar a sua conta',
-    privacy: 'Sem conta. As suas contas ficam neste dispositivo.',
+    privacy: 'Sem registo. As suas contas ficam neste dispositivo.',
   },
 
   notFound: {
