@@ -7,6 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import {
   GENERATED_NOTICES,
   VENDOR_FILES,
+  BUNDLED_PACKAGES,
   VENDOR_PACKAGES,
   packageVersion,
   vendorAssets,
@@ -47,8 +48,8 @@ describe('vendor-assets.mjs (D7, D8, M-I-3)', () => {
     expect(typeof module.heicTo).toBe('function')
   })
 
-  it('gives every vendored package a licence file or a notice', async () => {
-    for (const pkg of VENDOR_PACKAGES) {
+  it('gives every vendored or bundled package a licence file or a notice', async () => {
+    for (const pkg of [...VENDOR_PACKAGES, ...BUNDLED_PACKAGES]) {
       for (const { to } of pkg.licenseFiles) {
         const text = await readFile(path.join(outDir, 'licenses', to), 'utf8')
         expect(text.length, to).toBeGreaterThan(100)
@@ -85,14 +86,14 @@ describe('vendor-assets.mjs (D7, D8, M-I-3)', () => {
 })
 
 describe('THIRD_PARTY_NOTICES.md', () => {
-  it('names every vendored package with its installed version, licence and source', async () => {
+  it('names every vendored and bundled package with its installed version, licence and source', async () => {
     const notices = await readFile(
       path.resolve('public/THIRD_PARTY_NOTICES.md'),
       'utf8',
     )
     // Prettier pads the table's columns; compare rows with single spaces.
     const rows = notices.replace(/ +/g, ' ')
-    for (const pkg of VENDOR_PACKAGES) {
+    for (const pkg of [...VENDOR_PACKAGES, ...BUNDLED_PACKAGES]) {
       const version = await packageVersion(nodeModules, pkg.name)
       expect(rows).toContain(
         `| ${pkg.name} | ${version} | ${pkg.license} | ${pkg.source} |`,

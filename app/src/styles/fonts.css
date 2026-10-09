@@ -7,8 +7,9 @@
  * woff2 only: every browser Settle supports reads it.
  *
  * Generated from each package's per-weight CSS (fonts.test.ts keeps it in
- * step with scripts/check-build.mjs). Licence: SIL OFL 1.1, in each
- * package's LICENSE.
+ * step with scripts/check-build.mjs). Licence: SIL OFL 1.1, listed in
+ * public/THIRD_PARTY_NOTICES.md and copied to /vendor/licenses/ by
+ * scripts/vendor-assets.mjs.
  */
 
 @font-face {

@@ -2,20 +2,27 @@
 
 **Split bills. Settle up. Stay private.**
 
-Split bills fairly, and later keep track of your own finances, all in your
-browser. You scan a receipt or type in a bill's items, say who had what,
-and Settle shows who owes what, down to the cent. There are no accounts and no server:
-everything stays on your device.
+Split bills fairly, and soon keep track of a shared household's
+expenses, all in your browser. You scan a receipt or type in a bill's
+items, say who had what, and Settle shows who owes what, down to the
+cent. There are no accounts and no server: everything stays on your
+device. In English or European Portuguese.
+
+<img src="docs/milestones/milestone-3-evidence/screens/the-split-390-light.webp" alt="Settle on a phone: the split of a bill between three people, each share a bar in their colour" width="300">
 
 ## What works today
 
-- **Split a bill.** Add the items (name, quantity, price) and the people
-  sharing it. Assign each item to one or more people, equally or with
-  custom shares. Add tax, a tip and a discount, as an amount or a
-  percentage. You see each person's total, with a breakdown, and who owes
-  the person who paid. The totals always add up to the bill total exactly,
-  and leftover cents are shared out fairly across the whole bill. Copy the
-  result as text to send it to your friends.
+- **Split a bill, in three steps.** **Receipt**: scan one, or type the
+  items in. **Who had what**: the people, the items (name, quantity,
+  price), and tax, a tip and a discount, as an amount or a percentage.
+  Choose a person, then tap the items they had; "Everyone" shares an item
+  with all, and Edit gives custom shares. **The split**: each person's
+  total as a bar in their colour, with a breakdown, and who owes the
+  person who paid. On a wide screen the split sits beside the items and
+  updates as you go. The browser's Back button moves between the steps.
+  The totals always add up to the bill total exactly, and leftover cents
+  are shared out fairly across the whole bill. Copy the result as text to
+  send it to your friends.
 - **Scan a receipt.** Choose a photo or PDF of a receipt (JPEG, PNG, HEIC
   or PDF), take a photo on your phone, or drop the file on the page.
   Settle reads it on your device with PaddleOCR, an open-source
@@ -66,15 +73,22 @@ everything stays on your device.
   - Crumpled, faded or blurred receipts, and lines on a fold of the
     paper, may be misread; the check shows the gap.
 
+- **English and Portuguese.** The whole app is in English and European
+  Portuguese. It follows your browser's language until you choose one in
+  Settings.
 - **Region.** In Settings, choose how amounts are typed and shown:
   Portuguese, UK or US number format, and euros, pounds or US dollars. The
   default is Portuguese format in euros. Changing the currency only
-  changes the symbol; nothing is converted.
-- **Light and dark themes**, following your system or chosen by hand.
-- **Phones and desktops.** The app is built for small screens first.
+  changes the symbol; nothing is converted. The language and the region
+  are separate: Portuguese text with UK numbers is fine.
+- **Light and dark themes**, following your system or chosen in Settings
+  (or with the toggle in the header on a wide screen).
+- **Phones and desktops.** One web app: a tab bar at the bottom on a
+  phone, a menu at the top on a wider screen.
 
-Personal finance dashboards and more are on the
-[roadmap](docs/ROADMAP.md).
+Households, balances and settling up are next on the
+[roadmap](docs/ROADMAP.md); the Household tab is already there as a
+placeholder.
 
 ## Try it
 
@@ -92,8 +106,9 @@ Then open the address it prints and choose **Split a bill**.
 ## Privacy
 
 Everything runs in your browser. The bill you're editing, the receipt
-check's summary and your Region setting are saved in your browser's
-storage on this device only, so a refresh doesn't lose them. **New bill**
+check's summary and your settings (language, theme, region) are saved in
+your browser's storage on this device only, so a refresh doesn't lose
+them. **New bill**
 clears them. Nothing is sent anywhere.
 
 **Receipts are read on your device and never uploaded.** Settle has no
@@ -107,7 +122,9 @@ policy stops the page from contacting any other site.
 ## Third-party licences
 
 Receipt reading uses open-source libraries: PaddleOCR's models (through
-ppu-paddle-ocr and ONNX Runtime Web), zxing-wasm, pdf.js and heic-to. heic-to, which opens HEIC photos in browsers that
+ppu-paddle-ocr and ONNX Runtime Web), zxing-wasm, pdf.js and heic-to.
+Settle's look uses three open-source fonts (Unbounded, JetBrains Mono and
+Source Sans 3) and the Tabler icons, all served from Settle itself. heic-to, which opens HEIC photos in browsers that
 can't, is licensed under the LGPL-3.0 and is shipped as its own,
 unmodified file. Each library, its licence and its source are listed in
 [`app/public/THIRD_PARTY_NOTICES.md`](app/public/THIRD_PARTY_NOTICES.md),

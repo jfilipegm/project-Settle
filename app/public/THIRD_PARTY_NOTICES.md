@@ -14,6 +14,25 @@ never from another server. Each licence text is in `/vendor/licenses/`.
 | pdfjs-dist                                               | 6.3.289                   | Apache-2.0 | https://github.com/mozilla/pdf.js                                                                     |
 | heic-to                                                  | 1.5.2                     | LGPL-3.0   | https://github.com/hoppergee/heic-to                                                                  |
 
+## Fonts and icons
+
+Settle's look uses the open-source fonts and icons below. They are built
+into Settle's own files: the fonts are served from Settle's site, never
+from a font service, and only the icons Settle uses are included.
+
+| Package                    | Version | Licence | Source                                     |
+| -------------------------- | ------- | ------- | ------------------------------------------ |
+| @fontsource/unbounded      | 5.3.0   | OFL-1.1 | https://github.com/googlefonts/unbounded   |
+| @fontsource/jetbrains-mono | 5.3.0   | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono |
+| @fontsource/source-sans-3  | 5.3.0   | OFL-1.1 | https://github.com/adobe-fonts/source-sans |
+| @tabler/icons-react        | 3.49.0  | MIT     | https://github.com/tabler/tabler-icons     |
+
+The three fonts are under the SIL Open Font License 1.1, which allows
+bundling them with an app as long as the licence goes with them. Each
+licence text is in `/vendor/licenses/`: `unbounded-OFL.txt`,
+`jetbrains-mono-OFL.txt`, `source-sans-3-OFL.txt` and
+`tabler-icons-LICENSE.txt`.
+
 ## Licence files
 
 - ppu-paddle-ocr: `/vendor/licenses/ppu-paddle-ocr-LICENSE.txt`

@@ -11,7 +11,10 @@ PR #10. Phase `IMPLEMENTING`.
 
 ## Next action
 
-**CP6 — Quality pass and documentation.**
+All six checkpoints are complete. Next: the self-review, the full
+verification and the implementation review bundle
+(`/milestone-implement milestone-3` again), then the local and manual
+implementation reviews.
 
 ## Progress
 
@@ -190,6 +193,37 @@ PR #10. Phase `IMPLEMENTING`.
     what, The split) and 1280 px (beside, light and dark); the canvas's
     split screens get the shipped details (the Edit button, "Type it in")
     in CP6.
+- **CP6 — Quality pass and documentation: complete.**
+  - `app/scripts/screens.mjs`: every screen of the production build in
+    headless Brave at 390 and 1440 px, light and dark (screenshot and
+    rendered DOM), the 360 px check and a Tab pass. Results and evidence in
+    `docs/milestones/milestone-3-evidence/` (`CHECKS.md`): no sideways
+    scroll at 360 px on any screen; every Tab stop a control with the
+    focus ring.
+  - The checkers: Impeccable 0 findings on the CSS; on the screens 4
+    findings of one rule (`repeated-container-text`, the screen-reader
+    field prefixes in the hidden editor on Receipt), not applicable.
+    ux-lint's findings (six rules on the screens and built CSS, four on
+    the source CSS) each checked and named as not applicable in
+    `CHECKS.md`.
+  - Privacy on the same build: page load 12 same-origin requests, a scan
+    of sample 1 27 clean requests, no CSP violation. Fonts: 343,772 bytes,
+    131,652 for a first view.
+  - `docs/DESIGN.md` (tokens, type, icons, components, motion, layout,
+    house rules, languages, how to check new UI) and
+    `docs/adr/0004-design-system-and-languages.md`.
+  - `app/public/THIRD_PARTY_NOTICES.md` lists the three fonts and Tabler;
+    `vendor-assets.mjs` copies their licences to `/vendor/licenses/`
+    (`BUNDLED_PACKAGES`), and the vendor tests cover them.
+  - `README.md` (the three steps, two languages, a screenshot, the
+    roadmap line) and `app/README.md` (Design and Languages sections, how
+    to add a text, the new folders and storage key).
+  - The design canvas: a new "As shipped in M3" board with the production
+    screens (phone light and dark, desktop), and the navigation map
+    updated (Settings built, recent splits planned, Back and the step
+    default). The target boards are kept as the target.
+  - Verified: `npm run check` (69 files, 1370 passed, 1 skipped);
+    `npm run build` and `check-build.mjs`.
 
 ## Last completed: M2.5 — Accurate receipt reading
 

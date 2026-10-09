@@ -90,6 +90,53 @@ export const VENDOR_PACKAGES = [
 ]
 
 /**
+ * Packages Vite bundles into Settle's own files (M3 plan, S4, S5): the
+ * three fonts, emitted as woff2 assets, and the icons, compiled into the
+ * app's code. Nothing of theirs is vendored, but their licences travel
+ * with the app, next to the vendored ones.
+ */
+export const BUNDLED_PACKAGES = [
+  {
+    name: '@fontsource/unbounded',
+    license: 'OFL-1.1',
+    source: 'https://github.com/googlefonts/unbounded',
+    licenseFiles: [
+      { from: '@fontsource/unbounded/LICENSE', to: 'unbounded-OFL.txt' },
+    ],
+  },
+  {
+    name: '@fontsource/jetbrains-mono',
+    license: 'OFL-1.1',
+    source: 'https://github.com/JetBrains/JetBrainsMono',
+    licenseFiles: [
+      {
+        from: '@fontsource/jetbrains-mono/LICENSE',
+        to: 'jetbrains-mono-OFL.txt',
+      },
+    ],
+  },
+  {
+    name: '@fontsource/source-sans-3',
+    license: 'OFL-1.1',
+    source: 'https://github.com/adobe-fonts/source-sans',
+    licenseFiles: [
+      {
+        from: '@fontsource/source-sans-3/LICENSE',
+        to: 'source-sans-3-OFL.txt',
+      },
+    ],
+  },
+  {
+    name: '@tabler/icons-react',
+    license: 'MIT',
+    source: 'https://github.com/tabler/tabler-icons',
+    licenseFiles: [
+      { from: '@tabler/icons-react/LICENSE', to: 'tabler-icons-LICENSE.txt' },
+    ],
+  },
+]
+
+/**
  * Licence notes the script writes itself, for what the packages don't
  * ship as a file.
  */
@@ -149,7 +196,7 @@ export async function vendorAssets({ nodeModules, outDir }) {
       })
     }
   }
-  for (const pkg of VENDOR_PACKAGES) {
+  for (const pkg of [...VENDOR_PACKAGES, ...BUNDLED_PACKAGES]) {
     for (const { from, to } of pkg.licenseFiles) {
       copies.push({ from, to: `licenses/${to}` })
     }
