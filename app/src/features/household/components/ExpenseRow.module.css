@@ -1,0 +1,90 @@
+/*
+ * An expense in a list (M4 plan, H12, H13): two lines at phone width (what
+ * and the amount; then the date, category and payer), one row of columns
+ * from 640 px. The amount aligns right in the figures face.
+ */
+
+.row {
+  border-top: 1px solid var(--color-line);
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.link {
+  display: grid;
+  grid-template-areas:
+    'what what amount'
+    'date category payer';
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  min-height: 3rem;
+  padding: var(--space-3) 0;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.link:hover .description {
+  text-decoration: underline;
+}
+
+.date {
+  grid-area: date;
+  color: var(--color-quiet);
+  font-family: var(--font-mono);
+  font-size: var(--text-14);
+}
+
+.what {
+  display: flex;
+  grid-area: what;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-2);
+  min-width: 0;
+}
+
+.description {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.items {
+  color: var(--color-quiet);
+  font-size: var(--text-14);
+}
+
+.category {
+  display: inline-flex;
+  grid-area: category;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  color: var(--color-quiet);
+  font-size: var(--text-14);
+}
+
+.payer {
+  grid-area: payer;
+  justify-self: end;
+  font-size: var(--text-14);
+}
+
+.amount {
+  grid-area: amount;
+  justify-self: end;
+  font-weight: 500;
+}
+
+@media (min-width: 640px) {
+  .link {
+    grid-template-areas: 'date what category payer amount';
+    grid-template-columns: 4.5rem minmax(0, 1fr) 9rem 8rem 7rem;
+  }
+
+  .payer {
+    justify-self: start;
+  }
+}

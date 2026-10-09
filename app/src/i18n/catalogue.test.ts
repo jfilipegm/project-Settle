@@ -50,6 +50,7 @@ const SAME_IN_BOTH = new Map([
   ['receipt.check.taxId', 'NIF is the Portuguese tax number'],
   ['split.copyText.person', 'a format: name and amount'],
   ['split.adjustments.tip.hint', 'empty: the tip has no hint'],
+  ['categories.internet', '“Internet” is the Portuguese word too'],
 ])
 
 describe('the catalogues', () => {

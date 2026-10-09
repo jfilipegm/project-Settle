@@ -5,6 +5,11 @@ import { NotFoundPage } from '../pages/NotFoundPage.tsx'
 import { SettingsPage } from '../pages/SettingsPage.tsx'
 import { SplitPage } from '../pages/SplitPage.tsx'
 import { ExpensesPage } from '../pages/households/ExpensesPage.tsx'
+import { ExpensePage } from '../pages/households/ExpensePage.tsx'
+import {
+  EditExpensePage,
+  NewExpensePage,
+} from '../pages/households/ExpenseFormPage.tsx'
 import { HouseholdRedirect } from '../pages/households/HouseholdRedirect.tsx'
 import { HouseholdShell } from '../pages/households/HouseholdShell.tsx'
 import { HouseholdsPage } from '../pages/households/HouseholdsPage.tsx'
@@ -43,6 +48,9 @@ export function routeTable({ dev }: { dev: boolean }): RouteObject[] {
       children: [
         { index: true, element: <OverviewPage /> },
         { path: 'expenses', element: <ExpensesPage /> },
+        { path: 'expenses/new', element: <NewExpensePage /> },
+        { path: 'expenses/:eid', element: <ExpensePage /> },
+        { path: 'expenses/:eid/edit', element: <EditExpensePage /> },
         { path: 'members', element: <MembersPage /> },
       ],
     },

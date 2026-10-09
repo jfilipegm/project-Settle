@@ -78,6 +78,35 @@ implementation reviews.
     Household tab on `/households/…`.
   - Design canvas: the household screens and the navigation map are
     updated in CP6, with the rest of M4's screens.
+- **CP3 — Quick expenses and the overview: complete.**
+  - `features/household/quickForm.ts`: the form's text to an expense,
+    field errors in words, a live preview of each share, and what exact
+    amounts or percentages still have to place. Parsing reuses the split's
+    `parseAmount`, `toBillRatio` and messages.
+    `percentText` drops trailing zeros ("75 %", not "75,000 %"; found by
+    its test).
+  - `QuickExpenseForm`:
+    - what, amount, date, category and "Who paid?", which offers anyone
+      active that day, in the split or not (H6);
+    - the four methods as radios, each member a checkbox with the
+      method's input and their share.
+  - Pages: `expenses/new`, `expenses/:eid` (amount, date, category, who
+    paid, each share, Edit, Delete with a dialog) and
+    `expenses/:eid/edit`.
+  - Overview (H13): one month at a time (`?month=`, previous and next),
+    "{amount} shared across {count} expenses", "Add expense" (a dialog
+    offering Quick expense; Split a bill comes in CP4), the latest six,
+    and "Where it went". `features/household/totals.ts` derives every
+    total. With no active member, Add expense is disabled with a link to
+    Members.
+  - Categories (H8): `categories.ts` (Tabler icons) and their names in
+    both languages. "Internet" is the same word in Portuguese, so it joins
+    the catalogue test's named exceptions.
+  - Tests: the form logic (each method, the remainders, errors in words,
+    a round trip back into the form), month totals across month edges,
+    and the pages end to end (each method saved, the payer outside the
+    split, refusing a split that doesn't add up, edit, delete, the
+    overview, the previous month, Portuguese).
 
 ## Last completed: M3 — Design foundations
 
