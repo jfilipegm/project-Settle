@@ -7,14 +7,13 @@ the user inserted on 2026-10-07; households and every later milestone
 moved down one in `docs/ROADMAP.md`). Plan revision 5,
 `docs/milestones/milestone-3-PLAN.md`, approved on 2026-10-08 (both plan
 reviews APPROVE; approval commit `ced7c3b`), on `feature/milestone-3`,
-PR #10. Phase `IMPLEMENTING`.
+PR #10. Phase `AWAITING_LOCAL_IMPLEMENTATION_REVIEW` (implementation
+revision 2).
 
 ## Next action
 
-All six checkpoints are complete. Next: the self-review, the full
-verification and the implementation review bundle
-(`/milestone-implement milestone-3` again), then the local and manual
-implementation reviews.
+Implementation review round 2: the local review of revision 2
+(`/review-implementation milestone-3`), then the manual external review.
 
 ## Progress
 
@@ -224,6 +223,25 @@ implementation reviews.
     default). The target boards are kept as the target.
   - Verified: `npm run check` (69 files, 1370 passed, 1 skipped);
     `npm run build` and `check-build.mjs`.
+- **Implementation review, round 1** (revision 1, local review:
+  REVISE). Every finding was reproduced and fixed; none was rejected.
+  - **R1-I1** (`1051ba2`): a step-less `/split`, which the tab bar's
+    Split link opens, used the default step from when the page first
+    mounted, so tapping it from The split after a scan opened Receipt.
+    The default now reads the current bill. A regression test failed
+    before the fix.
+  - **R1-O1** (`07f97bb`): `useMediaQuery` subscribed again on every
+    render; now once per query, with its own tests.
+  - **R1-O2** (`d098a6b`): the literal-text guard now checks braced
+    label attributes (`aria-label={'remove'}`). No new finding in `src/`.
+    The allowlist still applies in every position, which is harmless
+    for its nine entries; left as is.
+  - **R1-O3, R1-O4** (`e7b220a`): Home's Portuguese privacy line reads
+    "Sem registo." instead of "Sem conta.", and `pt.ts` names its parity
+    test.
+  - Verified: `npm run check` (70 files, 1378 passed, 1 skipped);
+    `npm run build` and `check-build.mjs` (unchanged: 343,772 bytes of
+    fonts, 131,652 for a first view, no gallery).
 
 ## Last completed: M2.5 — Accurate receipt reading
 
