@@ -26,6 +26,7 @@ import { RECEIPT_STORAGE_KEY } from '../features/receipt/receiptStore.ts'
 import { receiptToBill } from '../features/receipt/toBill.ts'
 import { DRAFT_STORAGE_KEY } from '../features/split/draft.ts'
 import { SplitPage } from './SplitPage.tsx'
+import { inRouter, openEditors, wideScreen } from '../test/splitSteps.tsx'
 
 const LOADED = { timeout: 10_000 }
 vi.setConfig({ testTimeout: 30_000 })
@@ -65,12 +66,16 @@ function importing(lines: TextLine[] = OCR, imageUrl = 'blob:receipt') {
 }
 
 function renderPage(importReceipt: ImportReceiptFn) {
+  // The split beside the items, on Who had what (harness, L4-I2).
+  wideScreen(vi.spyOn)
   return render(
-    <RegionProvider>
-      <ReceiptImportContext value={importReceipt}>
-        <SplitPage />
-      </ReceiptImportContext>
-    </RegionProvider>,
+    inRouter(
+      <RegionProvider>
+        <ReceiptImportContext value={importReceipt}>
+          <SplitPage />
+        </ReceiptImportContext>
+      </RegionProvider>,
+    ),
   )
 }
 
@@ -79,8 +84,12 @@ async function scanAndOpenReview(importReceipt: ImportReceiptFn) {
   fireEvent.change(screen.getByLabelText('Choose file'), {
     target: { files: [new File(['r'], 'r.jpg', { type: 'image/jpeg' })] },
   })
+  // On Who had what, where the panel shows (harness, L4-I2).
   await waitFor(
-    () => expect(screen.getByText('Review lines')).toBeInTheDocument(),
+    () =>
+      expect(
+        screen.getByRole('region', { name: 'Receipt check' }),
+      ).toBeInTheDocument(),
     LOADED,
   )
   fireEvent.click(screen.getByText('Review lines'))
@@ -135,6 +144,7 @@ describe('Review lines (M2.5, P15)', () => {
     expect(rects[2]).toHaveAttribute('data-selected', 'true')
     const highlighted = container.querySelector('li[data-highlighted]')
     expect(highlighted).toHaveAttribute('aria-current', 'true')
+    openEditors()
     expect(
       within(highlighted as HTMLElement).getByDisplayValue('Tosta mista'),
     ).toBeInTheDocument()
@@ -161,6 +171,7 @@ describe('Review lines (M2.5, P15)', () => {
     expect(
       screen.getByRole('button', { name: 'Added: Couvert 1,00' }),
     ).toBeDisabled()
+    openEditors()
     const names = screen
       .getAllByRole('textbox', { name: /^Item \d+ Name$/ })
       .map((input) => (input as HTMLInputElement).value)
@@ -196,10 +207,10 @@ describe('Review lines (M2.5, P15)', () => {
     fireEvent.change(screen.getByLabelText('Choose file'), {
       target: { files: [new File(['r'], 'r2.jpg', { type: 'image/jpeg' })] },
     })
-    await waitFor(
-      () => expect(screen.getByDisplayValue('Bica')).toBeInTheDocument(),
-      LOADED,
-    )
+    await waitFor(() => {
+      openEditors()
+      expect(screen.getByDisplayValue('Bica')).toBeInTheDocument()
+    }, LOADED)
     await waitFor(() => expect(importReceipt).toHaveBeenCalledTimes(2), LOADED)
     if (
       screen.queryByRole('list', { name: 'Lines read from the receipt' }) ===
@@ -249,10 +260,10 @@ describe('Review lines (M2.5, P15)', () => {
     fireEvent.change(screen.getByLabelText('Choose file'), {
       target: { files: [new File(['r'], 'r2.jpg', { type: 'image/jpeg' })] },
     })
-    await waitFor(
-      () => expect(screen.getByDisplayValue('Agua')).toBeInTheDocument(),
-      LOADED,
-    )
+    await waitFor(() => {
+      openEditors()
+      expect(screen.getByDisplayValue('Agua')).toBeInTheDocument()
+    }, LOADED)
     if (screen.queryByRole('group', { name: 'Add a missed line' }) === null) {
       fireEvent.click(screen.getByText('Review lines'))
     }
@@ -294,6 +305,7 @@ describe('Review lines (M2.5, P15)', () => {
       target: { value: '1,20' },
     })
     fireEvent.click(add)
+    openEditors()
     const names = screen
       .getAllByRole('textbox', { name: /^Item \d+ Name$/ })
       .map((input) => (input as HTMLInputElement).value)

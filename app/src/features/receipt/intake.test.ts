@@ -7,6 +7,9 @@ import {
   sniffType,
 } from './intake.ts'
 import { readErrorMessage } from './messages.ts'
+import { translator } from '../../i18n/t.ts'
+
+const en = translator('en')
 
 const bytes = (...values: number[]) => new Uint8Array(values)
 const text = (value: string) => new TextEncoder().encode(value)
@@ -216,7 +219,7 @@ describe('readDimensions', () => {
 
 describe('read error messages', () => {
   it('tells the user how to fix tooManyPixels (R2-O-6)', () => {
-    expect(readErrorMessage('tooManyPixels')).toBe(
+    expect(readErrorMessage(en, 'tooManyPixels')).toBe(
       'This photo is too large to read. Take the photo at normal resolution, or crop it. You can type the items in below.',
     )
   })
@@ -233,17 +236,17 @@ describe('read error messages', () => {
       'noItems',
       'cancelled',
     ] as const) {
-      expect(readErrorMessage(code)).toMatch(
+      expect(readErrorMessage(en, code)).toMatch(
         / You can type the items in below\.$/,
       )
     }
   })
 
   it('says a browser that can’t read images isn’t a connection problem (M2.5, P16)', () => {
-    expect(readErrorMessage('readerUnsupported')).toBe(
+    expect(readErrorMessage(en, 'readerUnsupported')).toBe(
       'This file has to be read as an image, and this browser can’t read images. A PDF receipt with selectable text works. You can type the items in below.',
     )
-    expect(readErrorMessage('assetsUnavailable')).toBe(
+    expect(readErrorMessage(en, 'assetsUnavailable')).toBe(
       'The receipt reader couldn’t load. Check your connection: the first scan downloads it. You can type the items in below.',
     )
   })

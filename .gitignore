@@ -2,3 +2,9 @@
 .ai-review/
 __pycache__/
 *.pyc
+
+# Design references from the user (local only, never committed)
+design-ideas/
+
+# playwright-cli session files (snapshots, console logs)
+.playwright-cli/

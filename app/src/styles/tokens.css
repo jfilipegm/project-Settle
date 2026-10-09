@@ -1,23 +1,73 @@
 /*
- * Design tokens. The light palette is the default; the dark palette applies
- * when the system prefers dark, unless the user forced light. A forced mode
- * is data-theme="light" | "dark" on <html>, set by src/app/theme.ts and,
- * before first paint, by public/theme-init.js.
+ * Design tokens (M3 plan, S1 to S3 and S6). The light palette is the
+ * default; the dark palette applies when the system prefers dark, unless
+ * the user forced light. A forced mode is data-theme="light" | "dark" on
+ * <html>, set by src/app/theme.ts and, before first paint, by
+ * public/theme-init.js.
  *
- * The two dark blocks must stay identical, and --color-surface must match
- * THEME_COLORS in src/app/theme.ts: tokens.test.ts checks both.
+ * The two dark blocks must stay identical, --color-card must match
+ * THEME_COLORS in src/app/theme.ts, and every text and fill pair must meet
+ * its contrast target: tokens.test.ts checks all three. Every role exists
+ * in both palettes.
  */
 
 :root {
   color-scheme: light;
 
-  --color-bg: #f5f6f8;
-  --color-surface: #ffffff;
-  --color-text: #1b1e24;
-  --color-text-muted: #5b616e;
-  --color-border: #d5d9e0;
-  --color-accent: #2553c9;
-  --color-error: #b3261e;
+  /* S1: the palette. */
+  --color-ground: #eceef1;
+  --color-card: #ffffff;
+  --color-line: #dce0e5;
+  --color-control-border: #c9ced6;
+  --color-quiet: #565c6b;
+  --color-ink: #191c27;
+  --color-on-ink: #ffffff;
+  --color-accent: #b83f1e;
+  --color-success: #1f6b44;
+  --color-success-fill: #e3f1e8;
+  --color-warning: #7a5208;
+  --color-warning-fill: #fbf0d9;
+  --color-error: #a3221b;
+  --color-error-fill: #fbe4e1;
+
+  /* S2: people, in this order, each with its initial's colour. */
+  --person-1: #3d57a3;
+  --person-2: #1d7268;
+  --person-3: #a3365a;
+  --person-4: #6a4c98;
+  --person-5: #56651a;
+  --person-6: #2c6585;
+  --person-on-1: #ffffff;
+  --person-on-2: #ffffff;
+  --person-on-3: #ffffff;
+  --person-on-4: #ffffff;
+  --person-on-5: #ffffff;
+  --person-on-6: #ffffff;
+
+  /* S6: only menus and sheets are raised, with a shadow tinted from ink. */
+  --shadow-raised:
+    0 0.5rem 1.5rem rgb(25 28 39 / 0.12),
+    0 0.125rem 0.375rem rgb(25 28 39 / 0.08);
+
+  /* S3: type. Static weights only, bundled (S4). */
+  --font-display: 'Unbounded', 'Source Sans 3', system-ui, sans-serif;
+  --font-body:
+    'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, Arial,
+    sans-serif;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --text-12: 0.75rem;
+  --text-13: 0.8125rem;
+  --text-14: 0.875rem;
+  --text-15: 0.9375rem;
+  --text-16: 1rem;
+  --text-17: 1.0625rem;
+  --text-19: 1.1875rem;
+  --text-22: 1.375rem;
+  --text-28: 1.75rem;
+  --text-40: 2.5rem;
+  --leading-text: 1.5;
+  --leading-title: 1.1;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -25,21 +75,21 @@
   --space-4: 1rem;
   --space-5: 1.5rem;
   --space-6: 2rem;
+  --space-7: 3rem;
 
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-full: 999px;
+  /* S6: three radii, nothing else. */
+  --radius-chip: 0.5rem;
+  --radius-control: 0.75rem;
+  --radius-card: 1rem;
 
-  --font-family-base:
-    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
-  --font-size-sm: 0.875rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.5rem;
-  --font-size-2xl: 2rem;
-  --line-height-tight: 1.2;
-  --line-height-base: 1.5;
+  /* S6: motion. Reduced motion turns it off in global.css. */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --duration-press: 140ms;
+  --duration-enter: 200ms;
+  --duration-enter-min: 150ms;
+  --duration-enter-max: 250ms;
+  --duration-flash: 200ms;
+  --press-scale: 0.97;
 
   --gutter: 1rem;
   --content-max-width: 60rem;
@@ -51,24 +101,70 @@
   :root:not([data-theme='light']) {
     color-scheme: dark;
 
-    --color-bg: #111318;
-    --color-surface: #1b1e25;
-    --color-text: #e7e9ee;
-    --color-text-muted: #a4abb8;
-    --color-border: #353a46;
-    --color-accent: #8db0ff;
-    --color-error: #ffb4ab;
+    --color-ground: #12141c;
+    --color-card: #1c1f2b;
+    --color-line: #2e3240;
+    --color-control-border: #3a3f4e;
+    --color-quiet: #a3a9b7;
+    --color-ink: #eef0f4;
+    --color-on-ink: #12141c;
+    --color-accent: #f07a52;
+    --color-success: #8fd3ac;
+    --color-success-fill: #17382a;
+    --color-warning: #f0c46a;
+    --color-warning-fill: #3a2e12;
+    --color-error: #f4a39a;
+    --color-error-fill: #3d1c1a;
+
+    --person-1: #7f97e0;
+    --person-2: #45b3a3;
+    --person-3: #db7398;
+    --person-4: #a18bd6;
+    --person-5: #a3b55a;
+    --person-6: #6aa8cb;
+    --person-on-1: #12141c;
+    --person-on-2: #12141c;
+    --person-on-3: #12141c;
+    --person-on-4: #12141c;
+    --person-on-5: #12141c;
+    --person-on-6: #12141c;
+
+    --shadow-raised:
+      0 0.5rem 1.5rem rgb(0 0 0 / 0.45), 0 0.125rem 0.375rem rgb(0 0 0 / 0.3);
   }
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  --color-bg: #111318;
-  --color-surface: #1b1e25;
-  --color-text: #e7e9ee;
-  --color-text-muted: #a4abb8;
-  --color-border: #353a46;
-  --color-accent: #8db0ff;
-  --color-error: #ffb4ab;
+  --color-ground: #12141c;
+  --color-card: #1c1f2b;
+  --color-line: #2e3240;
+  --color-control-border: #3a3f4e;
+  --color-quiet: #a3a9b7;
+  --color-ink: #eef0f4;
+  --color-on-ink: #12141c;
+  --color-accent: #f07a52;
+  --color-success: #8fd3ac;
+  --color-success-fill: #17382a;
+  --color-warning: #f0c46a;
+  --color-warning-fill: #3a2e12;
+  --color-error: #f4a39a;
+  --color-error-fill: #3d1c1a;
+
+  --person-1: #7f97e0;
+  --person-2: #45b3a3;
+  --person-3: #db7398;
+  --person-4: #a18bd6;
+  --person-5: #a3b55a;
+  --person-6: #6aa8cb;
+  --person-on-1: #12141c;
+  --person-on-2: #12141c;
+  --person-on-3: #12141c;
+  --person-on-4: #12141c;
+  --person-on-5: #12141c;
+  --person-on-6: #12141c;
+
+  --shadow-raised:
+    0 0.5rem 1.5rem rgb(0 0 0 / 0.45), 0 0.125rem 0.375rem rgb(0 0 0 / 0.3);
 }

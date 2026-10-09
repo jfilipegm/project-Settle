@@ -10,6 +10,9 @@ import { readerSupportNote } from '../messages.ts'
 import { ReceiptImportContext, type ImportReceiptFn } from '../receiptImport.ts'
 import type { ReaderSupport } from '../readerSupport.ts'
 import { PDF_ACCEPT, RECEIPT_ACCEPT, ScanReceipt } from './ScanReceipt.tsx'
+import { translator } from '../../../i18n/t.ts'
+
+const en = translator('en')
 
 afterEach(() => {
   vi.restoreAllMocks()
@@ -62,23 +65,23 @@ describe('ScanReceipt and the reader support check (P16)', () => {
       expect(within(section).queryByLabelText('Choose file')).toBeNull()
       expect(section).toHaveTextContent('Or drop a PDF file here.')
       expect(within(section).getByRole('note')).toHaveTextContent(
-        readerSupportNote(support),
+        readerSupportNote(en, support),
       )
     },
   )
 
   it('names Lockdown Mode, and both ways to turn it off, only for noWebAssembly', () => {
-    expect(readerSupportNote('noWebAssembly')).toContain('Lockdown Mode')
-    expect(readerSupportNote('noWebAssembly')).toContain(
+    expect(readerSupportNote(en, 'noWebAssembly')).toContain('Lockdown Mode')
+    expect(readerSupportNote(en, 'noWebAssembly')).toContain(
       'tap aA, then Website Settings',
     )
-    expect(readerSupportNote('noWebAssembly')).toContain(
+    expect(readerSupportNote(en, 'noWebAssembly')).toContain(
       'Settings for This Website',
     )
-    expect(readerSupportNote('noSimd')).not.toContain('Lockdown Mode')
-    expect(readerSupportNote('noSimd')).toContain('update iOS')
+    expect(readerSupportNote(en, 'noSimd')).not.toContain('Lockdown Mode')
+    expect(readerSupportNote(en, 'noSimd')).toContain('update iOS')
     for (const support of ['noWebAssembly', 'noSimd'] as const) {
-      expect(readerSupportNote(support)).toContain(
+      expect(readerSupportNote(en, support)).toContain(
         'A PDF receipt from an app still works.',
       )
     }

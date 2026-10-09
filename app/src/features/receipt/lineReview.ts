@@ -2,19 +2,20 @@
  * The row-by-row review's pure helpers (M2.5 plan, P15), kept out of the
  * component file so it only exports components.
  */
+import type { MessageKey } from '../../i18n/t.ts'
 import { LIMITS } from '../split/model.ts'
 import type { LineRole, ReviewLine } from './model.ts'
 
-/** Each role, as the review writes it (never colour alone). */
-export const ROLE_LABELS: Record<LineRole, string> = {
-  item: 'Item',
-  itemDetail: 'Item detail',
-  discount: 'Discount or savings',
-  total: 'Total or subtotal',
-  tip: 'Tip',
-  taxTable: 'Tax table',
-  payment: 'Payment',
-  ignored: 'Ignored',
+/** Each role's text, as the review writes it (never colour alone). */
+export const ROLE_KEYS: Record<LineRole, MessageKey> = {
+  item: 'receipt.lines.role.item',
+  itemDetail: 'receipt.lines.role.itemDetail',
+  discount: 'receipt.lines.role.discount',
+  total: 'receipt.lines.role.total',
+  tip: 'receipt.lines.role.tip',
+  taxTable: 'receipt.lines.role.taxTable',
+  payment: 'receipt.lines.role.payment',
+  ignored: 'receipt.lines.role.ignored',
 }
 
 /**

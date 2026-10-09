@@ -15,11 +15,11 @@ import {
 } from '../../lib/money.ts'
 import {
   adjustmentAmount,
-  displayName,
   lineTotal,
   validateBill,
   type Bill,
   type BillError,
+  type Person,
 } from './model.ts'
 
 /** One line of a person's breakdown. The lines sum to their total. */
@@ -74,9 +74,14 @@ function lcm(a: bigint, b: bigint): bigint {
 /**
  * Splits a bill. Validates it first, and computes only a valid bill, so it
  * returns typed errors instead of throwing for any value the `Bill` type
- * allows.
+ * allows. `nameOf` gives each person's shown name; the app passes the
+ * catalogue's "Person n" for an unnamed person (M3 plan, S11).
  */
-export function computeSplit(bill: Bill): SplitOutcome {
+export function computeSplit(
+  bill: Bill,
+  nameOf: (person: Person, index: number) => string = (person) =>
+    person.name.trim(),
+): SplitOutcome {
   const errors = validateBill(bill)
   if (errors.length > 0) {
     return { ok: false, errors }
@@ -201,7 +206,7 @@ export function computeSplit(bill: Bill): SplitOutcome {
 
     return {
       personId: person.id,
-      name: displayName(person, p),
+      name: nameOf(person, p),
       total: personTotal,
       lines: breakdown,
     }

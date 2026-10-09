@@ -1,5 +1,6 @@
-import type { Dispatch } from 'react'
+import type { Dispatch, Ref } from 'react'
 import type { Region } from '../../../app/region.ts'
+import { useT } from '../../../i18n/language.ts'
 import { newId, type BillAction } from '../billReducer.ts'
 import { displayName, LIMITS, type Bill, type BillError } from '../model.ts'
 import { fieldError, fieldId } from './fields.ts'
@@ -11,24 +12,35 @@ interface Props {
   dispatch: Dispatch<BillAction>
   errors: readonly BillError[]
   region: Region
+  /** Who had what's first heading: the step's focus target (S9). */
+  headingRef?: Ref<HTMLHeadingElement>
 }
 
-export function PeopleSection({ bill, dispatch, errors, region }: Props) {
-  const error = (field: Parameters<typeof fieldError>[1]) =>
-    fieldError(errors, field, bill, region)
+export function PeopleSection({
+  bill,
+  dispatch,
+  errors,
+  region,
+  headingRef,
+}: Props) {
+  const t = useT()
+  const error = (field: Parameters<typeof fieldError>[2]) =>
+    fieldError(t, errors, field, bill, region)
 
   return (
     <section className={styles.section} aria-labelledby="split-people-heading">
-      <h2 id="split-people-heading">People</h2>
+      <h2 id="split-people-heading" tabIndex={-1} ref={headingRef}>
+        {t('split.people.heading')}
+      </h2>
 
       <Stepper
         id={fieldId({ kind: 'people' })}
-        label="Number of people"
+        label={t('split.people.count')}
         value={bill.people.length}
         min={LIMITS.minPeople}
         max={LIMITS.maxPeople}
-        decreaseLabel="Remove a person"
-        increaseLabel="Add a person"
+        decreaseLabel={t('split.people.remove')}
+        increaseLabel={t('split.people.add')}
         error={error({ kind: 'people' })}
         onChange={(count) => {
           dispatch({
@@ -47,9 +59,9 @@ export function PeopleSection({ bill, dispatch, errors, region }: Props) {
           <li key={person.id} className={styles.personRow}>
             <TextInput
               id={fieldId({ kind: 'person', personId: person.id })}
-              label={`Person ${index + 1}`}
-              srPrefix="Name of"
-              placeholder={`Person ${index + 1}`}
+              label={t('split.people.defaultName', { n: index + 1 })}
+              srPrefix={t('split.people.nameOf')}
+              placeholder={t('split.people.defaultName', { n: index + 1 })}
               maxLength={LIMITS.maxNameLength}
               value={person.name}
               error={error({ kind: 'person', personId: person.id })}
@@ -65,9 +77,9 @@ export function PeopleSection({ bill, dispatch, errors, region }: Props) {
                   dispatch({ type: 'removePerson', personId: person.id })
                 }}
               >
-                Remove{' '}
+                {t('split.people.removeButton')}{' '}
                 <span className={styles.srOnly}>
-                  {displayName(person, index)}
+                  {displayName(t, person, index)}
                 </span>
               </button>
             )}
@@ -76,7 +88,7 @@ export function PeopleSection({ bill, dispatch, errors, region }: Props) {
       </ul>
 
       <fieldset className={styles.fieldset} id={fieldId({ kind: 'payer' })}>
-        <legend>Who paid?</legend>
+        <legend>{t('split.people.whoPaid')}</legend>
         <div className={styles.choices}>
           {bill.people.map((person, index) => (
             <label key={person.id} className={styles.choice}>
@@ -88,7 +100,7 @@ export function PeopleSection({ bill, dispatch, errors, region }: Props) {
                   dispatch({ type: 'setPayer', personId: person.id })
                 }}
               />
-              {displayName(person, index)}
+              {displayName(t, person, index)}
             </label>
           ))}
         </div>

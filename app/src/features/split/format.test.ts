@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest'
+import { translator } from '../../i18n/t.ts'
 import { cents } from '../../lib/money.ts'
 import { resultAsText } from './format.ts'
 import { computeSplit } from './split.ts'
-import type { Bill } from './model.ts'
+import { displayName, type Bill } from './model.ts'
+
+const en = translator('en')
 
 const input: Bill = {
   people: [
@@ -30,12 +33,14 @@ const input: Bill = {
   payerId: 'a',
 }
 
-function text(region: Parameters<typeof resultAsText>[1]): string {
-  const outcome = computeSplit(input)
+function text(region: Parameters<typeof resultAsText>[2]): string {
+  const outcome = computeSplit(input, (person, index) =>
+    displayName(en, person, index),
+  )
   if (!outcome.ok) {
     throw new Error('test bill is invalid')
   }
-  return resultAsText(outcome.result, region)
+  return resultAsText(en, outcome.result, region)
 }
 
 describe('resultAsText', () => {

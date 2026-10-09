@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 /**
  * `system` follows the operating system's light/dark preference through
@@ -11,13 +11,13 @@ export type ThemeMode = 'system' | 'light' | 'dark'
 export const THEME_STORAGE_KEY = 'settle.theme'
 
 /**
- * Each palette's `theme-color`: its `--color-surface` token, the colour of
+ * Each palette’s `theme-color`: its `--color-card` token, the colour of
  * the header next to the browser's own UI. public/theme-init.js repeats
  * these values; tokens.test.ts and theme-init.test.ts keep them in step.
  */
 export const THEME_COLORS = {
   light: '#ffffff',
-  dark: '#1b1e25',
+  dark: '#1c1f2b',
 } as const
 
 const NEXT_MODE: Record<ThemeMode, ThemeMode> = {
@@ -93,22 +93,43 @@ export interface Theme {
   nextMode: ThemeMode
   /** Switches to `nextMode`, applies it and stores it. */
   cycleMode: () => void
+  /** Applies and stores a mode (Settings' Theme field). */
+  setMode: (mode: ThemeMode) => void
 }
 
-export function useTheme(): Theme {
-  const [mode, setMode] = useState(readStoredThemeMode)
+/**
+ * One theme state: read from storage, applied to `<html>` while `active`,
+ * and stored on each change. `ThemeProvider` holds the app's; a component
+ * rendered without one (in a test) gets its own.
+ */
+export function useThemeState(active = true): Theme {
+  const [mode, setModeState] = useState(readStoredThemeMode)
 
   useEffect(() => {
-    applyThemeMode(mode)
-  }, [mode])
+    if (active) applyThemeMode(mode)
+  }, [mode, active])
 
+  const setMode = (next: ThemeMode) => {
+    storeThemeMode(next)
+    setModeState(next)
+  }
   const nextMode = nextThemeMode(mode)
   return {
     mode,
     nextMode,
     cycleMode: () => {
-      storeThemeMode(nextMode)
       setMode(nextMode)
     },
+    setMode,
   }
+}
+
+/** The app's theme, shared by the header toggle and Settings. */
+export const ThemeContext = createContext<Theme | null>(null)
+
+/** The theme from the nearest `ThemeProvider`, or a state of its own. */
+export function useTheme(): Theme {
+  const shared = useContext(ThemeContext)
+  const own = useThemeState(shared === null)
+  return shared ?? own
 }

@@ -1,5 +1,6 @@
-import { formatAmount } from '../../lib/money.ts'
 import type { Region } from '../../app/region.ts'
+import type { Translate } from '../../i18n/t.ts'
+import { formatAmount } from '../../lib/money.ts'
 import type { SplitResult } from './split.ts'
 
 /**
@@ -9,6 +10,7 @@ import type { SplitResult } from './split.ts'
  * people to read, not a data format.
  */
 export function resultAsText(
+  t: Translate,
   result: SplitResult,
   region: Region,
   notices: readonly string[] = [],
@@ -19,15 +21,27 @@ export function resultAsText(
     result.people.map((share) => [share.personId, share.name]),
   )
 
-  const lines = [`Bill total: ${money(result.total)}`, '']
+  const lines = [
+    t('split.copyText.billTotal', { amount: money(result.total) }),
+    '',
+  ]
   for (const share of result.people) {
-    lines.push(`${share.name}: ${money(share.total)}`)
+    lines.push(
+      t('split.copyText.person', {
+        name: share.name,
+        amount: money(share.total),
+      }),
+    )
   }
   if (result.settlements.length > 0) {
     lines.push('')
     for (const { fromId, toId, amount } of result.settlements) {
       lines.push(
-        `${names.get(fromId) ?? ''} owes ${names.get(toId) ?? ''} ${money(amount)}`,
+        t('split.copyText.owes', {
+          from: names.get(fromId) ?? '',
+          to: names.get(toId) ?? '',
+          amount: money(amount),
+        }),
       )
     }
   }

@@ -2,80 +2,74 @@
 
 ## Milestone
 
-None active. The last milestone, M2.5 — Accurate receipt reading (work
-item `milestone-2-5`), is `MILESTONE_COMPLETE`, accepted on 2026-10-07.
+None active. The last milestone, M3 — Design foundations (work item
+`milestone-3`), is `MILESTONE_COMPLETE`, accepted on 2026-10-09.
 
 ## Next action
 
-Plan **M3 — Households, members and the expense ledger**
+Plan **M4 — Households, members and the expense ledger**
 (`docs/ROADMAP.md`) with `/milestone-plan`: turn one-off bills into a
-household's running expense history.
+household's running expense history, built on M3's design system and in
+both languages.
 
-Before planning, and after the user merges PR #9 (M2.5) into `master`
+Before planning, and after the user merges PR #10 (M3) into `master`
 (see CLAUDE.md, "Git and GitHub workflow"): run
-`git switch master && git pull && git switch -c feature/milestone-3`.
-After the first commit, open the M3 PR.
+`git switch master && git pull && git switch -c feature/milestone-4`.
+After the first commit, open the M4 PR.
 
-## Last completed: M2.5 — Accurate receipt reading
+## Last completed: M3 — Design foundations
 
-Receipts are read by PaddleOCR instead of Tesseract.js, still for free
-and entirely in the browser:
+Settle has one design system and speaks English and European
+Portuguese. Behaviour, storage formats and the split's arithmetic are
+unchanged.
 
-- **CP1:** the local test set (format v2, real receipts kept local only,
-  never committed) and one accuracy measure, in Node and a real browser,
-  with the Tesseract baseline.
-- **CP2:** the PaddleOCR reader (`ppu-paddle-ocr` on ONNX Runtime Web,
-  PP-OCRv5 mobile models) behind M2's `ReceiptReader` interface, in a
-  worker, its assets self-hosted under the existing CSP.
-- **CP3:** image clean-up and parser tuning on the local set.
-- **CP4:** the committed corpus moved to PaddleOCR, the photo quality
-  check (tips for blurred, dark, small or cut-off photos), and Tesseract
-  retired.
-- **CP5:** the row-by-row review ("Review lines"): the image with a box
-  per read line, each line's role, "Add as item" and "Add a missed line".
-- **CP6:** the acceptance measurement, privacy scans, ADR 0003, the
-  licence notices, Settings and the READMEs.
-- **CP6A** (plan amendment, revisions 9–10): browsers that can't run the
-  reader (no WebAssembly, e.g. Lockdown Mode, or no SIMD) get a note
-  naming the cause, Choose PDF only, and `readerUnsupported` instead of
-  a wrong "check your connection".
-
-Measured (browser, two runs, 21 local images, 18 tuning and 3 held out):
-tuning receipts with no edit 15 of 18 (83.3 %) in both runs; held out 5
-of 6 run-results; rows 96.0–96.5 %; prices 97.5 %; **0 false
-"Matches"**. Below the roadmap's 94 % aim: the plateau was accepted by
-the user at CP3 (2026-10-03) and the measurement at CP6 (2026-10-04).
+- **CP1:** slate/rust tokens for light and dark, six people colours,
+  three bundled fonts and Tabler icons, all from Settle's own origin;
+  the roadmap renumbered (M3 inserted, households now M4).
+- **CP2:** one typed catalogue (`en.ts`, `pt.ts`) with no library, the
+  Language setting (`settle.language`, separate from Region), and a
+  compiler-API guard against literal interface text.
+- **CP3:** the component kit (`app/src/ui/`) and a development-only
+  gallery at `/_kit`, absent from production builds.
+- **CP4:** the new shell (tab bar on a phone, header menu from 640 px),
+  Home, Settings and a Household placeholder (`/finances` redirects).
+- **CP5:** the split in three steps in the URL (Receipt, Who had what,
+  The split), The split beside the items from 1024 px, and person-first
+  assignment.
+- **CP6:** the quality pass (screens at 360/390/1440 px in both themes,
+  keyboard pass, design checkers, request checks), `docs/DESIGN.md`,
+  ADR 0004, notices and READMEs.
 
 Verification:
-- `npm run check` (typecheck, lint, format, 52 test files: 1084 passed,
-  1 skipped) and `npm run build` pass; the request-privacy scans
-  (`check-requests.mjs`) pass, with logs in
-  `docs/milestones/milestone-2-5-evidence/`.
+- `npm run check` (typecheck, lint, format, 70 test files: 1378 passed,
+  1 skipped), `npm run build` and `check-build.mjs` (14 same-origin
+  fonts, 131,652 bytes for a first view; no gallery) pass; evidence in
+  `docs/milestones/milestone-3-evidence/`.
 - `app`, `workflow-conformance` and `pr-title` are green on GitHub
-  (PR #9).
-- Implementation review: three external rounds (REVISE, REVISE, then
-  APPROVE); technical approval `64a2b1d`.
-- Functional review: round 1 checklist `f1727fe`; no findings were
-  written; the user accepted the milestone on 2026-10-07.
+  (PR #10).
+- Implementation review: revision 1 local REVISE (one important, four
+  optional findings, all fixed); revision 2 local APPROVE, manual REVISE
+  (CI evidence only), then round 3 local and manual APPROVE; technical
+  approval `2cfcad3`.
+- Functional review: round 1 checklist `80f9cc3`; no findings were
+  written; the user accepted the milestone on 2026-10-09.
 
 Carried forward (not blockers):
-- **The 94 % aim.** More real receipts first (the set has 19 distinct
-  receipts, 3 held out, against the plan's 20 and 5; the roadmap's 30),
-  then, if the local route stays short, the opt-in "enhanced reading"
-  with the user's own AI key (the user's decision; it changes a guiding
-  principle).
-- **The phone reading times** (P13) were not timed, the user's decision
-  (2026-10-04); the reading was found fast on the iPhone 13.
-- **The CP6A iPhone checks** (Lockdown Mode on and off for the site,
-  checklist flows 8–9) were deferred by the user on 2026-10-05; no
-  result for them is recorded here. The behaviour is covered by the
-  headless-Brave runs with WebAssembly removed.
-- Remembering the user's corrections on the device (roadmap: Future).
-- Receipts from other countries: prefer general parser rules; revisit
-  now that M2.5 is done.
-- Not in M2.5: cropping and perspective correction, handwriting, editing
-  a read line's text in "Review lines", offline caching of the reader
-  (M6).
+- **The literal-text guard's remaining forms** (R2-O1): a ternary or a
+  template with substitutions in a label attribute, a parenthesised or
+  `as` literal, and a kit `label` prop still pass it; nothing in `src/`
+  uses them today. Harden it when M4 adds screens.
+- A Ctrl/⌘-click on a split step link leaves a harmless focus request
+  pending (R3-O2); skip `onSelect` for modified clicks if it gains other
+  uses.
+- Recent splits, the running "so far" total and a segmented Tabs
+  component appear on the design canvas for later milestones (M4 on).
+- **The M2.5 iPhone checks** (Lockdown Mode on and off for the site)
+  are still not run; suggest them at the next real-phone testing (M7,
+  the PWA and deployment).
+- From M2.5: the 94 % reading aim (more real receipts, then perhaps the
+  opt-in "enhanced reading"), remembering the user's corrections, and
+  receipts from other countries.
 
 ## Current blockers
 
@@ -83,13 +77,13 @@ None.
 
 ## Active plan
 
-None. M2.5's plan is archived at
-`docs/milestones/completed/milestone-2-5-PLAN.md` (M0's, M1's, M2's and
-M2's remediation child's are in the same folder).
+None. M3's plan is archived at
+`docs/milestones/completed/milestone-3-PLAN.md` (M0's, M1's, M2's,
+M2's remediation child's and M2.5's are in the same folder).
 
 ## Functional review checklist
 
-None. M2.5's round-1 checklist is in commit `f1727fe`.
+None. M3's round-1 checklist is in commit `80f9cc3`.
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is

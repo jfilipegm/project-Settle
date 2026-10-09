@@ -54,6 +54,8 @@ export interface ImportOptions {
   nextId: () => string
   /** The region's currency, for `currencyDiffers` (D18). */
   regionCurrency?: MoneyCurrency
+  /** The stand-in item's name, in the interface's language (M3, S11). */
+  notReadName?: string
   signal?: AbortSignal
   onProgress?: (progress: ReadProgress) => void
   /** P11: every page's photo issues so far, each time a page is checked. */
@@ -89,6 +91,7 @@ export async function importReceipt(
     currentBill,
     nextId,
     regionCurrency,
+    notReadName,
     signal,
     onProgress,
     onQuality,
@@ -171,7 +174,10 @@ export async function importReceipt(
     qr,
     currentBill,
     nextId,
-    regionCurrency === undefined ? {} : { regionCurrency },
+    {
+      ...(regionCurrency === undefined ? {} : { regionCurrency }),
+      ...(notReadName === undefined ? {} : { notReadName }),
+    },
   )
   const first = source.pages[0]
   let imageUrl: string | undefined

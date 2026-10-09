@@ -7,17 +7,21 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* The browser's own parts take the palette too (M3 plan, S6). */
+  accent-color: var(--color-accent);
+  caret-color: var(--color-accent);
+  scrollbar-color: var(--color-control-border) transparent;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-base);
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-16);
+  line-height: var(--leading-text);
   /* Long words and URLs wrap instead of widening the page at 360 px. */
   overflow-wrap: break-word;
 }
@@ -29,9 +33,35 @@ p {
   margin: 0 0 var(--space-4);
 }
 
+/* Page and card titles use the display face, never above 600 (S3). */
+h1,
+h2 {
+  font-family: var(--font-display);
+  line-height: var(--leading-title);
+}
+
 h1 {
-  font-size: var(--font-size-2xl);
-  line-height: var(--line-height-tight);
+  font-size: var(--text-28);
+  font-weight: 600;
+}
+
+h2 {
+  font-size: var(--text-19);
+  font-weight: 500;
+}
+
+h3 {
+  font-size: var(--text-17);
+  font-weight: 600;
+  line-height: var(--leading-title);
+}
+
+/* Every amount, date and count: the figures face, tabular (S3). */
+.amount,
+data,
+time {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 img,
@@ -55,4 +85,26 @@ a {
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 24%, transparent);
+  color: var(--color-ink);
+}
+
+/* Movement becomes an instant change (S6). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* `hidden` always hides, whatever display a class sets. */
+[hidden] {
+  display: none !important;
 }

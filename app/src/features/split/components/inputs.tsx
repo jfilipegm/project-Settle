@@ -1,5 +1,8 @@
+import { IconMinus, IconPlus } from '@tabler/icons-react'
 import { useState } from 'react'
 import { useRegion } from '../../../app/region.ts'
+import { useT } from '../../../i18n/language.ts'
+import { Icon } from '../../../ui/Icon.tsx'
 import { parseAmount, type Cents, type Ratio } from '../../../lib/money.ts'
 import { LIMITS, toBillRatio } from '../model.ts'
 import {
@@ -68,6 +71,7 @@ export function AmountInput({
   ...field
 }: FieldProps & { value: Cents; onChange: (value: Cents) => void }) {
   const { region } = useRegion()
+  const t = useT()
   const [text, setText] = useState(() => amountText(value, region.locale))
   const [inputError, setInputError] = useState<string>()
   const error = inputError ?? field.error
@@ -91,11 +95,11 @@ export function AmountInput({
           }
           const parsed = parseAmount(next, region.locale, region.currency)
           if (!parsed.ok) {
-            setInputError(amountInputMessage(parsed.error, region))
+            setInputError(amountInputMessage(t, parsed.error, region))
           } else if (parsed.value < 0) {
-            setInputError(amountInputMessage('negative', region))
+            setInputError(amountInputMessage(t, 'negative', region))
           } else if (parsed.value > LIMITS.maxAmount) {
-            setInputError(amountInputMessage('tooLarge', region))
+            setInputError(amountInputMessage(t, 'tooLarge', region))
           } else {
             setInputError(undefined)
             onChange(parsed.value)
@@ -122,6 +126,7 @@ export function RatioInput({
   onChange: (value: Ratio) => void
 }) {
   const { region } = useRegion()
+  const t = useT()
   const [text, setText] = useState(() =>
     kind === 'percent' && value.numerator === 0
       ? ''
@@ -149,7 +154,7 @@ export function RatioInput({
           }
           const parsed = toBillRatio(next)
           if (!parsed.ok) {
-            setInputError(ratioInputMessage(kind, parsed.error))
+            setInputError(ratioInputMessage(t, kind, parsed.error))
             return
           }
           const { numerator, denominator } = parsed.ratio
@@ -159,7 +164,7 @@ export function RatioInput({
             (kind === 'quantity' && numerator === 0) ||
             numerator > max * denominator
           ) {
-            setInputError(ratioInputMessage(kind, 'range'))
+            setInputError(ratioInputMessage(t, kind, 'range'))
             return
           }
           setInputError(undefined)
@@ -248,7 +253,7 @@ export function Stepper({
             onChange(clamp(whole - 1))
           }}
         >
-          −
+          <Icon icon={IconMinus} />
         </button>
         <output id={id} className={styles.stepperValue} aria-live="polite">
           {format(value)}
@@ -262,7 +267,7 @@ export function Stepper({
             onChange(clamp(whole + 1))
           }}
         >
-          +
+          <Icon icon={IconPlus} />
         </button>
       </div>
       {error && (

@@ -16,7 +16,7 @@
  */
 import type { Cents } from '../../lib/money.ts'
 import { adjustmentAmount, lineTotal, type Bill } from '../split/model.ts'
-import { NOT_READ_ITEM_NAME } from './messages.ts'
+import { isNotReadItemName } from '../../i18n/notRead.ts'
 import type { ReceiptSummary } from './model.ts'
 import { checkReceipt, type ReceiptCheck } from './reconcile.ts'
 
@@ -280,7 +280,7 @@ export interface ImageScore {
 /** The bill's items as read rows, without R13/R14's stand-in item. */
 export function readRows(bill: Bill): ReadRow[] {
   return bill.items
-    .filter((item) => item.name !== NOT_READ_ITEM_NAME)
+    .filter((item) => !isNotReadItemName(item.name))
     .map((item) => ({ name: item.name, amount: lineTotal(item) }))
 }
 

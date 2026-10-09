@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { ReceiptImportProvider } from '../features/receipt/ReceiptImportProvider.tsx'
 import { RegionProvider } from './RegionProvider.tsx'
 import { AppRoutes } from './router.tsx'
+import { routeTable } from './routes.tsx'
 
 function renderAt(path: string) {
   return render(
@@ -17,7 +18,7 @@ function renderAt(path: string) {
   )
 }
 
-const NAV_LINK_NAMES = ['Home', 'Split', 'Finances', 'Settings']
+const NAV_LINK_NAMES = ['Split', 'Household', 'Settings']
 
 function mainNav() {
   return screen.getByRole('navigation', { name: 'Main' })
@@ -38,23 +39,46 @@ describe('routes', () => {
     ).toBeInTheDocument()
   })
 
-  it.each([
-    [
-      '/finances',
-      'Finances',
-      'Coming in M5: Finance file import and dashboards.',
-    ],
-  ])(
-    'renders the %s placeholder with its heading and milestone',
-    (path, heading, milestone) => {
-      renderAt(path)
+  it('renders the Household placeholder, with a link to the split', () => {
+    renderAt('/household')
 
-      expect(
-        screen.getByRole('heading', { level: 1, name: heading }),
-      ).toBeInTheDocument()
-      expect(screen.getByText(milestone)).toBeInTheDocument()
-    },
-  )
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Household' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(
+        'Coming in M4: households, members and the expense ledger.',
+      ),
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('link', { name: 'Split a bill' }))
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Split a bill' }),
+    ).toBeInTheDocument()
+  })
+
+  it('redirects the old /finances to /household', () => {
+    renderAt('/finances')
+
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Household' }),
+    ).toBeInTheDocument()
+    expect(
+      within(mainNav()).getByRole('link', { name: 'Household' }),
+    ).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('links the wordmark in the header to Home', () => {
+    renderAt('/settings')
+
+    const home = within(screen.getByRole('banner')).getByRole('link', {
+      name: 'Settle, home',
+    })
+    expect(home).toHaveTextContent('Settle')
+    fireEvent.click(home)
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Settle' }),
+    ).toBeInTheDocument()
+  })
 
   it('links from the home page to the split page', () => {
     renderAt('/')
@@ -76,6 +100,8 @@ describe('routes', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: 'Split a bill' }),
     ).toBeInTheDocument()
+    // The result is the third step (M3 plan, S9).
+    fireEvent.click(screen.getByRole('link', { name: 'The split' }))
     expect(
       screen.getByRole('heading', { level: 2, name: 'Who owes what' }),
     ).toBeInTheDocument()
@@ -132,9 +158,8 @@ describe('shell accessibility', () => {
   })
 
   it.each([
-    ['/', 'Home'],
     ['/split', 'Split'],
-    ['/finances', 'Finances'],
+    ['/household', 'Household'],
     ['/settings', 'Settings'],
   ])(
     'marks only the active link at %s with aria-current="page"',
@@ -152,8 +177,17 @@ describe('shell accessibility', () => {
     },
   )
 
-  it('marks no nav link as current on the not-found page', () => {
-    renderAt('/no/such/page')
+  it('gives each tab an icon and words', () => {
+    renderAt('/split')
+
+    for (const link of within(mainNav()).getAllByRole('link')) {
+      expect(link.querySelector('svg')).toHaveAttribute('aria-hidden', 'true')
+      expect(link.textContent).not.toBe('')
+    }
+  })
+
+  it.each(['/', '/no/such/page'])('marks no tab as current at %s', (path) => {
+    renderAt(path)
 
     for (const link of within(mainNav()).getAllByRole('link')) {
       expect(link).not.toHaveAttribute('aria-current')
@@ -170,5 +204,50 @@ describe('shell accessibility', () => {
     expect(main).toHaveAttribute('id', 'main')
     // Focusable by script, so following the skip link moves focus there.
     expect(main).toHaveAttribute('tabindex', '-1')
+  })
+})
+
+describe('the route table (M3 plan, S12)', () => {
+  const paths = (dev: boolean) =>
+    (routeTable({ dev })[0]?.children ?? []).map(
+      (route) => route.path ?? (route.index === true ? '(index)' : ''),
+    )
+
+  it('has no gallery in production', () => {
+    expect(paths(false)).toEqual([
+      '(index)',
+      'split',
+      'household',
+      'finances',
+      'settings',
+      '*',
+    ])
+  })
+
+  it('adds the gallery at /_kit in development, before not found', () => {
+    expect(paths(true)).toEqual([
+      '(index)',
+      'split',
+      'household',
+      'finances',
+      'settings',
+      '_kit',
+      '*',
+    ])
+  })
+
+  it('renders the gallery at /_kit in development', async () => {
+    renderAt('/_kit')
+    // A lazy import: allow for a busy machine running the whole suite.
+    expect(
+      await screen.findByRole(
+        'heading',
+        { level: 1, name: 'Kit' },
+        { timeout: 10_000 },
+      ),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('region', { name: 'PersonBadge' }),
+    ).toHaveTextContent('Person 8')
   })
 })

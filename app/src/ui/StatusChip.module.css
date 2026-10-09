@@ -1,0 +1,30 @@
+/*
+ * A status chip (M3 plan, S1, S12): green, amber or red belong to the
+ * receipt check and errors only, always with an icon and words.
+ */
+
+.chip {
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-chip);
+  font-size: var(--text-14);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.success {
+  background: var(--color-success-fill);
+  color: var(--color-success);
+}
+
+.warning {
+  background: var(--color-warning-fill);
+  color: var(--color-warning);
+}
+
+.error {
+  background: var(--color-error-fill);
+  color: var(--color-error);
+}

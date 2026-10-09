@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState, type DragEvent } from 'react'
+import { IconCamera, IconFileUpload } from '@tabler/icons-react'
+import { useEffect, useRef, useState, type DragEvent, type Ref } from 'react'
 import type { Region } from '../../../app/region.ts'
+import { useT } from '../../../i18n/language.ts'
+import { Icon } from '../../../ui/Icon.tsx'
+import type { Translate } from '../../../i18n/t.ts'
 import { newId } from '../../split/billReducer.ts'
 import type { Bill } from '../../split/model.ts'
 import splitStyles from '../../split/components/split.module.css'
 import type { ImportResult } from '../importReceipt.ts'
 import { billHasContent, revokeImageUrl } from '../importUi.ts'
-import {
-  PHOTO_ADVICE_LEAD,
-  readErrorMessage,
-  readerSupportNote,
-} from '../messages.ts'
+import { readErrorMessage, readerSupportNote } from '../messages.ts'
 import type { PhotoIssue, ReadErrorCode, ReadProgress } from '../model.ts'
 import { useReceiptImport } from '../receiptImport.ts'
 import { readerSupport, type ReaderSupport } from '../readerSupport.ts'
@@ -22,9 +22,6 @@ export const RECEIPT_ACCEPT =
 
 /** M2.5, P16: what the picker offers where the reader can't run. */
 export const PDF_ACCEPT = 'application/pdf'
-
-export const REPLACE_PROMPT =
-  'Replace the current items with the receipt’s? People stay as they are.'
 
 type Imported = Extract<ImportResult, { ok: true }>
 
@@ -39,22 +36,30 @@ interface Props {
    * default. The tests pass each answer.
    */
   support?: () => ReaderSupport
+  /** The Receipt step's focus target (M3 plan, S9). */
+  headingRef?: Ref<HTMLHeadingElement>
 }
 
-function phaseText({ phase, progress }: ReadProgress, region: Region): string {
+function phaseText(
+  t: Translate,
+  { phase, progress }: ReadProgress,
+  region: Region,
+): string {
   switch (phase) {
     case 'opening':
-      return 'Opening the file…'
+      return t('receipt.scan.phase.opening')
     case 'loadingReader':
-      return 'Loading the reader (first time only)…'
+      return t('receipt.scan.phase.loadingReader')
     case 'reading':
       return progress === undefined
-        ? 'Reading the text…'
-        : `Reading the text… ${new Intl.NumberFormat(region.locale, {
-            style: 'percent',
-          }).format(progress)}`
+        ? t('receipt.scan.phase.reading')
+        : t('receipt.scan.phase.readingProgress', {
+            percent: new Intl.NumberFormat(region.locale, {
+              style: 'percent',
+            }).format(progress),
+          })
     case 'checkingQr':
-      return 'Checking the QR code…'
+      return t('receipt.scan.phase.checkingQr')
   }
 }
 
@@ -76,7 +81,9 @@ export function ScanReceipt({
   onBusyChange,
   onImported,
   support = readerSupport,
+  headingRef,
 }: Props) {
+  const t = useT()
   const importReceipt = useReceiptImport()
   // Read once: it can't change while the page is open.
   const [supported] = useState(support)
@@ -94,7 +101,10 @@ export function ScanReceipt({
     if (busy) {
       return
     }
-    if (billHasContent(bill) && !window.confirm(REPLACE_PROMPT)) {
+    if (
+      billHasContent(bill) &&
+      !window.confirm(t('receipt.scan.replacePrompt'))
+    ) {
       return
     }
     const current = new AbortController()
@@ -109,6 +119,7 @@ export function ScanReceipt({
         currentBill: bill,
         nextId: newId,
         regionCurrency: region.currency,
+        notReadName: t('receipt.notReadItem'),
         signal: current.signal,
         onProgress: (next) => {
           if (!current.signal.aborted) setProgress(next)
@@ -183,15 +194,15 @@ export function ScanReceipt({
         }
       }}
     >
-      <h2 id="receipt-scan-heading">Scan a receipt</h2>
+      <h2 id="receipt-scan-heading" tabIndex={-1} ref={headingRef}>
+        {t('receipt.scan.heading')}
+      </h2>
       {supported !== 'ok' && (
         <p className={styles.note} role="note">
-          {readerSupportNote(supported)}
+          {readerSupportNote(t, supported)}
         </p>
       )}
-      <p className={splitStyles.hint}>
-        Read on this device. The receipt never leaves your browser.
-      </p>
+      <p className={splitStyles.hint}>{t('receipt.scan.privacy')}</p>
       <div className={styles.scanActions}>
         <label className={styles.fileButton} data-disabled={busy}>
           <input
@@ -203,7 +214,10 @@ export function ScanReceipt({
               pick(event.currentTarget)
             }}
           />
-          {supported === 'ok' ? 'Choose file' : 'Choose PDF'}
+          <Icon icon={IconFileUpload} />
+          {supported === 'ok'
+            ? t('receipt.scan.chooseFile')
+            : t('receipt.scan.choosePdf')}
         </label>
         {supported === 'ok' && (
           <label className={styles.fileButton} data-disabled={busy}>
@@ -217,19 +231,20 @@ export function ScanReceipt({
                 pick(event.currentTarget)
               }}
             />
-            Take photo
+            <Icon icon={IconCamera} />
+            {t('receipt.scan.takePhoto')}
           </label>
         )}
       </div>
       <p className={splitStyles.hint}>
         {supported === 'ok'
-          ? 'Or drop a JPEG, PNG, HEIC or PDF file here.'
-          : 'Or drop a PDF file here.'}
+          ? t('receipt.scan.dropHint')
+          : t('receipt.scan.dropPdfHint')}
       </p>
 
       <div className={styles.progress}>
         <p className={styles.status} role="status">
-          {progress !== undefined && phaseText(progress, region)}
+          {progress !== undefined && phaseText(t, progress, region)}
         </p>
         {busy && (
           <button
@@ -239,14 +254,16 @@ export function ScanReceipt({
               controller.current?.abort()
             }}
           >
-            Cancel
+            {t('receipt.scan.cancel')}
           </button>
         )}
       </div>
-      {busy && <PhotoAdvice issues={photoIssues} lead={PHOTO_ADVICE_LEAD} />}
+      {busy && (
+        <PhotoAdvice issues={photoIssues} lead={t('receipt.photo.lead')} />
+      )}
       {error !== undefined && (
         <p className={styles.error} role="alert">
-          {readErrorMessage(error)}
+          {readErrorMessage(t, error)}
         </p>
       )}
     </section>

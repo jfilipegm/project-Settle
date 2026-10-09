@@ -21,7 +21,7 @@ import {
   type Item,
 } from '../split/model.ts'
 import type { FiscalQr } from './fiscalQr.ts'
-import { NOT_READ_ITEM_NAME } from './messages.ts'
+import { catalogue } from '../../i18n/t.ts'
 import type {
   ParsedItem,
   ParsedReceipt,
@@ -33,6 +33,11 @@ import type {
 export interface ReceiptToBillOptions {
   /** The region's currency, for the `currencyDiffers` warning (D18). */
   regionCurrency?: MoneyCurrency
+  /**
+   * The stand-in item's name (R14), in the interface's language (M3 plan,
+   * S11); English when not given, as the measuring tools read it.
+   */
+  notReadName?: string
 }
 
 export interface ReceiptToBillResult {
@@ -444,7 +449,7 @@ export function receiptToBill(
           ...receipt,
           items: [
             {
-              name: NOT_READ_ITEM_NAME,
+              name: options.notReadName ?? catalogue('en').receipt.notReadItem,
               quantity: { numerator: 1, denominator: 1 },
               unitPrice: qr.total,
               lineTotal: qr.total,

@@ -15,6 +15,7 @@ export interface VendorPackage {
 export const VENDOR_FILES: VendorCopy[]
 export const VENDOR_DIRECTORIES: VendorCopy[]
 export const VENDOR_PACKAGES: VendorPackage[]
+export const BUNDLED_PACKAGES: VendorPackage[]
 export const GENERATED_NOTICES: { to: string; text: string }[]
 
 export function packageVersion(

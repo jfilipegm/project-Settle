@@ -1,10 +1,11 @@
 import { useId, useState, type FormEvent } from 'react'
 import type { Region } from '../../../app/region.ts'
+import { useT } from '../../../i18n/language.ts'
 import { formatAmount, parseAmount, type Cents } from '../../../lib/money.ts'
 import { LIMITS, type Bill } from '../../split/model.ts'
 import { amountInputMessage } from '../../split/components/fields.ts'
 import splitStyles from '../../split/components/split.module.css'
-import { ROLE_LABELS, canAddAsItem, nameFromLine } from '../lineReview.ts'
+import { ROLE_KEYS, canAddAsItem, nameFromLine } from '../lineReview.ts'
 import type { ReviewLine } from '../model.ts'
 import styles from './receiptLines.module.css'
 
@@ -50,6 +51,7 @@ function LinesReview({
   onAddItem,
   onSelectItem,
 }: Props) {
+  const t = useT()
   const [selected, setSelected] = useState<number>()
   const [added, setAdded] = useState<ReadonlySet<number>>(new Set())
   const [size, setSize] = useState<{ width: number; height: number }>()
@@ -68,7 +70,7 @@ function LinesReview({
         <div className={styles.figure}>
           <img
             src={imageUrl}
-            alt="The scanned receipt, with a box over each line read"
+            alt={t('receipt.lines.imageAlt')}
             onLoad={(event) => {
               const image = event.currentTarget
               setSize({
@@ -105,7 +107,7 @@ function LinesReview({
         </div>
       )}
 
-      <ol className={styles.lines} aria-label="Lines read from the receipt">
+      <ol className={styles.lines} aria-label={t('receipt.lines.list')}>
         {lines.map((line, index) => (
           <li
             key={index}
@@ -122,8 +124,10 @@ function LinesReview({
               }}
             >
               <span className={styles.role}>
-                {ROLE_LABELS[line.role]}
-                {line.leftOut === true && ' (left out of the bill)'}
+                <span className={styles.swatch} aria-hidden="true" />
+                {t(ROLE_KEYS[line.role])}
+                {line.leftOut === true &&
+                  ` ${t('receipt.lines.leftOutOfBill')}`}
               </span>
               <span className={styles.text}>{line.text}</span>
               {line.amount !== undefined && (
@@ -143,7 +147,9 @@ function LinesReview({
                   setAdded(new Set([...added, index]))
                 }}
               >
-                {added.has(index) ? 'Added' : 'Add as item'}
+                {added.has(index)
+                  ? t('receipt.lines.added')
+                  : t('receipt.lines.addAsItem')}
                 <span className={splitStyles.srOnly}>: {line.text}</span>
               </button>
             )}
@@ -153,8 +159,7 @@ function LinesReview({
 
       {full ? (
         <p className={splitStyles.hint}>
-          The bill has {LIMITS.maxItems} items, the most it can hold: nothing
-          more can be added.
+          {t('receipt.lines.full', { max: LIMITS.maxItems })}
         </p>
       ) : (
         <MissedLine region={region} onAdd={onAddItem} />
@@ -171,6 +176,7 @@ function MissedLine({
   region: Region
   onAdd: (name: string, amount: Cents) => void
 }) {
+  const t = useT()
   const id = useId()
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
@@ -179,14 +185,14 @@ function MissedLine({
   const submit = (event: FormEvent) => {
     event.preventDefault()
     const next: { name?: string; price?: string } = {}
-    if (name.trim() === '') next.name = 'Enter a name'
+    if (name.trim() === '') next.name = t('receipt.lines.enterName')
     const parsed = parseAmount(price, region.locale, region.currency)
     let amount: Cents | undefined
-    if (!parsed.ok) next.price = amountInputMessage(parsed.error, region)
+    if (!parsed.ok) next.price = amountInputMessage(t, parsed.error, region)
     else if (parsed.value < 0)
-      next.price = amountInputMessage('negative', region)
+      next.price = amountInputMessage(t, 'negative', region)
     else if (parsed.value > LIMITS.maxAmount)
-      next.price = amountInputMessage('tooLarge', region)
+      next.price = amountInputMessage(t, 'tooLarge', region)
     else amount = parsed.value
     setErrors(next)
     if (next.name !== undefined || amount === undefined) return
@@ -203,9 +209,9 @@ function MissedLine({
   return (
     <form className={styles.missed} onSubmit={submit} noValidate>
       <fieldset className={splitStyles.fieldset}>
-        <legend>Add a missed line</legend>
+        <legend>{t('receipt.lines.missed')}</legend>
         <div className={splitStyles.field}>
-          <label htmlFor={`${id}-name`}>Name</label>
+          <label htmlFor={`${id}-name`}>{t('receipt.lines.name')}</label>
           <input
             id={`${id}-name`}
             className={splitStyles.input}
@@ -225,7 +231,7 @@ function MissedLine({
           )}
         </div>
         <div className={splitStyles.field}>
-          <label htmlFor={`${id}-price`}>Price</label>
+          <label htmlFor={`${id}-price`}>{t('receipt.lines.price')}</label>
           <input
             id={`${id}-price`}
             className={splitStyles.input}
@@ -245,7 +251,7 @@ function MissedLine({
           )}
         </div>
         <button type="submit" className={splitStyles.secondaryButton}>
-          Add the missed line
+          {t('receipt.lines.addMissed')}
         </button>
       </fieldset>
     </form>

@@ -9,16 +9,18 @@ This is a living document. Milestones after the current one are a
 direction, not a commitment. They get re-ordered, merged or dropped as we
 learn.
 
-Last updated: 2026-10-07 (M2.5 complete; M2 complete and M2.5 added for
+Last updated: 2026-10-09 (M3 complete; M3 Design foundations added
+after M2.5, and every later milestone moved down one, on 2026-10-08; M2.5 complete on 2026-10-07; M2 complete and M2.5 added for
 receipt-reading accuracy on 2026-09-30; restructured around the free-first product strategy on
 2026-09-28, see [Roadmap strategy](#roadmap-strategy))
 
 ## Current goal
 
 > **Phase 1: finish the free, local-first core.** The next milestone is
-> **M3 — Households, members and the expense ledger**, the start of the
+> **M4 — Households, members and the expense ledger**, the start of the
 > shared-household core: households, an expense ledger, balances and
-> settling up (M3–M4).
+> settling up (M4–M5), built on M3's design system and in English and
+> European Portuguese.
 
 Nothing in Phases 3–8 is being built yet.
 
@@ -60,7 +62,7 @@ later, and only around behaviour that real users have shown they value.
   signing up. Accounts arrive only with sync (Phase 7), and stay optional.
 - **Your data stays yours.** Financial data stays on the device. The only
   thing that ever leaves it before accounts exist is **anonymous, aggregate
-  product telemetry** (M7), which never contains amounts, names, items,
+  product telemetry** (M8), which never contains amounts, names, items,
   merchants or receipt content.
 - **Useful for free, not crippled.** The free product must solve the
   problem on its own. Paid features add convenience, automation, sync,
@@ -110,22 +112,23 @@ scope. Anything not listed as must-have is negotiable there.
 | M1  | Bill splitter (manual entry)                       | 1 · Free local-first core        | Complete    |
 | M2  | Receipt upload and built-in parsing                | 1 · Free local-first core        | Complete    |
 | M2.5| Accurate receipt reading                           | 1 · Free local-first core        | Complete    |
-| M3  | Households, members and the expense ledger         | 1 · Free local-first core        | Not started |
-| M4  | Balances and settling up                           | 1 · Free local-first core        | Not started |
-| M5  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
-| M6  | Installable PWA and public deployment              | 1 · Free local-first core        | Not started |
-| M7  | Privacy-first product analytics                    | 2 · Analytics and developer BO   | Not started |
-| M8  | Minimal developer backoffice                       | 2 · Analytics and developer BO   | Not started |
-| M9  | Personal validation and stabilisation              | 3 · Personal validation          | Not started |
-| M10 | Product design and UX pass                         | 4 · Design and UX                | Not started |
-| M11 | Real-user validation (closed beta)                 | 5 · Real-user validation         | Not started |
-| M12 | Paid-product exploration                           | 6 · Paid-product exploration     | Not started |
-| M13 | Accounts, cloud sync and billing                   | 7 · Paid layer (if validated)    | Not started |
-| M14 | Student plan and verification                      | 7 · Paid layer (if validated)    | Not started |
-| M15 | Business and financial backoffice                  | 7 · Paid layer (if validated)    | Not started |
-| M16 | Landlord / property-manager experiments            | 8 · Expansion (if validated)     | Not started |
+| M3  | Design foundations                                 | 1 · Free local-first core        | Complete    |
+| M4  | Households, members and the expense ledger         | 1 · Free local-first core        | Not started |
+| M5  | Balances and settling up                           | 1 · Free local-first core        | Not started |
+| M6  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
+| M7  | Installable PWA and public deployment              | 1 · Free local-first core        | Not started |
+| M8  | Privacy-first product analytics                    | 2 · Analytics and developer BO   | Not started |
+| M9  | Minimal developer backoffice                       | 2 · Analytics and developer BO   | Not started |
+| M10 | Personal validation and stabilisation              | 3 · Personal validation          | Not started |
+| M11 | Product design and UX pass                         | 4 · Design and UX                | Not started |
+| M12 | Real-user validation (closed beta)                 | 5 · Real-user validation         | Not started |
+| M13 | Paid-product exploration                           | 6 · Paid-product exploration     | Not started |
+| M14 | Accounts, cloud sync and billing                   | 7 · Paid layer (if validated)    | Not started |
+| M15 | Student plan and verification                      | 7 · Paid layer (if validated)    | Not started |
+| M16 | Business and financial backoffice                  | 7 · Paid layer (if validated)    | Not started |
+| M17 | Landlord / property-manager experiments            | 8 · Expansion (if validated)     | Not started |
 
-Milestones M12–M16 are **conditional**. Each one starts only if the
+Milestones M13–M17 are **conditional**. Each one starts only if the
 milestone before it produced the evidence it needs, and any of them can be
 dropped. Ideas without a milestone live in the
 [Validation-dependent backlog](#validation-dependent-backlog).
@@ -138,15 +141,22 @@ plans):
 - The old *M4–M7 personal finance file ("the key"), dashboards, editing
   and bill-to-expenses integration* moved to the backlog as a possible
   future expansion. Their durable parts are kept in the new milestones: a
-  versioned, validated, user-owned file (M5) and a local working copy that
-  autosaves (M3).
-- The old *M8 Installable app* is now M6, earlier, because real users need
+  versioned, validated, user-owned file (M6) and a local working copy that
+  autosaves (M4).
+- The old *M8 Installable app* is now M7, earlier, because real users need
   it deployed and installable.
 - *M2.5 Accurate receipt reading* was added on 2026-09-30, after M2's
   functional review showed real receipts reading far below what a
   product needs. Its work item id is `milestone-2-5` (work item ids can't
   contain a dot).
-- The old *M9 Accounts and sync* is now M13, a paid-layer candidate.
+- The old *M9 Accounts and sync* is now M14, a paid-layer candidate.
+
+**Changes on 2026-10-08:** *M3 Design foundations* was inserted after
+M2.5, by the user's decision: "clean house … establish some design
+patterns so it's easier later on", before the household features
+multiply the screens. Every later milestone moved down one (households
+are now M4, and so on to M17), so plans written before this date use
+numbers one lower from M3 on.
 
 ### Every milestone
 
@@ -166,8 +176,8 @@ setup, commands or project layout. If nothing needs changing, the
 milestone's PR says so in one line. The check is part of every
 milestone's "Done when".
 
-From M7 on, every milestone that adds a user action also adds its
-analytics event (see M7's event rules), or says in its plan why it
+From M8 on, every milestone that adds a user action also adds its
+analytics event (see M8's event rules), or says in its plan why it
 doesn't need one.
 
 ---
@@ -184,7 +194,9 @@ on a core that works. The free product is the product. The paid layer
 only makes it more convenient.
 
 **Not yet in Phase 1:** accounts, cloud sync, payments, bank integrations,
-hosted AI, landlord features, and visual polish beyond clean and usable.
+hosted AI and landlord features. Phase 1 includes a design system (M3):
+consistent tokens, type, components and two languages, not decoration.
+The logo and the polish informed by real use wait for M11.
 
 ## M0 — Project foundation
 
@@ -313,7 +325,7 @@ screenshots 11–22 % of items). Still €0, and nothing leaves the browser.
 
 **Why it matters:** if people still have to type in or check the items
 on a large share of their receipts, receipt reading doesn't work as a
-product. It's also what M3's itemised expenses are fed by.
+product. It's also what M4's itemised expenses are fed by.
 
 **Where it starts:** a local spike (branch `spike/paddleocr`, not pushed)
 ran PaddleOCR (`ppu-paddle-ocr` on ONNX Runtime Web, the PP-OCRv5 mobile
@@ -384,11 +396,67 @@ total check**.
   milestone").
 
 **Not yet:** cloud or BYOK readers, a hosted reader, storing receipt
-images (M3's "Useful"), households (M3).
+images (M4's "Useful"), households (M4).
 
 ---
 
-## M3 — Households, members and the expense ledger
+## M3 — Design foundations
+
+**Status:** Complete (accepted 2026-10-09; PR #10). Plan archived at
+`docs/milestones/completed/milestone-3-PLAN.md`. Delivered: the slate/rust
+tokens in both themes with self-hosted fonts and icons, the component
+kit, the new shell, the split in three steps with person-first
+assignment, and the whole interface in English and European Portuguese
+(`docs/DESIGN.md`, ADR 0004). Carried forward: hardening the literal-text
+guard's remaining forms, and the canvas's recent splits, running total
+and Tabs component for M4 on.
+
+**Objective:** give Settle one coherent, deliberate design before the
+household features multiply the screens: a design system in code and in
+`docs/DESIGN.md`, every existing screen rebuilt on it, and the whole
+interface in English and European Portuguese.
+
+**Why it matters:** every later milestone adds screens. Without shared
+tokens, components and house rules, each one invents its own look, and
+the clean-up gets harder with every screen. Portuguese matters now
+because Settle's first users and receipts are Portuguese.
+
+**Must-have**
+- **Design tokens** for light and dark: cool slate neutrals, one rust
+  accent, a colour per person, the receipt check's state colours, a type
+  scale, corner radii and motion, every text pair tested for WCAG AA
+  contrast.
+- **Fonts and icons served from the app itself** (Unbounded, JetBrains
+  Mono, Source Sans 3; the Tabler icon set), so no request leaves Settle.
+- **English and European Portuguese** from one typed catalogue, with a
+  Language setting that follows the browser until the user picks one.
+- **A component kit**: buttons, fields, cards, status chips, person
+  badges, amounts and steps, tested, with a development-only gallery.
+- **One responsive web app**: a header menu on wide screens, a bottom
+  tab bar under 640 px (Split, Household, Settings), a short Home page,
+  and a Household placeholder replacing the outdated Finances page.
+- **The split as three steps** (Receipt, Who had what, The split) that
+  work with the browser's Back, person-first assignment, and the live
+  split beside the items on a wide screen.
+
+**Completion criteria**
+- Every screen follows the tokens and house rules in both themes at
+  360 to 1440 px, with no horizontal scroll at 360 px, and the design
+  checkers (Impeccable, ux-lint) are clean on the rendered screens.
+- No interface text outside the catalogue (a compiler-API test), and
+  every page rendered in Portuguese without English left over.
+- Every existing behaviour kept: the full test suite, the receipt corpus
+  and the CI browser smoke test pass.
+- No request outside the app's own origin, fonts included.
+- `docs/DESIGN.md`, an ADR for the design system and languages, and
+  `README.md` and `app/README.md` updated (see "Every milestone").
+
+**Not yet:** households (M4), a logo or new app icon (M11), languages
+other than English and European Portuguese, a native app.
+
+---
+
+## M4 — Households, members and the expense ledger
 
 **Status:** Not started
 
@@ -442,12 +510,12 @@ settling up, sharing and every later phase build on this model.
   the history, survives a reload and an app update (a migration test).
 - The split rules are unit-tested with the same exactness guarantees as M1.
 
-**Not yet:** balances across the household (M4), sharing between devices
-(M5), properties, units or tenants (M16).
+**Not yet:** balances across the household (M5), sharing between devices
+(M6), properties, units or tenants (M17).
 
 ---
 
-## M4 — Balances and settling up
+## M5 — Balances and settling up
 
 **Status:** Not started
 
@@ -490,7 +558,7 @@ notifications.
 
 ---
 
-## M5 — Export, import, backup and sharing
+## M6 — Export, import, backup and sharing
 
 **Status:** Not started
 
@@ -522,7 +590,7 @@ to share, even before cloud sync exists.
 - A read-only summary link or image of the balances.
 
 **Future / validation-dependent**
-- Real-time multi-device sync (M13, a paid-layer candidate).
+- Real-time multi-device sync (M14, a paid-layer candidate).
 - Import from other apps' exports (e.g. Splitwise CSV), if early users ask
   for it.
 
@@ -536,7 +604,7 @@ to share, even before cloud sync exists.
 
 ---
 
-## M6 — Installable PWA and public deployment
+## M7 — Installable PWA and public deployment
 
 **Status:** Not started
 
@@ -556,7 +624,7 @@ hosting question.
 - **Camera-first receipt capture** and touch-friendly item assignment
   (tap a person, then tap items).
 - A short **privacy page**: what stays on the device, and what doesn't
-  (nothing, until M7).
+  (nothing, until M8).
 
 **Useful**
 - Web Share API for summaries and Settle files.
@@ -585,10 +653,10 @@ learning anything about anyone's finances.
 "is anyone using it, and for what?" can't be answered.
 
 **Not yet in Phase 2:** anything about revenue, plans or subscriptions
-(that's M15), per-user tracking, third-party analytics scripts, and
+(that's M16), per-user tracking, third-party analytics scripts, and
 session replay.
 
-## M7 — Privacy-first product analytics
+## M8 — Privacy-first product analytics
 
 **Status:** Not started
 
@@ -627,7 +695,7 @@ session replay.
 
 **Future / validation-dependent**
 - Funnels and retention cohorts beyond simple counts. Only build these if
-  the M8 dashboard shows they're needed to answer a real question.
+  the M9 dashboard shows they're needed to answer a real question.
 
 **Completion criteria**
 - Tests prove that no event payload can contain a field outside the
@@ -640,7 +708,7 @@ and per-user profiles.
 
 ---
 
-## M8 — Minimal developer backoffice
+## M9 — Minimal developer backoffice
 
 **Status:** Not started
 
@@ -648,7 +716,7 @@ and per-user profiles.
 Settle is used, and whether it's healthy.
 
 This is the **free-phase BO**. It exists for product learning, not as
-customer support infrastructure. The business BO comes later (M15).
+customer support infrastructure. The business BO comes later (M16).
 
 **Must-have**
 - **Access limited to the developer.** It lives outside the public app, or
@@ -666,8 +734,8 @@ customer support infrastructure. The business BO comes later (M15).
 - A weekly summary (a generated page or email) of the key numbers.
 
 **Future / validation-dependent**
-- User and account counts, once accounts exist (M13).
-- Everything financial (plans, MRR, churn, costs), which is M15.
+- User and account counts, once accounts exist (M14).
+- Everything financial (plans, MRR, churn, costs), which is M16.
 
 **Completion criteria**
 - The dashboard answers "how many households used Settle this week, how
@@ -675,14 +743,14 @@ customer support infrastructure. The business BO comes later (M15).
 
 **Not yet:** looking up or impersonating individual users, viewing any
 household's content, and any business metrics. **Privacy rule:** the BO
-only ever shows aggregates of the M7 catalogue. It has no access to users'
+only ever shows aggregates of the M8 catalogue. It has no access to users'
 financial data, because that data never leaves their devices.
 
 ---
 
 # Phase 3 — Personal validation and stabilisation
 
-## M9 — Personal validation and stabilisation
+## M10 — Personal validation and stabilisation
 
 **Status:** Not started
 
@@ -709,9 +777,9 @@ real users rely on the data.
   - adding historical expenses;
   - settling partial balances.
 - **Fixes** for every data-model, splitting or settlement problem found.
-  Schema changes go through M3's migrations, with no data loss.
+  Schema changes go through M4's migrations, with no data loss.
 - **Receipt-reading report**: how often the built-in reader was good
-  enough, on real receipts, from the log and M7's `receipt_parsed`
+  enough, on real receipts, from the log and M8's `receipt_parsed`
   outcomes. This decides the BYOK backlog item.
 
 **Useful**
@@ -731,7 +799,7 @@ real users rely on the data.
 
 # Phase 4 — Product design and UX
 
-## M10 — Product design and UX pass
+## M11 — Product design and UX pass
 
 **Status:** Not started
 
@@ -743,22 +811,24 @@ only pays off once the workflow is known to work. **Visual polish is not a
 substitute for validation.**
 
 **Must-have**
-- **Visual identity**: the logo (the current "S" mark is a placeholder),
-  colour, typography, and a small component set built on the existing design
-  tokens.
+- **Visual identity**: the logo and app icon (the current "S" mark is a
+  placeholder). The colour, type, components and house rules come from
+  M3's design system (`docs/DESIGN.md`); this pass extends them rather
+  than starting over.
 - **Onboarding**: from first open to the first household and first
   expense in under a minute, with no explanation needed.
 - **Navigation** built around households: the household's home shows the
   balances, a quick "add expense", and recent activity.
-- **Simpler expense and receipt-splitting flows**, informed by M9's log.
+- **Simpler expense and receipt-splitting flows**, informed by M10's log.
 - **Balances you understand at a glance**, and a settle-up action that's
   obvious.
 - **Empty, loading and error states** for every screen.
 
 **Useful**
-- Motion and micro-interactions that help understanding (not decoration).
-- Portuguese UI translation, if the first users need it. (M11 answers
-  this.)
+- Motion and micro-interactions that help understanding (not decoration),
+  beyond M3's basics.
+- More languages, if the first users need them (M3 ships English and
+  European Portuguese; M12 answers this).
 
 **Completion criteria**
 - 3–5 people who haven't seen Settle each complete "create a household,
@@ -771,7 +841,7 @@ substitute for validation.**
 
 # Phase 5 — Real-user validation
 
-## M11 — Real-user validation (closed beta)
+## M12 — Real-user validation (closed beta)
 
 **Status:** Not started
 
@@ -785,7 +855,7 @@ later, only to listen.
 **Must-have**
 - **Recruitment and onboarding** of the beta households, with a simple
   way to give feedback in the app (a link or form, not a tracking tool).
-- **Quantitative signals** from M7/M8: households created, members added
+- **Quantitative signals** from M8/M9: households created, members added
   per household, expenses per household per week, the share of expenses
   from receipts, settlements completed, and whether people return in week
   2 and week 4.
@@ -820,9 +890,9 @@ before they're weighed against the findings.
 
 # Phase 6 — Paid-product exploration
 
-## M12 — Paid-product exploration
+## M13 — Paid-product exploration
 
-**Status:** Not started, and **conditional on M11** showing that
+**Status:** Not started, and **conditional on M12** showing that
 households keep using the free product.
 
 **Objective:** find out what, if anything, people would pay for, and at
@@ -834,7 +904,7 @@ adding convenience, automation, sync, backup, more powerful processing
 and collaboration.
 
 **Must-have**
-- **A shortlist of paid-feature candidates**, each backed by M11's evidence
+- **A shortlist of paid-feature candidates**, each backed by M12's evidence
   (repeat requests, workarounds, drop-off points). Candidates, none of them
   committed:
   - cloud sync, cloud backup and multi-device use;
@@ -853,7 +923,7 @@ and collaboration.
 - **Unit economics**: the cost per paying user of each candidate (hosting,
   sync storage, AI/OCR calls), and payment-provider fees.
 - **Decision record**: which paid features to build (if any), at what
-  price, and what stays free. This updates M13–M16 below.
+  price, and what stays free. This updates M14–M17 below.
 
 **Completion criteria**
 - The decision record exists and is backed by evidence. If the evidence
@@ -863,16 +933,16 @@ and collaboration.
 
 ---
 
-# Phase 7 — The paid layer (only what M12 validates)
+# Phase 7 — The paid layer (only what M13 validates)
 
-## M13 — Accounts, cloud sync and billing
+## M14 — Accounts, cloud sync and billing
 
-**Status:** Not started, and **conditional on M12**.
+**Status:** Not started, and **conditional on M13**.
 
 **Objective:** optional accounts, so a household's data follows its members
-across devices and people, with billing for whatever M12 validated.
+across devices and people, with billing for whatever M13 validated.
 
-**Must-have (if M12 chooses sync)**
+**Must-have (if M13 chooses sync)**
 - Sign-in, and server-side storage of the same data model, with end-to-end
   encryption considered first.
 - **Real household sharing**: invite roommates, and see the same ledger on
@@ -890,13 +960,13 @@ across devices and people, with billing for whatever M12 validated.
 - A signed-in household sees the same data on two members' devices, and
   a paid plan can be bought, cancelled and refunded end to end.
 
-**Not yet:** any paid feature M12 didn't validate.
+**Not yet:** any paid feature M13 didn't validate.
 
 ---
 
-## M14 — Student plan and verification
+## M15 — Student plan and verification
 
-**Status:** Not started, and **conditional on M12** showing students value
+**Status:** Not started, and **conditional on M13** showing students value
 a student price.
 
 **Objective:** a student plan with the lightest verification that works.
@@ -912,12 +982,12 @@ documents.
 
 ---
 
-## M15 — Business and financial backoffice
+## M16 — Business and financial backoffice
 
-**Status:** Not started, and **conditional on M13** (there's revenue to
+**Status:** Not started, and **conditional on M14** (there's revenue to
 track).
 
-**Objective:** extend M8's BO with what a paid product needs.
+**Objective:** extend M9's BO with what a paid product needs.
 
 **Must-have (when monetised)**
 - Plans, subscriptions and paying users (student, household, landlord).
@@ -933,10 +1003,10 @@ own privacy review first.
 
 # Phase 8 — Expansion (only with evidence)
 
-## M16 — Landlord / property-manager experiments
+## M17 — Landlord / property-manager experiments
 
 **Status:** Not started, and **conditional on evidence** (landlords in
-M11/M12 asking for it, and willing to pay).
+M12/M13 asking for it, and willing to pay).
 
 **Objective:** test the narrow wedge, *shared expenses and financial
 reconciliation for multi-tenant properties*, without becoming a
@@ -971,12 +1041,12 @@ willingness to pay) supports it.
 - **Bring-your-own-key receipt reading** (the old M3). The user's own AI
   or receipt-service key, called straight from the browser. It's €0 for
   the project and much more accurate. Revisit if M2.5's local reader
-  stops short of its goal, or after M9's receipt-reading report. The design notes are kept under
+  stops short of its goal, or after M10's receipt-reading report. The design notes are kept under
   [Bring your own key (BYOK)](#bring-your-own-key-byok).
 - **Personal finance** (the old M4–M7): a personal "key" file, dashboards
   of income and expenses, and your share of household expenses feeding
   your own finances. It's a possible expansion once the household product
-  is validated. M5's Settle file and M3's local working copy already
+  is validated. M6's Settle file and M4's local working copy already
   cover the durable parts of the idea.
 - Recurring expenses and subscription detection (also a paid candidate).
 - Multi-currency (for example, trips).
@@ -999,8 +1069,8 @@ Decision: tiers behind one shared reader interface (M2's `ReceiptReader`).
 |------|-----------------|---------|----------|--------|
 | Built-in (M2): Tesseract.js + rule parser + fiscal QR | None | Nothing leaves the browser | Fine on clean receipts, weak on real photos and app screenshots (M2's floors: 11–100 % of items) | Phase 1, replaced in M2.5 |
 | Built-in (M2.5): PaddleOCR + rule parser + fiscal QR | None | Nothing leaves the browser | Goal: 94–100 % of receipts with no edit needed | Phase 1 (M2.5) |
-| BYOK: the user's AI model or receipt-service key | None (the user pays their provider) | Image sent to the user's chosen provider | Much better, returns items directly | Backlog, after M9 |
-| Hosted AI/OCR | Per receipt, so it needs a paid plan | Image sent to Settle's provider | Much better | Paid candidate (M12) |
+| BYOK: the user's AI model or receipt-service key | None (the user pays their provider) | Image sent to the user's chosen provider | Much better, returns items directly | Backlog, after M10 |
+| Hosted AI/OCR | Per receipt, so it needs a paid plan | Image sent to Settle's provider | Much better | Paid candidate (M13) |
 
 The review step applies to every tier, so a reader that is mostly right is
 still usable.
@@ -1033,20 +1103,20 @@ Roommates each have their own device, but the free product has no server.
 The options, cheapest first:
 
 1. **One bookkeeper**: one member keeps the household, and shares
-   summaries as text (M4).
+   summaries as text (M5).
 2. **File exchange**: send the Settle file, and the other person opens it
-   (M5, must-have).
-3. **File merge** by stable record ids, with conflict prompts (M5,
+   (M6, must-have).
+3. **File merge** by stable record ids, with conflict prompts (M6,
    useful).
-4. **Real-time sync**: needs a server (M13, a paid candidate).
+4. **Real-time sync**: needs a server (M14, a paid candidate).
 
-Open question: is 2 or 3 enough for real households? M11 answers it
+Open question: is 2 or 3 enough for real households? M12 answers it
 ("Do they invite roommates?") before sync is built.
 
 ### Analytics and privacy
 
-Decided: aggregate, anonymous product events only (M7's rules), a €0
-endpoint, and a user setting. Still open, for M7 planning:
+Decided: aggregate, anonymous product events only (M8's rules), a €0
+endpoint, and a user setting. Still open, for M8 planning:
 
 - opt-in or opt-out by default, under GDPR/ePrivacy;
 - how to count active users and households without a persistent
@@ -1056,13 +1126,13 @@ endpoint, and a user setting. Still open, for M7 planning:
 ### Hosting
 
 Decided in principle: a free static host with an SPA fallback (ADR 0001,
-D11). Which host is chosen in M6, together with the M7 endpoint, so they
+D11). Which host is chosen in M7, together with the M8 endpoint, so they
 can share an origin.
 
 ### Pricing (hypotheses, not decisions)
 
 A free core, student around €2.49/month, household around €4.99/month,
-and higher-priced landlord plans. M12 validates or replaces all of these.
+and higher-priced landlord plans. M13 validates or replaces all of these.
 
 ### Tech stack
 
@@ -1072,7 +1142,7 @@ React + Vite, with npm as the package manager and path-based routes
 at `/` and rewrites unknown paths to `index.html`. Node comes from the
 system package (Node 24 LTS, matching `app/.nvmrc`).
 
-PWA support is expected via `vite-plugin-pwa` (M6). A later native app
+PWA support is expected via `vite-plugin-pwa` (M7). A later native app
 would be a Capacitor wrapper around the same codebase.
 
 ### Earlier decisions, kept
@@ -1082,7 +1152,7 @@ would be a Capacitor wrapper around the same codebase.
 - **The user-owned file** (from the old "finance key" discussion): keep a
   working copy in the browser (IndexedDB, autosaved), and a strictly
   validated, versioned file as the portable backup and exchange format.
-  M3 and M5 carry this forward, as JSON rather than `.xlsx`: it's robust to
+  M4 and M6 carry this forward, as JSON rather than `.xlsx`: it's robust to
   parse and fits the household model. A spreadsheet export is covered by
   CSV.
 

@@ -1,0 +1,882 @@
+{
+  "when": "2026-10-08T23:18:55.929Z",
+  "screens": [
+    {
+      "screen": "home",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "home",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Split a bill",
+          "ring": true,
+          "focusVisible": true
+        }
+      ]
+    },
+    {
+      "screen": "home",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "home",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "home",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "home",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "receipt",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "receipt",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Receipt",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Who had what",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "The split",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Type it in",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "New bill",
+          "ring": true,
+          "focusVisible": true
+        }
+      ]
+    },
+    {
+      "screen": "receipt",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "receipt",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "receipt",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "receipt",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "who-had-what",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "who-had-what",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Receipt",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Who had what",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "The split",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Dismiss",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Remove a person",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Add a person",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Remove Ana",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Remove Bruno",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Remove Carla",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "split-payer",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "_r_1_",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Pizza margherita14,50 €AB",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Everyone for Pizza margherita",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Edit Pizza margherita",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Bitoque12,90 €B",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Everyone for Bitoque",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Edit Bitoque",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Salada mista6,50 €ABC",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Edit Salada mista",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Vinho da casa12,00 €AC",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Everyone for Vinho da casa",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Edit Vinho da casa",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Add item",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "split-tax-kind",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "split-tax-mode",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "split-tip-kind",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "split-tip-mode",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "split-discount-kind",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "input",
+          "label": "",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Ana",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Bruno",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Carla",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Copy as text",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "New bill",
+          "ring": true,
+          "focusVisible": true
+        }
+      ]
+    },
+    {
+      "screen": "who-had-what",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "who-had-what",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "who-had-what",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "who-had-what",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "the-split",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "the-split",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Receipt",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Who had what",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "The split",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Ana",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Bruno",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Carla",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Copy as text",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "New bill",
+          "ring": true,
+          "focusVisible": true
+        }
+      ]
+    },
+    {
+      "screen": "the-split",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "the-split",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "the-split",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "the-split",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "household",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Split a bill",
+          "ring": true,
+          "focusVisible": true
+        }
+      ]
+    },
+    {
+      "screen": "household",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "household",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "household",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "settings",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "settings",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "select",
+          "label": "SystemEnglishPortuguês",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "select",
+          "label": "SystemLightDark",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "select",
+          "label": "Portuguese (Portugal)English (UK)English",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "select",
+          "label": "Euro (€)Pound sterling (£)US dollar ($)",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Third-party licences",
+          "ring": true,
+          "focusVisible": true
+        }
+      ]
+    },
+    {
+      "screen": "settings",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "settings",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "settings",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "settings",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "not-found",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "not-found",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true
+        },
+        {
+          "tag": "a",
+          "label": "Go to the home page",
+          "ring": true,
+          "focusVisible": true
+        }
+      ]
+    },
+    {
+      "screen": "not-found",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "not-found",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "not-found",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "not-found",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    }
+  ],
+  "problems": []
+}
