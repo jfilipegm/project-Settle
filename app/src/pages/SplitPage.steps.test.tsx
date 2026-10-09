@@ -165,6 +165,20 @@ describe('the step in the URL (S9)', () => {
     expect(currentStep()).toBe('Who had what')
   })
 
+  it('opens a step-less /split by the bill as it is now, not as it was at first (R1-I1)', async () => {
+    const { router, url } = renderAt()
+    expect(currentStep()).toBe('Receipt')
+    await scan()
+    showStep('The split')
+    // The tab bar's Split link: /split with no step.
+    await act(async () => {
+      await router.navigate('/split')
+    })
+    expect(url()).toBe('/split?step=items')
+    expect(currentStep()).toBe('Who had what')
+    expect(heading('People')).toHaveFocus()
+  })
+
   it('keeps the step in the URL over a reload', () => {
     saveDraft(createBill(['p1', 'p2', 'i1']))
     const view = renderAt(['/split?step=split'])

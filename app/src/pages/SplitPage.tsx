@@ -76,11 +76,12 @@ export function SplitPage() {
 
   // The step: the URL's, or with none, the bill's default (L4-I1), which
   // is then written into the URL so it can't flip while the bill changes.
+  // The default reads the bill as it is now: the tab bar's Split link
+  // leads here with no step long after the page first showed (R1-I1).
   const [params] = useSearchParams()
   const navigate = useNavigate()
-  const [initialStep] = useState(() => defaultStep(bill))
   const requested = parseStep(params.get('step'))
-  const step = requested ?? initialStep
+  const step = requested ?? defaultStep(bill)
   const beside = useMediaQuery(BESIDE)
   const goTo = (next: SplitStep, replace = false) => {
     void navigate({ search: `?step=${next}` }, { replace })
