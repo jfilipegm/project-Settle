@@ -105,6 +105,16 @@ describe('the guard itself', () => {
       ['attribute: Warnings'],
     ],
     [
+      'a lone lower-case word in a braced label attribute (R1-O2)',
+      `export const A = () => <button aria-label={'remove'} />`,
+      ['attribute: remove'],
+    ],
+    [
+      'a braced template label attribute (R1-O2)',
+      'export const A = () => <img alt={`photo`} />',
+      ['attribute: photo'],
+    ],
+    [
       'template text',
       'const s = `Reading the text… ${percent}`',
       ['literal: Reading the text…'],
@@ -128,6 +138,10 @@ describe('the guard itself', () => {
     ['a className', `export const A = () => <p className="pageActions" />`],
     ['a code comparison', `if (role === 'item' || kind === 'itemDetail') {}`],
     ['a catalogue call', `t('split.newBill')`],
+    [
+      'a catalogue call as a label attribute',
+      `export const A = () => <button aria-label={t('nav.home')} />`,
+    ],
     ['codes and keys', `const a = ['pt-PT', 'EUR', '/split', 'settle.bill']`],
     ['a camelCase code', `const a = 'outOfRange'`],
     ['an Error’s text', `throw new RangeError('Not an amount here')`],

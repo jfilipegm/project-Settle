@@ -71,6 +71,27 @@ function isSkippedPosition(node: ts.Node): boolean {
 }
 
 /**
+ * A label attribute's literal text, written `aria-label="…"` or in braces
+ * as `aria-label={'…'}` or a template with no substitution: rule (b)
+ * holds for all three, so a lone lower-case word in braces doesn't slip
+ * past rule (c) (R1-O2).
+ */
+function attributeLiteral(
+  initializer: ts.JsxAttributeValue | undefined,
+): string | undefined {
+  if (initializer === undefined) return undefined
+  if (ts.isStringLiteral(initializer)) return initializer.text
+  const expression = ts.isJsxExpression(initializer)
+    ? initializer.expression
+    : undefined
+  return expression !== undefined &&
+    (ts.isStringLiteral(expression) ||
+      ts.isNoSubstitutionTemplateLiteral(expression))
+    ? expression.text
+    : undefined
+}
+
+/**
  * The findings in one source text. `allowed` holds exact literal values
  * the caller accepts (each with a reason, kept at the call site).
  */
@@ -104,12 +125,10 @@ export function findLiteralText(
     } else if (
       ts.isJsxAttribute(node) &&
       LABEL_ATTRIBUTES.has(node.name.getText()) &&
-      node.initializer !== undefined &&
-      ts.isStringLiteral(node.initializer)
+      attributeLiteral(node.initializer) !== undefined
     ) {
-      if (!allowed.has(node.initializer.text)) {
-        report(node, 'attribute', node.initializer.text)
-      }
+      const text = attributeLiteral(node.initializer) ?? ''
+      if (!allowed.has(text)) report(node, 'attribute', text)
       return
     } else if (
       ts.isStringLiteral(node) ||
