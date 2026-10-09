@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 
 function hasMatchMedia(): boolean {
   return (
@@ -12,8 +12,10 @@ function hasMatchMedia(): boolean {
  * layout with no polyfill.
  */
 export function useMediaQuery(query: string): boolean {
-  return useSyncExternalStore(
-    (onChange) => {
+  // One subscription per query: a new function on each render would make
+  // React drop and re-add the listener every time (R1-O1).
+  const subscribe = useCallback(
+    (onChange: () => void) => {
       if (!hasMatchMedia()) return () => undefined
       const list = window.matchMedia(query)
       list.addEventListener('change', onChange)
@@ -21,6 +23,10 @@ export function useMediaQuery(query: string): boolean {
         list.removeEventListener('change', onChange)
       }
     },
+    [query],
+  )
+  return useSyncExternalStore(
+    subscribe,
     () => hasMatchMedia() && window.matchMedia(query).matches,
     () => false,
   )
