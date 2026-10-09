@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-10-09
 - **Milestone:** M3 — Design foundations
-  (`docs/milestones/milestone-3-PLAN.md`, decisions S1 to S14)
+  (`docs/milestones/completed/milestone-3-PLAN.md`, decisions S1 to S14)
 - **Builds on:** ADR 0001 (the web app's stack and its CSP), ADR 0002 and
   0003 (everything served from Settle's own origin).
 

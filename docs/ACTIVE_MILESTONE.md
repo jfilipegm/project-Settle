@@ -2,333 +2,74 @@
 
 ## Milestone
 
-**M3 — Design foundations** (work item `milestone-3`, a new milestone
-the user inserted on 2026-10-07; households and every later milestone
-moved down one in `docs/ROADMAP.md`). Plan revision 5,
-`docs/milestones/milestone-3-PLAN.md`, approved on 2026-10-08 (both plan
-reviews APPROVE; approval commit `ced7c3b`), on `feature/milestone-3`,
-PR #10. Phase `AWAITING_FUNCTIONAL_REVIEW` (implementation revision 2,
-technical approval `2cfcad3`).
+None active. The last milestone, M3 — Design foundations (work item
+`milestone-3`), is `MILESTONE_COMPLETE`, accepted on 2026-10-09.
 
 ## Next action
 
-The user's functional review: the checklist below. Findings go to
-`.ai-review/milestone-3/feedback/FUNCTIONAL_REVIEW.md`, then
-`/apply-functional-review`; once clean, `/accept-milestone`.
+Plan **M4 — Households, members and the expense ledger**
+(`docs/ROADMAP.md`) with `/milestone-plan`: turn one-off bills into a
+household's running expense history, built on M3's design system and in
+both languages.
 
-## Progress
+Before planning, and after the user merges PR #10 (M3) into `master`
+(see CLAUDE.md, "Git and GitHub workflow"): run
+`git switch master && git pull && git switch -c feature/milestone-4`.
+After the first commit, open the M4 PR.
 
-- **CP1 — Foundations: complete.**
-  - `docs/ROADMAP.md`: M3 Design foundations inserted after M2.5, every
-    later milestone moved down one (M17 is now the last) with every
-    cross-reference; the old design pass (now M11) keeps the logo and
-    the polish informed by real use; Phase 1's "Not yet" reworded.
-  - `PRODUCT.md` committed at the root.
-  - `app/src/styles/tokens.css`: the S1 palette, S2's six people colours
-    with their initials, S3's faces and type scale, S6's radii, shadow
-    and motion, in both themes. Today's token names stay as aliases until
-    CP5.
-  - Fonts bundled from `@fontsource` (Unbounded 500/600, JetBrains Mono
-    400/500, Source Sans 3 400/600/700; latin and latin-ext with their
-    unicode ranges, woff2 only) through `src/styles/fonts.css`;
-    `@tabler/icons-react` and `src/ui/Icon.tsx` (stroke 1.75; 16, 20 or
-    24 px; always `aria-hidden`).
-  - `global.css`: the new body, title faces, tabular figures for
-    `.amount`/`<data>`/`<time>`, the rust focus ring, selection, caret,
-    `accent-color`, scrollbars, reduced motion.
-  - Header colours: `THEME_COLORS` `#ffffff`/`#1c1f2b`, in `theme-init.js`,
-    `index.html` and the manifest (background `#eceef1`).
-  - Tests: contrast (every text and fill pair at least 4.5:1, people
-    colours and the focus ring at least 3:1 on card and ground, both
-    themes), every role in both palettes, `fonts.css` against the build
-    check, and `scripts/check-build.mjs`'s new font check (14 same-origin
-    woff2 files, no remote URL, the budgets).
-  - Verified: `npm run check` (54 files, 1173 passed, 1 skipped);
-    `npm run build` and `check-build.mjs` (fonts 343,772 bytes in all,
-    131,652 for a first view, against 400 kB and 250 kB); the page-load
-    request check in headless Brave passes (12 same-origin requests, the
-    five fonts used included, no CSP violation).
-  - Notes for later checkpoints: the lowest text pair is rust on the
-    light ground (4.79:1). Control borders (`#C9CED6`/`#3A3F4E`) are about
-    1.6:1 on the card, as the approved canvas has them; every field keeps
-    a visible label, and CP3's fields should not rely on the border alone.
-    Until CP5, the receipt panels' warning edge now shows amber (the old
-    fallback token is now defined); CP5 restyles them without the stripe
-    (S7). The licence notices for the fonts and Tabler land in CP6.
-- **CP2 — English and Portuguese: complete.**
-  - `app/src/i18n/`: `en.ts` (the source catalogue), `pt.ts` (European
-    Portuguese, typed against it), `t.ts` (lookup, `{name}` parameters,
-    `Intl.PluralRules` plurals), `language.ts` and `LanguageProvider.tsx`
-    (System, English or Português under `settle.language`; System takes
-    the first `pt`/`en` browser language, else English; `<html lang>` is
-    `en` or `pt-PT`), `notRead.ts` (`isNotReadItemName`, either language).
-  - Every interface text moved: the components, the plain modules (which
-    now take `t`: `fields.ts`, `messages.ts`, `review.ts`, `format.ts`;
-    `lineReview.ts` maps roles to keys), the display maps and both
-    `window.confirm` prompts. `model.ts`'s `displayName` takes `t`;
-    `computeSplit` takes an optional name function, so the maths is
-    unchanged. The stand-in name reaches `toBill.ts` as an import option,
-    English by default, so `readRows`, `localReport.node.ts` and the CI
-    expected-bill check are untouched.
-  - Settings has a Language field next to Region; switching re-renders
-    without a reload.
-  - Tests: key, plural and parameter parity, and every Portuguese text
-    translated apart from six named exceptions; the literal-text guard
-    (TypeScript compiler API, all of `src/` by default, one exclusion:
-    the parser and its keywords; the allowlist: the wordmark, `'Files'`,
-    one developer-only error detail and the key names) with its own
-    negative and positive snippets; every page in Portuguese with no
-    English sentinel; Settings' options, the navigation and theme
-    labels, the adjustment names and hints asserted exactly; every
-    validation message, read error, warning, photo advice, line role,
-    notice and the copied summary in Portuguese; the stand-in in both
-    languages through `review.ts` and `accuracy.ts`, renamed and
-    price-only, and "Add the difference" in Portuguese next to an English
-    stand-in.
-  - The existing suites kept their results with only harness changes:
-    tests that call a message function pass an English translator.
-  - Verified: `npm run check` (59 files, 1291 passed, 1 skipped).
-  - Design check (S14): the new Language field in Settings goes onto the
-    canvas with CP6's update; nothing else changed visually.
-- **CP3 — The component kit: complete.**
-  - `app/src/ui/`: `Button` (primary ink, secondary, quiet; 40 to 52 px;
-    optional icon; the 0.97 press), `IconButton` (required label),
-    `TextField` and `SelectField` (label above, hint and error below,
-    both in `aria-describedby`, `aria-invalid`, the error with an icon),
-    `Card` (flat on a 1 px line; a title makes it a named section),
-    `StatusChip` (success, warning, error: an icon and words), `PersonBadge`
-    (S2's colour by position through CSS custom properties in the
-    `style` prop, the initial or the person's number, the name shown or
-    read out), `Amount` (a `<data>` in cents, the region's format, the
-    minus sign U+2212, an optional plus), `Steps` (named step links,
-    `aria-current="step"`), and `Icon` from CP1.
-  - The gallery at `/_kit`: `routeTable({ dev })` in `app/routes.tsx`, the
-    gallery a lazy import behind `import.meta.env.DEV`; tests for both
-    `dev` values; `check-build.mjs` now also fails any built file carrying
-    the gallery. It shows every component, with switches for light and
-    dark and for English and Portuguese. Checked in headless Brave in
-    both themes and both languages.
-  - The literal-text guard excludes `ui/gallery/` (development only).
-  - Verified: `npm run check` (66 files, 1339 passed, 1 skipped);
-    `npm run build` and `check-build.mjs` (no gallery in `dist/`).
-  - Design check (S14): the kit matches the canvas's foundations sheet;
-    nothing to update yet.
-  - A flaky timing in the gallery's route test (a lazy import over the
-    default 1 s wait under a full run) slipped into the CP3 commit; CP4's
-    commit raises that wait to 10 s.
-- **CP4 — The shell and the simple pages: complete.**
-  - The shell: the wordmark links to Home; Split, Household and Settings
-    are a bottom tab bar with icons and words under 640 px and a header
-    menu from 640 px, the active one bold and underlined in rust, next to
-    the compact theme toggle. One theme state for the app
-    (`ThemeProvider`), so the toggle and Settings agree.
-  - Home: two lines, then "Split a bill", or "Continue your bill" when the
-    saved draft has content (`billHasContent`), and the privacy line.
-  - `/household`: the placeholder ("Coming in M4: households, members and
-    the expense ledger.", a link to the split), no household state.
-    `/finances` redirects there; `FinancesPage` and `PlaceholderPage` are
-    gone.
-  - Settings on the kit: Language, Theme (System, Light, Dark), Region
-    (the example as an `Amount`), Receipt reading with the licences.
-  - Not found on the kit.
-  - Tests: the routes, the redirect, the tabs' `aria-current`, icons and
-    words, the wordmark link; Home's button with no draft, a saved fresh
-    bill and a draft with content; Settings' Theme field driving the
-    header toggle; Portuguese labels for the tabs and the Theme options.
-  - Checked in headless Brave: Home at 390 px, Settings at 1280 px.
-  - Verified: `npm run check` (68 files, 1347 passed, 1 skipped).
-  - Design check (S14): the shell and pages follow the canvas's navigation
-    map; the Settings screen (Language and Theme) goes onto the canvas
-    with CP6's update.
-- **CP5 — The split flow: complete.**
-  - Three steps, Receipt, Who had what and The split, named in a steps
-    indicator and kept in the URL (`/split?step=`): Back, Forward and a
-    reload keep the step. With no step, a bill without content
-    (`billHasContent`) opens on Receipt and one with content on Who had
-    what, and the step is written into the URL. All three stay mounted,
-    the others `hidden`, so switching loses nothing typed. Each step's
-    heading takes focus when the step changes.
-  - Receipt: the scan, and "Type it in". An import ends on Who had what
-    with the check's heading focused (the CI smoke contract). From
-    1024 px (`useMediaQuery`, narrow without `matchMedia`) Who had what
-    shows The split beside the items, live; under it, "See the split".
-    The result's error and notice links go to their field or panel on
-    Who had what.
-  - Person-first assignment: a person picker (native radios as person
-    chips), item rows that toggle the chosen person (`aria-pressed`, the
-    sharers as a description, each change announced), "Everyone", and
-    today's editor behind Edit (open at first for an empty item, and for
-    an item with an error). Both ways dispatch `toggleAssignee`. A row
-    that gains or loses a person flashes for 200 ms (reduced motion: no
-    flash).
-  - New bill on every step, with today's confirmation and hint; it
-    resets everything and replaces the history entry with
-    `?step=receipt`, focusing the Receipt heading.
-  - The receipt panels and the result on the kit and tokens: icons
-    instead of the ⚠/✓ glyphs, amber notices with an icon, a swatch
-    instead of a coloured edge in Review lines, the share bars in each
-    person's colour, `Amount` with the true minus sign. The CP1 token
-    aliases are gone.
-  - Existing suites: harness, selector and navigation changes only
-    (`src/test/splitSteps.tsx`: a router, `showStep`, `openEditors`, and a
-    wide screen so the result sits beside the items). One judgment call:
-    one receipt test asserted the status text with its decorative "⚠ "
-    glyph, which S5 replaces with an icon; it now asserts the same words
-    and the hidden icon. The "See result" link it checked is replaced by
-    "See the split", tested in the new suite.
-  - New tests (`SplitPage.steps.test.tsx`, 23): the step names, the
-    default step (no draft, a saved fresh bill, a priced item), reload,
-    Back and Forward with focus, "Type it in", both layouts, the error
-    link across steps, the smoke contract in jsdom, person-first
-    assignment (pointer, keyboard elements, Everyone, the editor agreeing,
-    the flag), New bill from Who had what and The split (cancel, confirm,
-    the fresh bill, the replace by one Back).
-  - The three CI smoke steps, locally in headless Brave on the production
-    build: samples 1 and 12 pass (27 clean requests, no CSP violation,
-    the bill as expected), and the wrong expected bill fails on the bill
-    alone.
-  - Verified: `npm run check` (69 files, 1370 passed, 1 skipped);
-    `npm run build` and `check-build.mjs`.
-  - Design check (S14): checked in Brave at 390 px (Receipt, Who had
-    what, The split) and 1280 px (beside, light and dark); the canvas's
-    split screens get the shipped details (the Edit button, "Type it in")
-    in CP6.
-- **CP6 — Quality pass and documentation: complete.**
-  - `app/scripts/screens.mjs`: every screen of the production build in
-    headless Brave at 390 and 1440 px, light and dark (screenshot and
-    rendered DOM), the 360 px check and a Tab pass. Results and evidence in
-    `docs/milestones/milestone-3-evidence/` (`CHECKS.md`): no sideways
-    scroll at 360 px on any screen; every Tab stop a control with the
-    focus ring.
-  - The checkers: Impeccable 0 findings on the CSS; on the screens 4
-    findings of one rule (`repeated-container-text`, the screen-reader
-    field prefixes in the hidden editor on Receipt), not applicable.
-    ux-lint's findings (six rules on the screens and built CSS, four on
-    the source CSS) each checked and named as not applicable in
-    `CHECKS.md`.
-  - Privacy on the same build: page load 12 same-origin requests, a scan
-    of sample 1 27 clean requests, no CSP violation. Fonts: 343,772 bytes,
-    131,652 for a first view.
-  - `docs/DESIGN.md` (tokens, type, icons, components, motion, layout,
-    house rules, languages, how to check new UI) and
-    `docs/adr/0004-design-system-and-languages.md`.
-  - `app/public/THIRD_PARTY_NOTICES.md` lists the three fonts and Tabler;
-    `vendor-assets.mjs` copies their licences to `/vendor/licenses/`
-    (`BUNDLED_PACKAGES`), and the vendor tests cover them.
-  - `README.md` (the three steps, two languages, a screenshot, the
-    roadmap line) and `app/README.md` (Design and Languages sections, how
-    to add a text, the new folders and storage key).
-  - The design canvas: a new "As shipped in M3" board with the production
-    screens (phone light and dark, desktop), and the navigation map
-    updated (Settings built, recent splits planned, Back and the step
-    default). The target boards are kept as the target.
-  - Verified: `npm run check` (69 files, 1370 passed, 1 skipped);
-    `npm run build` and `check-build.mjs`.
-- **Implementation review, round 1** (revision 1, local review:
-  REVISE). Every finding was reproduced and fixed; none was rejected.
-  - **R1-I1** (`1051ba2`): a step-less `/split`, which the tab bar's
-    Split link opens, used the default step from when the page first
-    mounted, so tapping it from The split after a scan opened Receipt.
-    The default now reads the current bill. A regression test failed
-    before the fix.
-  - **R1-O1** (`07f97bb`): `useMediaQuery` subscribed again on every
-    render; now once per query, with its own tests.
-  - **R1-O2** (`d098a6b`): the literal-text guard now checks braced
-    label attributes (`aria-label={'remove'}`). No new finding in `src/`.
-    The allowlist still applies in every position, which is harmless
-    for its nine entries; left as is.
-  - **R1-O3, R1-O4** (`e7b220a`): Home's Portuguese privacy line reads
-    "Sem registo." instead of "Sem conta.", and `pt.ts` names its parity
-    test.
-  - Verified: `npm run check` (70 files, 1378 passed, 1 skipped);
-    `npm run build` and `check-build.mjs` (unchanged: 343,772 bytes of
-    fonts, 131,652 for a first view, no gallery).
-- **Implementation review, round 2** (revision 2). The local review
-  approved. The manual external review asked for changes (REVISE), with
-  one blocking finding and no code defect.
-  - **B-EXT-1** (evidence only): the bundle didn't show completed
-    required CI for the revision-2 code. All four required checks have
-    since passed on `dfb6b55`:
-    - App CI on the push (run 37894899945);
-    - App CI on the pull request (37894905619);
-    - workflow-conformance (37894905562);
-    - pr-title (37894905541).
-    `git diff e7b220a dfb6b55` touches only `docs/ACTIVE_MILESTONE.md`
-    and `WORKFLOW_STATE.json`, and `app/` and `.github/` are identical.
-    So CI tested the reviewed code. Recorded in the bundle's
-    `TEST_RESULTS.md`. No code change.
-  - **O-EXT-1, O-EXT-2**: keep the step and focus regression tests, and
-    keep the migrated suites' assertions intact. Both already hold, so
-    nothing changed.
-  - **R2-O1** (local, optional): some forms still pass the literal-text
-    guard: a ternary or a template with substitutions in a label
-    attribute, a parenthesised or `as` literal, and a kit `label` prop.
-    It also reports `alt=""`. Deferred, because nothing in `src/` uses
-    these forms, and fixing it now would change the reviewed content
-    for an optional finding.
-  - The bundle was regenerated at the same content (same review content
-    ID), and revision 2 is unchanged.
+## Last completed: M3 — Design foundations
 
-## Last completed: M2.5 — Accurate receipt reading
+Settle has one design system and speaks English and European
+Portuguese. Behaviour, storage formats and the split's arithmetic are
+unchanged.
 
-Receipts are read by PaddleOCR instead of Tesseract.js, still for free
-and entirely in the browser:
-
-- **CP1:** the local test set (format v2, real receipts kept local only,
-  never committed) and one accuracy measure, in Node and a real browser,
-  with the Tesseract baseline.
-- **CP2:** the PaddleOCR reader (`ppu-paddle-ocr` on ONNX Runtime Web,
-  PP-OCRv5 mobile models) behind M2's `ReceiptReader` interface, in a
-  worker, its assets self-hosted under the existing CSP.
-- **CP3:** image clean-up and parser tuning on the local set.
-- **CP4:** the committed corpus moved to PaddleOCR, the photo quality
-  check (tips for blurred, dark, small or cut-off photos), and Tesseract
-  retired.
-- **CP5:** the row-by-row review ("Review lines"): the image with a box
-  per read line, each line's role, "Add as item" and "Add a missed line".
-- **CP6:** the acceptance measurement, privacy scans, ADR 0003, the
-  licence notices, Settings and the READMEs.
-- **CP6A** (plan amendment, revisions 9–10): browsers that can't run the
-  reader (no WebAssembly, e.g. Lockdown Mode, or no SIMD) get a note
-  naming the cause, Choose PDF only, and `readerUnsupported` instead of
-  a wrong "check your connection".
-
-Measured (browser, two runs, 21 local images, 18 tuning and 3 held out):
-tuning receipts with no edit 15 of 18 (83.3 %) in both runs; held out 5
-of 6 run-results; rows 96.0–96.5 %; prices 97.5 %; **0 false
-"Matches"**. Below the roadmap's 94 % aim: the plateau was accepted by
-the user at CP3 (2026-10-03) and the measurement at CP6 (2026-10-04).
+- **CP1:** slate/rust tokens for light and dark, six people colours,
+  three bundled fonts and Tabler icons, all from Settle's own origin;
+  the roadmap renumbered (M3 inserted, households now M4).
+- **CP2:** one typed catalogue (`en.ts`, `pt.ts`) with no library, the
+  Language setting (`settle.language`, separate from Region), and a
+  compiler-API guard against literal interface text.
+- **CP3:** the component kit (`app/src/ui/`) and a development-only
+  gallery at `/_kit`, absent from production builds.
+- **CP4:** the new shell (tab bar on a phone, header menu from 640 px),
+  Home, Settings and a Household placeholder (`/finances` redirects).
+- **CP5:** the split in three steps in the URL (Receipt, Who had what,
+  The split), The split beside the items from 1024 px, and person-first
+  assignment.
+- **CP6:** the quality pass (screens at 360/390/1440 px in both themes,
+  keyboard pass, design checkers, request checks), `docs/DESIGN.md`,
+  ADR 0004, notices and READMEs.
 
 Verification:
-- `npm run check` (typecheck, lint, format, 52 test files: 1084 passed,
-  1 skipped) and `npm run build` pass; the request-privacy scans
-  (`check-requests.mjs`) pass, with logs in
-  `docs/milestones/milestone-2-5-evidence/`.
+- `npm run check` (typecheck, lint, format, 70 test files: 1378 passed,
+  1 skipped), `npm run build` and `check-build.mjs` (14 same-origin
+  fonts, 131,652 bytes for a first view; no gallery) pass; evidence in
+  `docs/milestones/milestone-3-evidence/`.
 - `app`, `workflow-conformance` and `pr-title` are green on GitHub
-  (PR #9).
-- Implementation review: three external rounds (REVISE, REVISE, then
-  APPROVE); technical approval `64a2b1d`.
-- Functional review: round 1 checklist `f1727fe`; no findings were
-  written; the user accepted the milestone on 2026-10-07.
+  (PR #10).
+- Implementation review: revision 1 local REVISE (one important, four
+  optional findings, all fixed); revision 2 local APPROVE, manual REVISE
+  (CI evidence only), then round 3 local and manual APPROVE; technical
+  approval `2cfcad3`.
+- Functional review: round 1 checklist `80f9cc3`; no findings were
+  written; the user accepted the milestone on 2026-10-09.
 
 Carried forward (not blockers):
-- **The 94 % aim.** More real receipts first (the set has 19 distinct
-  receipts, 3 held out, against the plan's 20 and 5; the roadmap's 30),
-  then, if the local route stays short, the opt-in "enhanced reading"
-  with the user's own AI key (the user's decision; it changes a guiding
-  principle).
-- **The phone reading times** (P13) were not timed, the user's decision
-  (2026-10-04); the reading was found fast on the iPhone 13.
-- **The CP6A iPhone checks** (Lockdown Mode on and off for the site,
-  checklist flows 8–9) were deferred by the user on 2026-10-05; no
-  result for them is recorded here. The behaviour is covered by the
-  headless-Brave runs with WebAssembly removed.
-- Remembering the user's corrections on the device (roadmap: Future).
-- Receipts from other countries: prefer general parser rules; revisit
-  now that M2.5 is done.
-- Not in M2.5: cropping and perspective correction, handwriting, editing
-  a read line's text in "Review lines", offline caching of the reader
-  (M7, after the M3 renumbering).
+- **The literal-text guard's remaining forms** (R2-O1): a ternary or a
+  template with substitutions in a label attribute, a parenthesised or
+  `as` literal, and a kit `label` prop still pass it; nothing in `src/`
+  uses them today. Harden it when M4 adds screens.
+- A Ctrl/⌘-click on a split step link leaves a harmless focus request
+  pending (R3-O2); skip `onSelect` for modified clicks if it gains other
+  uses.
+- Recent splits, the running "so far" total and a segmented Tabs
+  component appear on the design canvas for later milestones (M4 on).
+- **The M2.5 iPhone checks** (Lockdown Mode on and off for the site)
+  are still not run; suggest them at the next real-phone testing (M7,
+  the PWA and deployment).
+- From M2.5: the 94 % reading aim (more real receipts, then perhaps the
+  opt-in "enhanced reading"), remembering the user's corrections, and
+  receipts from other countries.
 
 ## Current blockers
 
@@ -336,130 +77,13 @@ None.
 
 ## Active plan
 
-`docs/milestones/milestone-3-PLAN.md` (revision 5). M2.5's plan is archived at
-`docs/milestones/completed/milestone-2-5-PLAN.md` (M0's, M1's, M2's and
-M2's remediation child's are in the same folder).
+None. M3's plan is archived at
+`docs/milestones/completed/milestone-3-PLAN.md` (M0's, M1's, M2's,
+M2's remediation child's and M2.5's are in the same folder).
 
 ## Functional review checklist
 
-M3, round 1 (implementation revision 2, technical approval `2cfcad3`).
-Write each finding, with the flow number, to
-`.ai-review/milestone-3/feedback/FUNCTIONAL_REVIEW.md`. M3 changes how
-Settle looks and speaks, not what it computes: any change in a split's
-amounts, or a lost bill, is a finding.
-
-### Setup
-
-1. `npm --prefix app ci`, then `npm --prefix app run build`.
-2. Desktop: `npm --prefix app run preview` and open the address it
-   prints. Phone: `npm --prefix app run preview -- --host`, then open the
-   `Network:` address on the phone, on the same Wi-Fi.
-3. For flow 1, keep the bill you already have from M2.5 if there is one
-   (don't clear the site's data first). Clear it after flow 1 if you
-   want to start fresh.
-4. Optional, flow 12: `npm --prefix app run dev` for the component
-   gallery at `/_kit`.
-
-### Test data
-
-- Committed receipt samples in
-  `app/src/features/receipt/fixtures/browser/` (`sample-1.jpg`,
-  `sample-12.jpg`, `sample-9.pdf`), or any receipt of your own.
-- A small typed bill: three people, four items, one shared by everyone,
-  one service charge or tip.
-
-### Flows and expected results
-
-1. **Existing data kept.** Open the app with the bill saved before M3.
-   *Expected:* Home shows "Continue your bill"; it opens the split on
-   Who had what with the same people, items, amounts and result as
-   before. Theme and Region settings are as you left them.
-2. **The shell, phone.** At phone width (or under 640 px), look at Home,
-   Split, Household and Settings. *Expected:* a bottom tab bar with
-   Split, Household and Settings, the current one marked; the Settle
-   wordmark goes to Home. Nothing scrolls sideways at 360 px. Household
-   says it is coming in M4. `/finances` lands on Household.
-3. **The shell, desktop.** From 640 px: *Expected:* the destinations are
-   in the header instead of a tab bar; the theme toggle is in the header
-   and stays in step with Settings → Theme.
-4. **Split in three steps, scanning.** New bill → Receipt → scan
-   `sample-1.jpg`. *Expected:* after reading, it moves to Who had what
-   with the Receipt check first and focused; the items are filled in
-   and the check says whether they match. "See the split" (phone) shows
-   The split. The address bar shows `?step=receipt`, `items`, `split`;
-   Back and Forward walk the steps, and a reload keeps the step and
-   everything typed.
-5. **Split in three steps, typing.** New bill (confirm) → "Type it in".
-   *Expected:* Who had what with People and Items; enter the typed test
-   bill. Going between steps loses nothing. "New bill" asks first, and
-   after it Back doesn't return to the old bill's step.
-6. **Person-first assignment.** On Who had what, choose a person under
-   "Assign to", then tap items. *Expected:* each tapped item shows that
-   person's coloured initial, and tapping again removes it. Choose
-   another person and repeat. "Everyone" on an item gives it to all, and
-   is then disabled. Edit opens the full editor for the item (name,
-   quantity, price, sharers); its toggles agree with the row's. The split
-   is right to the cent.
-7. **Beside layout.** At 1024 px or wider, on Who had what. *Expected:*
-   The split shows beside the items and updates as you assign; there is
-   no "See the split" button. Narrow the window below 1024 px: it goes
-   back to one column on the same step, nothing lost.
-8. **Errors lead back.** Leave an item without a price or sharer, go to
-   The split. *Expected:* the problem is listed with a link; the link
-   goes back to Who had what and puts the cursor in that field.
-9. **Portuguese.** Settings → Language → Português. *Expected:* every
-   screen is in European Portuguese at once, including the tabs (Dividir,
-   Casa, Definições), the steps (Talão, Quem consumiu o quê, A divisão),
-   buttons, hints, validation messages, the Receipt check and its
-   notices, "Review lines", and the confirmation for "Nova conta". Read
-   it as a native speaker: note any wording that is wrong, Brazilian,
-   awkward or inconsistent (e.g. tu/você vs the impersonal form, "conta"
-   vs "talão"). Plurals read right with 1 and with 2 or more (people,
-   items). No English left anywhere.
-10. **Language is separate from Region.** In Portuguese, set Region to
-    English (UK) and GBP, then back. *Expected:* only number and money
-    formats change, never the words; switching language never changes
-    amounts. "System" follows the browser's language (a pt browser gets
-    Portuguese, anything other than pt or en gets English). A reload
-    keeps the choice.
-11. **Stand-in item in both languages.** In English, scan a receipt
-    whose total the items don't reach (or add a line by hand, then
-    "Add the difference"). *Expected:* an item "Not read from the
-    receipt" appears. Switch to Portuguese: the existing item keeps its
-    English name, and the Receipt check still treats it as the stand-in.
-    A new difference added in Portuguese gets the Portuguese name.
-12. **Look and feel, both themes.** On Home, Split (all three steps),
-    Settings and Household, in light and dark, at phone and desktop
-    width. *Expected:* it matches the design canvas: slate and rust, one
-    accent per screen, the three fonts (none blocked or substituted),
-    icons not emoji, negative amounts with a true minus sign, and a
-    visible focus ring when you Tab through each screen. Optional:
-    `/_kit` under `npm run dev` shows every kit component; it doesn't
-    exist in the built app (preview).
-13. **Keyboard and screen reader (spot check).** Tab through the split
-    steps. *Expected:* a step change focuses its heading; on Who had what
-    the person picker works with the arrow keys and each item row
-    announces whether the chosen person has it.
-14. **No outside requests.** In the browser's network panel, load each
-    page and scan once. *Expected:* every request is to the app's own
-    address (fonts included).
-
-### Known limitations (not findings for this milestone)
-
-- Households, members, the expense ledger and balances are M4 to M6;
-  the Household page is a placeholder.
-- Recent splits and the running "so far" total on the canvas come with
-  later milestones; there is no segmented Tabs component yet (M4).
-- An item with an invalid quantity or price shows "—" as its line
-  total, as before.
-- The field border is a light 1.6:1 line by design; every field has a
-  visible label.
-- No new logo or app icon (M11); no offline caching or deployment.
-- Only English and European Portuguese; Brazilian Portuguese browsers
-  get the European text.
-- Item names read from receipts are never translated.
-- The M2.5 iPhone Lockdown Mode checks stay deferred to the next
-  real-phone testing (M6).
+None. M3's round-1 checklist is in commit `80f9cc3`.
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is

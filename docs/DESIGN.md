@@ -1,7 +1,7 @@
 # Settle's design system
 
 How Settle looks, reads and behaves, and how to check new UI against it.
-It was set in M3 (Design foundations, `docs/milestones/milestone-3-PLAN.md`,
+It was set in M3 (Design foundations, `docs/milestones/completed/milestone-3-PLAN.md`,
 decisions S1 to S14) and every later milestone builds on it. The visual
 reference is the design canvas, a private artifact
 (`https://claude.ai/artifact/YLBvTe9jnLx1WqUzmty6wG`): the foundations

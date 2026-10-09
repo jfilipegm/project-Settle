@@ -9,19 +9,18 @@ This is a living document. Milestones after the current one are a
 direction, not a commitment. They get re-ordered, merged or dropped as we
 learn.
 
-Last updated: 2026-10-08 (M3 Design foundations added after M2.5, and
-every later milestone moved down one; M2.5 complete on 2026-10-07; M2 complete and M2.5 added for
+Last updated: 2026-10-09 (M3 complete; M3 Design foundations added
+after M2.5, and every later milestone moved down one, on 2026-10-08; M2.5 complete on 2026-10-07; M2 complete and M2.5 added for
 receipt-reading accuracy on 2026-09-30; restructured around the free-first product strategy on
 2026-09-28, see [Roadmap strategy](#roadmap-strategy))
 
 ## Current goal
 
-> **Phase 1: finish the free, local-first core.** The current milestone
-> is **M3 — Design foundations**: one design system and the whole
-> interface in English and European Portuguese, before the household
-> screens multiply. Next is **M4 — Households, members and the expense
-> ledger**, the start of the shared-household core: households, an
-> expense ledger, balances and settling up (M4–M5).
+> **Phase 1: finish the free, local-first core.** The next milestone is
+> **M4 — Households, members and the expense ledger**, the start of the
+> shared-household core: households, an expense ledger, balances and
+> settling up (M4–M5), built on M3's design system and in English and
+> European Portuguese.
 
 Nothing in Phases 3–8 is being built yet.
 
@@ -113,7 +112,7 @@ scope. Anything not listed as must-have is negotiable there.
 | M1  | Bill splitter (manual entry)                       | 1 · Free local-first core        | Complete    |
 | M2  | Receipt upload and built-in parsing                | 1 · Free local-first core        | Complete    |
 | M2.5| Accurate receipt reading                           | 1 · Free local-first core        | Complete    |
-| M3  | Design foundations                                 | 1 · Free local-first core        | In progress |
+| M3  | Design foundations                                 | 1 · Free local-first core        | Complete    |
 | M4  | Households, members and the expense ledger         | 1 · Free local-first core        | Not started |
 | M5  | Balances and settling up                           | 1 · Free local-first core        | Not started |
 | M6  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
@@ -403,8 +402,14 @@ images (M4's "Useful"), households (M4).
 
 ## M3 — Design foundations
 
-**Status:** In progress (plan approved 2026-10-08,
-`docs/milestones/milestone-3-PLAN.md`).
+**Status:** Complete (accepted 2026-10-09; PR #10). Plan archived at
+`docs/milestones/completed/milestone-3-PLAN.md`. Delivered: the slate/rust
+tokens in both themes with self-hosted fonts and icons, the component
+kit, the new shell, the split in three steps with person-first
+assignment, and the whole interface in English and European Portuguese
+(`docs/DESIGN.md`, ADR 0004). Carried forward: hardening the literal-text
+guard's remaining forms, and the canvas's recent splits, running total
+and Tabs component for M4 on.
 
 **Objective:** give Settle one coherent, deliberate design before the
 household features multiply the screens: a design system in code and in
