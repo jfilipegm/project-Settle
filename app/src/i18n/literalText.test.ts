@@ -35,6 +35,7 @@ const ALLOWED = new Map([
     'The OCR worker failed',
     'a PaddleFailure detail for developers, never shown',
   ],
+  ['VersionError', 'a DOMException name compared in code (data/db.ts)'],
   ['Enter', 'a KeyboardEvent.key name compared in code'],
   ['Escape', 'a KeyboardEvent.key name compared in code'],
   ['ArrowDown', 'a KeyboardEvent.key name compared in code'],

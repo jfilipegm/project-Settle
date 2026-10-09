@@ -1,0 +1,152 @@
+{
+  "_comment": "Raw records exactly as database version 1 writes them (M4 plan, H2). Frozen: every later schema change must still read these back equal.",
+  "households": [
+    {
+      "v": 1,
+      "id": "h1",
+      "name": "Rua das Flores 12",
+      "createdAt": "2026-10-01T10:00:00.000Z",
+      "updatedAt": "2026-10-01T10:00:00.000Z"
+    },
+    {
+      "v": 1,
+      "id": "h2",
+      "name": "Algarve 2026",
+      "createdAt": "2026-07-01T10:00:00.000Z",
+      "updatedAt": "2026-09-01T10:00:00.000Z",
+      "archivedAt": "2026-09-01T10:00:00.000Z"
+    }
+  ],
+  "members": [
+    {
+      "v": 1,
+      "id": "ana",
+      "householdId": "h1",
+      "name": "Ana",
+      "position": 0,
+      "joinedOn": "2026-01-01"
+    },
+    {
+      "v": 1,
+      "id": "marta",
+      "householdId": "h1",
+      "name": "Marta",
+      "position": 1,
+      "joinedOn": "2026-01-01"
+    },
+    {
+      "v": 1,
+      "id": "joao",
+      "householdId": "h1",
+      "name": "João",
+      "position": 2,
+      "joinedOn": "2026-01-01",
+      "leftOn": "2026-09-30"
+    },
+    {
+      "v": 1,
+      "id": "rui",
+      "householdId": "h2",
+      "name": "Rui",
+      "position": 0,
+      "joinedOn": "2026-07-01"
+    }
+  ],
+  "expenses": [
+    {
+      "v": 1,
+      "id": "e1",
+      "householdId": "h1",
+      "description": "Electricity, September",
+      "date": "2026-10-02",
+      "category": "utilities",
+      "payerId": "marta",
+      "split": {
+        "kind": "equal",
+        "amount": 8640,
+        "memberIds": ["ana", "marta", "joao"]
+      },
+      "createdAt": "2026-10-02T09:00:00.000Z",
+      "updatedAt": "2026-10-02T09:00:00.000Z"
+    },
+    {
+      "v": 1,
+      "id": "e2",
+      "householdId": "h1",
+      "description": "Takeaway",
+      "date": "2026-10-03",
+      "category": "eatingOut",
+      "payerId": "joao",
+      "split": {
+        "kind": "percent",
+        "amount": 4290,
+        "percents": [
+          { "memberId": "ana", "ratio": { "numerator": 50, "denominator": 1 } },
+          {
+            "memberId": "marta",
+            "ratio": { "numerator": 50, "denominator": 1 }
+          }
+        ]
+      },
+      "createdAt": "2026-10-03T21:00:00.000Z",
+      "updatedAt": "2026-10-04T08:00:00.000Z"
+    },
+    {
+      "v": 1,
+      "id": "e3",
+      "householdId": "h1",
+      "description": "Continente",
+      "date": "2026-10-05",
+      "category": "groceries",
+      "payerId": "ana",
+      "split": {
+        "kind": "itemised",
+        "members": [
+          { "personId": "p1", "memberId": "ana" },
+          { "personId": "p2", "memberId": "marta" }
+        ],
+        "bill": {
+          "people": [
+            { "id": "p1", "name": "Ana" },
+            { "id": "p2", "name": "Marta" }
+          ],
+          "items": [
+            {
+              "id": "i1",
+              "name": "Leite",
+              "quantity": { "numerator": 2, "denominator": 1 },
+              "unitPrice": 89,
+              "assignees": [
+                { "personId": "p1", "weight": 1 },
+                { "personId": "p2", "weight": 1 }
+              ]
+            },
+            {
+              "id": "i2",
+              "name": "Café",
+              "quantity": { "numerator": 1, "denominator": 1 },
+              "unitPrice": 449,
+              "assignees": [{ "personId": "p2", "weight": 1 }]
+            }
+          ],
+          "tax": { "kind": "amount", "value": 0 },
+          "taxMode": "proportional",
+          "tip": { "kind": "amount", "value": 0 },
+          "tipMode": "proportional",
+          "discount": { "kind": "amount", "value": 0 },
+          "payerId": "p1"
+        }
+      },
+      "receipt": {
+        "merchant": "Continente",
+        "merchantTaxId": "502011475",
+        "date": "2026-10-05",
+        "total": 627,
+        "totalSource": "qr"
+      },
+      "receiptKey": "qr:502011475:JFX5JJ7K-123",
+      "createdAt": "2026-10-05T18:00:00.000Z",
+      "updatedAt": "2026-10-05T18:00:00.000Z"
+    }
+  ]
+}

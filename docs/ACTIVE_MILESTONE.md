@@ -2,20 +2,50 @@
 
 ## Milestone
 
-None active. The last milestone, M3 — Design foundations (work item
-`milestone-3`), is `MILESTONE_COMPLETE`, accepted on 2026-10-09.
+**M4 — Households, members and the expense ledger** (work item
+`milestone-4`). Plan revision 4, `docs/milestones/milestone-4-PLAN.md`,
+approved on 2026-10-09 (local and manual external plan reviews both
+APPROVE; approval commit `ee0225d`), on `feature/milestone-4`, PR #12.
+Phase `IMPLEMENTING`.
 
 ## Next action
 
-Plan **M4 — Households, members and the expense ledger**
-(`docs/ROADMAP.md`) with `/milestone-plan`: turn one-off bills into a
-household's running expense history, built on M3's design system and in
-both languages.
+Implement the remaining checkpoints back to back (the user's choice:
+reviews only after the last one), then the self-review and the
+implementation reviews.
 
-Before planning, and after the user merges PR #10 (M3) into `master`
-(see CLAUDE.md, "Git and GitHub workflow"): run
-`git switch master && git pull && git switch -c feature/milestone-4`.
-After the first commit, open the M4 PR.
+## Progress
+
+- **CP1 — Data foundations: complete.**
+  - `features/household/model.ts`: the household, member and expense
+    model (H4), categories (H8), dates with "today" passed in (R2-O2),
+    `validateExpense` and `expenseContentErrors`, `referencedMemberIds`.
+  - `features/household/shares.ts`: `expenseShares` and `expenseAmount`
+    (H5). Quick splits allocate once with the leftover-cent tie-break
+    rotated by an FNV-1a hash of the expense id; itemised ones read
+    `computeSplit`. Tests: M1's exactness cases and a 2000-case seeded
+    property test.
+  - `data/db.ts`: the `settle` database, version 1, the migration runner
+    (a failing step aborts the upgrade), `versionchange`, a newer database
+    (`StorageOutdatedError`), storage unavailable (H2, H3).
+  - `data/records.ts`: one reader per store; a rejected record is
+    counted, never deleted (H1). `readBill` is now exported from
+    `draft.ts` for the itemised split; its behaviour is unchanged.
+  - `data/repository.ts`: one transaction per action. Saving an expense
+    re-reads the household and every referenced member inside its own
+    transaction (M-I-3). Members added by the save dialog are written in
+    the same transaction (R3-O1). A member delete scans the raw records
+    and fails closed on anything it can't read, including a cursor
+    failure (M-I-4 and the manual review's implementation note).
+  - Tests (`fake-indexeddb` 6.2.5, dev only, H17): the migration tests
+    with the frozen `data/fixtures/v1.json` and the value-preserving
+    test-only version 2 (R2-O1), and the repository and integrity tests,
+    including two connections racing a save against a delete.
+  - ADR 0005 drafted (the local ledger store).
+  - The literal-text guard allows `VersionError`, a DOM name compared in
+    code; error classes carry no prose.
+  - Checks: the new suites, the guard and `draft.test.ts` (189 passed),
+    `tsc -b`, `eslint`, `prettier`.
 
 ## Last completed: M3 — Design foundations
 
@@ -77,9 +107,8 @@ None.
 
 ## Active plan
 
-None. M3's plan is archived at
-`docs/milestones/completed/milestone-3-PLAN.md` (M0's, M1's, M2's,
-M2's remediation child's and M2.5's are in the same folder).
+`docs/milestones/milestone-4-PLAN.md` (revision 4). M3's plan is
+archived at `docs/milestones/completed/milestone-3-PLAN.md`.
 
 ## Functional review checklist
 
