@@ -3218,7 +3218,7 @@
       "registry_path": "docs/ai-workflow/registry/milestone-3-registry.json",
       "mapping_path": "docs/ai-workflow/requirements/milestone-3-mapping.json",
       "governing_workflow_version": "2.2",
-      "phase": "AWAITING_LOCAL_IMPLEMENTATION_REVIEW",
+      "phase": "APPLYING_REVIEW_FEEDBACK",
       "plan_revision": 5,
       "implementation_revision": 2,
       "functional_review_round": null,
@@ -3303,8 +3303,8 @@
       },
       "functional_acceptance_status": null,
       "blocking_decisions": [],
-      "state_revision": 36,
-      "last_transition": "2026-10-09T06:41:21Z",
+      "state_revision": 38,
+      "last_transition": "2026-10-09T19:42:22Z",
       "feedback_layout": "scoped",
       "plan_review_binding": {
         "status": "BOUND",
@@ -3323,6 +3323,16 @@
           "bundle_id": "229fcb89feb176ac5c1ca1affa8b3c71f9b144a8f445f7fb26cb11b4ac994613",
           "plan_revision": 5
         }
+      },
+      "implementation_review_stages": {
+        "review_content_id": "dbf4fb99ae2df72e12617b3e2f56575eb120291b02b5f8e2db4a62ef6dda5547",
+        "LOCAL_MODEL_IMPLEMENTATION_REVIEW": {
+          "bundle_id": "21c8c1cade216b14d444eb6e587bc6e8c69efc465391eece9f8efc97aa6e6d50",
+          "verdict": "APPROVE",
+          "round": 2,
+          "completed_at": "2026-10-09T06:47:52Z"
+        },
+        "MANUAL_EXTERNAL_IMPLEMENTATION_REVIEW": null
       }
     }
   }
