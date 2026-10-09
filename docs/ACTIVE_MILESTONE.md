@@ -12,8 +12,9 @@ revision 2).
 
 ## Next action
 
-Implementation review round 2: the local review of revision 2
-(`/review-implementation milestone-3`), then the manual external review.
+Implementation review round 3 of revision 2 (same content, CI evidence
+added): the local review (`/review-implementation milestone-3`), then
+the manual external review.
 
 ## Progress
 
@@ -242,6 +243,31 @@ Implementation review round 2: the local review of revision 2
   - Verified: `npm run check` (70 files, 1378 passed, 1 skipped);
     `npm run build` and `check-build.mjs` (unchanged: 343,772 bytes of
     fonts, 131,652 for a first view, no gallery).
+- **Implementation review, round 2** (revision 2). The local review
+  approved. The manual external review asked for changes (REVISE), with
+  one blocking finding and no code defect.
+  - **B-EXT-1** (evidence only): the bundle didn't show completed
+    required CI for the revision-2 code. All four required checks have
+    since passed on `dfb6b55`:
+    - App CI on the push (run 37894899945);
+    - App CI on the pull request (37894905619);
+    - workflow-conformance (37894905562);
+    - pr-title (37894905541).
+    `git diff e7b220a dfb6b55` touches only `docs/ACTIVE_MILESTONE.md`
+    and `WORKFLOW_STATE.json`, and `app/` and `.github/` are identical.
+    So CI tested the reviewed code. Recorded in the bundle's
+    `TEST_RESULTS.md`. No code change.
+  - **O-EXT-1, O-EXT-2**: keep the step and focus regression tests, and
+    keep the migrated suites' assertions intact. Both already hold, so
+    nothing changed.
+  - **R2-O1** (local, optional): some forms still pass the literal-text
+    guard: a ternary or a template with substitutions in a label
+    attribute, a parenthesised or `as` literal, and a kit `label` prop.
+    It also reports `alt=""`. Deferred, because nothing in `src/` uses
+    these forms, and fixing it now would change the reviewed content
+    for an optional finding.
+  - The bundle was regenerated at the same content (same review content
+    ID), and revision 2 is unchanged.
 
 ## Last completed: M2.5 — Accurate receipt reading
 
