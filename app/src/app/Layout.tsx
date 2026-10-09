@@ -4,7 +4,7 @@ import {
   IconSettings,
   type Icon as TablerIcon,
 } from '@tabler/icons-react'
-import { Link, NavLink, Outlet } from 'react-router'
+import { Link, Outlet, useLocation } from 'react-router'
 import { useT } from '../i18n/language.ts'
 import type { MessageKey } from '../i18n/t.ts'
 import { Icon } from '../ui/Icon.tsx'
@@ -16,11 +16,30 @@ const NAV_ITEMS: readonly {
   to: string
   label: MessageKey
   icon: TablerIcon
+  /** The paths it is current on: its own, and below it. */
+  prefixes: readonly string[]
 }[] = [
-  { to: '/split', label: 'nav.split', icon: IconReceipt },
-  { to: '/household', label: 'nav.household', icon: IconHome },
-  { to: '/settings', label: 'nav.settings', icon: IconSettings },
+  { to: '/split', label: 'nav.split', icon: IconReceipt, prefixes: ['/split'] },
+  {
+    to: '/household',
+    label: 'nav.household',
+    icon: IconHome,
+    // `/household` redirects to `/households/…` (M4 plan, H9).
+    prefixes: ['/household', '/households'],
+  },
+  {
+    to: '/settings',
+    label: 'nav.settings',
+    icon: IconSettings,
+    prefixes: ['/settings'],
+  },
 ]
+
+function isCurrent(pathname: string, prefixes: readonly string[]): boolean {
+  return prefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  )
+}
 
 /**
  * The app shell (S8): the header with the wordmark, a link to Home; the
@@ -30,6 +49,7 @@ const NAV_ITEMS: readonly {
  */
 export function Layout() {
   const t = useT()
+  const { pathname } = useLocation()
   return (
     <>
       <a className={styles.skipLink} href="#main">
@@ -44,14 +64,20 @@ export function Layout() {
             <ul className={styles.navList}>
               {NAV_ITEMS.map((item) => (
                 <li key={item.to}>
-                  <NavLink className={styles.navLink} to={item.to}>
+                  <Link
+                    className={styles.navLink}
+                    to={item.to}
+                    aria-current={
+                      isCurrent(pathname, item.prefixes) ? 'page' : undefined
+                    }
+                  >
                     <Icon
                       icon={item.icon}
                       size={24}
                       className={styles.navIcon}
                     />
                     <span>{t(item.label)}</span>
-                  </NavLink>
+                  </Link>
                 </li>
               ))}
             </ul>

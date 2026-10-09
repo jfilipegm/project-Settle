@@ -412,4 +412,122 @@ export const en = {
       enterName: 'Enter a name',
     },
   },
+  // M4: households and members (plan, H7, H9, H13).
+  households: {
+    title: 'Households',
+    intro:
+      'A household keeps what a group shares over time: a flat, a holiday, a club.',
+    empty: 'No households yet',
+    emptyHint:
+      'Create one for the people you share costs with. Everything stays on this device.',
+    new: 'New household',
+    open: 'Open {name}',
+    memberCount: { one: '{count} person', other: '{count} people' },
+    archived: 'Archived',
+    restore: 'Restore',
+    restoreFor: 'Restore {name}',
+    unreadable: {
+      one: '{count} household couldn’t be read. It is kept as it was.',
+      other: '{count} households couldn’t be read. They are kept as they were.',
+    },
+    create: {
+      name: 'Household name',
+      nameHint: 'For example, the street or the trip.',
+      people: 'People',
+      peopleHint: 'You can add more people later.',
+      person: 'Name of person {n}',
+      addPerson: 'Add a person',
+      removePerson: 'Remove person {n}',
+      submit: 'Create household',
+    },
+    cancel: 'Cancel',
+    save: 'Save',
+    switch: '{name}, switch household',
+    tabs: {
+      label: 'Household',
+      overview: 'Overview',
+      expenses: 'Expenses',
+      members: 'Members',
+    },
+    archivedNotice: 'This household is archived.',
+    errors: {
+      nameRequired: 'Give it a name.',
+      nameTooLong: 'Use 60 characters or fewer.',
+      tooManyPeople: 'A household can have up to 20 people at a time.',
+      saveFailed: 'This couldn’t be saved. Try again.',
+    },
+    storage: {
+      unavailableTitle: 'Households can’t be saved here',
+      unavailable:
+        'This browser isn’t letting Settle save households, often in a private window or with site data blocked. Your split still works.',
+      outdated:
+        'Settle was updated in another tab. Reload this page to keep going.',
+      blocked: 'Close Settle’s other tabs to finish updating.',
+      reload: 'Reload',
+      splitLink: 'Split a bill',
+    },
+  },
+
+  members: {
+    title: 'Members',
+    left: 'Left',
+    noneLeft: 'Nobody has left.',
+    joined: 'Joined {date}',
+    leftOn: 'Left {date}',
+    rename: 'Rename',
+    renameFor: 'Rename {name}',
+    renameTitle: 'Rename {name}',
+    name: 'Name',
+    markLeft: 'Mark as left',
+    markLeftFor: 'Mark {name} as left',
+    markLeftTitle: '{name} has left',
+    leftDate: 'Date they left',
+    leftHint: 'They stay on every past expense, with their history.',
+    undoLeaving: 'Undo leaving',
+    undoLeavingFor: 'Undo leaving for {name}',
+    delete: 'Delete',
+    deleteFor: 'Delete {name}',
+    deleteTitle: 'Delete {name}?',
+    deleteBody:
+      '{name} isn’t on any expense, so they can be deleted. This can’t be undone.',
+    inUse:
+      '{name} is on expenses, so they can’t be deleted. Mark them as left instead.',
+    unreadable:
+      'Some expenses in this household couldn’t be read, so this person can’t be deleted. Mark them as left instead.',
+    add: {
+      title: 'Add a person',
+      name: 'Name',
+      joinedOn: 'Joined on',
+      submit: 'Add',
+    },
+    errors: {
+      limit: 'A household can have up to 20 people at a time, and 50 in all.',
+      leftBeforeJoined: 'They can’t leave before they joined.',
+      dateInvalid: 'Enter a date.',
+    },
+    unreadableCount: {
+      one: '{count} member couldn’t be read. It is kept as it was.',
+      other: '{count} members couldn’t be read. They are kept as they were.',
+    },
+    household: {
+      title: 'This household',
+      rename: 'Rename household',
+      archive: 'Archive household',
+      archiveTitle: 'Archive {name}?',
+      archiveBody:
+        'It leaves the list of households, with everything in it kept. You can restore it from Archived.',
+      archiveConfirm: 'Archive',
+    },
+  },
+
+  overview: {
+    noMembers: 'Add the people who share costs',
+    noMembersHint: 'A household needs at least one person before expenses.',
+    toMembers: 'Go to Members',
+    noExpenses: 'No expenses yet',
+  },
+
+  expenses: {
+    title: 'Expenses',
+  },
 } as const

@@ -1,0 +1,20 @@
+/* A labelled checkbox (M4 plan, H14): a 44 px row, the house accent. */
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 2.75rem;
+  cursor: pointer;
+}
+
+.input {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0;
+}
+
+.label {
+  min-width: 0;
+}

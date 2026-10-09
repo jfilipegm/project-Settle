@@ -46,6 +46,38 @@ implementation reviews.
     code; error classes carry no prose.
   - Checks: the new suites, the guard and `draft.test.ts` (189 passed),
     `tsc -b`, `eslint`, `prettier`.
+- **CP2 — Households and members: complete.**
+  - Routes (H9): `/household` opens the household used last
+    (`settle.household`, an id only) or the list. `/households` is the
+    list, with "New household" (a dialog: name, then people), Archived and
+    Restore. `/households/:hid` holds the tabs Overview, Expenses and
+    Members. `/finances` still lands on the Household tab, and an unknown
+    id shows Not found. The tab bar marks Household on every
+    `/households/…` page (`Layout.tsx` now sets `aria-current` itself).
+  - `HouseholdDataProvider` (around the shell) opens the database lazily,
+    on the first household page, so the split never touches IndexedDB. It
+    has the unavailable, outdated and blocked states (H2, H3) and a
+    `BroadcastChannel` refresh. `requestPersistentStorage()` runs when a
+    household is created.
+  - Members (H7): add (with the joining date), rename, mark as left
+    (with the date, never before joining), undo leaving, delete (refused
+    with the reason, and "Mark as left" offered, when the repository
+    refuses). The household's rename and archive are here too.
+  - The kit (H14): `Tabs`, `Dialog` (native `<dialog>`, falling back to
+    the `open` attribute where `showModal` is missing, as in jsdom) and
+    `Checkbox`, each tested and in the `/_kit` gallery.
+  - Both languages: the new catalogue entries in `en.ts` and `pt.ts`.
+    Portuguese uses neutral wording for a person ("esta pessoa"). The
+    English sentinels moved to `test/portuguese.ts`, a harness change,
+    with M4's words added.
+  - Tests: the household pages end to end on fake-indexeddb (create, the
+    redirect, Not found, archive and restore, the member actions, the
+    refusal of an in-use member, the empty overview, Portuguese), and the
+    kit components. The router tests for the old placeholder now check
+    the storage message jsdom shows (it has no IndexedDB) and the
+    Household tab on `/households/…`.
+  - Design canvas: the household screens and the navigation map are
+    updated in CP6, with the rest of M4's screens.
 
 ## Last completed: M3 — Design foundations
 

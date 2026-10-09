@@ -408,4 +408,125 @@ export const pt: Catalogue = {
       enterName: 'Introduza um nome',
     },
   },
+  households: {
+    title: 'Casas',
+    intro:
+      'Uma casa guarda o que um grupo partilha ao longo do tempo: um apartamento, umas férias, um clube.',
+    empty: 'Ainda não há casas',
+    emptyHint:
+      'Crie uma para as pessoas com quem partilha despesas. Tudo fica neste dispositivo.',
+    new: 'Nova casa',
+    open: 'Abrir {name}',
+    memberCount: { one: '{count} pessoa', other: '{count} pessoas' },
+    archived: 'Arquivadas',
+    restore: 'Restaurar',
+    restoreFor: 'Restaurar {name}',
+    unreadable: {
+      one: 'Não foi possível ler {count} casa. Fica guardada como estava.',
+      other:
+        'Não foi possível ler {count} casas. Ficam guardadas como estavam.',
+    },
+    create: {
+      name: 'Nome da casa',
+      nameHint: 'Por exemplo, a rua ou a viagem.',
+      people: 'Pessoas',
+      peopleHint: 'Pode adicionar mais pessoas depois.',
+      person: 'Nome da pessoa {n}',
+      addPerson: 'Adicionar uma pessoa',
+      removePerson: 'Remover a pessoa {n}',
+      submit: 'Criar casa',
+    },
+    cancel: 'Cancelar',
+    save: 'Guardar',
+    switch: '{name}, mudar de casa',
+    tabs: {
+      label: 'Casa',
+      overview: 'Resumo',
+      expenses: 'Despesas',
+      members: 'Membros',
+    },
+    archivedNotice: 'Esta casa está arquivada.',
+    errors: {
+      nameRequired: 'Dê-lhe um nome.',
+      nameTooLong: 'Use 60 caracteres ou menos.',
+      tooManyPeople: 'Uma casa pode ter até 20 pessoas de cada vez.',
+      saveFailed: 'Não foi possível guardar. Tente novamente.',
+    },
+    storage: {
+      unavailableTitle: 'Não é possível guardar casas aqui',
+      unavailable:
+        'Este navegador não deixa o Settle guardar casas, muitas vezes numa janela privada ou com os dados do site bloqueados. A divisão continua a funcionar.',
+      outdated:
+        'O Settle foi atualizado noutro separador. Recarregue esta página para continuar.',
+      blocked:
+        'Feche os outros separadores do Settle para terminar a atualização.',
+      reload: 'Recarregar',
+      splitLink: 'Dividir uma conta',
+    },
+  },
+
+  members: {
+    title: 'Membros',
+    left: 'Saíram',
+    noneLeft: 'Ninguém saiu.',
+    joined: 'Entrou a {date}',
+    leftOn: 'Saiu a {date}',
+    rename: 'Mudar o nome',
+    renameFor: 'Mudar o nome de {name}',
+    renameTitle: 'Mudar o nome de {name}',
+    name: 'Nome',
+    markLeft: 'Marcar saída',
+    markLeftFor: 'Marcar a saída de {name}',
+    markLeftTitle: '{name} saiu',
+    leftDate: 'Data de saída',
+    leftHint: 'Continua em todas as despesas passadas, com o seu histórico.',
+    undoLeaving: 'Anular a saída',
+    undoLeavingFor: 'Anular a saída de {name}',
+    delete: 'Eliminar',
+    deleteFor: 'Eliminar {name}',
+    deleteTitle: 'Eliminar {name}?',
+    deleteBody:
+      'Como {name} não está em nenhuma despesa, pode eliminar esta pessoa. Isto não pode ser anulado.',
+    inUse:
+      'Como {name} está em despesas, não é possível eliminar esta pessoa. Marque a saída em vez disso.',
+    unreadable:
+      'Não foi possível ler algumas despesas desta casa, por isso esta pessoa não pode ser eliminada. Marque a saída em vez disso.',
+    add: {
+      title: 'Adicionar uma pessoa',
+      name: 'Nome',
+      joinedOn: 'Entrou a',
+      submit: 'Adicionar',
+    },
+    errors: {
+      limit: 'Uma casa pode ter até 20 pessoas de cada vez, e 50 no total.',
+      leftBeforeJoined: 'Não pode sair antes de ter entrado.',
+      dateInvalid: 'Introduza uma data.',
+    },
+    unreadableCount: {
+      one: 'Não foi possível ler {count} membro. Fica guardado como estava.',
+      other:
+        'Não foi possível ler {count} membros. Ficam guardados como estavam.',
+    },
+    household: {
+      title: 'Esta casa',
+      rename: 'Mudar o nome da casa',
+      archive: 'Arquivar a casa',
+      archiveTitle: 'Arquivar {name}?',
+      archiveBody:
+        'Sai da lista de casas, com tudo o que tem guardado. Pode restaurá-la em Arquivadas.',
+      archiveConfirm: 'Arquivar',
+    },
+  },
+
+  overview: {
+    noMembers: 'Adicione as pessoas que partilham as despesas',
+    noMembersHint:
+      'Uma casa precisa de pelo menos uma pessoa antes das despesas.',
+    toMembers: 'Ir para Membros',
+    noExpenses: 'Ainda não há despesas',
+  },
+
+  expenses: {
+    title: 'Despesas',
+  },
 }

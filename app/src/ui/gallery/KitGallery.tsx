@@ -18,6 +18,9 @@ import { Icon } from '../Icon.tsx'
 import { PersonBadge } from '../PersonBadge.tsx'
 import { StatusChip } from '../StatusChip.tsx'
 import { Steps } from '../Steps.tsx'
+import { Checkbox } from '../Checkbox.tsx'
+import { Dialog } from '../Dialog.tsx'
+import { Tabs } from '../Tabs.tsx'
 import styles from './KitGallery.module.css'
 
 const PEOPLE = ['Ana', 'Bruno', 'Carla', 'Duarte', 'Eva', 'Filipa', 'Gil', '']
@@ -26,6 +29,8 @@ export default function KitGallery() {
   const { region } = useRegion()
   const { language, setSetting, t } = useLanguage()
   const [theme, setTheme] = useState<ThemeMode>('light')
+  const [checked, setChecked] = useState(true)
+  const [dialogOpen, setDialogOpen] = useState(false)
   const switchTheme = (mode: ThemeMode) => {
     applyThemeMode(mode)
     setTheme(mode)
@@ -163,6 +168,56 @@ export default function KitGallery() {
             },
           ]}
         />
+      </Card>
+
+      <Card title="Tabs">
+        <Tabs
+          label={t('households.tabs.label')}
+          current="expenses"
+          tabs={[
+            {
+              id: 'overview',
+              label: t('households.tabs.overview'),
+              to: '?tab=overview',
+            },
+            {
+              id: 'expenses',
+              label: t('households.tabs.expenses'),
+              to: '?tab=expenses',
+            },
+            {
+              id: 'members',
+              label: t('households.tabs.members'),
+              to: '?tab=members',
+            },
+          ]}
+        />
+      </Card>
+
+      <Card title="Checkbox">
+        <Checkbox
+          label={<PersonBadge person={{ id: 'a', name: 'Ana' }} index={0} />}
+          checked={checked}
+          onChange={(event) => setChecked(event.target.checked)}
+        />
+      </Card>
+
+      <Card title="Dialog">
+        <Button onClick={() => setDialogOpen(true)}>
+          {t('members.rename')}
+        </Button>
+        <Dialog
+          open={dialogOpen}
+          title={t('members.renameTitle', { name: 'Ana' })}
+          onClose={() => setDialogOpen(false)}
+        >
+          <TextField label={t('members.name')} defaultValue="Ana" />
+          <p>
+            <Button variant="primary" onClick={() => setDialogOpen(false)}>
+              {t('households.save')}
+            </Button>
+          </p>
+        </Dialog>
       </Card>
 
       <Card title="Icon">
