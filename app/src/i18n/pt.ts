@@ -544,6 +544,22 @@ export const pt: Catalogue = {
 
   expenses: {
     title: 'Despesas',
+    filters: 'Filtros',
+    member: 'Pessoa',
+    allMembers: 'Todos',
+    category: 'Categoria',
+    allCategories: 'Todas as categorias',
+    search: 'Pesquisar',
+    searchHint: 'O que foi, a loja ou um artigo.',
+    count: { one: '{count} despesa', other: '{count} despesas' },
+    nothingMatches: 'Nenhuma despesa corresponde a estes filtros.',
+    clear: 'Limpar os filtros',
+    add: 'Adicionar despesa',
+    unreadable: {
+      one: 'Não foi possível ler {count} despesa. Fica guardada como estava.',
+      other:
+        'Não foi possível ler {count} despesas. Ficam guardadas como estavam.',
+    },
     itemCount: { one: '({count} artigo)', other: '({count} artigos)' },
   },
 

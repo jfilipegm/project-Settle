@@ -167,6 +167,30 @@ implementation reviews.
 
     The existing split suites pass unchanged (208 tests), and so do the
     receipt suites (651).
+- **CP5 — History: complete.**
+  - `features/household/search.ts`:
+    - member: the payer, or anyone sharing the expense;
+    - category;
+    - search: every word of the query, case- and accent-insensitive
+      (`foldText`), over the description, the receipt's merchant, item
+      names, and the category's name in the current language;
+    - `groupByMonth`.
+  - The Expenses tab (H12):
+    - the filters (Person, Category, Search) live in the URL
+      (`?member=&category=&q=`, written with `replace`);
+    - month groups, newest first, each with its total;
+    - the result count;
+    - "No expense matches these filters" with "Clear the filters";
+    - the empty state;
+    - the unreadable count.
+  - Tests:
+    - the rules on their own, including Portuguese accents and the
+      category's Portuguese name;
+    - the page: order and grouping, each filter, the URL on a reload, the
+      search;
+    - 1000 expenses render and filter within the budget: about 2 s in
+      jsdom, against 15 s and 5 s;
+    - the Expenses tab in Portuguese.
 
 ## Last completed: M3 — Design foundations
 

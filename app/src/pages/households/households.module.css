@@ -227,3 +227,34 @@
 .choiceTitle {
   font-weight: 700;
 }
+
+.filters {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.monthGroup {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.monthHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-19);
+}
+
+@media (min-width: 640px) {
+  .filters {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+
+  .filters > :last-child {
+    grid-column: 1 / -1;
+  }
+}

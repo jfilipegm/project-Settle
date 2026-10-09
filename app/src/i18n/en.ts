@@ -545,6 +545,21 @@ export const en = {
 
   expenses: {
     title: 'Expenses',
+    filters: 'Filters',
+    member: 'Person',
+    allMembers: 'Everyone',
+    category: 'Category',
+    allCategories: 'All categories',
+    search: 'Search',
+    searchHint: 'What it was, the shop or an item.',
+    count: { one: '{count} expense', other: '{count} expenses' },
+    nothingMatches: 'No expense matches these filters.',
+    clear: 'Clear the filters',
+    add: 'Add expense',
+    unreadable: {
+      one: '{count} expense couldn’t be read. It is kept as it was.',
+      other: '{count} expenses couldn’t be read. They are kept as they were.',
+    },
     itemCount: { one: '({count} item)', other: '({count} items)' },
   },
 

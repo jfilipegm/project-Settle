@@ -240,20 +240,22 @@ describe('the household pages in Portuguese', () => {
     localStorage.setItem(LANGUAGE_STORAGE_KEY, 'pt')
   })
 
-  it.each(['/households', '/households/h1', '/households/h1/members'])(
-    '%s shows no English',
-    async (path) => {
-      await seed()
-      const { container } = renderApp(path)
-      await screen.findByRole('navigation', { name: 'Principal' })
-      await waitFor(() => expect(container.querySelector('h1')).not.toBeNull())
-      // Wait for the data to load.
-      await waitFor(() =>
-        expect(shownText(container)).toMatch(/Rua das Flores 12/),
-      )
-      expect(english(shownText(container))).toEqual([])
-    },
-  )
+  it.each([
+    '/households',
+    '/households/h1',
+    '/households/h1/members',
+    '/households/h1/expenses',
+  ])('%s shows no English', async (path) => {
+    await seed()
+    const { container } = renderApp(path)
+    await screen.findByRole('navigation', { name: 'Principal' })
+    await waitFor(() => expect(container.querySelector('h1')).not.toBeNull())
+    // Wait for the data to load.
+    await waitFor(() =>
+      expect(shownText(container)).toMatch(/Rua das Flores 12/),
+    )
+    expect(english(shownText(container))).toEqual([])
+  })
 
   it('labels the household tabs exactly', async () => {
     await seed()
