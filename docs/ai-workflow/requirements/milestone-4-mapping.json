@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-4",
+  "requirements": {
+    "REQ-1": {
+      "description": "Households (generic groups): create, rename, archive and unarchive; several per device, with the last one used reopened",
+      "checkpoint_ids": [
+        "CP2"
+      ]
+    },
+    "REQ-2": {
+      "description": "Members: add, rename, mark as left with the date and rejoin; a member who left keeps their history and still appears in past expenses",
+      "checkpoint_ids": [
+        "CP1",
+        "CP2"
+      ]
+    },
+    "REQ-3": {
+      "description": "Quick expense: description, date, amount, category, payer and a split equally, by shares, by exact amounts or by percentages among chosen members, exact to the cent",
+      "checkpoint_ids": [
+        "CP1",
+        "CP3"
+      ]
+    },
+    "REQ-4": {
+      "description": "Itemised expense: M1's bill splitter, fed by M2's receipt reader, saved to a household with its items, assignments and receipt summary, and editable later",
+      "checkpoint_ids": [
+        "CP4"
+      ]
+    },
+    "REQ-5": {
+      "description": "Someone paid on behalf of others: the payer can be any member, including one who is not part of the split",
+      "checkpoint_ids": [
+        "CP3",
+        "CP4"
+      ]
+    },
+    "REQ-6": {
+      "description": "History: a list per household, newest first, filtered by member and category, with a search",
+      "checkpoint_ids": [
+        "CP5"
+      ]
+    },
+    "REQ-7": {
+      "description": "Corrections: edit or delete any expense; shares and totals are derived from the stored expenses, never stored",
+      "checkpoint_ids": [
+        "CP1",
+        "CP3",
+        "CP4"
+      ]
+    },
+    "REQ-8": {
+      "description": "Local persistence: IndexedDB with a versioned schema and tested migrations, saved on every change, the split draft kept and saveable into the new model",
+      "checkpoint_ids": [
+        "CP1",
+        "CP6"
+      ]
+    },
+    "REQ-9": {
+      "description": "Duplicate-receipt warning: the same fiscal QR document, or the same merchant, date and total, already saved in the household",
+      "checkpoint_ids": [
+        "CP4"
+      ]
+    },
+    "REQ-10": {
+      "description": "Every new screen in English and European Portuguese, on the design system, at every width from 360 px, keyboard and screen-reader usable",
+      "checkpoint_ids": [
+        "CP2",
+        "CP3",
+        "CP4",
+        "CP5",
+        "CP6"
+      ]
+    },
+    "REQ-11": {
+      "description": "Completion: a household with 4 members, 30+ expenses of both kinds, a member who leaves and one who joins and several corrections survives a reload and an app update (a migration test); the split rules are unit-tested with M1's exactness guarantees",
+      "checkpoint_ids": [
+        "CP1",
+        "CP6"
+      ]
+    },
+    "REQ-12": {
+      "description": "Documentation: ADR 0005 (the local data store), DESIGN.md, READMEs, the roadmap and the design canvas updated",
+      "checkpoint_ids": [
+        "CP6"
+      ]
+    }
+  }
+}

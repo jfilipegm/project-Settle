@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "active_work_item_id": null,
+  "active_work_item_id": "milestone-4",
   "work_items": {
     "milestone-0": {
       "work_item_type": "product",
@@ -4089,6 +4089,102 @@
           "completed_at": "2026-10-09T19:56:53Z"
         }
       }
+    },
+    "milestone-4": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-4",
+      "parent_work_item_id": null,
+      "plan_path": "docs/milestones/milestone-4-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-4-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-4-mapping.json",
+      "governing_workflow_version": "2.2",
+      "phase": "IMPLEMENTING",
+      "plan_revision": 4,
+      "implementation_revision": null,
+      "functional_review_round": null,
+      "base_commit": "c71a455f88e004bbeb4cd1da2b995248e5d418b5",
+      "reviewed_implementation_head": null,
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": null,
+      "checkpoints": {},
+      "current_bundle_id": "6f76b198cd22b50ee42a14e64ca4103da5e48482f331e03e224e852e1bc9558d",
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "6f76b198cd22b50ee42a14e64ca4103da5e48482f331e03e224e852e1bc9558d",
+        "approved_review_content_id": "fd61f72a6ab4c24d442b6ea25df7ce07ac5b666f7c70f270cbe92e4724bc282f",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-4-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8a3d3d3618c75cb7effc15b0ac77a0a303a39927"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-4-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6856a2cc1d439900a386441e598a8e32a069b25f"
+          },
+          {
+            "path": "docs/milestones/milestone-4-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "078c9529423aff024daa0b734733703b7e7f3474"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-4 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-10-09T22:31:07Z"
+      },
+      "technical_approval": null,
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "fd61f72a6ab4c24d442b6ea25df7ce07ac5b666f7c70f270cbe92e4724bc282f",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "6f76b198cd22b50ee42a14e64ca4103da5e48482f331e03e224e852e1bc9558d",
+          "verdict": "APPROVE",
+          "round": 4,
+          "completed_at": "2026-10-09T22:25:21Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "6f76b198cd22b50ee42a14e64ca4103da5e48482f331e03e224e852e1bc9558d",
+          "verdict": "APPROVE",
+          "round": 4,
+          "completed_at": "2026-10-09T22:28:53Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 17,
+      "last_transition": "2026-10-09T22:31:07Z",
+      "feedback_layout": "scoped",
+      "plan_review_binding": {
+        "status": "BOUND",
+        "at": "2026-10-09T22:24:26Z",
+        "consumed": {
+          "review_content_id": "0964abae30370f293cb6345179df6b05ca2beb6bcf4fa91367f74f905acb9721",
+          "plan_revision": 3,
+          "legacy": false
+        },
+        "published": {
+          "review_content_id": "fd61f72a6ab4c24d442b6ea25df7ce07ac5b666f7c70f270cbe92e4724bc282f",
+          "plan_revision": 4
+        },
+        "bound": {
+          "review_content_id": "fd61f72a6ab4c24d442b6ea25df7ce07ac5b666f7c70f270cbe92e4724bc282f",
+          "bundle_id": "6f76b198cd22b50ee42a14e64ca4103da5e48482f331e03e224e852e1bc9558d",
+          "plan_revision": 4
+        }
+      },
+      "consumed_plan_review_content_ids": [
+        "0964abae30370f293cb6345179df6b05ca2beb6bcf4fa91367f74f905acb9721",
+        "227d7e50eb94e1c69ca711c187803e992e7fe495260a86a0297250277f234082",
+        "3f6112a9dc32073e3fd84474296ddb078d11f37cffb8c79bfd89e47e152a786b"
+      ]
     }
   }
 }
