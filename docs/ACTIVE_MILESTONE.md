@@ -7,14 +7,14 @@ the user inserted on 2026-10-07; households and every later milestone
 moved down one in `docs/ROADMAP.md`). Plan revision 5,
 `docs/milestones/milestone-3-PLAN.md`, approved on 2026-10-08 (both plan
 reviews APPROVE; approval commit `ced7c3b`), on `feature/milestone-3`,
-PR #10. Phase `AWAITING_LOCAL_IMPLEMENTATION_REVIEW` (implementation
-revision 2).
+PR #10. Phase `AWAITING_FUNCTIONAL_REVIEW` (implementation revision 2,
+technical approval `2cfcad3`).
 
 ## Next action
 
-Implementation review round 3 of revision 2 (same content, CI evidence
-added): the local review (`/review-implementation milestone-3`), then
-the manual external review.
+The user's functional review: the checklist below. Findings go to
+`.ai-review/milestone-3/feedback/FUNCTIONAL_REVIEW.md`, then
+`/apply-functional-review`; once clean, `/accept-milestone`.
 
 ## Progress
 
@@ -342,7 +342,124 @@ M2's remediation child's are in the same folder).
 
 ## Functional review checklist
 
-None. M2.5's round-1 checklist is in commit `f1727fe`.
+M3, round 1 (implementation revision 2, technical approval `2cfcad3`).
+Write each finding, with the flow number, to
+`.ai-review/milestone-3/feedback/FUNCTIONAL_REVIEW.md`. M3 changes how
+Settle looks and speaks, not what it computes: any change in a split's
+amounts, or a lost bill, is a finding.
+
+### Setup
+
+1. `npm --prefix app ci`, then `npm --prefix app run build`.
+2. Desktop: `npm --prefix app run preview` and open the address it
+   prints. Phone: `npm --prefix app run preview -- --host`, then open the
+   `Network:` address on the phone, on the same Wi-Fi.
+3. For flow 1, keep the bill you already have from M2.5 if there is one
+   (don't clear the site's data first). Clear it after flow 1 if you
+   want to start fresh.
+4. Optional, flow 12: `npm --prefix app run dev` for the component
+   gallery at `/_kit`.
+
+### Test data
+
+- Committed receipt samples in
+  `app/src/features/receipt/fixtures/browser/` (`sample-1.jpg`,
+  `sample-12.jpg`, `sample-9.pdf`), or any receipt of your own.
+- A small typed bill: three people, four items, one shared by everyone,
+  one service charge or tip.
+
+### Flows and expected results
+
+1. **Existing data kept.** Open the app with the bill saved before M3.
+   *Expected:* Home shows "Continue your bill"; it opens the split on
+   Who had what with the same people, items, amounts and result as
+   before. Theme and Region settings are as you left them.
+2. **The shell, phone.** At phone width (or under 640 px), look at Home,
+   Split, Household and Settings. *Expected:* a bottom tab bar with
+   Split, Household and Settings, the current one marked; the Settle
+   wordmark goes to Home. Nothing scrolls sideways at 360 px. Household
+   says it is coming in M4. `/finances` lands on Household.
+3. **The shell, desktop.** From 640 px: *Expected:* the destinations are
+   in the header instead of a tab bar; the theme toggle is in the header
+   and stays in step with Settings → Theme.
+4. **Split in three steps, scanning.** New bill → Receipt → scan
+   `sample-1.jpg`. *Expected:* after reading, it moves to Who had what
+   with the Receipt check first and focused; the items are filled in
+   and the check says whether they match. "See the split" (phone) shows
+   The split. The address bar shows `?step=receipt`, `items`, `split`;
+   Back and Forward walk the steps, and a reload keeps the step and
+   everything typed.
+5. **Split in three steps, typing.** New bill (confirm) → "Type it in".
+   *Expected:* Who had what with People and Items; enter the typed test
+   bill. Going between steps loses nothing. "New bill" asks first, and
+   after it Back doesn't return to the old bill's step.
+6. **Person-first assignment.** On Who had what, choose a person under
+   "Assign to", then tap items. *Expected:* each tapped item shows that
+   person's coloured initial, and tapping again removes it. Choose
+   another person and repeat. "Everyone" on an item gives it to all, and
+   is then disabled. Edit opens the full editor for the item (name,
+   quantity, price, sharers); its toggles agree with the row's. The split
+   is right to the cent.
+7. **Beside layout.** At 1024 px or wider, on Who had what. *Expected:*
+   The split shows beside the items and updates as you assign; there is
+   no "See the split" button. Narrow the window below 1024 px: it goes
+   back to one column on the same step, nothing lost.
+8. **Errors lead back.** Leave an item without a price or sharer, go to
+   The split. *Expected:* the problem is listed with a link; the link
+   goes back to Who had what and puts the cursor in that field.
+9. **Portuguese.** Settings → Language → Português. *Expected:* every
+   screen is in European Portuguese at once, including the tabs (Dividir,
+   Casa, Definições), the steps (Talão, Quem consumiu o quê, A divisão),
+   buttons, hints, validation messages, the Receipt check and its
+   notices, "Review lines", and the confirmation for "Nova conta". Read
+   it as a native speaker: note any wording that is wrong, Brazilian,
+   awkward or inconsistent (e.g. tu/você vs the impersonal form, "conta"
+   vs "talão"). Plurals read right with 1 and with 2 or more (people,
+   items). No English left anywhere.
+10. **Language is separate from Region.** In Portuguese, set Region to
+    English (UK) and GBP, then back. *Expected:* only number and money
+    formats change, never the words; switching language never changes
+    amounts. "System" follows the browser's language (a pt browser gets
+    Portuguese, anything other than pt or en gets English). A reload
+    keeps the choice.
+11. **Stand-in item in both languages.** In English, scan a receipt
+    whose total the items don't reach (or add a line by hand, then
+    "Add the difference"). *Expected:* an item "Not read from the
+    receipt" appears. Switch to Portuguese: the existing item keeps its
+    English name, and the Receipt check still treats it as the stand-in.
+    A new difference added in Portuguese gets the Portuguese name.
+12. **Look and feel, both themes.** On Home, Split (all three steps),
+    Settings and Household, in light and dark, at phone and desktop
+    width. *Expected:* it matches the design canvas: slate and rust, one
+    accent per screen, the three fonts (none blocked or substituted),
+    icons not emoji, negative amounts with a true minus sign, and a
+    visible focus ring when you Tab through each screen. Optional:
+    `/_kit` under `npm run dev` shows every kit component; it doesn't
+    exist in the built app (preview).
+13. **Keyboard and screen reader (spot check).** Tab through the split
+    steps. *Expected:* a step change focuses its heading; on Who had what
+    the person picker works with the arrow keys and each item row
+    announces whether the chosen person has it.
+14. **No outside requests.** In the browser's network panel, load each
+    page and scan once. *Expected:* every request is to the app's own
+    address (fonts included).
+
+### Known limitations (not findings for this milestone)
+
+- Households, members, the expense ledger and balances are M4 to M6;
+  the Household page is a placeholder.
+- Recent splits and the running "so far" total on the canvas come with
+  later milestones; there is no segmented Tabs component yet (M4).
+- An item with an invalid quantity or price shows "—" as its line
+  total, as before.
+- The field border is a light 1.6:1 line by design; every field has a
+  visible label.
+- No new logo or app icon (M11); no offline caching or deployment.
+- Only English and European Portuguese; Brazilian Portuguese browsers
+  get the European text.
+- Item names read from receipts are never translated.
+- The M2.5 iPhone Lockdown Mode checks stay deferred to the next
+  real-phone testing (M6).
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is
