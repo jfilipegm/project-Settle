@@ -74,6 +74,11 @@ const now = new Date()
 const MONTH = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
 const day = (n) =>
   `${MONTH}-${String(Math.min(n, now.getDate())).padStart(2, '0')}`
+/** A day `back` months before this one, for the six-month trend (M-7). */
+const earlier = (back, n) => {
+  const d = new Date(Date.UTC(now.getFullYear(), now.getMonth() - back, n))
+  return d.toISOString().slice(0, 10)
+}
 
 /**
  * An invented household (M4): four members and one who left, quick
@@ -118,7 +123,29 @@ const LEDGER = (() => {
     createdAt: stamp,
     updatedAt: stamp,
   })
+  // Earlier months, so the overview's six-month trend has a shape.
+  const history = [
+    [1, 21430],
+    [2, 18760],
+    [3, 25290],
+    [4, 16120],
+    [5, 19980],
+  ].map(([back, amount]) =>
+    quick(
+      `m${back}`,
+      'Groceries, the month',
+      'groceries',
+      'ana',
+      earlier(back, 12),
+      {
+        kind: 'equal',
+        amount,
+        memberIds: all,
+      },
+    ),
+  )
   const expenses = [
+    ...history,
     quick('e1', 'Electricity, September', 'utilities', 'marta', day(2), {
       kind: 'equal',
       amount: 8640,
@@ -204,6 +231,11 @@ const SCREENS = [
   {
     name: 'itemised-expense',
     path: '/households/h1/expenses/it1',
+    ledger: true,
+  },
+  {
+    name: 'expense-dialog',
+    path: '/households/h1/expenses?expense=e2',
     ledger: true,
   },
   { name: 'settings', path: '/settings' },

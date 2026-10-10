@@ -1,5 +1,5 @@
 {
-  "when": "2026-10-10T10:52:47.665Z",
+  "when": "2026-10-10T11:33:54.038Z",
   "screens": [
     {
       "screen": "home",
@@ -1209,6 +1209,48 @@
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "May 2026: 199,80 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "June 2026: 161,20 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "July 2026: 252,90 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "August 2026: 187,60 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "September 2026: 214,30 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "October 2026: 286,03 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
         }
       ]
     },
@@ -1370,6 +1412,41 @@
         {
           "tag": "a",
           "label": "Date 2 Oct, Description Electricity, Sep",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 12 Sept, Description Groceries, the",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 12 Aug, Description Groceries, the ",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 12 Jul, Description Groceries, the ",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 12 Jun, Description Groceries, the ",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 12 May, Description Groceries, the ",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
@@ -1927,77 +2004,6 @@
       "theme": "light",
       "keyboard": [
         {
-          "tag": "a",
-          "label": "Skip to content",
-          "ring": true,
-          "focusVisible": true,
-          "outline": "solid 3px"
-        },
-        {
-          "tag": "a",
-          "label": "Settle, home",
-          "ring": true,
-          "focusVisible": true,
-          "outline": "solid 3px"
-        },
-        {
-          "tag": "a",
-          "label": "Split",
-          "ring": true,
-          "focusVisible": true,
-          "outline": "solid 3px"
-        },
-        {
-          "tag": "a",
-          "label": "Household",
-          "ring": true,
-          "focusVisible": true,
-          "outline": "solid 3px"
-        },
-        {
-          "tag": "a",
-          "label": "Settings",
-          "ring": true,
-          "focusVisible": true,
-          "outline": "solid 3px"
-        },
-        {
-          "tag": "button",
-          "type": "button",
-          "label": "Theme: light. Switch to dark.",
-          "ring": true,
-          "focusVisible": true,
-          "outline": "solid 2px"
-        },
-        {
-          "tag": "a",
-          "label": "Rua das Flores 12, switch household",
-          "ring": true,
-          "focusVisible": true,
-          "outline": "solid 3px"
-        },
-        {
-          "tag": "a",
-          "label": "Overview",
-          "ring": true,
-          "focusVisible": true,
-          "outline": "solid 3px"
-        },
-        {
-          "tag": "a",
-          "label": "Expenses",
-          "ring": true,
-          "focusVisible": true,
-          "outline": "solid 3px"
-        },
-        {
-          "tag": "a",
-          "label": "Members",
-          "ring": true,
-          "focusVisible": true,
-          "outline": "solid 3px"
-        },
-        {
           "tag": "button",
           "type": "button",
           "label": "Edit items",
@@ -2017,6 +2023,14 @@
           "tag": "button",
           "type": "button",
           "label": "Delete",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Close",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 2px"
@@ -2042,6 +2056,58 @@
     },
     {
       "screen": "itemised-expense",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Edit",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Delete",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "expense-dialog",
       "width": 360,
       "theme": "dark",
       "scrollWidth": 360,

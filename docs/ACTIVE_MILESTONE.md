@@ -6,16 +6,17 @@
 `milestone-4`). Plan revision 4, `docs/milestones/milestone-4-PLAN.md`,
 approved on 2026-10-09 (local and manual external plan reviews both
 APPROVE; approval commit `ee0225d`), on `feature/milestone-4`, PR #12.
-Phase `AWAITING_LOCAL_IMPLEMENTATION_REVIEW` (implementation revision 3).
+Phase `AWAITING_LOCAL_IMPLEMENTATION_REVIEW` (implementation revision 4).
 
 ## Next action
 
-Round 2: the local implementation review returned APPROVE, and the
+Round 3: the local implementation review returned APPROVE, and the
 manual external review (the project owner's own testing) returned
-REVISE with four usability findings, M-1 to M-4. All four are fixed and
-the post-fix bundle is generated. Next, `/review-implementation
-milestone-4` (round 3), then the manual external implementation review
-and `/approve-review implementation`.
+REVISE with M-5 to M-7: an expense in a dialog over its list, a lighter
+dialog backdrop, and charts on the overview. All three are done and the
+post-fix bundle is generated. Next, `/review-implementation milestone-4`
+(round 4), then the manual external implementation review and
+`/approve-review implementation`.
 
 ## Progress
 
@@ -343,6 +344,67 @@ and `/approve-review implementation`.
     14 screens, 84 checks, 0 problems (no sideways scroll at 360 px,
     every Tab stop in reading order with the focus ring), and the
     evidence screens are replaced with this run's.
+
+- **Implementation review, round 3: local APPROVE; manual external
+  REVISE, applied.** The owner's own testing asked for three changes.
+  Each change has tests; the fixes are bugs or gaps reproduced in the
+  code first.
+  - **M-5 (done, `26316be`).** An expense replaced the list with its own
+    page, and nothing on it led back. It now opens in a dialog
+    (`?expense=:eid`) over the page it came from, the Expenses list or
+    the overview, rendered once by `HouseholdShell`, so the list keeps
+    its month, filters and scroll. Closing (Close, Escape, the backdrop)
+    goes Back when a row opened it, so the browser's Back closes it too;
+    opened directly, it drops the parameter. Edit returns to the dialog;
+    Delete closes it and the row goes. The dialog draws each member's
+    share as one bar above the shares list. The kit's `Dialog` gains an
+    optional close button beside the title (the first focus, so a long
+    dialog opens at its top), and Escape in a dialog opened from another
+    closes only that one (a test that failed first).
+    **Departure from the plan's route table:**
+    `/households/:hid/expenses/:eid` (CP3) is kept for links, saves and
+    bookmarks but now lands on the Expenses list with that expense open,
+    rather than a page of its own. Its edit page is unchanged.
+  - **M-6 (done, `67dbd16`).** The backdrop mixed in `--color-ink`,
+    near-white in the dark theme, so every dialog laid a pale veil over
+    the page. A new `--color-scrim` is a near-black at 0.28 (light) and
+    0.5 (dark) opacity.
+  - **M-7 (done, `b5d9119`).** The overview draws "Day by day" (each
+    day's spending as bars), "Where it went" as a donut beside the
+    category list, now its legend with a percentage for each, and "The
+    last six months" (this month emphasised, each bar opening its
+    month), on top of the figures, never instead of them. The charts are
+    kit components (`ui/Charts.tsx`: `Donut`, `Bars`, `ShareBar`; inline
+    SVG and CSS, no library), fed by `features/household/charts.ts`,
+    built on the same totals as the numbers. Eight categorical chart
+    tokens per theme, the data-visualisation reference palette in its
+    validated order, checked for colour-vision deficiency on the card in
+    both themes; a category keeps its hue month to month, Other and a
+    donut's folded rest are neutral. Each chart is one image named by a
+    text alternative with every value. A month with nothing draws none.
+    Not drawn: "Who paid" and balances (M5).
+  - **The local round 3's optional findings.** O-9 (stale headers in the
+    bundle's request and results) is fixed in this round's bundle; O-10
+    and O-11 are fixed in `26316be`; the missing overview-headings test
+    is in `overviewCharts.test.tsx`.
+  - Changes to existing tests: the household suites find an expense by
+    its dialog (`role="dialog"`, named by the description) where they
+    found its `h1`; the history's row helper matches the `?expense=`
+    link; the overview's "Where it went" rows now include the
+    percentage. Their other assertions are unchanged.
+  - Design canvas, version 30: the "As shipped in M4" board has this
+    round's screenshots (the overview with its charts and an expense's
+    dialog, at both widths, light and dark), and the navigation map says
+    an expense opens over the list it came from. `docs/DESIGN.md`: the
+    scrim, the chart tokens and rules, `Donut`, `Bars`, `ShareBar` and
+    the dialog's close button.
+  - Verification: `npm run check` (90 files, 1550 passed, 1 skipped);
+    `npm run build` and `check-build.mjs` pass (343,772 bytes of fonts,
+    131,652 for a first view, no gallery); `node scripts/screens.mjs`:
+    15 screens, 90 checks, 0 problems; Impeccable: the CSS clean, the
+    screens only M3's reasoned finding (a `cramped-padding` on the bar
+    plot's baseline was found and fixed); ux-lint: the same 36 findings
+    from M3's six reasoned rules, none on a household screen.
 
 ## Last completed: M3 — Design foundations
 

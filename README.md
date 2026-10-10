@@ -100,11 +100,13 @@ device. In English or European Portuguese.
   - **Who paid** can be anyone in the household, even someone not sharing
     the expense.
   - **The overview** shows a month at a time: what was shared, the latest
-    expenses and where the money went.
+    expenses and where the money went, with charts beside the figures (each
+    day's spending, a donut of the categories, the last six months).
   - **The Expenses tab** lists everything, newest first. Filter it by person
     or category, and search it, ignoring accents ("agua" finds "Água").
-  - Every expense can be edited or deleted; every total is worked out
-    again from the expenses themselves.
+  - An expense opens over the list you were on, with each person's share.
+    It can be edited or deleted there; every total is worked out again from
+    the expenses themselves.
   - Saving the same receipt twice into a household shows a warning.
 
 Balances, settling up, and export and backup are next on the
