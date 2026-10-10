@@ -6,17 +6,26 @@
 `milestone-4`). Plan revision 4, `docs/milestones/milestone-4-PLAN.md`,
 approved on 2026-10-09 (local and manual external plan reviews both
 APPROVE; approval commit `ee0225d`), on `feature/milestone-4`, PR #12.
-Phase `AWAITING_LOCAL_IMPLEMENTATION_REVIEW` (implementation revision 4).
+Phase `AWAITING_FUNCTIONAL_REVIEW` (implementation revision 4, technical
+approval `6f18e98`).
 
 ## Next action
 
-Round 3: the local implementation review returned APPROVE, and the
-manual external review (the project owner's own testing) returned
-REVISE with M-5 to M-7: an expense in a dialog over its list, a lighter
-dialog backdrop, and charts on the overview. All three are done and the
-post-fix bundle is generated. Next, `/review-implementation milestone-4`
-(round 4), then the manual external implementation review and
-`/approve-review implementation`.
+The implementation is approved: round 4's manual review asked only for
+the completed CI (B-EXT-1), and round 5, the same content republished
+with that evidence, was approved by both reviews; technical approval
+`6f18e98`. Next, the functional review: test with the checklist below,
+then `/accept-milestone`, or write findings for
+`/apply-functional-review`.
+
+To carry forward at acceptance (optional, from the local round 4
+review, deferred so the approved content stays as reviewed):
+- O-12: the `/_kit` gallery lacks `Donut`, `Bars`, `ShareBar` and the
+  dialog's close button.
+- O-13: in a month with seven or more categories, the donut and its
+  legend can show a category's percentage a point apart.
+- O-14: "The last six months" names both the card and its chart, so a
+  screen reader says it twice.
 
 ## Progress
 
@@ -471,7 +480,118 @@ archived at `docs/milestones/completed/milestone-3-PLAN.md`.
 
 ## Functional review checklist
 
-None. M3's round-1 checklist is in commit `80f9cc3`.
+M4, round 1 (implementation revision 4, technical approval `6f18e98`).
+Write each finding, with the flow number, to
+`.ai-review/milestone-4/feedback/FUNCTIONAL_REVIEW.md`. Every amount is
+exact to the cent: shares that don't add up to the expense, a total
+that differs from its expenses, or anything lost is a finding.
+
+### Setup
+
+1. `npm --prefix app ci`, then `npm --prefix app run build`.
+2. Desktop: `npm --prefix app run preview` and open the address it
+   prints. Phone: `npm --prefix app run preview -- --host`, then open the
+   `Network:` address on the phone, on the same Wi-Fi.
+3. Keep the site's data from M3 for flow 1 (a bill in progress, theme,
+   language, region). Households are new, so there are none yet.
+4. Use one browser profile throughout: households live in this
+   browser's IndexedDB, on this device only (until M6).
+
+### Test data
+
+- A household "Flat" with four people: Ana, João, Marta, Rui.
+- Quick expenses across this month and the two before it, in at least
+  three categories (rent, groceries, eating out), some paid by someone
+  who isn't in the split.
+- A receipt for flow 7: `app/src/features/receipt/fixtures/browser/sample-1.jpg`
+  (or any receipt with a QR code), and a small typed bill.
+
+### Flows and expected results
+
+1. **Nothing lost from M3.** Open the app. *Expected:* the bill in
+   progress, theme, language and region are as you left them. Household
+   shows "No households yet" and "New household".
+2. **Create a household.** New household → "Flat", add four people →
+   Create household. *Expected:* its Overview opens, with Overview,
+   Expenses and Members tabs. Reopening the Household tab later goes
+   straight back to "Flat". A second household appears in the list and
+   the header's switch moves between them.
+3. **Members.** On Members: add "Bea" with a joining date; rename Rui;
+   mark Marta as left (the date can't be before she joined), then undo
+   it; delete Bea. *Expected:* each change shows at once and survives a
+   reload. Once someone is in an expense, Delete is refused with the
+   reason and offers "Mark as left" instead.
+4. **Quick expense, each method.** Add expense → Quick expense, four
+   times: 30,00 € Equally among three; 10,00 € By shares 2:1:1; 25,00 €
+   Exact amounts; 100,00 € By percentage 50/30/20. *Expected:* each
+   person's share previews as you type; exact amounts and percentages
+   say what is left or too much, and Save is refused until they add up.
+   Shares always sum to the amount (10,00 € equally among three is
+   3,34 + 3,33 + 3,33). Someone outside the split can be "Who paid?".
+5. **An expense in its dialog.** On Expenses, open an expense.
+   *Expected:* a dialog over the list, with the amount, date, category,
+   who paid, a bar of the shares and the list of shares. Close, Escape,
+   a click on the dim backdrop and the browser's Back each close it,
+   back to the same list with its filters. The backdrop is a light dim
+   in both themes, not a white veil. A copied link to an open expense
+   opens it over Expenses.
+6. **Edit and delete.** From the dialog: Edit → change the amount →
+   Save expense. *Expected:* back in the dialog with the new amount.
+   Delete asks first; Escape on the question cancels only the question;
+   confirming closes the dialog and the row is gone.
+7. **Itemised expense from a split.** Overview → Add expense → Split a
+   bill. *Expected:* a split starts with the household's active people.
+   Scan or type the bill, assign items, then "Save to a household" on
+   The split: choose who each person is (or "Add as a new member"), who
+   paid, what, when and the category. *Expected:* the expense shows its
+   items and who shares each; the split starts fresh after saving.
+   Saving the same scanned receipt again warns "This receipt looks
+   already saved", with "Save anyway" and "Open that expense".
+8. **Edit an itemised expense.** Open it → Edit items. *Expected:* the
+   split opens with a banner; change an item → Save changes updates the
+   expense; Cancel changes nothing. A split you had in progress
+   elsewhere is untouched.
+9. **Overview and its charts.** On Overview, this month. *Expected:*
+   "{amount} shared across {count} expenses"; Day by day (bars on the
+   days with spending); Latest expenses; Where it went (a donut beside
+   the category list, each with its colour, percentage and amount,
+   the percentages adding up to 100); The last six months (bars, this
+   month marked). The figures agree with the Expenses tab. Tapping a
+   month's bar opens that month; Previous and Next walk the months. A
+   month with nothing in it shows no chart. A category keeps its colour
+   from month to month.
+10. **History and filters.** On Expenses: filter by Person, then
+    Category, then search a word from a description, an item name or a
+    category (accents and case don't matter). *Expected:* month groups,
+    newest first, each with its total, and the count. The filters stay
+    in the address and survive a reload; "Clear the filters" resets
+    them.
+11. **Archive and restore.** Members → Archive household. *Expected:*
+    it leaves the list, everything kept; Archived → Restore brings it
+    back unchanged.
+12. **Portuguese.** Settings → Language → Português, then walk flows 2
+    to 10. *Expected:* everything in European Portuguese, including
+    the charts' titles ("Dia a dia", "Onde foi o dinheiro", "Os
+    últimos seis meses"), the dialog's Fechar and "Despesa não
+    encontrada". Note any wording that is wrong, Brazilian or awkward.
+    Plurals read right with 1 and 2 or more. No English left.
+13. **Phone and desktop, both themes.** At 360 px and on a desktop, in
+    light and dark. *Expected:* nothing scrolls sideways; the charts
+    fit their cards; the expense dialog fits the phone; text is
+    readable on every chart colour.
+14. **Keyboard.** Tab through the Expenses list, open an expense with
+    Enter. *Expected:* focus starts on Close and stays in the dialog;
+    after closing, focus is somewhere sensible on the list. Each chart
+    bar that links is reachable and named.
+
+### Known limitations (not findings)
+
+- Data lives only in this browser on this device until M6 (sync and
+  backup); clearing site data deletes it.
+- Balances, "who owes whom" and settling up are M5.
+- The charts' hover detail is the browser's own tooltip; every value is
+  also in the figures beside them.
+- The three optional findings above (O-12 to O-14).
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is
