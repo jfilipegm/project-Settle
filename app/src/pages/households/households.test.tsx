@@ -4,6 +4,7 @@ import { openDatabase } from '../../data/db.ts'
 import { HOUSEHOLD_POINTER_KEY } from '../../data/pointer.ts'
 import {
   createHousehold,
+  listHouseholds,
   listMembers,
   saveExpense,
 } from '../../data/repository.ts'
@@ -95,6 +96,32 @@ describe('the households list (M4 plan, H9)', () => {
     expect(screen.getByText('Ana')).toBeInTheDocument()
   })
 
+  it('creates one household when Create is pressed twice', async () => {
+    renderApp('/households')
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'New household' }),
+    )
+    const dialog = screen.getByRole('dialog', { name: 'New household' })
+    fireEvent.change(within(dialog).getByLabelText('Household name'), {
+      target: { value: 'Rua das Flores 12' },
+    })
+    const create = within(dialog).getByRole('button', {
+      name: 'Create household',
+    })
+    fireEvent.click(create)
+    fireEvent.click(create)
+
+    await screen.findByRole('link', {
+      name: 'Rua das Flores 12, switch household',
+    })
+    const db = await openDatabase(factory)
+    try {
+      expect((await listHouseholds(db)).items).toHaveLength(1)
+    } finally {
+      db.close()
+    }
+  })
+
   it('opens the household used last from the Household tab', async () => {
     await seed()
     localStorage.setItem(HOUSEHOLD_POINTER_KEY, 'h1')
@@ -144,6 +171,28 @@ describe('the households list (M4 plan, H9)', () => {
 })
 
 describe('members (M4 plan, H7)', () => {
+  it('adds one member when Add is pressed twice', async () => {
+    await seed()
+    renderApp('/households/h1/members')
+
+    const add = await screen.findByRole('region', { name: 'Add a person' })
+    fireEvent.change(within(add).getByLabelText('Name'), {
+      target: { value: 'Rui' },
+    })
+    const button = within(add).getByRole('button', { name: 'Add' })
+    fireEvent.click(button)
+    fireEvent.click(button)
+    expect(await screen.findByText('Rui')).toBeInTheDocument()
+
+    const db = await openDatabase(factory)
+    try {
+      const { items } = await listMembers(db, 'h1')
+      expect(items.filter((m) => m.name === 'Rui')).toHaveLength(1)
+    } finally {
+      db.close()
+    }
+  })
+
   it('adds, renames, marks as left and undoes leaving', async () => {
     await seed()
     renderApp('/households/h1/members')

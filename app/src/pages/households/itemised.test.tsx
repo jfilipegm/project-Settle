@@ -223,6 +223,29 @@ describe('saving a split into a household (H10)', () => {
     })
   })
 
+  it('saves once when Save is pressed twice (H10)', async () => {
+    saveDraft(typedBill(['Ana', 'Rui']))
+    const dialog = await openSaveDialog()
+    fireEvent.change(
+      await within(dialog).findByRole('combobox', { name: 'Who is Rui?' }),
+      { target: { value: 'new' } },
+    )
+    fireEvent.change(
+      within(dialog).getByRole('textbox', { name: 'What was it?' }),
+      { target: { value: 'Pastelaria' } },
+    )
+    const save = within(dialog).getByRole('button', {
+      name: 'Save to household',
+    })
+    fireEvent.click(save)
+    fireEvent.click(save)
+
+    await screen.findByRole('heading', { level: 1, name: 'Pastelaria' })
+    expect((await withDb((db) => listExpenses(db, 'h1'))).items).toHaveLength(1)
+    const members = (await withDb((db) => listMembers(db, 'h1'))).items
+    expect(members.filter((m) => m.name === 'Rui')).toHaveLength(1)
+  })
+
   it('refuses two people as one member', async () => {
     saveDraft(typedBill())
     const dialog = await openSaveDialog()

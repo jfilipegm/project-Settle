@@ -183,6 +183,8 @@ function NewHouseholdDialog({
   const [people, setPeople] = useState<string[]>([''])
   const [submitted, setSubmitted] = useState(false)
   const [failed, setFailed] = useState(false)
+  // A create in progress: a second press is ignored (one household).
+  const [saving, setSaving] = useState(false)
 
   const close = () => {
     setName('')
@@ -204,8 +206,10 @@ function NewHouseholdDialog({
     !tooMany
 
   const submit = () => {
+    if (saving) return
     setSubmitted(true)
     if (!valid || db === null) return
+    setSaving(true)
     const now = new Date().toISOString()
     const id = newId()
     const household: Household = {
@@ -227,11 +231,15 @@ function NewHouseholdDialog({
       () => {
         requestPersistentStorage()
         writeHouseholdPointer(id)
+        setSaving(false)
         onCreated()
         close()
         void navigate(`/households/${id}`)
       },
-      () => setFailed(true),
+      () => {
+        setSaving(false)
+        setFailed(true)
+      },
     )
   }
 
@@ -303,7 +311,7 @@ function NewHouseholdDialog({
         )}
         <div className={styles.formActions}>
           <Button onClick={close}>{t('households.cancel')}</Button>
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" disabled={saving}>
             {t('households.create.submit')}
           </Button>
         </div>

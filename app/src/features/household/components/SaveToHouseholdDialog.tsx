@@ -187,6 +187,9 @@ export function SaveToHouseholdDialog({
   const [submitted, setSubmitted] = useState(false)
   const [duplicate, setDuplicate] = useState<Expense | null>(null)
   const [failure, setFailure] = useState<string>()
+  // A save in progress: a second press is ignored, so the bill can't be
+  // saved twice (H10).
+  const [saving, setSaving] = useState(false)
 
   const people = bill.people.map((person, index) => ({
     person,
@@ -306,9 +309,11 @@ export function SaveToHouseholdDialog({
     modelErrors.length === 0
 
   const save = (confirmedDuplicate: boolean) => {
+    if (saving) return
     setSubmitted(true)
     setFailure(undefined)
     if (!valid || db === null) return
+    setSaving(true)
     const run = async () => {
       if (!confirmedDuplicate && receiptKey !== undefined) {
         const matches = (
@@ -316,6 +321,7 @@ export function SaveToHouseholdDialog({
         ).filter((e) => e.id !== editing?.id)
         if (matches.length > 0) {
           setDuplicate(matches[0] ?? null)
+          setSaving(false)
           return
         }
       }
@@ -343,15 +349,16 @@ export function SaveToHouseholdDialog({
       changed()
       onSaved(householdId, expense.id)
     }
-    run().catch((error: unknown) =>
+    run().catch((error: unknown) => {
+      setSaving(false)
       setFailure(
         error instanceof MemberLimitError
           ? t('members.errors.limit')
           : error instanceof MissingReferenceError
             ? t('expense.errors.gone')
             : t('expense.errors.save'),
-      ),
-    )
+      )
+    })
   }
 
   const shown = (text: string | undefined) => (submitted ? text : undefined)
@@ -404,7 +411,11 @@ export function SaveToHouseholdDialog({
           </p>
           <div className={styles.actions}>
             <Button onClick={onClose}>{t('households.cancel')}</Button>
-            <Button variant="primary" onClick={() => save(true)}>
+            <Button
+              variant="primary"
+              disabled={saving}
+              onClick={() => save(true)}
+            >
               {t('saveToHousehold.duplicate.saveAnyway')}
             </Button>
           </div>
@@ -517,7 +528,7 @@ export function SaveToHouseholdDialog({
               type="submit"
               variant="primary"
               // Not before the household's members have loaded.
-              disabled={householdId !== '' && choices === null}
+              disabled={saving || (householdId !== '' && choices === null)}
             >
               {editing !== undefined
                 ? t('editingExpense.save')
