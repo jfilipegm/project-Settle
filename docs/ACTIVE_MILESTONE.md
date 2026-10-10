@@ -41,11 +41,30 @@
     data", with Reload and the split (O-4). The member-delete messages
     now say "expenses or payments".
   - ADR 0005, "Version 2: payments".
-- CP3 to CP6: to do.
+- **CP3 — complete:** the balances engine (`features/household/balances.ts`,
+  pure).
+  - `balances`: paid − share + sent − received per member, in integer
+    cents, as of a date or over every record (future-dated ones counted
+    and counted out). It carries `complete` and the unreadable counts
+    (M-I-1).
+  - `suggestSettlements`: the most zero-sum groups by the O(2ⁿ·n)
+    programme (`zeroSumGroups`, up to 16), each settled greedily, so the
+    count is the minimum. Above 16, opposite pairs come out first.
+    Deterministic tie-breaks by member order.
+  - `explainBalance` (newest first, summing to the balance) and
+    `paymentOutcome`, the dialog's "after this" line (an edit without
+    itself, L2-I1; `null` on incomplete balances).
+  - Tests: a 2000-household property sweep (zero sum, cleared, the
+    minimum by brute force up to 8, order independence, explanations,
+    dates), the planted-groups generator, the 13 hand-checked examples,
+    the grouping rule, the over-16 fallback with members who left, and
+    the budgets (1000 expenses and 200 payments, adversarial 16-member
+    vectors).
+- CP4 to CP6: to do.
 
 ## Next action
 
-Continue `/milestone-implement milestone-5` with CP3.
+Continue `/milestone-implement milestone-5` with CP4.
 
 ## Last completed: M4 — Households, members and the expense ledger
 
