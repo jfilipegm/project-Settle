@@ -277,6 +277,10 @@ Portuguese is pt-PT in spelling and vocabulary ("ecrã", "registo",
 "partilhar"), with the impersonal "you", in the voice of `PRODUCT.md`:
 calm, precise and friendly.
 
+Names come without an article, since the app doesn't know the gender
+"à"/"ao" would need: "Tiago paga a Ana", "Tiago pagou a Ana" (M5; the plan
+wrote "paga à").
+
 ## Checking new UI
 
 Before a UI change is done:

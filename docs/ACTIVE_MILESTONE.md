@@ -117,17 +117,23 @@
     tabs, balances and payments); `app/README.md` (version 2 as the
     worked migration, the engine); the root `README.md`; the roadmap's
     M5 status.
-  - **The design canvas is not updated yet.** Uploading the M5
-    screenshots to the canvas was blocked by the session's permission
-    check, so the "As shipped in M5" board, the Balances tab at phone
-    width, the navigation map (Balances drawn) and the chart-tip note on
-    the M4 board wait for the user's go-ahead.
+  - Design canvas: updated on 2026-10-10 with the user's go-ahead
+    (version 31): an "As shipped in M5" board (16 screenshots), the
+    Balances tab at phone width in light and dark, the navigation map
+    (Balances drawn, Record a payment and the explanation), and the
+    chart-tip note on the M4 board.
+
+## Implementation review
+
+- **Round 1, local:** REVISE. I-1, the canvas, is fixed (above). The
+  optional findings are applied: the Portuguese 360 px pass (O-1), the
+  "paga a" wording recorded in `docs/DESIGN.md` (O-2), and the share-bar
+  tip check (O-3).
 
 ## Next action
 
-`/milestone-implement milestone-5` again: every checkpoint is complete,
-so it enters the self-review, runs the full verification and generates
-the implementation bundle for `/review-implementation`.
+`/review-implementation milestone-5` on the post-fix bundle (round 2,
+local), then the manual external review.
 
 ## Last completed: M4 — Households, members and the expense ledger
 
