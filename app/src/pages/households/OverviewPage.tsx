@@ -19,6 +19,7 @@ import {
 } from '../../features/household/components/MonthCharts.tsx'
 import { dateLocale, formatMonth } from '../../features/household/format.ts'
 import { useLoaded } from '../../features/household/householdData.ts'
+import { useLedger } from '../../features/household/useLedger.ts'
 import { activeMembers, isoDate } from '../../features/household/model.ts'
 import {
   categoryTotals,
@@ -35,6 +36,7 @@ import { Button } from '../../ui/Button.tsx'
 import { Card } from '../../ui/Card.tsx'
 import { Dialog } from '../../ui/Dialog.tsx'
 import { Icon } from '../../ui/Icon.tsx'
+import { BalancesCard } from './BalancesCard.tsx'
 import { useHouseholdContext } from './householdContext.ts'
 import styles from './households.module.css'
 
@@ -43,12 +45,12 @@ const LATEST = 6
 /**
  * A household's overview (M4 plan, H13): one month at a time
  * (`?month=YYYY-MM`), its total and count, "Add expense", the latest
- * expenses and where the money went. Balances are M5's.
+ * expenses and where the money went, and the balances card (M5, B5).
  */
 export function OverviewPage() {
   const { t, language } = useLanguage()
   const { region } = useRegion()
-  const { household, members } = useHouseholdContext()
+  const { household, members, unreadableMembers } = useHouseholdContext()
   const [params] = useSearchParams()
   const [adding, setAdding] = useState(false)
   const noMembersId = useId()
@@ -62,6 +64,7 @@ export function OverviewPage() {
   const loaded = useLoaded(
     useCallback((db) => listExpenses(db, household.id), [household.id]),
   )
+  const ledger = useLedger(household.id, members, unreadableMembers)
   const active = activeMembers(members, today)
   const byId = new Map(members.map((m) => [m.id, m]))
 
@@ -133,6 +136,14 @@ export function OverviewPage() {
           <Link to={`${base}/members`}>{t('overview.toMembers')}</Link>
         </p>
       )}
+
+      {ledger.state === 'ready' &&
+        (ledger.value.expenses.length > 0 ||
+          ledger.value.settlements.length > 0 ||
+          ledger.value.unreadable.expenses > 0 ||
+          ledger.value.unreadable.settlements > 0) && (
+          <BalancesCard ledger={ledger.value} base={base} today={today} />
+        )}
 
       {monthly.length > 0 && (
         <Card title={t('overview.byDay')} titleId={byDayId}>

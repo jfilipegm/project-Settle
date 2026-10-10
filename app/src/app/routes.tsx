@@ -4,6 +4,8 @@ import { HomePage } from '../pages/HomePage.tsx'
 import { NotFoundPage } from '../pages/NotFoundPage.tsx'
 import { SettingsPage } from '../pages/SettingsPage.tsx'
 import { SplitPage } from '../pages/SplitPage.tsx'
+import { BalanceDetailPage } from '../pages/households/BalanceDetailPage.tsx'
+import { BalancesPage } from '../pages/households/BalancesPage.tsx'
 import { ExpensesPage } from '../pages/households/ExpensesPage.tsx'
 import { ExpensePage } from '../pages/households/ExpensePage.tsx'
 import {
@@ -51,6 +53,8 @@ export function routeTable({ dev }: { dev: boolean }): RouteObject[] {
         { path: 'expenses/new', element: <NewExpensePage /> },
         { path: 'expenses/:eid', element: <ExpensePage /> },
         { path: 'expenses/:eid/edit', element: <EditExpensePage /> },
+        { path: 'balances', element: <BalancesPage /> },
+        { path: 'balances/:mid', element: <BalanceDetailPage /> },
         { path: 'members', element: <MembersPage /> },
       ],
     },

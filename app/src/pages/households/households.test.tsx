@@ -314,6 +314,6 @@ describe('the household pages in Portuguese', () => {
       within(tabs)
         .getAllByRole('link')
         .map((link) => link.textContent),
-    ).toEqual(['Resumo', 'Despesas', 'Membros'])
+    ).toEqual(['Resumo', 'Despesas', 'Saldos', 'Membros'])
   })
 })

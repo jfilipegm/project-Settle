@@ -60,11 +60,32 @@
     the grouping rule, the over-16 fallback with members who left, and
     the budgets (1000 expenses and 200 payments, adversarial 16-member
     vectors).
-- CP4 to CP6: to do.
+- **CP4 — complete:** the Balances tab, recording a payment, explanations.
+  - A fourth tab, Balances (pt: Saldos), at `/households/:hid/balances`:
+    each member's balance ("Gets back", "Owes", "Settled up", the signed
+    amount, "Paid …", "Left on …"), "Settle up in N payments" with each
+    payment's Mark as paid, Record a payment, and "Balances on" a past
+    date (`?on=`, which hides the actions). The "dated after today" line
+    counts both kinds.
+  - The payment dialog (`SettlementForm`): From, To (those who left
+    last), Amount, Date, Note, and "After this, Tiago owes 7,65 and Ana
+    is settled up." before saving. Errors by field, a double-press guard,
+    a failed save keeps the input, "Payment recorded." announced.
+  - Incomplete balances fail closed (M-I-1): a notice, figures only, no
+    suggestion, no Mark as paid, never "Everyone is settled up" (zero
+    readable balances read "No balance"), the dialog shows the notice in
+    place of its outcome, and the overview card has no settle-up line.
+  - The explanation page `/households/:hid/balances/:mid`: the sums, the
+    lines by month (an expense opens over the page), and "Balance",
+    respecting `?on=`. The incomplete notice shows there too (L4-O1).
+  - The overview's balances card ("Across all expenses and payments.",
+    the settle-up line, Details).
+  - Design canvas and the screens check: in CP6.
+- CP5 and CP6: to do.
 
 ## Next action
 
-Continue `/milestone-implement milestone-5` with CP4.
+Continue `/milestone-implement milestone-5` with CP5.
 
 ## Last completed: M4 — Households, members and the expense ledger
 
