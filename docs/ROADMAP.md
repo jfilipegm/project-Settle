@@ -9,7 +9,7 @@ This is a living document. Milestones after the current one are a
 direction, not a commitment. They get re-ordered, merged or dropped as we
 learn.
 
-Last updated: 2026-10-10 (M4 complete; M3 complete on 2026-10-09; M3 Design foundations added
+Last updated: 2026-10-10 (M5 implemented, in review; M4 complete; M3 complete on 2026-10-09; M3 Design foundations added
 after M2.5, and every later milestone moved down one, on 2026-10-08; M2.5 complete on 2026-10-07; M2 complete and M2.5 added for
 receipt-reading accuracy on 2026-09-30; restructured around the free-first product strategy on
 2026-09-28, see [Roadmap strategy](#roadmap-strategy))
@@ -113,7 +113,7 @@ scope. Anything not listed as must-have is negotiable there.
 | M2.5| Accurate receipt reading                           | 1 · Free local-first core        | Complete    |
 | M3  | Design foundations                                 | 1 · Free local-first core        | Complete    |
 | M4  | Households, members and the expense ledger         | 1 · Free local-first core        | Complete    |
-| M5  | Balances and settling up                           | 1 · Free local-first core        | Not started |
+| M5  | Balances and settling up                           | 1 · Free local-first core        | In progress |
 | M6  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
 | M7  | Installable PWA and public deployment              | 1 · Free local-first core        | Not started |
 | M8  | Privacy-first product analytics                    | 2 · Analytics and developer BO   | Not started |
@@ -527,7 +527,9 @@ settling up, sharing and every later phase build on this model.
 
 ## M5 — Balances and settling up
 
-**Status:** Not started
+**Status:** In progress: plan revision 4 approved on 2026-10-10, all six
+checkpoints implemented on `feature/milestone-5` (PR #13), awaiting the
+implementation reviews. Plan: `docs/milestones/milestone-5-PLAN.md`.
 
 **Objective:** Everyone can see what they owe or are owed across the
 whole history, and settle it with as few payments as possible.

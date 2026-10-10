@@ -10,6 +10,7 @@ import {
   type Household,
   type Member,
   type QuickSplit,
+  type Settlement,
 } from '../features/household/model.ts'
 import { cents } from '../lib/money.ts'
 
@@ -98,6 +99,30 @@ export interface RawRecords {
   households: unknown[]
   members: unknown[]
   expenses: unknown[]
+  /** Version 2's payments (M5); absent from version-1 snapshots. */
+  settlements?: unknown[]
+}
+
+/** A payment from `fromId` to `toId` in household h1 (M5, B2). */
+export function settlement(
+  id: string,
+  fromId: string,
+  toId: string,
+  amount: number,
+  extra: Partial<Settlement> = {},
+): Settlement {
+  return {
+    v: RECORD_VERSION,
+    id,
+    householdId: 'h1',
+    fromId,
+    toId,
+    amount: cents(amount),
+    date: '2026-10-05',
+    createdAt: NOW,
+    updatedAt: NOW,
+    ...extra,
+  }
 }
 
 /** Puts raw records straight into the stores, as an older app wrote them. */
@@ -105,22 +130,23 @@ export async function putRaw(
   db: IDBDatabase,
   records: RawRecords,
 ): Promise<void> {
+  const settlements = records.settlements ?? []
+  const stores = ['households', 'members', 'expenses']
+  if (settlements.length > 0) stores.push('settlements')
   await new Promise<void>((resolve, reject) => {
-    const tx = db.transaction(
-      ['households', 'members', 'expenses'],
-      'readwrite',
-    )
+    const tx = db.transaction(stores, 'readwrite')
     for (const record of records.households)
       tx.objectStore('households').put(record)
     for (const record of records.members) tx.objectStore('members').put(record)
     for (const record of records.expenses)
       tx.objectStore('expenses').put(record)
+    for (const record of settlements) tx.objectStore('settlements').put(record)
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error ?? new Error('putRaw failed'))
   })
 }
 
-/** Every raw record of the three stores, by store, sorted by id. */
+/** Every raw record, as stored; `settlements` only from version 2 on. */
 export async function getRaw(db: IDBDatabase): Promise<RawRecords> {
   const all = (store: string) =>
     new Promise<unknown[]>((resolve, reject) => {
@@ -129,18 +155,23 @@ export async function getRaw(db: IDBDatabase): Promise<RawRecords> {
       request.onerror = () =>
         reject(request.error ?? new Error('getRaw failed'))
     })
-  return {
+  const raw: RawRecords = {
     households: await all('households'),
     members: await all('members'),
     expenses: await all('expenses'),
   }
+  if (db.objectStoreNames.contains('settlements')) {
+    raw.settlements = await all('settlements')
+  }
+  return raw
 }
 
 /**
- * The test-only version-2 step (H2, R2-O1): a new index, and every record
- * rewritten from `v: 1` to `v: 2` with the same content.
+ * The test-only step (H2, R2-O1), version 3 on top of M5's real version 2
+ * (B3): a new index, and every record rewritten from `v: 1` to `v: 2`
+ * with the same content.
  */
-export const testSchemaV2: Migration = (_db, tx) => {
+export const testSchemaV3: Migration = (_db, tx) => {
   tx.objectStore('expenses').createIndex('byDate', 'date')
   for (const store of ['households', 'members', 'expenses']) {
     const request = tx.objectStore(store).openCursor()

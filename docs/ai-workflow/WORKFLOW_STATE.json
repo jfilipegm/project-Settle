@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "active_work_item_id": null,
+  "active_work_item_id": "milestone-5",
   "work_items": {
     "milestone-0": {
       "work_item_type": "product",
@@ -4831,6 +4831,127 @@
           "completed_at": "2026-10-10T15:12:48Z"
         }
       }
+    },
+    "milestone-5": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-5",
+      "parent_work_item_id": null,
+      "plan_path": "docs/milestones/milestone-5-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-5-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-5-mapping.json",
+      "governing_workflow_version": "2.2",
+      "phase": "AWAITING_LOCAL_IMPLEMENTATION_REVIEW",
+      "plan_revision": 4,
+      "implementation_revision": 2,
+      "functional_review_round": null,
+      "base_commit": "5222a92699b94b4365de2abed6f2b289b68a9e70",
+      "reviewed_implementation_head": "ab7131ea88cec3f23aab11a64862a7df3c55120b",
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": "CP6",
+      "checkpoints": {
+        "CP1": {
+          "status": "COMPLETE",
+          "start_commit": "bc85333782868cd3e3d6471d7400722d06946799"
+        },
+        "CP2": {
+          "status": "COMPLETE",
+          "start_commit": "8294aa4863c53af6b7c55b1f1270ddfdd1b65e40"
+        },
+        "CP3": {
+          "status": "COMPLETE",
+          "start_commit": "b810871531613fe7c3ba1c81ee6339b64c751c95"
+        },
+        "CP4": {
+          "status": "COMPLETE",
+          "start_commit": "99759c76c68e26f742bbeb1f9caedab902d5d4c2"
+        },
+        "CP5": {
+          "status": "COMPLETE",
+          "start_commit": "e4232d1818554f12952e9ff2463b5135dbf4d3a8"
+        },
+        "CP6": {
+          "status": "COMPLETE",
+          "start_commit": "55099a675930f18c4b4c1dcc87a8d6ba8ec81866"
+        }
+      },
+      "current_bundle_id": "eea85f72bc8261a5a848104bb691738a8fa71e53b117071f21731d8cedf21857",
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "USER_OVERRIDE",
+        "reviewed_bundle_id": "eea85f72bc8261a5a848104bb691738a8fa71e53b117071f21731d8cedf21857",
+        "approved_review_content_id": "0e7db6b23e8dde5c3dbe753953d483731fab87cdaaab053b80ba3938e3dc3503",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-5-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3ec55e38b03174d636756bf369d6145b04849e2f"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-5-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3b42c6099cd377ba7f7667bd3930724c603b8885"
+          },
+          {
+            "path": "docs/milestones/milestone-5-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9a3a9df55956e1d6da68ad2f4c9bfc245be9d32c"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-5 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-10-10T20:23:57Z"
+      },
+      "technical_approval": null,
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "0e7db6b23e8dde5c3dbe753953d483731fab87cdaaab053b80ba3938e3dc3503",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "eea85f72bc8261a5a848104bb691738a8fa71e53b117071f21731d8cedf21857",
+          "verdict": "APPROVE",
+          "round": 4,
+          "completed_at": "2026-10-10T19:47:14Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "eea85f72bc8261a5a848104bb691738a8fa71e53b117071f21731d8cedf21857",
+          "verdict": "APPROVE",
+          "round": 4,
+          "completed_at": "2026-10-10T20:20:43Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 32,
+      "last_transition": "2026-10-10T22:02:27Z",
+      "feedback_layout": "scoped",
+      "plan_review_binding": {
+        "status": "BOUND",
+        "at": "2026-10-10T19:44:32Z",
+        "consumed": {
+          "review_content_id": "747cc7f8463fc229d5768f6f4abfefec62cc0b7e095a9479e1b5271057a7f9ef",
+          "plan_revision": 3,
+          "legacy": false
+        },
+        "published": {
+          "review_content_id": "0e7db6b23e8dde5c3dbe753953d483731fab87cdaaab053b80ba3938e3dc3503",
+          "plan_revision": 4
+        },
+        "bound": {
+          "review_content_id": "0e7db6b23e8dde5c3dbe753953d483731fab87cdaaab053b80ba3938e3dc3503",
+          "bundle_id": "eea85f72bc8261a5a848104bb691738a8fa71e53b117071f21731d8cedf21857",
+          "plan_revision": 4
+        }
+      },
+      "consumed_plan_review_content_ids": [
+        "27069e4af0d42396d3f7981779d45770e1128ebc5ad9dc1ceb6abef102ffd114",
+        "2b0a4f0c311b3fb83f6bd84c8fc5ba61e1836839c12b08efc7ab011d04e2a2b7",
+        "747cc7f8463fc229d5768f6f4abfefec62cc0b7e095a9479e1b5271057a7f9ef"
+      ]
     }
   }
 }

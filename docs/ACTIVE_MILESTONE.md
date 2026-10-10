@@ -2,26 +2,138 @@
 
 ## Milestone
 
-None active. M4 (Households, members and the expense ledger) was
-accepted on 2026-10-10; the next roadmap milestone is **M5 — Balances
-and settling up**.
+**M5 — Balances and settling up** (`milestone-5`), on
+`feature/milestone-5`, PR #13. Plan revision 4 was approved on
+2026-10-10 (`bc85333`). The plan is `docs/milestones/milestone-5-PLAN.md`.
+
+## Checkpoints
+
+- **CP1 — complete:** the chart notes and M4's follow-ups.
+  - A kit tip shows a mark's value at once: on hover for all four
+    charts, on a tap of a mark that isn't a link, and on keyboard focus
+    of a bar. `title` and SVG `<title>` are gone.
+  - Each bar chart is one Tab stop with roving focus (arrows, Home,
+    End). Every bar has the same hover, focus and tip style.
+  - Bar charts are named groups (by their card's heading on the
+    overview, O-14), described by a summary, with named marks. Nothing
+    focusable sits under `aria-hidden` or `role="img"` (L1-I2).
+  - "The last six months": the month on screen is a plain mark named
+    "this month"; only the other months link.
+  - The donut and its legend share one set of percentages (O-13).
+  - The `/_kit` gallery shows the charts and a dialog's close button
+    (O-12).
+  - The literal-text guard now also catches ternaries, templates with
+    substitutions, parenthesised, `as` and fallback literals in a label
+    attribute, and a kit `label` prop (R2-O1). No existing hit.
+  - Design canvas: the chart tip is noted on the "As shipped" board in
+    CP6, with the rest of M5's canvas work.
+- **CP2 — complete:** payments, the record and its storage.
+  - `Settlement` (`model.ts`) with `settlementContentErrors` and
+    `validateSettlement`; `readSettlement` (`records.ts`).
+  - The database's first real migration: version 2 (`createSchemaV2`)
+    adds the `settlements` store and rewrites nothing. M4's test-only
+    step moved to version 3. `fixtures/v2.json` joins `v1.json`.
+  - The repository: `listSettlements`, `getSettlement`, `saveSettlement`
+    (references re-checked in its transaction; an edit never revives a
+    payment deleted elsewhere), `deleteSettlement`. `deleteMember` also
+    refuses for a payment, readable or not.
+  - A failed upgrade has its own state, "Settle couldn't update its
+    data", with Reload and the split (O-4). The member-delete messages
+    now say "expenses or payments".
+  - ADR 0005, "Version 2: payments".
+- **CP3 — complete:** the balances engine (`features/household/balances.ts`,
+  pure).
+  - `balances`: paid − share + sent − received per member, in integer
+    cents, as of a date or over every record (future-dated ones counted
+    and counted out). It carries `complete` and the unreadable counts
+    (M-I-1).
+  - `suggestSettlements`: the most zero-sum groups by the O(2ⁿ·n)
+    programme (`zeroSumGroups`, up to 16), each settled greedily, so the
+    count is the minimum. Above 16, opposite pairs come out first.
+    Deterministic tie-breaks by member order.
+  - `explainBalance` (newest first, summing to the balance) and
+    `paymentOutcome`, the dialog's "after this" line (an edit without
+    itself, L2-I1; `null` on incomplete balances).
+  - Tests: a 2000-household property sweep (zero sum, cleared, the
+    minimum by brute force up to 8, order independence, explanations,
+    dates), the planted-groups generator, the 13 hand-checked examples,
+    the grouping rule, the over-16 fallback with members who left, and
+    the budgets (1000 expenses and 200 payments, adversarial 16-member
+    vectors).
+- **CP4 — complete:** the Balances tab, recording a payment, explanations.
+  - A fourth tab, Balances (pt: Saldos), at `/households/:hid/balances`:
+    each member's balance ("Gets back", "Owes", "Settled up", the signed
+    amount, "Paid …", "Left on …"), "Settle up in N payments" with each
+    payment's Mark as paid, Record a payment, and "Balances on" a past
+    date (`?on=`, which hides the actions). The "dated after today" line
+    counts both kinds.
+  - The payment dialog (`SettlementForm`): From, To (those who left
+    last), Amount, Date, Note, and "After this, Tiago owes 7,65 and Ana
+    is settled up." before saving. Errors by field, a double-press guard,
+    a failed save keeps the input, "Payment recorded." announced.
+  - Incomplete balances fail closed (M-I-1): a notice, figures only, no
+    suggestion, no Mark as paid, never "Everyone is settled up" (zero
+    readable balances read "No balance"), the dialog shows the notice in
+    place of its outcome, and the overview card has no settle-up line.
+  - The explanation page `/households/:hid/balances/:mid`: the sums, the
+    lines by month (an expense opens over the page), and "Balance",
+    respecting `?on=`. The incomplete notice shows there too (L4-O1).
+  - The overview's balances card ("Across all expenses and payments.",
+    the settle-up line, Details).
+  - Design canvas and the screens check: in CP6.
+- **CP5 — complete:** payments in the history, and the settle-up text.
+  - The Expenses tab lists payments among the expenses, by date in the
+    same month groups, styled apart ("Tiago paid Ana", an exchange icon,
+    the note). Month totals and counts stay expenses only. A member
+    filter shows the payments they sent or received, a category filter
+    hides payments, and the search matches both names and the note.
+    Unreadable payments are counted there too (L4-O4).
+  - A payment opens in a dialog over the page (`?settlement=`): from,
+    to, amount, date, note, then Edit (the payment form, whose outcome
+    leaves the original out, L2-I1) and Delete ("Delete this payment?
+    The balances change back."). An explanation's payment lines open it
+    too (L3-O2).
+  - `balanceText.ts`: the balances and the payments as text, both
+    languages, no date in the header, the "dated after today" line; it
+    throws over incomplete balances (M-I-1). Copy as text ("Copied.", or
+    the refusal) and Share where the browser has it; neither with
+    `?on=` or over incomplete balances.
+- **CP6 — complete:** quality pass and documentation.
+  - The completion scenario with payments: five payments (two from the
+    suggestion, one partial, one by a member who left, one edited) and
+    one deleted; the balances, the suggestion and every explanation are
+    equal across a reload and across the real version-1 to version-2
+    upgrade (`data/completion.test.ts`).
+  - `app/scripts/screens.mjs`: the ledger built at version 2 with a
+    payment; five new screens; 1024 px added; a 360 px check that chart
+    tips stay inside their card. 20 screens, 162 checks, 0 problems,
+    after one fix: the four tabs were 12 px too wide at 360 px, so under
+    400 px they take less padding and 14 px text.
+  - The design checkers and the privacy checks: nothing new on any M5
+    screen; page load and the sample scans pass
+    (`docs/milestones/milestone-5-evidence/CHECKS.md`).
+  - ADR 0006 (balances and the suggestion, with the minimum's proof and
+    the over-16 fallback); `docs/DESIGN.md` (the chart tip, the four
+    tabs, balances and payments); `app/README.md` (version 2 as the
+    worked migration, the engine); the root `README.md`; the roadmap's
+    M5 status.
+  - Design canvas: updated on 2026-10-10 with the user's go-ahead
+    (version 31): an "As shipped in M5" board (16 screenshots), the
+    Balances tab at phone width in light and dark, the navigation map
+    (Balances drawn, Record a payment and the explanation), and the
+    chart-tip note on the M4 board.
+
+## Implementation review
+
+- **Round 1, local:** REVISE. I-1, the canvas, is fixed (above). The
+  optional findings are applied: the Portuguese 360 px pass (O-1), the
+  "paga a" wording recorded in `docs/DESIGN.md` (O-2), and the share-bar
+  tip check (O-3).
 
 ## Next action
 
-`/milestone-plan` for M5, after PR #12 (M4) is merged into `master`:
-then `git switch master && git pull` and
-`git switch -c feature/milestone-5`.
-
-**M5's first checkpoint, agreed on 2026-10-10:** the owner's notes on
-M4's charts, after acceptance, together with O-12 to O-14 below:
-- "The last six months": the bar for the month on screen must not be a
-  link (pressing it changes nothing and looks broken); only the other
-  months open theirs.
-- "Day by day" gets the same hover effect as "The last six months".
-- Every chart (both bar charts, the donut, the expense dialog's share
-  bar) shows its value at once on hover, and on focus or tap, through
-  a kit tooltip, instead of the browser's delayed `title`; the text
-  alternatives stay.
+`/review-implementation milestone-5` on the post-fix bundle (round 2,
+local), then the manual external review.
 
 ## Last completed: M4 — Households, members and the expense ledger
 
@@ -81,10 +193,6 @@ Carried forward (not blockers):
   sync, without which browser storage can be evicted: M6.
 
 From M3 and earlier, still open:
-- **The literal-text guard's remaining forms** (R2-O1): a ternary or a
-  template with substitutions in a label attribute, a parenthesised or
-  `as` literal, and a kit `label` prop still pass it. Harden it before
-  more screens land.
 - A Ctrl/⌘-click on a split step link leaves a harmless focus request
   pending (R3-O2); skip `onSelect` for modified clicks if it gains other
   uses.
@@ -104,8 +212,7 @@ None.
 
 ## Active plan
 
-None. M4's plan is archived at
-`docs/milestones/completed/milestone-4-PLAN.md`.
+`docs/milestones/milestone-5-PLAN.md` (revision 4, approved).
 
 ## Functional review checklist
 

@@ -8,6 +8,7 @@ import {
   member,
   quickExpense,
   TODAY,
+  settlement as settlementRecord,
 } from '../../test/households.ts'
 import {
   activeMembers,
@@ -20,6 +21,9 @@ import {
   validateExpense,
   type Expense,
   type ExpenseErrorCode,
+  settlementContentErrors,
+  validateSettlement,
+  type Settlement,
 } from './model.ts'
 
 const members = fourMembers()
@@ -201,5 +205,60 @@ describe('validateExpense', () => {
         ]),
       ),
     ).toEqual(['duplicateMember'])
+  })
+})
+
+describe('payments (M5, B2)', () => {
+  const paid = (extra: Partial<Settlement> = {}) =>
+    settlementRecord('s1', 'tiago', 'ana', 9115, extra)
+
+  it('accepts any two members, a note, and dates up to a year ahead', () => {
+    expect(validateSettlement(paid(), fourMembers(), TODAY)).toEqual([])
+    expect(
+      validateSettlement(
+        paid({ note: 'Rent, September', date: '2027-10-09' }),
+        fourMembers(),
+        TODAY,
+      ),
+    ).toEqual([])
+    // A member who has left can still pay or be paid.
+    const left = fourMembers().map((m) =>
+      m.id === 'tiago' ? { ...m, leftOn: '2026-01-31' } : m,
+    )
+    expect(
+      validateSettlement(paid({ date: '2026-09-01' }), left, TODAY),
+    ).toEqual([])
+  })
+
+  it.each([
+    ['the same member twice', { toId: 'tiago' }, ['sameMember:to']],
+    ['nothing paid', { amount: cents(0) }, ['amountOutOfRange:amount']],
+    [
+      'more than 1 000 000,00',
+      { amount: cents(100_000_001) },
+      ['amountOutOfRange:amount'],
+    ],
+    ['an unreal date', { date: '2026-13-01' }, ['dateInvalid:date']],
+    ['a date before 2000', { date: '1999-12-31' }, ['dateOutOfRange:date']],
+    [
+      'a date more than a year ahead',
+      { date: '2027-10-10' },
+      ['dateOutOfRange:date'],
+    ],
+    ['an empty note', { note: '' }, ['noteInvalid:note']],
+    ['a long note', { note: 'n'.repeat(81) }, ['noteInvalid:note']],
+    ['an unknown payer', { fromId: 'ghost' }, ['unknownMember:from']],
+    ['an unknown payee', { toId: 'ghost' }, ['unknownMember:to']],
+  ])('refuses %s', (_name, change, expected) => {
+    expect(
+      validateSettlement(paid(change), fourMembers(), TODAY).map(
+        (e) => `${e.code}:${e.field}`,
+      ),
+    ).toEqual(expected)
+  })
+
+  it('keeps the content rules apart from the date’s upper bound', () => {
+    expect(settlementContentErrors(paid({ date: '2030-01-01' }))).toEqual([])
+    expect(settlementContentErrors(paid({ note: 'x'.repeat(80) }))).toEqual([])
   })
 })
