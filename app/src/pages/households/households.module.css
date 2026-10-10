@@ -1,0 +1,263 @@
+/*
+ * The household pages (M4 plan, H9, H13): tuned for desktop width, working
+ * from 360 px. Cards sit flat; one accent per screen.
+ */
+
+.page {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 48rem;
+}
+
+.page h1 {
+  margin-bottom: 0;
+}
+
+.intro,
+.hint {
+  margin: 0;
+  color: var(--color-quiet);
+}
+
+.hint {
+  font-size: var(--text-14);
+}
+
+.list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  min-height: 3rem;
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.row:first-child {
+  border-top: 0;
+}
+
+.rowMain {
+  display: flex;
+  flex: 1 1 12rem;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rowTitle {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.rowLink {
+  color: var(--color-ink);
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.rowLink:hover {
+  text-decoration: underline;
+}
+
+.rowMeta {
+  color: var(--color-quiet);
+  font-size: var(--text-14);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.formRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.formRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.error {
+  margin: 0;
+  color: var(--color-error);
+}
+
+.header {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.switcher {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  max-width: 100%;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-card);
+  color: var(--color-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.switcherName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.bigAmount {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--text-28);
+  font-weight: 500;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+}
+
+.facts dt {
+  color: var(--color-quiet);
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.monthNav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.summary {
+  margin: 0;
+  color: var(--color-quiet);
+  font-size: var(--text-17);
+}
+
+.addChoices {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.choice {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.choice:hover {
+  border-color: var(--color-control-border);
+}
+
+.choiceTitle {
+  font-weight: 700;
+}
+
+.filters {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.monthGroup {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.monthHeading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-19);
+}
+
+@media (min-width: 640px) {
+  .filters {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+
+  .filters > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* An expense in its dialog (M-5): its parts stacked, the shares bar above
+ * the list it draws. */
+.expense {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.expense .bigAmount {
+  margin: 0;
+}
+
+.expense section {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.subTitle {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-17);
+  font-weight: 600;
+}

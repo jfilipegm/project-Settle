@@ -194,3 +194,50 @@ describe('index.html', () => {
     expect(el?.hasAttribute('defer')).toBe(false)
   })
 })
+
+describe('the dialog scrim and the chart colours (M4, M-6 and M-7)', () => {
+  const dialogCss = readFileSync(
+    `${import.meta.dirname}/../ui/Dialog.module.css`,
+    'utf8',
+  )
+
+  it('darkens behind a dialog in both themes, never lightens', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      const scrim = tokens(PALETTES[theme]).get('--color-scrim') ?? ''
+      // A near-black at a low opacity: never the theme's ink.
+      const match = /^rgb\((\d+) (\d+) (\d+) \/ (0\.\d+)\)$/.exec(scrim)
+      expect(match, `${theme} scrim ${scrim}`).not.toBeNull()
+      const [, r, g, b, alpha] = (match ?? []).map(Number)
+      expect(Math.max(r ?? 255, g ?? 255, b ?? 255)).toBeLessThanOrEqual(32)
+      expect(alpha).toBeGreaterThan(0)
+      expect(alpha).toBeLessThanOrEqual(0.5)
+    }
+    expect(dialogCss).toMatch(
+      /\.dialog::backdrop\s*\{\s*background: var\(--color-scrim\);/,
+    )
+  })
+
+  it('defines eight chart hues and the neutral in both themes', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      const names = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => `--chart-${n}`)
+      for (const name of [...names, '--chart-rest']) {
+        expect(
+          tokens(PALETTES[theme]).get(name),
+          `${name} in ${theme}`,
+        ).toMatch(/^#[0-9a-f]{6}$/)
+      }
+      const values = names.map((name) => tokens(PALETTES[theme]).get(name))
+      expect(new Set(values).size).toBe(8)
+    }
+  })
+
+  it.each([1, 2, 3, 4, 5, 6, 7, 8])(
+    'dark chart hue %i is a mark of at least 3:1 on the card',
+    (n) => {
+      const hue = tokens(PALETTES.dark).get(`--chart-${n}`) ?? ''
+      expect(
+        contrast(hue, colour('dark', '--color-card')),
+      ).toBeGreaterThanOrEqual(3)
+    },
+  )
+})

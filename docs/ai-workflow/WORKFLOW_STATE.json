@@ -4089,6 +4089,748 @@
           "completed_at": "2026-10-09T19:56:53Z"
         }
       }
+    },
+    "milestone-4": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-4",
+      "parent_work_item_id": null,
+      "plan_path": "docs/milestones/milestone-4-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-4-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-4-mapping.json",
+      "governing_workflow_version": "2.2",
+      "phase": "MILESTONE_COMPLETE",
+      "plan_revision": 4,
+      "implementation_revision": 4,
+      "functional_review_round": null,
+      "base_commit": "c71a455f88e004bbeb4cd1da2b995248e5d418b5",
+      "reviewed_implementation_head": "f0fd43fa8a7f7a9bb15a165e115940659421a973",
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": "CP6",
+      "checkpoints": {
+        "CP1": {
+          "status": "COMPLETE",
+          "start_commit": "ee0225d36c94910a908a3e0ea65b902daafb6eb0"
+        },
+        "CP2": {
+          "status": "COMPLETE",
+          "start_commit": "1b0fb52c97292289d7d98cb66a4a193d645faf9c"
+        },
+        "CP3": {
+          "status": "COMPLETE",
+          "start_commit": "b6854656da0dbc1ca14b0f3122b6e3e775e11d2a"
+        },
+        "CP4": {
+          "status": "COMPLETE",
+          "start_commit": "79f1b998f56eeab5d004ca43099d74ee81491108"
+        },
+        "CP5": {
+          "status": "COMPLETE",
+          "start_commit": "02b1326d8b97a442a47f7c74439fc2099e7d1962"
+        },
+        "CP6": {
+          "status": "COMPLETE",
+          "start_commit": "08af73bb290e96235c9ca25cc2aa6cfb3cd22ec5"
+        }
+      },
+      "current_bundle_id": "6f76b198cd22b50ee42a14e64ca4103da5e48482f331e03e224e852e1bc9558d",
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "6f76b198cd22b50ee42a14e64ca4103da5e48482f331e03e224e852e1bc9558d",
+        "approved_review_content_id": "fd61f72a6ab4c24d442b6ea25df7ce07ac5b666f7c70f270cbe92e4724bc282f",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-4-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8a3d3d3618c75cb7effc15b0ac77a0a303a39927"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-4-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6856a2cc1d439900a386441e598a8e32a069b25f"
+          },
+          {
+            "path": "docs/milestones/milestone-4-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "078c9529423aff024daa0b734733703b7e7f3474"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-4 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-10-09T22:31:07Z"
+      },
+      "technical_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "3f32b33a6495cb02847fb9ee2e24debee387a77bd73e636287017aa3cbad33bd",
+        "approved_review_content_id": "d7ad5c35ece92d36749c92d347dc3043380f968d15dc40162568020efdae244f",
+        "review_content_manifest": [
+          {
+            "path": "README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7505002fca303c856afb054164c92f26473cc64d"
+          },
+          {
+            "path": "app/README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8081acf6704cb797f0a8025e258c9fc286a76c0f"
+          },
+          {
+            "path": "app/package-lock.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8a979a086969756dd0b245198f3c7b0fb60b2b7d"
+          },
+          {
+            "path": "app/package.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "461b188e4827edc355ff157c3f2c789a0d99ff59"
+          },
+          {
+            "path": "app/scripts/screens.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ac39781db60f58d905ae6ee9208a3b03438d8bf1"
+          },
+          {
+            "path": "app/src/app/Layout.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "25582e82839edc522efa6788c0c4eecf645780c9"
+          },
+          {
+            "path": "app/src/app/router.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6e2e8a63138988f390e437f2693476a3cae80dd4"
+          },
+          {
+            "path": "app/src/app/routes.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4275a1a8faa75e1b1919e2f99884bcd9009c45dd"
+          },
+          {
+            "path": "app/src/data/completion.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bc7b79f7eb84c32b4b07f1647ad0eb5d9ce9ac8d"
+          },
+          {
+            "path": "app/src/data/db.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "765d1ab97c7c7926ed54d3a04902f7969ef88bc2"
+          },
+          {
+            "path": "app/src/data/db.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b6bebeb7bd49e4d646d7f5e2111c45d61d8219c6"
+          },
+          {
+            "path": "app/src/data/fixtures/v1.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a83907b605b69784556f5312494c33890f45ad29"
+          },
+          {
+            "path": "app/src/data/pointer.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c70af96d57bc58398ffb5981c01894983ca129ad"
+          },
+          {
+            "path": "app/src/data/records.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "65e9a66dfbca99b1f6d9eded8ec4ccfbc2bcda1d"
+          },
+          {
+            "path": "app/src/data/repository.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "eb50c4fd201b0e2846a7562528935fe91d43826c"
+          },
+          {
+            "path": "app/src/data/repository.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "00f7c6990f40db635dfffea85507c3f2a71d93ba"
+          },
+          {
+            "path": "app/src/features/household/HouseholdDataProvider.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "320a15c04449fa40cd43adee5c69fc901948a2d2"
+          },
+          {
+            "path": "app/src/features/household/categories.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b93d33cb4224cddea108b5ab2e57d30f75e62267"
+          },
+          {
+            "path": "app/src/features/household/charts.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6c39534faa0a6a84dc46bbb41e76d0e5ee1ddaaf"
+          },
+          {
+            "path": "app/src/features/household/charts.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "85a6b579c21b274204b1ee1ade65386107d7376b"
+          },
+          {
+            "path": "app/src/features/household/components/ExpenseRow.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "baf9ffd62efd92c8bcebdbcd35e0113f02e9b6bb"
+          },
+          {
+            "path": "app/src/features/household/components/ExpenseRow.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "20511274996f4a1d1af73fd20a8628d4f2de60a7"
+          },
+          {
+            "path": "app/src/features/household/components/MonthCharts.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "fe8e19e6857ca85587fe8cdb8699d86a2eda7199"
+          },
+          {
+            "path": "app/src/features/household/components/MonthCharts.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "551a6e09db89154a336a038534160075e27ef0f8"
+          },
+          {
+            "path": "app/src/features/household/components/QuickExpenseForm.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "abe9afc4049990b34d4ddffe2c92c1986a706c06"
+          },
+          {
+            "path": "app/src/features/household/components/QuickExpenseForm.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d55df675565fd1f0f3e44deb1c6c91a2a6cff6e9"
+          },
+          {
+            "path": "app/src/features/household/components/SaveToHouseholdDialog.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "646704b509ae4c4d8c9d3711573b1f8ce0d55ab3"
+          },
+          {
+            "path": "app/src/features/household/components/SaveToHouseholdDialog.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "48531824ebaa2c546245564d50b12a3b4987dd04"
+          },
+          {
+            "path": "app/src/features/household/format.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1fc92177a501addc1beb1244ba1613fcaffc4d3d"
+          },
+          {
+            "path": "app/src/features/household/forms.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0c935bce6337b93fde806242d3c7c997b733c468"
+          },
+          {
+            "path": "app/src/features/household/householdData.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f09a52b3b300c034d6973e44ed566ec4a1654e72"
+          },
+          {
+            "path": "app/src/features/household/itemised.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "85c758b3586921525225a0ae4b5b6c416a9c86dc"
+          },
+          {
+            "path": "app/src/features/household/model.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "df2b986a4989e5615100b516e52c9066ae0aa1a1"
+          },
+          {
+            "path": "app/src/features/household/model.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "dce0ab179b21dbc1f1ede8e6b1f81e08d8664343"
+          },
+          {
+            "path": "app/src/features/household/quickForm.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ef76ac51a0f35e2d743a0d9c9950c552d227c1bb"
+          },
+          {
+            "path": "app/src/features/household/quickForm.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "83dcb2e73e6ae818903d31e6676719b9044dd709"
+          },
+          {
+            "path": "app/src/features/household/search.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ac837dee26e65a7ff4e78dc669e1a8192ac4a693"
+          },
+          {
+            "path": "app/src/features/household/search.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "809a96c49499f6750f2ff71fc221ffa058ce546c"
+          },
+          {
+            "path": "app/src/features/household/shares.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4529865dedcab873e6fec04bc63187d3acd22eb6"
+          },
+          {
+            "path": "app/src/features/household/shares.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "72446ff42a81c5e6f64b7c4d4010cc94d7adb284"
+          },
+          {
+            "path": "app/src/features/household/totals.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f27ce01c09f8f17450ff70c90e1101aef5fbf6aa"
+          },
+          {
+            "path": "app/src/features/household/totals.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "32c4ca3a06b4e0292aeaf9b2150175c177d064ce"
+          },
+          {
+            "path": "app/src/features/receipt/model.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "550db9617cb491b55483986c9d0818ebba621fd6"
+          },
+          {
+            "path": "app/src/features/receipt/receiptKey.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1d3bfa32d1da07dd9284faa64d7aa065f2a55fbf"
+          },
+          {
+            "path": "app/src/features/receipt/receiptKey.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "bfd2588ab603cb78e7bd05e395396ae03cdc2ab7"
+          },
+          {
+            "path": "app/src/features/receipt/receiptStore.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "324ece8643dc7a447b0c9a2cfa8fa6b772900c28"
+          },
+          {
+            "path": "app/src/features/receipt/receiptStore.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ad39c3f16d9db6755878efe3a84387deb1dc122b"
+          },
+          {
+            "path": "app/src/features/receipt/toBill.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ed4730290444d9b4ad2a0a4ac0c27471ae93b704"
+          },
+          {
+            "path": "app/src/features/receipt/toBill.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1678279b3c24da953fb478c384126323c32a36dc"
+          },
+          {
+            "path": "app/src/features/split/components/split.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "18798f9b95de5f3bff92360a70cbca3535f6d86c"
+          },
+          {
+            "path": "app/src/features/split/draft.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f470356727037d80f10cb09e5c938a6b26e917ce"
+          },
+          {
+            "path": "app/src/features/split/useBill.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "73266720a95a80fac1b55938235f6aea3a88dc5a"
+          },
+          {
+            "path": "app/src/i18n/catalogue.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4f44b0b5582b7f5fc0c1c25a9aa573b31ad968ba"
+          },
+          {
+            "path": "app/src/i18n/en.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0614efd43c67cabe4bc46718927742eb3798e45f"
+          },
+          {
+            "path": "app/src/i18n/literalText.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "52d17b2a89318dd45e9ca4f08971045d62ce4f12"
+          },
+          {
+            "path": "app/src/i18n/portuguese.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b745f3fa007b3c4f6b21f4ef3f55b06a641aacb2"
+          },
+          {
+            "path": "app/src/i18n/pt.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "47a029a5016b55c8dfb8bec72791f250f3d92ecf"
+          },
+          {
+            "path": "app/src/pages/HouseholdPage.tsx",
+            "exists": false,
+            "mode": null,
+            "blob": null
+          },
+          {
+            "path": "app/src/pages/SplitPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "15e5c68c33adb5fb6edcbefd8b6578a50286b7a5"
+          },
+          {
+            "path": "app/src/pages/households/ExpenseDialog.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "e05ed875c196ee1a85a6f2c343c945adb1d00bbb"
+          },
+          {
+            "path": "app/src/pages/households/ExpenseFormPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3017baaf7972c633572192d7cf70217f7fdf5d10"
+          },
+          {
+            "path": "app/src/pages/households/ExpensePage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5069f5545f6748afedd83a2182babdbbdedad313"
+          },
+          {
+            "path": "app/src/pages/households/ExpensesPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7c43cb58103fdf0d01458a3c5a1833d25de32e0e"
+          },
+          {
+            "path": "app/src/pages/households/HouseholdRedirect.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6c06908df85a8ec059bb1a6644b7a42f9653ef92"
+          },
+          {
+            "path": "app/src/pages/households/HouseholdShell.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "499dccdf0a00b788fb6fd32f162d3936e89055c3"
+          },
+          {
+            "path": "app/src/pages/households/HouseholdsPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "184b324ba230fb753a67348a645dfaf2480df3b0"
+          },
+          {
+            "path": "app/src/pages/households/MembersPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "656522a53582bac8925d13a218c1847ff5d1cc02"
+          },
+          {
+            "path": "app/src/pages/households/OverviewPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "82d34745381baca687cae0c246933eefd7c9fff6"
+          },
+          {
+            "path": "app/src/pages/households/StorageState.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "72ef72009d24c1af476ffbeced4d79d188650415"
+          },
+          {
+            "path": "app/src/pages/households/expenseDialog.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9954d64481ca06faa7ab0aef888444a1c8b171f9"
+          },
+          {
+            "path": "app/src/pages/households/expenses.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "befbdf6430d446df4942c5d6271a968ca5342bb0"
+          },
+          {
+            "path": "app/src/pages/households/history.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c86dfb8db992db1256aee8e4eee3e51200bdb3c6"
+          },
+          {
+            "path": "app/src/pages/households/householdContext.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "41866b4232d252057ae106398c2205c7aadff52f"
+          },
+          {
+            "path": "app/src/pages/households/households.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "50917fa9415e8103ab1d2b0c724c74777ca40c88"
+          },
+          {
+            "path": "app/src/pages/households/households.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5fd2a498eda9d9e93ff0376afdc83fab2d820e18"
+          },
+          {
+            "path": "app/src/pages/households/itemised.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4588fc15f8669158a9872bf5a88ab3b457f542f5"
+          },
+          {
+            "path": "app/src/pages/households/overviewCharts.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "52f392177965840be3d02705eb794a4404258320"
+          },
+          {
+            "path": "app/src/styles/tokens.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "6b3ae24dd123956f4618fc619ca05445f6892767"
+          },
+          {
+            "path": "app/src/styles/tokens.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "54b7128404326497f904de056a278c274618a3c9"
+          },
+          {
+            "path": "app/src/test/households.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ce9e9f833d7e462a7cdc096f57a0f1ea0bf29026"
+          },
+          {
+            "path": "app/src/test/portuguese.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4962765b97adf1163de4264b8af4deb36dccf4c4"
+          },
+          {
+            "path": "app/src/test/renderApp.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8b8e58de8dbd6c84023dca7ef76cd7e2b23b8e91"
+          },
+          {
+            "path": "app/src/ui/Charts.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "791745687830e166e8faa0447653d55957d0b545"
+          },
+          {
+            "path": "app/src/ui/Charts.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "457384cef77d3f1a7044ff85c6c69c4bd2bc6338"
+          },
+          {
+            "path": "app/src/ui/Charts.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0b4d3dc9e287329f1bac5e9ebccd16857cdf02e8"
+          },
+          {
+            "path": "app/src/ui/Checkbox.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "38646b7b00e00f8cd2a7524543f660cb951139d3"
+          },
+          {
+            "path": "app/src/ui/Checkbox.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "af45443f6990f88a968928c721cf8f527588bbc4"
+          },
+          {
+            "path": "app/src/ui/Checkbox.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "127bb974bd49c425ebf07fd42949e29d5015a81f"
+          },
+          {
+            "path": "app/src/ui/Dialog.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "197060f85de759ca7f3f93b78a2ed5fc3e0a0353"
+          },
+          {
+            "path": "app/src/ui/Dialog.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2231513f0086503e02f8fc426e650142d14f5c6e"
+          },
+          {
+            "path": "app/src/ui/Dialog.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "4f203e5c7b12f72c9bbc8b919626b73cae86d299"
+          },
+          {
+            "path": "app/src/ui/Field.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "354c55801f0a1748475882af5cc652eabf4af864"
+          },
+          {
+            "path": "app/src/ui/Tabs.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "663cc828664296699a8cc0761ebc94a5e044f13c"
+          },
+          {
+            "path": "app/src/ui/Tabs.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2c0aa36db713632e7c2e327b3b399696fe984838"
+          },
+          {
+            "path": "app/src/ui/Tabs.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "fecba34b87d9eb70faa331a079ee24f5d942740d"
+          },
+          {
+            "path": "app/src/ui/gallery/KitGallery.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "275ded0f9508ed03081efc0ef3d0c7cc7f82726c"
+          },
+          {
+            "path": "docs/DESIGN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c2fcddb5de6087c1280f2e254857765243d5032f"
+          },
+          {
+            "path": "docs/adr/0005-local-ledger-store.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "71e8d801b929b8d4f9d62190237f38a4ba9ae9c6"
+          },
+          {
+            "path": "docs/ai-workflow/registry/milestone-4-artifacts.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3df9929c607ed9a354c541adec384696715c5d22"
+          }
+        ],
+        "reviewed_content_commit": "f0fd43fa8a7f7a9bb15a165e115940659421a973",
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-4 implementation",
+        "waived_guarantees": [],
+        "recorded_at": "2026-10-10T15:14:34Z"
+      },
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "fd61f72a6ab4c24d442b6ea25df7ce07ac5b666f7c70f270cbe92e4724bc282f",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "6f76b198cd22b50ee42a14e64ca4103da5e48482f331e03e224e852e1bc9558d",
+          "verdict": "APPROVE",
+          "round": 4,
+          "completed_at": "2026-10-09T22:25:21Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "6f76b198cd22b50ee42a14e64ca4103da5e48482f331e03e224e852e1bc9558d",
+          "verdict": "APPROVE",
+          "round": 4,
+          "completed_at": "2026-10-09T22:28:53Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 45,
+      "last_transition": "2026-10-10T15:18:30Z",
+      "feedback_layout": "scoped",
+      "plan_review_binding": {
+        "status": "BOUND",
+        "at": "2026-10-09T22:24:26Z",
+        "consumed": {
+          "review_content_id": "0964abae30370f293cb6345179df6b05ca2beb6bcf4fa91367f74f905acb9721",
+          "plan_revision": 3,
+          "legacy": false
+        },
+        "published": {
+          "review_content_id": "fd61f72a6ab4c24d442b6ea25df7ce07ac5b666f7c70f270cbe92e4724bc282f",
+          "plan_revision": 4
+        },
+        "bound": {
+          "review_content_id": "fd61f72a6ab4c24d442b6ea25df7ce07ac5b666f7c70f270cbe92e4724bc282f",
+          "bundle_id": "6f76b198cd22b50ee42a14e64ca4103da5e48482f331e03e224e852e1bc9558d",
+          "plan_revision": 4
+        }
+      },
+      "consumed_plan_review_content_ids": [
+        "0964abae30370f293cb6345179df6b05ca2beb6bcf4fa91367f74f905acb9721",
+        "227d7e50eb94e1c69ca711c187803e992e7fe495260a86a0297250277f234082",
+        "3f6112a9dc32073e3fd84474296ddb078d11f37cffb8c79bfd89e47e152a786b"
+      ],
+      "implementation_review_stages": {
+        "review_content_id": "d7ad5c35ece92d36749c92d347dc3043380f968d15dc40162568020efdae244f",
+        "LOCAL_MODEL_IMPLEMENTATION_REVIEW": {
+          "bundle_id": "3f32b33a6495cb02847fb9ee2e24debee387a77bd73e636287017aa3cbad33bd",
+          "verdict": "APPROVE",
+          "round": 5,
+          "completed_at": "2026-10-10T15:07:40Z"
+        },
+        "MANUAL_EXTERNAL_IMPLEMENTATION_REVIEW": {
+          "bundle_id": "3f32b33a6495cb02847fb9ee2e24debee387a77bd73e636287017aa3cbad33bd",
+          "verdict": "APPROVE",
+          "round": 5,
+          "completed_at": "2026-10-10T15:12:48Z"
+        }
+      }
     }
   }
 }

@@ -1,0 +1,44 @@
+/*
+ * Segmented tabs (M4 plan, H14): a slate track, the current tab on the
+ * card colour, bold and aria-current. Equal widths; they wrap to two rows
+ * rather than scroll.
+ */
+
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-1);
+  border-radius: var(--radius-control);
+  background: var(--color-line);
+  list-style: none;
+}
+
+.item {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  border-radius: calc(var(--radius-control) - var(--space-1));
+  color: var(--color-quiet);
+  font-size: var(--text-15);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.tab:hover {
+  color: var(--color-ink);
+}
+
+.tab[aria-current='page'] {
+  background: var(--color-card);
+  color: var(--color-ink);
+  font-weight: 700;
+}

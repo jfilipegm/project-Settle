@@ -47,86 +47,9 @@ import { cents } from '../lib/money.ts'
 import { LANGUAGE_STORAGE_KEY } from './language.ts'
 import { LanguageProvider } from './LanguageProvider.tsx'
 import { translator } from './t.ts'
+import { english, shownText } from '../test/portuguese.ts'
 
 const pt = translator('pt')
-
-/**
- * English that must never show in the Portuguese interface: words and
- * phrases from every page, and the lone words the literal-text guard can't
- * see ('less', 'more', 'was', 'were', 'items', 'each').
- */
-const ENGLISH_SENTINELS = [
-  'Split',
-  'Settle up',
-  'Settings',
-  'People',
-  'Person',
-  'Items',
-  'Item',
-  'Receipt',
-  'receipt',
-  'Add',
-  'Remove',
-  'Who',
-  'owes',
-  'Tax',
-  'Tip',
-  'Discount',
-  'Amount',
-  'Percentage',
-  'Choose',
-  'photo',
-  'Theme',
-  'Language',
-  'Region',
-  'Currency',
-  'Example',
-  'About',
-  'Home',
-  'Page',
-  'Skip',
-  'Copy',
-  'Coming',
-  'Finances',
-  'Check',
-  'Lines',
-  'Matches',
-  'Cancel',
-  'Dismiss',
-  'Enter',
-  'the',
-  'and',
-  'less',
-  'more',
-  'was',
-  'were',
-  'items',
-  'each',
-  'this',
-  'your',
-]
-
-/** The English sentinels found in a text, as whole words. */
-function english(text: string): string[] {
-  return ENGLISH_SENTINELS.filter((word) =>
-    new RegExp(`(^|[^\\p{L}])${word}($|[^\\p{L}])`, 'u').test(text),
-  )
-}
-
-/** Everything a person can see or hear on the page. */
-function shownText(container: HTMLElement): string {
-  const attributes = [
-    ...container.querySelectorAll('[aria-label],[alt],[placeholder],[title]'),
-  ].flatMap((element) =>
-    ['aria-label', 'alt', 'placeholder', 'title'].map(
-      (name) => element.getAttribute(name) ?? '',
-    ),
-  )
-  // The wordmark is a name, the same in every language.
-  return [container.textContent ?? '', ...attributes]
-    .join('\n')
-    .replace(/\bSettle\b(?! up)/g, '')
-}
 
 beforeEach(() => {
   localStorage.setItem(LANGUAGE_STORAGE_KEY, 'pt')

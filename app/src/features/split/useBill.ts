@@ -19,15 +19,31 @@ function initialBill(): Bill {
 }
 
 /**
- * The bill being edited: loaded from the saved draft (or fresh), and saved
- * again after every change.
+ * Where the bill being edited comes from (M4 plan, H10, L1-O2): the saved
+ * draft (the default, unchanged), or a working copy held in memory, such as
+ * an itemised expense being edited, which saves nowhere until its own
+ * "Save changes".
  */
-export function useBill(): [Bill, Dispatch<BillAction>] {
-  const [bill, dispatch] = useReducer(billReducer, undefined, initialBill)
+export type BillSource = { kind: 'draft' } | { kind: 'memory'; initial: Bill }
+
+const DRAFT: BillSource = { kind: 'draft' }
+
+/**
+ * The bill being edited: loaded from the saved draft (or fresh), and saved
+ * again after every change; or, from memory, a working copy that is never
+ * saved here.
+ */
+export function useBill(
+  source: BillSource = DRAFT,
+): [Bill, Dispatch<BillAction>] {
+  const [bill, dispatch] = useReducer(billReducer, source, (from) =>
+    from.kind === 'memory' ? from.initial : initialBill(),
+  )
+  const persist = source.kind === 'draft'
 
   useEffect(() => {
-    saveDraft(bill)
-  }, [bill])
+    if (persist) saveDraft(bill)
+  }, [bill, persist])
 
   return [bill, dispatch]
 }

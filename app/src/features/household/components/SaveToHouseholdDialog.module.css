@@ -1,0 +1,41 @@
+/* The "Save to a household" dialog (M4 plan, H10): one column, pairs from 640 px. */
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.pair {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-quiet);
+  font-size: var(--text-14);
+}
+
+.strong {
+  margin: 0;
+  font-weight: 700;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-error);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+@media (min-width: 640px) {
+  .pair {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}

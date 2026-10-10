@@ -1,0 +1,66 @@
+/*
+ * The overview's charts (M4, M-7). "Where it went" puts the donut above
+ * its legend at phone width and beside it from 640 px.
+ */
+
+.whereItWent {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+}
+
+.holeAmount {
+  font-family: var(--font-mono);
+  font-size: var(--text-15);
+  font-weight: 600;
+}
+
+.legend {
+  display: grid;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 2.75rem;
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.legendRow:first-child {
+  border-top: 0;
+}
+
+.swatch {
+  flex: none;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 4px;
+}
+
+.legendName {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.percent {
+  color: var(--color-quiet);
+  font-family: var(--font-mono);
+  font-size: var(--text-14);
+}
+
+@media (min-width: 640px) {
+  .whereItWent {
+    grid-template-columns: 11rem minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-5);
+  }
+}

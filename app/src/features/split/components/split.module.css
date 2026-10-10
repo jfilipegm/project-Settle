@@ -612,3 +612,11 @@ dd.summaryTotal data {
 .receiptNotice a {
   color: inherit;
 }
+
+/* M4, H10: the editing banner's buttons. */
+.actionsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+}

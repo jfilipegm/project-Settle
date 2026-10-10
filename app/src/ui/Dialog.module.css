@@ -1,0 +1,88 @@
+/*
+ * A dialog (M4 plan, H14): raised (menus and sheets are the only raised
+ * surfaces), a sheet from the bottom under 640 px, a centred card from
+ * 640 px. It appears with the house ease-out; nothing moves under reduced
+ * motion.
+ */
+
+.dialog {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  max-height: calc(100dvh - var(--space-6));
+  margin: auto 0 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-card) var(--radius-card) 0 0;
+  background: var(--color-card);
+  box-shadow: var(--shadow-raised);
+  color: var(--color-ink);
+}
+
+/* The content fills the box and scrolls, so a click on the <dialog>
+ * element itself is a click on the backdrop. */
+.content {
+  box-sizing: border-box;
+  max-height: calc(100dvh - var(--space-6));
+  padding: var(--space-5) var(--gutter)
+    calc(var(--space-5) + env(safe-area-inset-bottom));
+  overflow-y: auto;
+}
+
+.dialog[open] {
+  animation: enter var(--duration-enter) var(--ease-out);
+}
+
+.dialog::backdrop {
+  background: var(--color-scrim);
+}
+
+.title {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-22);
+}
+
+/* A title with its close button (`closeLabel`). */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.header .title {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.header > button {
+  flex: none;
+  margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-2)) 0 0;
+}
+
+@keyframes enter {
+  from {
+    transform: translateY(var(--space-5));
+    opacity: 0;
+  }
+}
+
+@media (min-width: 640px) {
+  .dialog {
+    width: min(32rem, calc(100% - 2 * var(--gutter)));
+    margin: auto;
+    border-radius: var(--radius-card);
+  }
+
+  .content {
+    padding: var(--space-5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open] {
+    animation: none;
+  }
+}

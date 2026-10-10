@@ -110,7 +110,7 @@ function readItem(value: Json): Item | null {
  * The bill's shape: every field present with the right JSON type, rebuilt
  * from known fields only. Numbers aren't range-checked here.
  */
-function readBill(value: Json): Bill | null {
+export function readBill(value: Json): Bill | null {
   if (!isObject(value) || typeof value.payerId !== 'string') {
     return null
   }

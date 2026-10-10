@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-4",
+  "plan_revision": 4,
+  "checkpoints": [
+    {
+      "id": "CP1",
+      "name": "Data foundations: the IndexedDB store with a versioned schema and migration runner, the household, member and expense model, the quick-split rules with exactness tests, derived shares, repositories",
+      "depends_on": [],
+      "complexity": 3,
+      "session_target": 2
+    },
+    {
+      "id": "CP2",
+      "name": "Households and members: routes, the household switcher and list (create, rename, archive), members (add, rename, mark as left, rejoin), the Tabs and Dialog kit components, the empty and unavailable states",
+      "depends_on": [
+        "CP1"
+      ],
+      "complexity": 3,
+      "session_target": 2
+    },
+    {
+      "id": "CP3",
+      "name": "Quick expenses: add, view, edit and delete, split equally, by shares, by exact amounts or by percentages, any member as payer, and the household overview",
+      "depends_on": [
+        "CP2"
+      ],
+      "complexity": 3,
+      "session_target": 2
+    },
+    {
+      "id": "CP4",
+      "name": "Itemised expenses: save a split to a household, split a bill from a household, edit an itemised expense in the split, the duplicate-receipt warning",
+      "depends_on": [
+        "CP3"
+      ],
+      "complexity": 3,
+      "session_target": 2
+    },
+    {
+      "id": "CP5",
+      "name": "History: every expense newest first by month, filters by member and category, accent-insensitive search",
+      "depends_on": [
+        "CP4"
+      ],
+      "complexity": 2,
+      "session_target": 1
+    },
+    {
+      "id": "CP6",
+      "name": "Quality pass and documentation: the completion scenario and migration tests, screens and design checkers, privacy checks, ADR 0005, DESIGN.md, READMEs, roadmap, the design canvas",
+      "depends_on": [
+        "CP5"
+      ],
+      "complexity": 2,
+      "session_target": 1
+    }
+  ]
+}

@@ -9,6 +9,7 @@ import {
   type Cents,
   type MoneyCurrency,
 } from '../../lib/money.ts'
+import { isReceiptKey } from './receiptKey.ts'
 import type { ReceiptSummary, ReceiptWarning } from './model.ts'
 
 export const RECEIPT_STORAGE_KEY = 'settle.receipt'
@@ -82,6 +83,8 @@ function readSummary(value: Json): ReceiptSummary | null {
   if ((summary.total === undefined) !== (summary.totalSource === undefined)) {
     return null
   }
+  // H11: an invalid key reads as absent, never as a broken summary.
+  if (isReceiptKey(value.receiptKey)) summary.receiptKey = value.receiptKey
   // R24: the lines a cut left out. The app never writes an empty list; a
   // stored one reads as absent, so "0 lines" can never be shown.
   if (value.removedLines !== undefined) {

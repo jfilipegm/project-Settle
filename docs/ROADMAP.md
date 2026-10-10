@@ -9,7 +9,7 @@ This is a living document. Milestones after the current one are a
 direction, not a commitment. They get re-ordered, merged or dropped as we
 learn.
 
-Last updated: 2026-10-09 (M3 complete; M3 Design foundations added
+Last updated: 2026-10-10 (M4 complete; M3 complete on 2026-10-09; M3 Design foundations added
 after M2.5, and every later milestone moved down one, on 2026-10-08; M2.5 complete on 2026-10-07; M2 complete and M2.5 added for
 receipt-reading accuracy on 2026-09-30; restructured around the free-first product strategy on
 2026-09-28, see [Roadmap strategy](#roadmap-strategy))
@@ -17,10 +17,9 @@ receipt-reading accuracy on 2026-09-30; restructured around the free-first produ
 ## Current goal
 
 > **Phase 1: finish the free, local-first core.** The next milestone is
-> **M4 — Households, members and the expense ledger**, the start of the
-> shared-household core: households, an expense ledger, balances and
-> settling up (M4–M5), built on M3's design system and in English and
-> European Portuguese.
+> **M5 — Balances and settling up**: what everyone owes or is owed
+> across a household's ledger (M4), and settling it with as few
+> payments as possible, in English and European Portuguese.
 
 Nothing in Phases 3–8 is being built yet.
 
@@ -113,7 +112,7 @@ scope. Anything not listed as must-have is negotiable there.
 | M2  | Receipt upload and built-in parsing                | 1 · Free local-first core        | Complete    |
 | M2.5| Accurate receipt reading                           | 1 · Free local-first core        | Complete    |
 | M3  | Design foundations                                 | 1 · Free local-first core        | Complete    |
-| M4  | Households, members and the expense ledger         | 1 · Free local-first core        | Not started |
+| M4  | Households, members and the expense ledger         | 1 · Free local-first core        | Complete    |
 | M5  | Balances and settling up                           | 1 · Free local-first core        | Not started |
 | M6  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
 | M7  | Installable PWA and public deployment              | 1 · Free local-first core        | Not started |
@@ -458,7 +457,18 @@ other than English and European Portuguese, a native app.
 
 ## M4 — Households, members and the expense ledger
 
-**Status:** Not started
+**Status:** Complete (accepted 2026-10-10; PR #12). Plan archived at
+`docs/milestones/completed/milestone-4-PLAN.md`. Delivered: households
+and members with joining and leaving dates, quick expenses (equally, by
+shares, exact amounts, percentages) and itemised expenses saved from the
+split, the month overview with charts beside the figures, an expense in
+a dialog over its list, and the searchable history, all in IndexedDB on
+the device (ADR 0005). Carried forward: the kit gallery's new
+components, two small chart refinements, and the storage eviction risk
+until M6. The plan reads "M1's
+single `settle.bill` draft is migrated into the new model" as: the draft
+stays the split's working copy, and its bill becomes an expense when it
+is saved into a household (H16).
 
 **Objective:** Turn one-off bills into a household's running expense
 history. This is the core expense model.

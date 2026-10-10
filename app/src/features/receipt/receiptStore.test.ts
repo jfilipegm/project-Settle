@@ -116,3 +116,23 @@ describe('receiptStore (D15)', () => {
     }).not.toThrow()
   })
 })
+
+describe('the duplicate-receipt key in the summary (M4 plan, H11)', () => {
+  it('keeps a valid key across a reload, additively at version 1', () => {
+    saveReceiptSummary({ ...SUMMARY, receiptKey: 'qr:123456789:ABC-1' })
+    expect(loadReceiptSummary()).toEqual({
+      ...SUMMARY,
+      receiptKey: 'qr:123456789:ABC-1',
+    })
+  })
+
+  it('reads a summary saved before M4 (no key) as before', () => {
+    store({ ...SUMMARY })
+    expect(loadReceiptSummary()).toEqual(SUMMARY)
+  })
+
+  it('reads an invalid key as absent, keeping the summary', () => {
+    store({ ...SUMMARY, receiptKey: 'nonsense' })
+    expect(loadReceiptSummary()).toEqual(SUMMARY)
+  })
+})

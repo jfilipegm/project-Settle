@@ -39,16 +39,15 @@ describe('routes', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders the Household placeholder, with a link to the split', () => {
+  it('shows the Household tab’s storage message where IndexedDB is missing (M4, H3)', async () => {
+    // jsdom has no IndexedDB: the household pages say so, and keep the
+    // way to the split.
     renderAt('/household')
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Household' }),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText(
-        'Coming in M4: households, members and the expense ledger.',
-      ),
+      await screen.findByRole('heading', {
+        name: 'Households can’t be saved here',
+      }),
     ).toBeInTheDocument()
     fireEvent.click(screen.getByRole('link', { name: 'Split a bill' }))
     expect(
@@ -56,12 +55,20 @@ describe('routes', () => {
     ).toBeInTheDocument()
   })
 
-  it('redirects the old /finances to /household', () => {
+  it('redirects the old /finances to the Household tab', async () => {
     renderAt('/finances')
 
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Household' }),
+      await screen.findByRole('heading', { level: 1, name: 'Households' }),
     ).toBeInTheDocument()
+    expect(
+      within(mainNav()).getByRole('link', { name: 'Household' }),
+    ).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('marks Household current on a household’s own pages', () => {
+    renderAt('/households/someone/members')
+
     expect(
       within(mainNav()).getByRole('link', { name: 'Household' }),
     ).toHaveAttribute('aria-current', 'page')
@@ -218,6 +225,8 @@ describe('the route table (M3 plan, S12)', () => {
       '(index)',
       'split',
       'household',
+      'households',
+      'households/:hid',
       'finances',
       'settings',
       '*',
@@ -229,6 +238,8 @@ describe('the route table (M3 plan, S12)', () => {
       '(index)',
       'split',
       'household',
+      'households',
+      'households/:hid',
       'finances',
       'settings',
       '_kit',

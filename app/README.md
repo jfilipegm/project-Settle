@@ -56,18 +56,24 @@ app/
     ├── i18n/             The catalogue: en.ts, pt.ts, t(), the Language
     │                     setting
     ├── ui/               The component kit, and gallery/ (dev only)
-    ├── pages/            One component per route
+    ├── pages/            One component per route; households/ (M4)
+    ├── data/             The ledger's IndexedDB store (M4): db.ts,
+    │                     migrations, record readers, repository.ts
     ├── features/
     │   ├── split/        The bill splitter: model and validation,
     │   │   │             the split engine, bill reducer, saved draft
     │   │   └── components/  The Split page's sections and inputs
+    │   ├── household/    Households, members and expenses (M4): the
+    │   │                 model, shares, totals, search, form logic,
+    │   │                 the data provider; components/
     │   └── receipt/      Receipt reading (M2), see below
     │       ├── components/  The scan section and the receipt check
     │       └── fixtures/ Text receipts, sample receipts, browser files
     ├── lib/              Framework-free logic (money.ts)
     ├── styles/           Fonts, design tokens and global CSS
     └── test/             Test setup and helpers (the literal-text guard,
-                          the Split page's step harness)
+                          the Split page's step harness, the ledger's
+                          builders and app render on fake-indexeddb)
 ```
 
 Tests sit next to the code they cover, as `*.test.ts(x)`.
@@ -100,13 +106,14 @@ the bill total over everyone's exact share. Its algorithm is specified in
 Each key is validated when read, and anything unreadable falls back to a
 default:
 
-| Key               | Holds                                                      |
-| ----------------- | ---------------------------------------------------------- |
-| `settle.theme`    | The theme mode.                                            |
-| `settle.language` | The Language setting: `system`, `en` or `pt`.              |
-| `settle.region`   | `{ locale, currency }`.                                    |
-| `settle.bill`     | The bill being edited, as `{ version: 1, bill }`.          |
-| `settle.receipt`  | The receipt check's summary, as `{ version: 1, receipt }`. |
+| Key                | Holds                                                      |
+| ------------------ | ---------------------------------------------------------- |
+| `settle.theme`     | The theme mode.                                            |
+| `settle.language`  | The Language setting: `system`, `en` or `pt`.              |
+| `settle.region`    | `{ locale, currency }`.                                    |
+| `settle.bill`      | The bill being edited, as `{ version: 1, bill }`.          |
+| `settle.receipt`   | The receipt check's summary, as `{ version: 1, receipt }`. |
+| `settle.household` | The household used last: its id only (M4).                 |
 
 `settle.receipt` holds what the check panel shows (merchant, date, NIF,
 total, warnings, the ids of items still marked "Check"), never the image.
@@ -114,6 +121,55 @@ New bill and Dismiss remove it. The photo quality check's advice is never
 saved: it stays with the import that produced it. PaddleOCR's runtime and
 models are kept by the browser's HTTP cache after the first scan, so later
 scans don't download them again. They're public data, not personal data.
+
+Since M4 the summary also keeps `receiptKey`, the duplicate-receipt key
+computed at import (`features/receipt/receiptKey.ts`). An invalid one reads
+as absent, and the format stays version 1.
+
+## The household ledger (M4)
+
+Households, members and expenses live in **IndexedDB**, in a database named
+`settle`, through a small wrapper of our own (`src/data/db.ts`). There is
+no library. [ADR 0005](../docs/adr/0005-local-ledger-store.md) records why.
+
+- **One transaction per user action** (`src/data/repository.ts`). Saving an
+  expense re-checks, inside its own transaction, that its household and
+  every member it names exist. Deleting a member reads every raw expense
+  and refuses unless it can prove none names them.
+- **Readers, not trust** (`src/data/records.ts`). Every record is rebuilt
+  from known fields. One that fails is counted and **kept**, never deleted
+  or rewritten.
+- **Derived, never stored.** Shares, amounts and every total come from the
+  stored expenses (`features/household/shares.ts`, `totals.ts`). An
+  itemised expense stores only its bill.
+- **Lazy.** `HouseholdDataProvider` opens the database on the first
+  household page, so the split never touches it.
+
+### Adding a schema change
+
+1. Add a step to `MIGRATIONS` in `src/data/db.ts`. Version `n` is the
+   `n`th step. It runs in the upgrade transaction, and anything it throws
+   rolls the whole upgrade back.
+2. Bump the record readers if a record's shape changes. Every record
+   carries `v`, its own format version.
+3. Keep `src/data/fixtures/v1.json` reading back equal (`db.test.ts`,
+   `completion.test.ts`). It is the frozen version-1 data, and every later
+   version must still open it.
+4. Test the step on the completion scenario's data, the way
+   `testSchemaV2` does.
+
+### The test database
+
+Vitest has no IndexedDB. The tests use
+[fake-indexeddb](https://github.com/dumbmatter/fakeIndexedDB) (a dev
+dependency only), with a fresh `IDBFactory` per test:
+
+- `src/test/households.ts` for the data layer;
+- `stubIndexedDb()` and `renderApp()` in `src/test/renderApp.tsx` for
+  pages.
+
+`scripts/screens.mjs` seeds the real browser's IndexedDB with invented
+records for the household screens.
 
 ## Design
 

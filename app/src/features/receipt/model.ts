@@ -268,4 +268,10 @@ export interface ReceiptSummary {
    * an empty list.
    */
   removedLines?: RemovedLine[]
+  /**
+   * The duplicate-receipt key (M4 plan, H11), computed at import from the
+   * fiscal QR code (or merchant, date and total). Absent in summaries saved
+   * before M4.
+   */
+  receiptKey?: string
 }

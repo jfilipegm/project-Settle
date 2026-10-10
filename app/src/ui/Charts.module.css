@@ -1,0 +1,123 @@
+/*
+ * The kit's charts (M4, M-7): thin marks with 4 px rounded ends, a 2 px
+ * surface gap between fills, solid hairline baselines, no animation.
+ * Marks take the chart tokens; text stays in ink and quiet.
+ */
+
+.donut {
+  position: relative;
+  width: min(100%, 11rem);
+  aspect-ratio: 1;
+}
+
+.donut svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.track {
+  fill: none;
+  stroke: var(--color-line);
+}
+
+.hole {
+  display: flex;
+  position: absolute;
+  inset: 22%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.bars {
+  --bar-gap: 2px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.plot {
+  display: grid;
+  position: relative;
+  grid-template-columns: repeat(var(--bar-count), minmax(0, 1fr));
+  align-items: end;
+  gap: var(--bar-gap);
+  height: 7rem;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-line);
+  /* The baseline the bars stand on: a line under the plot, not a border
+   * around it, so the bars meet it with no inset. */
+  box-shadow: 0 1px 0 var(--color-control-border);
+}
+
+.scale {
+  position: absolute;
+  top: var(--space-1);
+  left: 0;
+  color: var(--color-quiet);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+}
+
+.slot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  min-width: 0;
+  border-radius: var(--radius-chip) var(--radius-chip) 0 0;
+}
+
+a.slot:hover .bar {
+  opacity: 0.8;
+}
+
+.bar {
+  width: 100%;
+  max-width: 2.5rem;
+  border-radius: 4px 4px 0 0;
+  background: var(--chart-1);
+}
+
+.bar[data-muted] {
+  background: var(--chart-rest);
+}
+
+.ticks {
+  display: grid;
+  grid-template-columns: repeat(var(--bar-count), minmax(0, 1fr));
+  gap: var(--bar-gap);
+  color: var(--color-quiet);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.ticks > span {
+  min-width: 0;
+  overflow: visible;
+}
+
+.ticks > span[data-current] {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.shareBar {
+  display: flex;
+  gap: 2px;
+  height: 0.75rem;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.segment {
+  flex-basis: 0;
+  min-width: 2px;
+  background: var(--person-color);
+}

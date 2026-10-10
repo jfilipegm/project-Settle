@@ -299,6 +299,8 @@ describe('receiptToBill: the trusted total and the summary (D12, D15)', () => {
     )
     expect(summary).toEqual({
       merchant: 'Tasca',
+      // M4, H11: the duplicate key, rule 3 (no QR code).
+      receiptKey: 'm:tasca:2026-09-28:950',
       date: '2026-09-28',
       total: 950,
       totalSource: 'printed',

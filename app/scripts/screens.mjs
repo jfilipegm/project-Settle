@@ -11,7 +11,8 @@
  *   control with a visible focus indicator.
  *
  * Only invented names and amounts appear. The bill is seeded in storage,
- * like a saved draft; no receipt is read.
+ * like a saved draft, and the household ledger (M4) in IndexedDB; no
+ * receipt is read.
  *
  *   node scripts/screens.mjs --out <dir> [--brave <path>] [--port <n>]
  *
@@ -68,21 +69,221 @@ function item(id, name, unitPrice, people) {
   }
 }
 
+/** This month and day, so the overview shows the seeded expenses. */
+const now = new Date()
+const MONTH = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+const day = (n) =>
+  `${MONTH}-${String(Math.min(n, now.getDate())).padStart(2, '0')}`
+/** A day `back` months before this one, for the six-month trend (M-7). */
+const earlier = (back, n) => {
+  const d = new Date(Date.UTC(now.getFullYear(), now.getMonth() - back, n))
+  return d.toISOString().slice(0, 10)
+}
+
+/**
+ * An invented household (M4): four members and one who left, quick
+ * expenses of each method, and one itemised expense with its receipt.
+ */
+const LEDGER = (() => {
+  const v = 1
+  const stamp = new Date().toISOString()
+  const people = [
+    ['ana', 'Ana'],
+    ['marta', 'Marta'],
+    ['joao', 'João'],
+    ['tiago', 'Tiago'],
+  ]
+  const members = people.map(([id, name], position) => ({
+    v,
+    id,
+    householdId: 'h1',
+    name,
+    position,
+    joinedOn: '2026-01-01',
+  }))
+  members.push({
+    v,
+    id: 'rui',
+    householdId: 'h1',
+    name: 'Rui',
+    position: 4,
+    joinedOn: '2026-01-01',
+    leftOn: '2026-06-30',
+  })
+  const all = ['ana', 'marta', 'joao', 'tiago']
+  const quick = (id, description, category, payerId, date, split) => ({
+    v,
+    id,
+    householdId: 'h1',
+    description,
+    date,
+    category,
+    payerId,
+    split,
+    createdAt: stamp,
+    updatedAt: stamp,
+  })
+  // Earlier months, so the overview's six-month trend has a shape.
+  const history = [
+    [1, 21430],
+    [2, 18760],
+    [3, 25290],
+    [4, 16120],
+    [5, 19980],
+  ].map(([back, amount]) =>
+    quick(
+      `m${back}`,
+      'Groceries, the month',
+      'groceries',
+      'ana',
+      earlier(back, 12),
+      {
+        kind: 'equal',
+        amount,
+        memberIds: all,
+      },
+    ),
+  )
+  const expenses = [
+    ...history,
+    quick('e1', 'Electricity, September', 'utilities', 'marta', day(2), {
+      kind: 'equal',
+      amount: 8640,
+      memberIds: all,
+    }),
+    quick('e2', 'Takeaway, Friday night', 'eatingOut', 'joao', day(3), {
+      kind: 'shares',
+      amount: 4290,
+      shares: [
+        { memberId: 'ana', weight: 1 },
+        { memberId: 'joao', weight: 2 },
+      ],
+    }),
+    quick('e3', 'Internet', 'internet', 'tiago', day(4), {
+      kind: 'percent',
+      amount: 3854,
+      percents: all.map((memberId) => ({
+        memberId,
+        ratio: { numerator: 25, denominator: 1 },
+      })),
+    }),
+    quick('e4', 'Kitchen shelves', 'household', 'joao', day(5), {
+      kind: 'exact',
+      amount: 6999,
+      amounts: [
+        { memberId: 'ana', amount: 3000 },
+        { memberId: 'joao', amount: 3999 },
+      ],
+    }),
+    {
+      ...quick('it1', 'Continente', 'groceries', 'ana', day(6), null),
+      split: {
+        kind: 'itemised',
+        bill: BILL,
+        members: [
+          { personId: 'p1', memberId: 'ana' },
+          { personId: 'p2', memberId: 'marta' },
+          { personId: 'p3', memberId: 'tiago' },
+        ],
+      },
+      receipt: {
+        merchant: 'Continente',
+        date: day(6),
+        total: 3847,
+        totalSource: 'qr',
+      },
+      receiptKey: 'qr:500000000:INVENTED-1',
+    },
+  ]
+  return {
+    households: [
+      {
+        v,
+        id: 'h1',
+        name: 'Rua das Flores 12',
+        createdAt: stamp,
+        updatedAt: stamp,
+      },
+    ],
+    members,
+    expenses,
+  }
+})()
+
 const SCREENS = [
   { name: 'home', path: '/' },
   { name: 'receipt', path: '/split?step=receipt', bill: false },
   { name: 'who-had-what', path: '/split?step=items', bill: true },
   { name: 'the-split', path: '/split?step=split', bill: true },
-  { name: 'household', path: '/household' },
+  {
+    name: 'save-to-household',
+    path: '/split?step=split',
+    bill: true,
+    ledger: true,
+    click: 'Save to a household',
+  },
+  { name: 'households-empty', path: '/households', ledger: 'empty' },
+  { name: 'households', path: '/households', ledger: true },
+  { name: 'household-overview', path: '/households/h1', ledger: true },
+  { name: 'household-expenses', path: '/households/h1/expenses', ledger: true },
+  { name: 'household-members', path: '/households/h1/members', ledger: true },
+  { name: 'new-expense', path: '/households/h1/expenses/new', ledger: true },
+  {
+    name: 'itemised-expense',
+    path: '/households/h1/expenses/it1',
+    ledger: true,
+  },
+  {
+    name: 'expense-dialog',
+    path: '/households/h1/expenses?expense=e2',
+    ledger: true,
+  },
   { name: 'settings', path: '/settings' },
   { name: 'not-found', path: '/no/such/page' },
 ]
+
+/**
+ * The page script that rebuilds the ledger's database (M4): deleted, then
+ * created at version 1 with its stores, as `data/db.ts` does, and filled.
+ */
+function ledgerScript(ledger) {
+  const records = JSON.stringify(ledger)
+  return `new Promise((resolve, reject) => {
+    const del = indexedDB.deleteDatabase('settle')
+    del.onerror = () => reject(del.error)
+    del.onsuccess = () => {
+      const open = indexedDB.open('settle', 1)
+      open.onupgradeneeded = () => {
+        const db = open.result
+        db.createObjectStore('households', { keyPath: 'id' })
+        db.createObjectStore('members', { keyPath: 'id' }).createIndex('byHousehold', 'householdId')
+        const e = db.createObjectStore('expenses', { keyPath: 'id' })
+        e.createIndex('byHousehold', 'householdId')
+        e.createIndex('byReceiptKey', ['householdId', 'receiptKey'])
+        db.createObjectStore('meta', { keyPath: 'key' })
+          .put({ key: 'schema', version: 1, migratedAt: new Date().toISOString() })
+      }
+      open.onerror = () => reject(open.error)
+      open.onsuccess = () => {
+        const db = open.result
+        const data = ${records}
+        const tx = db.transaction(['households', 'members', 'expenses'], 'readwrite')
+        for (const h of data.households) tx.objectStore('households').put(h)
+        for (const m of data.members) tx.objectStore('members').put(m)
+        for (const x of data.expenses) tx.objectStore('expenses').put(x)
+        tx.oncomplete = () => { db.close(); resolve(true) }
+        tx.onerror = () => reject(tx.error)
+      }
+    }
+  })`
+}
 
 function storageFor(screen, theme) {
   const entries = {
     'settle.theme': theme,
     'settle.language': 'en',
   }
+  if (screen.ledger === true) entries['settle.household'] = 'h1'
   if (screen.bill) {
     entries['settle.bill'] = JSON.stringify({ version: 1, bill: BILL })
     entries['settle.receipt'] = JSON.stringify({
@@ -144,6 +345,16 @@ async function load(cdp, session, origin, screen, theme, width) {
     session,
     `localStorage.clear(); for (const [k, v] of Object.entries(${storage})) localStorage.setItem(k, v)`,
   )
+  // The ledger (M4): rebuilt for each load, empty or seeded.
+  await evaluate(
+    cdp,
+    session,
+    ledgerScript(
+      screen.ledger === true
+        ? LEDGER
+        : { households: [], members: [], expenses: [] },
+    ),
+  )
   await cdp.send('Page.navigate', { url: `${origin}${screen.path}` }, session)
   await sleep(400)
   await evaluate(
@@ -152,6 +363,15 @@ async function load(cdp, session, origin, screen, theme, width) {
     `document.fonts.ready.then(() => new Promise((r) => requestAnimationFrame(() => r(true))))`,
   )
   await sleep(200)
+  if (screen.click !== undefined) {
+    // A dialog's screen: open it from its button, by its words.
+    await evaluate(
+      cdp,
+      session,
+      `[...document.querySelectorAll('button')].find((b) => b.textContent.trim() === ${JSON.stringify(screen.click)})?.click() ?? true`,
+    )
+    await sleep(500)
+  }
 }
 
 /**
@@ -220,7 +440,7 @@ async function keyboardPass(cdp, session) {
         const style = getComputedStyle(el)
         const ring = style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0
         const label = (el.getAttribute('aria-label') || el.textContent || el.getAttribute('name') || '').trim().slice(0, 40)
-        return { tag: el.tagName.toLowerCase(), label, ring, focusVisible: el.matches(':focus-visible') }
+        return { tag: el.tagName.toLowerCase(), type: el.getAttribute('type') ?? undefined, label, ring, focusVisible: el.matches(':focus-visible'), outline: style.outlineStyle + ' ' + style.outlineWidth }
       })()`,
     )
     if (stop === null) break
@@ -304,7 +524,12 @@ async function main() {
     cdp.close()
     brave.child.kill()
     preview.child.kill()
-    await rm(brave.profile, { recursive: true, force: true })
+    await rm(brave.profile, {
+      recursive: true,
+      force: true,
+      maxRetries: 10,
+      retryDelay: 200,
+    })
   }
   await writeFile(
     path.join(out, 'report.json'),

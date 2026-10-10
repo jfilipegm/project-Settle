@@ -31,14 +31,43 @@ themes, as a custom property in `app/src/styles/tokens.css`.
 | Success text / fill        | `--color-success`, `-fill` | `#1F6B44` on `#E3F1E8` | `#8FD3AC` on `#17382A` |
 | Warning text / fill        | `--color-warning`, `-fill` | `#7A5208` on `#FBF0D9` | `#F0C46A` on `#3A2E12` |
 | Error text / fill          | `--color-error`, `-fill`   | `#A3221B` on `#FBE4E1` | `#F4A39A` on `#3D1C1A` |
+| Scrim (behind a dialog)    | `--color-scrim`            | `rgb(18 20 28 / 0.28)` | `rgb(0 0 0 / 0.5)`     |
 
 - **One accent per screen.** Rust is for links, the focus ring, the
-  active destination and step, and category marks. Primary buttons are
-  ink (light) or near-white (dark), never rust.
+  active destination and step, and the browser's own checkboxes and radios
+  (`accent-color`). Category icons are ink or quiet text (M4). Primary
+  buttons are ink (light) or near-white (dark), never rust.
 - **Green, amber and red** belong to the receipt check and errors only,
   always with an icon and words.
 - **The header colour** (`theme-color`) is the card colour, kept in step
   by `THEME_COLORS` in `app/src/app/theme.ts` and its tests.
+- **The scrim** behind a dialog only ever darkens, lightly: a near-black
+  at a low opacity in both themes, never the ink (which is near-white in
+  the dark theme and would veil the page). Round 3 of M4's review (M-6).
+
+### Charts
+
+Eight categorical hues and a neutral for marks only (`--chart-1` to
+`--chart-8`, `--chart-rest`), from the data-visualisation reference
+palette, in its validated order, checked for colour-vision deficiency on
+the card in both themes. Text never wears them; they are data colours,
+not a second accent.
+
+|       | Blue      | Orange    | Aqua      | Yellow    | Magenta   | Green     | Violet    | Red       | Rest      |
+| ----- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- | --------- |
+| Light | `#2A78D6` | `#EB6834` | `#1BAF7A` | `#EDA100` | `#E87BA4` | `#008300` | `#4A3AA7` | `#E34948` | `#A3A9B7` |
+| Dark  | `#3987E5` | `#D95926` | `#199E70` | `#C98500` | `#D55181` | `#008300` | `#9085E9` | `#E66767` | `#5D6373` |
+
+- **A category keeps its hue** month to month, whatever its rank
+  (`CATEGORY_CHART_COLOURS` in `features/household/charts.ts`): Groceries
+  blue, Eating out orange, Rent aqua, Utilities yellow, Household
+  magenta, Transport green, Leisure violet, Internet red, Other the
+  neutral.
+- **One series, one hue:** bars are blue. With emphasis, only the current
+  bar is blue and the others are the neutral.
+- **Three light hues sit below 3:1** on the card (aqua, yellow, magenta),
+  so a chart always has its figures beside it as visible labels. The
+  dark hues all reach 3:1.
 
 ### People
 
@@ -125,20 +154,27 @@ interface.
 development-only gallery at `/_kit` (`npm run dev`) shows them all, with
 light/dark and English/Portuguese switches.
 
-| Component                  | Use                                                                                                                                                                |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Button`                   | Primary (ink), secondary (card with a border), quiet (a text link look). Heights 40, 44, 48, 52 px; an optional icon; the press scale. `type="button"` by default. |
-| `IconButton`               | A square button with an icon and a required `label`.                                                                                                               |
-| `TextField`, `SelectField` | The label above; a hint and an error below, both in `aria-describedby`; `aria-invalid` and an icon with the error.                                                 |
-| `Card`                     | A flat card; with a `title` it is a section named by its `h2`.                                                                                                     |
-| `StatusChip`               | Success, warning or error: an icon and words.                                                                                                                      |
-| `PersonBadge`              | A person's colour and initial (or number), with the name shown or read out.                                                                                        |
-| `Amount`                   | An amount in the figures face, the region's format, a true minus sign, an optional plus.                                                                           |
-| `Steps`                    | Named steps as links, the current one `aria-current="step"`.                                                                                                       |
-| `Icon`                     | A Tabler icon at the house size and stroke.                                                                                                                        |
+| Component                  | Use                                                                                                                                                                                                                                                                                                                                     |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button`                   | Primary (ink), secondary (card with a border), quiet (a text link look). Heights 40, 44, 48, 52 px; an optional icon; the press scale. `type="button"` by default.                                                                                                                                                                      |
+| `IconButton`               | A square button with an icon and a required `label`.                                                                                                                                                                                                                                                                                    |
+| `TextField`, `SelectField` | The label above; a hint and an error below, both in `aria-describedby`; `aria-invalid` and an icon with the error.                                                                                                                                                                                                                      |
+| `Card`                     | A flat card; with a `title` it is a section named by its `h2`.                                                                                                                                                                                                                                                                          |
+| `StatusChip`               | Success, warning or error: an icon and words.                                                                                                                                                                                                                                                                                           |
+| `PersonBadge`              | A person's colour and initial (or number), with the name shown or read out.                                                                                                                                                                                                                                                             |
+| `Amount`                   | An amount in the figures face, the region's format, a true minus sign, an optional plus.                                                                                                                                                                                                                                                |
+| `Steps`                    | Named steps as links, the current one `aria-current="step"`.                                                                                                                                                                                                                                                                            |
+| `Icon`                     | A Tabler icon at the house size and stroke.                                                                                                                                                                                                                                                                                             |
+| `Tabs`                     | A segmented group of links (M4): a slate track, the current tab on the card colour, bold and `aria-current="page"`.                                                                                                                                                                                                                     |
+| `Dialog`                   | The native `<dialog>`, modal (M4): a sheet from the bottom under 640 px, a centred card from 640 px, raised, over the scrim. Its title names it; Escape or a click on the backdrop closes it; focus returns. An optional close button (`closeLabel`) beside the title takes the first focus. A dialog opened from another closes alone. |
+| `Checkbox`                 | A labelled native checkbox in a 44 px row (M4), for choosing members.                                                                                                                                                                                                                                                                   |
+| `Donut`                    | Part to whole (M4): a thin ring, six slices at most with a 2 px gap, the total in the hole. One image named by a text alternative with every value.                                                                                                                                                                                     |
+| `Bars`                     | Vertical bars on one baseline (M4), scaled to the largest, 4 px rounded tops, "Up to {amount}" on the top hairline, optional ticks and emphasis; bars may link.                                                                                                                                                                         |
+| `ShareBar`                 | One horizontal bar split into each person's share (M4), in their colours with a 2 px gap.                                                                                                                                                                                                                                               |
 
-A segmented `Tabs` group is left for M4's household pages, its first real
-use.
+A date field (`TextField type="date"`) shows the house ring on `:focus`
+and `:focus-within` too. Its parts (day, month, year, the calendar
+button) take focus inside it, where `:focus-visible` doesn't reach.
 
 ## Layout and navigation
 
@@ -154,6 +190,40 @@ use.
   items. A step change moves focus to the step's heading.
 - **Person-first assignment:** choose a person, then tap the items they
   had; "Everyone" shares an item with all; Edit opens the item's fields.
+
+## The household (M4)
+
+- **Its header:** the household's name is a button-like link to the list
+  of households, to switch. Under it are the tabs Overview, Expenses and
+  Members (Balances joins in M5).
+- **The overview:** one month at a time, its title the month, then
+  "{amount} shared across {count} expenses", one primary "Add expense",
+  "Day by day" (the month's spending per day, as bars), "Latest expenses",
+  "Where it went" (a donut beside the category list, which is its legend,
+  with each category's percentage and total) and "The last six months"
+  (each month's total, this one emphasised, each bar opening its month).
+  The charts are drawn on top of the figures, never instead of them, and
+  a month with nothing in it draws none.
+- **An expense row:** the date in the figures face, what it was (with its
+  item count when itemised), the category with its icon, the payer's badge
+  and the amount, right-aligned. It is two lines at phone width and one row
+  of columns from 640 px, under column headings. Pressing it opens the
+  expense in a dialog over the list (`?expense=`), which keeps its month,
+  filters and scroll; Close, Escape, the backdrop or Back return to it.
+- **An expense's dialog:** the amount, the date, category and payer, the
+  items when itemised, each member's share as one bar above the shares
+  list, then Edit (or Edit items and Edit details) and Delete.
+- **A member's colour** comes from their position in the household (the
+  order they were added), stored on the member. Someone who leaves keeps
+  their colour, so their past expenses don't change colour.
+- **Categories:** nine, each with a Tabler icon always shown beside its
+  name. Groceries `shopping-cart`, Eating out `tools-kitchen-2`, Rent
+  `key`, Utilities `bolt`, Internet `wifi`, Household `sofa`, Transport
+  `bus`, Leisure `confetti`, Other `dots`. Category icons use the ink
+  and the quiet text; only in a chart does a category wear a colour, its
+  chart hue, next to its name.
+- **Saving a split into a household** happens in a dialog over The split.
+  It says, before saving, that the bill moves into the household.
 
 ## Languages
 

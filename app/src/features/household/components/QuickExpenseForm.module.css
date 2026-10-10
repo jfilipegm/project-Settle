@@ -1,0 +1,112 @@
+/*
+ * The quick-expense form (M4 plan, CP3): one column at phone width, pairs
+ * side by side from 640 px. Each member is a row: the box with their badge,
+ * the method's input, and their share in the figures face.
+ */
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.pair {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.split {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  margin-bottom: var(--space-2);
+  padding: 0;
+  font-weight: 700;
+}
+
+.methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+}
+
+.method {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  cursor: pointer;
+}
+
+.members {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.member {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.memberCheck {
+  min-width: 0;
+}
+
+.memberInput {
+  grid-column: 1 / -1;
+}
+
+.share {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+
+.remaining {
+  margin: 0;
+  color: var(--color-quiet);
+  font-weight: 600;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-error);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+@media (min-width: 640px) {
+  .pair {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+
+  .member {
+    grid-template-columns: minmax(0, 1fr) 10rem 7rem;
+  }
+
+  .memberInput {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .share {
+    grid-column: 3;
+  }
+}
