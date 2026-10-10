@@ -199,7 +199,7 @@ describe('the overview (H13)', () => {
       within(where)
         .getAllByRole('listitem')
         .map((li) => spaces(li.textContent)),
-    ).toEqual(['Rent25,50 €', 'Groceries4,50 €'])
+    ).toEqual(['Rent85 %25,50 €', 'Groceries15 %4,50 €'])
   })
 
   it('moves to the previous month, which is empty', async () => {

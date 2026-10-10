@@ -7,11 +7,16 @@ import { useCallback, useId, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { useRegion } from '../../app/region.ts'
 import { listExpenses } from '../../data/repository.ts'
-import { CATEGORY_ICONS } from '../../features/household/categories.ts'
+import { monthlyTotals } from '../../features/household/charts.ts'
 import {
   ExpenseColumns,
   ExpenseRow,
 } from '../../features/household/components/ExpenseRow.tsx'
+import {
+  DayByDay,
+  LastMonths,
+  WhereItWent,
+} from '../../features/household/components/MonthCharts.tsx'
 import { dateLocale, formatMonth } from '../../features/household/format.ts'
 import { useLoaded } from '../../features/household/householdData.ts'
 import { activeMembers, isoDate } from '../../features/household/model.ts'
@@ -26,7 +31,6 @@ import {
 } from '../../features/household/totals.ts'
 import { useLanguage } from '../../i18n/language.ts'
 import { formatAmount } from '../../lib/money.ts'
-import { Amount } from '../../ui/Amount.tsx'
 import { Button } from '../../ui/Button.tsx'
 import { Card } from '../../ui/Card.tsx'
 import { Dialog } from '../../ui/Dialog.tsx'
@@ -77,6 +81,8 @@ export function OverviewPage() {
   const monthly = inMonth(all, month).sort(newestFirst)
   const total = totalOf(monthly)
   const categories = categoryTotals(monthly)
+  // The trend shows once any of its six months has spending.
+  const trend = monthlyTotals(all, month).some((m) => m.total > 0)
 
   return (
     <>
@@ -126,6 +132,18 @@ export function OverviewPage() {
         </p>
       )}
 
+      {monthly.length > 0 && (
+        <Card title={t('overview.byDay')}>
+          <DayByDay
+            expenses={monthly}
+            month={month}
+            region={region}
+            locale={locale}
+            t={t}
+          />
+        </Card>
+      )}
+
       <Card title={t('overview.latest')}>
         {monthly.length === 0 ? (
           <p className={styles.hint}>
@@ -157,17 +175,24 @@ export function OverviewPage() {
 
       {categories.length > 0 && (
         <Card title={t('overview.whereItWent')}>
-          <ul className={styles.list}>
-            {categories.map(({ category, total: categoryTotal }) => (
-              <li key={category} className={styles.categoryRow}>
-                <span className={styles.categoryName}>
-                  <Icon icon={CATEGORY_ICONS[category]} size={20} />
-                  {t(`categories.${category}`)}
-                </span>
-                <Amount value={categoryTotal} region={region} />
-              </li>
-            ))}
-          </ul>
+          <WhereItWent
+            categories={categories}
+            total={total}
+            region={region}
+            t={t}
+          />
+        </Card>
+      )}
+
+      {trend && (
+        <Card title={t('overview.lastMonths')}>
+          <LastMonths
+            expenses={all}
+            month={month}
+            region={region}
+            locale={locale}
+            t={t}
+          />
         </Card>
       )}
 

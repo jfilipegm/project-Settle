@@ -540,6 +540,15 @@ export const pt: Catalogue = {
     latest: 'Últimas despesas',
     allExpenses: 'Todas as despesas',
     whereItWent: 'Onde foi o dinheiro',
+    whereItWentChart: 'Onde foi o dinheiro: {slices}.',
+    theRest: 'O resto',
+    percent: '{percent} %',
+    byDay: 'Dia a dia',
+    byDayChart: 'Gastos de cada dia em {month}: {days}.',
+    byDayNone: 'Nada gasto em {month}.',
+    lastMonths: 'Os últimos seis meses',
+    monthBar: '{month}: {amount}',
+    upTo: 'Até {amount}',
   },
 
   expenses: {

@@ -185,27 +185,6 @@
   font-size: var(--text-17);
 }
 
-.categoryRow {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: 2.75rem;
-  padding: var(--space-2) 0;
-  border-top: 1px solid var(--color-line);
-}
-
-.categoryRow:first-child {
-  border-top: 0;
-}
-
-.categoryName {
-  display: inline-flex;
-  flex: 1;
-  align-items: center;
-  gap: var(--space-2);
-  min-width: 0;
-}
-
 .addChoices {
   display: grid;
   gap: var(--space-3);

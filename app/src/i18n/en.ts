@@ -541,6 +541,15 @@ export const en = {
     latest: 'Latest expenses',
     allExpenses: 'All expenses',
     whereItWent: 'Where it went',
+    whereItWentChart: 'Where it went: {slices}.',
+    theRest: 'The rest',
+    percent: '{percent} %',
+    byDay: 'Day by day',
+    byDayChart: 'Spending each day in {month}: {days}.',
+    byDayNone: 'Nothing spent in {month}.',
+    lastMonths: 'The last six months',
+    monthBar: '{month}: {amount}',
+    upTo: 'Up to {amount}',
   },
 
   expenses: {
