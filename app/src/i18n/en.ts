@@ -545,10 +545,13 @@ export const en = {
     theRest: 'The rest',
     percent: '{percent} %',
     byDay: 'Day by day',
-    byDayChart: 'Spending each day in {month}: {days}.',
+    byDaySummary: '{total} spent in {month}; the most on {day}, {amount}.',
     byDayNone: 'Nothing spent in {month}.',
     lastMonths: 'The last six months',
     monthBar: '{month}: {amount}',
+    monthBarCurrent: '{month}, this month: {amount}',
+    lastMonthsSummary:
+      '{total} over the six months; the most in {month}, {amount}.',
     upTo: 'Up to {amount}',
   },
 

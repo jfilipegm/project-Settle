@@ -52,6 +52,8 @@ export function OverviewPage() {
   const [params] = useSearchParams()
   const [adding, setAdding] = useState(false)
   const noMembersId = useId()
+  const byDayId = useId()
+  const lastMonthsId = useId()
   const today = isoDate(new Date())
   const requested = params.get('month')
   const month = isMonth(requested) ? requested : monthOf(today)
@@ -133,8 +135,9 @@ export function OverviewPage() {
       )}
 
       {monthly.length > 0 && (
-        <Card title={t('overview.byDay')}>
+        <Card title={t('overview.byDay')} titleId={byDayId}>
           <DayByDay
+            labelledBy={byDayId}
             expenses={monthly}
             month={month}
             region={region}
@@ -185,8 +188,9 @@ export function OverviewPage() {
       )}
 
       {trend && (
-        <Card title={t('overview.lastMonths')}>
+        <Card title={t('overview.lastMonths')} titleId={lastMonthsId}>
           <LastMonths
+            labelledBy={lastMonthsId}
             expenses={all}
             month={month}
             region={region}

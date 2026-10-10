@@ -2,26 +2,36 @@
 
 ## Milestone
 
-None active. M4 (Households, members and the expense ledger) was
-accepted on 2026-10-10; the next roadmap milestone is **M5 — Balances
-and settling up**.
+**M5 — Balances and settling up** (`milestone-5`), on
+`feature/milestone-5`, PR #13. Plan revision 4 was approved on
+2026-10-10 (`bc85333`). The plan is `docs/milestones/milestone-5-PLAN.md`.
+
+## Checkpoints
+
+- **CP1 — complete:** the chart notes and M4's follow-ups.
+  - A kit tip shows a mark's value at once: on hover for all four
+    charts, on a tap of a mark that isn't a link, and on keyboard focus
+    of a bar. `title` and SVG `<title>` are gone.
+  - Each bar chart is one Tab stop with roving focus (arrows, Home,
+    End). Every bar has the same hover, focus and tip style.
+  - Bar charts are named groups (by their card's heading on the
+    overview, O-14), described by a summary, with named marks. Nothing
+    focusable sits under `aria-hidden` or `role="img"` (L1-I2).
+  - "The last six months": the month on screen is a plain mark named
+    "this month"; only the other months link.
+  - The donut and its legend share one set of percentages (O-13).
+  - The `/_kit` gallery shows the charts and a dialog's close button
+    (O-12).
+  - The literal-text guard now also catches ternaries, templates with
+    substitutions, parenthesised, `as` and fallback literals in a label
+    attribute, and a kit `label` prop (R2-O1). No existing hit.
+  - Design canvas: the chart tip is noted on the "As shipped" board in
+    CP6, with the rest of M5's canvas work.
+- CP2 to CP6: to do.
 
 ## Next action
 
-`/milestone-plan` for M5, after PR #12 (M4) is merged into `master`:
-then `git switch master && git pull` and
-`git switch -c feature/milestone-5`.
-
-**M5's first checkpoint, agreed on 2026-10-10:** the owner's notes on
-M4's charts, after acceptance, together with O-12 to O-14 below:
-- "The last six months": the bar for the month on screen must not be a
-  link (pressing it changes nothing and looks broken); only the other
-  months open theirs.
-- "Day by day" gets the same hover effect as "The last six months".
-- Every chart (both bar charts, the donut, the expense dialog's share
-  bar) shows its value at once on hover, and on focus or tap, through
-  a kit tooltip, instead of the browser's delayed `title`; the text
-  alternatives stay.
+Continue `/milestone-implement milestone-5` with CP2.
 
 ## Last completed: M4 — Households, members and the expense ledger
 
@@ -81,10 +91,6 @@ Carried forward (not blockers):
   sync, without which browser storage can be evicted: M6.
 
 From M3 and earlier, still open:
-- **The literal-text guard's remaining forms** (R2-O1): a ternary or a
-  template with substitutions in a label attribute, a parenthesised or
-  `as` literal, and a kit `label` prop still pass it. Harden it before
-  more screens land.
 - A Ctrl/⌘-click on a split step link leaves a harmless focus request
   pending (R3-O2); skip `onSelect` for modified clicks if it gains other
   uses.
@@ -104,8 +110,7 @@ None.
 
 ## Active plan
 
-None. M4's plan is archived at
-`docs/milestones/completed/milestone-4-PLAN.md`.
+`docs/milestones/milestone-5-PLAN.md` (revision 4, approved).
 
 ## Functional review checklist
 

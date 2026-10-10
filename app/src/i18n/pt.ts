@@ -544,10 +544,12 @@ export const pt: Catalogue = {
     theRest: 'O resto',
     percent: '{percent} %',
     byDay: 'Dia a dia',
-    byDayChart: 'Gastos de cada dia em {month}: {days}.',
+    byDaySummary: '{total} gastos em {month}; o máximo a {day}, {amount}.',
     byDayNone: 'Nada gasto em {month}.',
     lastMonths: 'Os últimos seis meses',
     monthBar: '{month}: {amount}',
+    monthBarCurrent: '{month}, este mês: {amount}',
+    lastMonthsSummary: '{total} nos seis meses; o máximo em {month}, {amount}.',
     upTo: 'Até {amount}',
   },
 

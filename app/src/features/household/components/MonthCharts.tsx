@@ -1,6 +1,6 @@
 import type { Region } from '../../../app/region.ts'
 import type { Translate } from '../../../i18n/t.ts'
-import { formatAmount, type Cents } from '../../../lib/money.ts'
+import { formatAmount, sum, type Cents } from '../../../lib/money.ts'
 import { Amount } from '../../../ui/Amount.tsx'
 import { Bars, Donut } from '../../../ui/Charts.tsx'
 import { Icon } from '../../../ui/Icon.tsx'
@@ -42,8 +42,19 @@ export function WhereItWent({
   const slices = categorySlices(categories)
   const name = (category: CategoryId | null) =>
     category === null ? t('overview.theRest') : t(`categories.${category}`)
-  const sliceShares = percentages(slices.map((s) => s.total))
+  // One set of percentages (O-13): every category's, worked out once; a
+  // slice of its own takes its category's, and the rest what's left.
   const rowShares = percentages(categories.map((c) => c.total))
+  const shareOf = (category: CategoryId) =>
+    rowShares[categories.findIndex((c) => c.category === category)] ?? 0
+  const ownShares = slices.map((slice) =>
+    slice.category === null ? 0 : shareOf(slice.category),
+  )
+  const sliceShares = slices.map((slice, i) =>
+    slice.category === null
+      ? 100 - ownShares.reduce((a, b) => a + b, 0)
+      : (ownShares[i] ?? 0),
+  )
   const described = slices
     .map(
       (slice, i) =>
@@ -105,30 +116,38 @@ export function DayByDay({
   region,
   locale,
   t,
+  labelledBy,
 }: {
   expenses: readonly Expense[]
   month: string
   region: Region
   locale: string
   t: Translate
+  /** The id of the card heading that names the chart. */
+  labelledBy?: string
 }) {
   const days = dailyTotals(expenses, month)
-  const max = days.reduce((a, d) => Math.max(a, d.total), 0)
+  const highest = days.reduce<{ date: string; total: Cents } | undefined>(
+    (best, d) => (d.total > (best?.total ?? 0) ? d : best),
+    undefined,
+  )
+  const max = highest?.total ?? 0
   const short = (date: string) =>
     formatDate(date, locale, { day: 'numeric', month: 'short' })
-  const spent = days.filter((d) => d.total > 0)
-  const label =
-    spent.length === 0
+  const summary =
+    highest === undefined
       ? t('overview.byDayNone', { month: formatMonth(month, locale) })
-      : t('overview.byDayChart', {
+      : t('overview.byDaySummary', {
+          total: formatAmount(sum(days.map((d) => d.total)), region),
           month: formatMonth(month, locale),
-          days: spent
-            .map((d) => `${short(d.date)} ${formatAmount(d.total, region)}`)
-            .join(', '),
+          day: short(highest.date),
+          amount: formatAmount(highest.total, region),
         })
   return (
     <Bars
-      label={label}
+      label={t('overview.byDay')}
+      labelledBy={labelledBy}
+      summary={summary}
       scale={t('overview.upTo', {
         amount: formatAmount(max as Cents, region),
       })}
@@ -147,7 +166,8 @@ export function DayByDay({
 
 /**
  * "The last six months": each month's total as a bar, this one in the
- * series colour and the others neutral; each bar opens its month.
+ * series colour and the others neutral. Each other month's bar opens it;
+ * the month on screen is a plain mark named "this month" (M5, B1).
  */
 export function LastMonths({
   expenses,
@@ -155,33 +175,56 @@ export function LastMonths({
   region,
   locale,
   t,
+  labelledBy,
 }: {
   expenses: readonly Expense[]
   month: string
   region: Region
   locale: string
   t: Translate
+  /** The id of the card heading that names the chart (O-14). */
+  labelledBy?: string
 }) {
   const months = monthlyTotals(expenses, month)
-  const max = months.reduce((a, m) => Math.max(a, m.total), 0)
+  const highest = months.reduce<{ month: string; total: Cents } | undefined>(
+    (best, m) => (m.total > (best?.total ?? 0) ? m : best),
+    undefined,
+  )
+  const max = highest?.total ?? 0
   return (
     <Bars
       emphasis
       label={t('overview.lastMonths')}
+      labelledBy={labelledBy}
+      summary={
+        highest === undefined
+          ? undefined
+          : t('overview.lastMonthsSummary', {
+              total: formatAmount(sum(months.map((m) => m.total)), region),
+              month: formatMonth(highest.month, locale),
+              amount: formatAmount(highest.total, region),
+            })
+      }
       scale={t('overview.upTo', {
         amount: formatAmount(max as Cents, region),
       })}
-      bars={months.map((m) => ({
-        id: m.month,
-        value: m.total,
-        current: m.month === month,
-        to: `?month=${m.month}`,
-        tick: formatDate(`${m.month}-01`, locale, { month: 'short' }),
-        label: t('overview.monthBar', {
+      bars={months.map((m) => {
+        const current = m.month === month
+        const words = {
           month: formatMonth(m.month, locale),
           amount: formatAmount(m.total, region),
-        }),
-      }))}
+        }
+        return {
+          id: m.month,
+          value: m.total,
+          current,
+          to: current ? undefined : `?month=${m.month}`,
+          tick: formatDate(`${m.month}-01`, locale, { month: 'short' }),
+          label: current
+            ? t('overview.monthBarCurrent', words)
+            : t('overview.monthBar', words),
+        }
+      })}
     />
   )
 }
