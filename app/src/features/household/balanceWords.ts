@@ -5,10 +5,10 @@
  */
 import type { Region } from '../../app/region.ts'
 import type { Translate } from '../../i18n/t.ts'
-import { negate, type Cents } from '../../lib/money.ts'
-import { formatAmount } from '../../lib/money.ts'
+import { formatAmount, negate, type Cents } from '../../lib/money.ts'
 import type { Balances, PaymentOutcome } from './balances.ts'
-import { isIsoDate, type Member } from './model.ts'
+import { displayName } from '../split/model.ts'
+import { isIsoDate, type Member, type Settlement } from './model.ts'
 
 /**
  * "Gets back", "Owes" or "Settled up". Over incomplete balances a zero
@@ -91,4 +91,20 @@ export function balanceDate(
 /** A member who had left before today. */
 export function hasLeft(member: Member, today: string): boolean {
   return member.leftOn !== undefined && member.leftOn < today
+}
+
+/** "Tiago paid Ana", with each name as the household shows it. */
+export function paidWords(
+  t: Translate,
+  settlement: Settlement,
+  members: ReadonlyMap<string, Member>,
+): string {
+  const name = (id: string) => {
+    const member = members.get(id)
+    return member === undefined ? '' : displayName(t, member, member.position)
+  }
+  return t('history.paid', {
+    from: name(settlement.fromId),
+    to: name(settlement.toId),
+  })
 }

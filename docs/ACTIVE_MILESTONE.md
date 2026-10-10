@@ -81,11 +81,28 @@
   - The overview's balances card ("Across all expenses and payments.",
     the settle-up line, Details).
   - Design canvas and the screens check: in CP6.
-- CP5 and CP6: to do.
+- **CP5 — complete:** payments in the history, and the settle-up text.
+  - The Expenses tab lists payments among the expenses, by date in the
+    same month groups, styled apart ("Tiago paid Ana", an exchange icon,
+    the note). Month totals and counts stay expenses only. A member
+    filter shows the payments they sent or received, a category filter
+    hides payments, and the search matches both names and the note.
+    Unreadable payments are counted there too (L4-O4).
+  - A payment opens in a dialog over the page (`?settlement=`): from,
+    to, amount, date, note, then Edit (the payment form, whose outcome
+    leaves the original out, L2-I1) and Delete ("Delete this payment?
+    The balances change back."). An explanation's payment lines open it
+    too (L3-O2).
+  - `balanceText.ts`: the balances and the payments as text, both
+    languages, no date in the header, the "dated after today" line; it
+    throws over incomplete balances (M-I-1). Copy as text ("Copied.", or
+    the refusal) and Share where the browser has it; neither with
+    `?on=` or over incomplete balances.
+- CP6: to do.
 
 ## Next action
 
-Continue `/milestone-implement milestone-5` with CP5.
+Continue `/milestone-implement milestone-5` with CP6.
 
 ## Last completed: M4 — Households, members and the expense ledger
 

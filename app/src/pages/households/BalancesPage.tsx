@@ -1,4 +1,4 @@
-import { IconCash, IconPlus } from '@tabler/icons-react'
+import { IconCash, IconCopy, IconPlus, IconShare } from '@tabler/icons-react'
 import { useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { useRegion } from '../../app/region.ts'
@@ -7,6 +7,7 @@ import {
   suggestSettlements,
   type SuggestedPayment,
 } from '../../features/household/balances.ts'
+import { balanceText } from '../../features/household/balanceText.ts'
 import {
   balanceDate,
   balanceWord,
@@ -51,6 +52,7 @@ export function BalancesPage() {
     prefill?: SuggestedPayment
   } | null>(null)
   const [announced, setAnnounced] = useState('')
+  const [copyStatus, setCopyStatus] = useState('')
 
   const result = useMemo(
     () =>
@@ -125,6 +127,16 @@ export function BalancesPage() {
           : t('balances.settled')
   const future =
     on === undefined ? futureDatedLine(t, result.futureDated) : null
+  const summary = () =>
+    balanceText({
+      t,
+      region,
+      householdName: household.name,
+      result,
+      rows,
+      payments,
+      nameOf,
+    })
 
   return (
     <>
@@ -248,12 +260,49 @@ export function BalancesPage() {
       )}
 
       {on === undefined && (
-        <p>
+        <div className={styles.actions}>
           <Button icon={IconPlus} onClick={() => setRecording({})}>
             {t('balances.record')}
           </Button>
-        </p>
+          {/* Text leaves the device: only over complete default balances
+              (B9, M-I-1, L2-I2). */}
+          {!empty && result.complete && (
+            <>
+              <Button
+                icon={IconCopy}
+                onClick={() => {
+                  const text = summary()
+                  setCopyStatus('')
+                  // `navigator.clipboard` is missing outside secure
+                  // contexts: a throw inside the chain becomes a rejection.
+                  Promise.resolve()
+                    .then(() => navigator.clipboard.writeText(text))
+                    .then(
+                      () => setCopyStatus(t('balances.copied')),
+                      () => setCopyStatus(t('balances.copyFailed')),
+                    )
+                }}
+              >
+                {t('balances.copy')}
+              </Button>
+              {typeof navigator.share === 'function' && (
+                <Button
+                  icon={IconShare}
+                  onClick={() => {
+                    // A cancelled share is not an error: nothing to say.
+                    navigator.share({ text: summary() }).catch(() => undefined)
+                  }}
+                >
+                  {t('balances.share')}
+                </Button>
+              )}
+            </>
+          )}
+        </div>
       )}
+      <p className={styles.hint} role="status">
+        {copyStatus}
+      </p>
 
       {!empty && (
         <TextField

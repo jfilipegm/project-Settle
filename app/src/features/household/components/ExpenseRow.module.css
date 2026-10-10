@@ -125,3 +125,18 @@
     display: none;
   }
 }
+
+/* A payment among the expenses (M5 plan, B8): styled apart, quieter, an
+ * exchange icon before the names; never in a month's total. */
+.payment .what {
+  align-items: center;
+  color: var(--color-quiet);
+}
+
+.payment .description {
+  font-weight: 500;
+}
+
+.payment .amount {
+  color: var(--color-quiet);
+}

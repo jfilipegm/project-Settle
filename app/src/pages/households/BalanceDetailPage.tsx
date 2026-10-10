@@ -12,6 +12,7 @@ import {
   balanceWord,
 } from '../../features/household/balanceWords.ts'
 import { EXPENSE_PARAM } from '../../features/household/components/ExpenseRow.tsx'
+import { SETTLEMENT_PARAM } from '../../features/household/components/SettlementRow.tsx'
 import {
   dateLocale,
   formatDate,
@@ -177,7 +178,13 @@ export function BalanceDetailPage() {
                         <span className={styles.rowMain}>
                           <span className={styles.inline}>
                             <Icon icon={IconArrowsExchange} size={16} />
-                            <span className={styles.rowTitle}>
+                            <Link
+                              className={styles.rowLink}
+                              to={{
+                                search: opener(SETTLEMENT_PARAM, record.id),
+                              }}
+                              state={{ settlementOpened: true }}
+                            >
                               {line.settlement.fromId === member.id
                                 ? t('explain.paidTo', {
                                     name: nameOf(line.settlement.toId),
@@ -185,7 +192,7 @@ export function BalanceDetailPage() {
                                 : t('explain.from', {
                                     name: nameOf(line.settlement.fromId),
                                   })}
-                            </span>
+                            </Link>
                           </span>
                           <span className={styles.rowMeta}>{date}</span>
                         </span>

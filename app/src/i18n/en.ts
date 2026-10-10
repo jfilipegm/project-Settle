@@ -583,6 +583,10 @@ export const en = {
       one: '{count} expense couldn’t be read. It is kept as it was.',
       other: '{count} expenses couldn’t be read. They are kept as they were.',
     },
+    unreadablePayments: {
+      one: '{count} payment couldn’t be read. It is kept as it was.',
+      other: '{count} payments couldn’t be read. They are kept as they were.',
+    },
     itemCount: { one: '({count} item)', other: '({count} items)' },
   },
 
@@ -745,6 +749,10 @@ export const en = {
       other: '{count} records couldn’t be read.',
     },
     recorded: 'Payment recorded.',
+    copy: 'Copy as text',
+    copied: 'Copied.',
+    copyFailed: 'Couldn’t copy. Your browser blocked it.',
+    share: 'Share',
   },
 
   payment: {
@@ -791,5 +799,40 @@ export const en = {
     from: 'From {name}',
     total: 'Balance',
     nothing: 'No expenses or payments for {name} yet.',
+  },
+
+  history: {
+    paid: '{from} paid {to}',
+    paymentRow: 'Payment, {date}, {paid}, {amount}',
+  },
+
+  paymentView: {
+    from: 'From',
+    to: 'To',
+    date: 'Date',
+    note: 'Note',
+    edit: 'Edit',
+    delete: 'Delete',
+    deleteTitle: 'Delete this payment?',
+    deleteBody: 'The balances change back.',
+    deleteConfirm: 'Delete payment',
+    cancel: 'Cancel',
+    deleteFailed: 'This payment couldn’t be deleted. Try again.',
+    notFoundTitle: 'Payment not found',
+    notFound:
+      'This payment doesn’t exist any more. It may have been deleted in another tab.',
+    close: 'Close',
+  },
+
+  balanceText: {
+    header: '{name}, balances',
+    getsBack: '{name} gets back {amount}',
+    owes: '{name} owes {amount}',
+    settled: '{name} is settled up',
+    toSettle: {
+      one: 'To settle up, {count} payment:',
+      other: 'To settle up, {count} payments:',
+    },
+    pays: '{from} pays {to} {amount}',
   },
 } as const

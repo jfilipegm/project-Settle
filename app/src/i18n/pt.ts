@@ -582,6 +582,11 @@ export const pt: Catalogue = {
       other:
         'Não foi possível ler {count} despesas. Ficam guardadas como estavam.',
     },
+    unreadablePayments: {
+      one: 'Não foi possível ler {count} pagamento. Fica guardado como estava.',
+      other:
+        'Não foi possível ler {count} pagamentos. Ficam guardados como estavam.',
+    },
     itemCount: { one: '({count} artigo)', other: '({count} artigos)' },
   },
 
@@ -745,6 +750,10 @@ export const pt: Catalogue = {
       other: 'Não foi possível ler {count} registos.',
     },
     recorded: 'Pagamento registado.',
+    copy: 'Copiar como texto',
+    copied: 'Copiado.',
+    copyFailed: 'Não foi possível copiar. O navegador bloqueou a cópia.',
+    share: 'Partilhar',
   },
 
   payment: {
@@ -793,5 +802,40 @@ export const pt: Catalogue = {
     from: 'De {name}',
     total: 'Saldo',
     nothing: 'Ainda não há despesas nem pagamentos de {name}.',
+  },
+
+  history: {
+    paid: '{from} pagou a {to}',
+    paymentRow: 'Pagamento, {date}, {paid}, {amount}',
+  },
+
+  paymentView: {
+    from: 'De',
+    to: 'Para',
+    date: 'Data',
+    note: 'Nota',
+    edit: 'Editar',
+    delete: 'Eliminar',
+    deleteTitle: 'Eliminar este pagamento?',
+    deleteBody: 'Os saldos voltam ao que eram.',
+    deleteConfirm: 'Eliminar pagamento',
+    cancel: 'Cancelar',
+    deleteFailed: 'Não foi possível eliminar este pagamento. Tente de novo.',
+    notFoundTitle: 'Pagamento não encontrado',
+    notFound:
+      'Este pagamento já não existe. Pode ter sido eliminado noutro separador.',
+    close: 'Fechar',
+  },
+
+  balanceText: {
+    header: '{name}, saldos',
+    getsBack: '{name} recebe {amount}',
+    owes: '{name} deve {amount}',
+    settled: '{name} tem as contas certas',
+    toSettle: {
+      one: 'Para acertar contas, {count} pagamento:',
+      other: 'Para acertar contas, {count} pagamentos:',
+    },
+    pays: '{from} paga a {to} {amount}',
   },
 }
