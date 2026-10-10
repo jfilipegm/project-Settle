@@ -11,14 +11,23 @@
   max-width: none;
   max-height: calc(100dvh - var(--space-6));
   margin: auto 0 0;
-  padding: var(--space-5) var(--gutter)
-    calc(var(--space-5) + env(safe-area-inset-bottom));
-  overflow-y: auto;
+  padding: 0;
+  overflow: hidden;
   border: 0;
   border-radius: var(--radius-card) var(--radius-card) 0 0;
   background: var(--color-card);
   box-shadow: var(--shadow-raised);
   color: var(--color-ink);
+}
+
+/* The content fills the box and scrolls, so a click on the <dialog>
+ * element itself is a click on the backdrop. */
+.content {
+  box-sizing: border-box;
+  max-height: calc(100dvh - var(--space-6));
+  padding: var(--space-5) var(--gutter)
+    calc(var(--space-5) + env(safe-area-inset-bottom));
+  overflow-y: auto;
 }
 
 .dialog[open] {
@@ -45,8 +54,11 @@
   .dialog {
     width: min(32rem, calc(100% - 2 * var(--gutter)));
     margin: auto;
-    padding: var(--space-5);
     border-radius: var(--radius-card);
+  }
+
+  .content {
+    padding: var(--space-5);
   }
 }
 

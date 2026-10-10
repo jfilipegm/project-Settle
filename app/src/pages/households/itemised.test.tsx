@@ -292,6 +292,18 @@ describe('saving a split into a household (H10)', () => {
     expect(loadDraft()).toEqual(typedBill())
     expect((await withDb((db) => listExpenses(db, 'h1'))).items).toEqual([])
   })
+
+  it('keeps the draft when closed by a click outside it', async () => {
+    saveDraft(typedBill())
+    const dialog = await openSaveDialog()
+    fireEvent.pointerDown(dialog)
+    fireEvent.click(dialog)
+    expect(
+      screen.queryByRole('dialog', { name: 'Save to a household' }),
+    ).not.toBeInTheDocument()
+    expect(loadDraft()).toEqual(typedBill())
+    expect((await withDb((db) => listExpenses(db, 'h1'))).items).toEqual([])
+  })
 })
 
 describe('splitting a bill from a household (H10, M-I-2)', () => {
