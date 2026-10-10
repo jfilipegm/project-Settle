@@ -18,8 +18,7 @@ import {
   WhereItWent,
 } from '../../features/household/components/MonthCharts.tsx'
 import { dateLocale, formatMonth } from '../../features/household/format.ts'
-import { useLoaded } from '../../features/household/householdData.ts'
-import { useLedger } from '../../features/household/useLedger.ts'
+import { useLedger, useLoaded } from '../../features/household/householdData.ts'
 import { activeMembers, isoDate } from '../../features/household/model.ts'
 import {
   categoryTotals,

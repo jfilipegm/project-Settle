@@ -5,6 +5,7 @@ import { useRegion } from '../../app/region.ts'
 import {
   balances,
   explainBalance,
+  type Balances,
   type ExplanationLine,
 } from '../../features/household/balances.ts'
 import {
@@ -18,9 +19,9 @@ import {
   formatDate,
   formatMonth,
 } from '../../features/household/format.ts'
+import { useLedger } from '../../features/household/householdData.ts'
 import { isoDate } from '../../features/household/model.ts'
 import { monthOf } from '../../features/household/totals.ts'
-import { useLedger } from '../../features/household/useLedger.ts'
 import { displayName } from '../../features/split/model.ts'
 import { useLanguage } from '../../i18n/language.ts'
 import { formatAmount } from '../../lib/money.ts'
@@ -30,6 +31,11 @@ import { Icon } from '../../ui/Icon.tsx'
 import { NotFoundPage } from '../NotFoundPage.tsx'
 import { useHouseholdContext } from './householdContext.ts'
 import styles from './households.module.css'
+
+/** Whether the default balances are complete, and how many records didn't read. */
+function completeness(result: Balances) {
+  return { complete: result.complete, unreadable: result.unreadable.total }
+}
 
 function recordOf(line: ExplanationLine): { id: string; date: string } {
   return line.kind === 'expense' ? line.expense : line.settlement
@@ -61,8 +67,7 @@ export function BalanceDetailPage() {
       ledger.state === 'ready' && member !== undefined
         ? {
             explanation: explainBalance(ledger.value, member.id, { asOf: on }),
-            complete: balances(ledger.value).complete,
-            unreadable: balances(ledger.value).unreadable.total,
+            ...completeness(balances(ledger.value)),
           }
         : null,
     [ledger, member, on],

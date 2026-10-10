@@ -9,6 +9,7 @@ import { SETTLEMENT_PARAM } from '../../features/household/components/Settlement
 import { dateLocale, formatDate } from '../../features/household/format.ts'
 import {
   useHouseholdData,
+  useLedger,
   useLoaded,
 } from '../../features/household/householdData.ts'
 import {
@@ -16,7 +17,6 @@ import {
   type Household,
   type Member,
 } from '../../features/household/model.ts'
-import { useLedger } from '../../features/household/useLedger.ts'
 import { useLanguage } from '../../i18n/language.ts'
 import { Amount } from '../../ui/Amount.tsx'
 import { Button } from '../../ui/Button.tsx'
