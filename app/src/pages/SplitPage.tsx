@@ -308,8 +308,9 @@ function SplitEditor({
   }
 
   // `/split?household=:hid` (H10): start from the household's active
-  // members, after asking to replace a bill with content; then drop the
-  // parameter, keeping the household for the save dialog.
+  // members, after asking to replace a bill with content, on the Receipt
+  // step; then drop the parameter, keeping the household for the save
+  // dialog.
   const seedFor = editing === undefined ? params.get('household') : null
   const seed = (members: Member[]) => {
     if (seedFor === null) return
@@ -324,8 +325,9 @@ function SplitEditor({
       setEditorSession((session) => session + 1)
       setLinkedHousehold(seedFor)
       writeHouseholdPointer(seedFor)
-      pendingFocus.current = 'items'
-      search.set('step', 'items')
+      // Receipt first, to read or upload it; the people are already in.
+      pendingFocus.current = 'receipt'
+      search.set('step', 'receipt')
     }
     void navigate({ search: `?${search.toString()}` }, { replace: true })
   }

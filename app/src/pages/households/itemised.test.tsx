@@ -309,6 +309,22 @@ describe('saving a split into a household (H10)', () => {
 describe('splitting a bill from a household (H10, M-I-2)', () => {
   it('starts a bill with the household’s active members', async () => {
     renderApp('/split?household=h1')
+    await waitFor(() =>
+      expect(loadDraft()?.people.map((p) => p.id)).toEqual([
+        'ana',
+        'marta',
+        'joao',
+        'tiago',
+      ]),
+    )
+    // Once seeded, it opens on Receipt, to read or upload the receipt first.
+    const steps = screen.getByRole('navigation', { name: 'Steps' })
+    expect(
+      within(steps).getByRole('link', { name: 'Receipt' }),
+    ).toHaveAttribute('aria-current', 'step')
+    expect(document.activeElement?.id).toBe('receipt-scan-heading')
+    // The people are already there on Who had what.
+    fireEvent.click(within(steps).getByRole('link', { name: 'Who had what' }))
     expect(
       await screen.findByRole('textbox', { name: 'Name of Person 4' }),
     ).toHaveValue('Tiago')
