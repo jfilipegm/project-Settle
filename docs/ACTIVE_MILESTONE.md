@@ -6,15 +6,16 @@
 `milestone-4`). Plan revision 4, `docs/milestones/milestone-4-PLAN.md`,
 approved on 2026-10-09 (local and manual external plan reviews both
 APPROVE; approval commit `ee0225d`), on `feature/milestone-4`, PR #12.
-Phase `AWAITING_LOCAL_IMPLEMENTATION_REVIEW` (implementation revision 2).
+Phase `AWAITING_LOCAL_IMPLEMENTATION_REVIEW` (implementation revision 3).
 
 ## Next action
 
-The local implementation review (round 1) returned REVISE. Its two
-important findings and three of its optional ones are fixed, and the
-post-fix bundle is generated. Next, `/review-implementation milestone-4`
-again (round 2), then the manual external implementation review and
-`/approve-review implementation`.
+Round 2: the local implementation review returned APPROVE, and the
+manual external review (the project owner's own testing) returned
+REVISE with four usability findings, M-1 to M-4. All four are fixed and
+the post-fix bundle is generated. Next, `/review-implementation
+milestone-4` (round 3), then the manual external implementation review
+and `/approve-review implementation`.
 
 ## Progress
 
@@ -292,6 +293,56 @@ again (round 2), then the manual external implementation review and
     editable.
   - Verification: `npm run check` (86 files, 1501 passed, 1 skipped),
     `npm run build` and `check-build.mjs` pass.
+
+- **Implementation review, round 2: local APPROVE; manual external
+  REVISE, applied.** The owner's own testing found four usability
+  problems. Each was reproduced with a test that failed first.
+  - **M-1 (fixed, `0cef3fb`).** A click outside a dialog didn't close it,
+    so on a phone Add expense's choice could only be left by picking one.
+    `Dialog` now closes on a click on the backdrop, as Cancel does. Its
+    content fills the `<dialog>` box, so only the backdrop's presses land
+    on the element, and a press that starts inside (selecting text) and
+    ends outside keeps it open. Closing the save dialog this way keeps
+    the draft.
+  - **M-2 (fixed, `731866c`).** On an expense's page, its edit page and a
+    new expense no household tab was current. Every page under
+    `/expenses` now keeps Expenses current, and under `/members`
+    Members.
+  - **M-3 (fixed, `26695f1`).** Expense rows showed a date, a
+    description, a category, a payer and an amount with nothing saying
+    which was which. From 640 px the lists (Expenses and the overview's
+    latest) have column headings, Date, Description, Category, Paid by
+    and Amount, as the canvas's desktop table always had. At phone
+    width, where a header row can't line up with the two-line rows, the
+    date has a calendar icon and the payer a visible "Paid by". Each
+    row's link is named with every value and its label ("Date 5 Oct,
+    Description Kitchen shelves, Category Household, Paid by João,
+    Amount 69,99 €"), in English and Portuguese ("Data", "Descrição",
+    "Categoria", "Pago por", "Valor").
+  - **M-4 (fixed, `8aea2bd`).** "Split a bill" from a household opened
+    the split on Who had what. It now opens on Receipt, with the
+    household's active members already the bill's people, so the receipt
+    can be read or uploaded first.
+  - **Optional findings of the local round 2 (O-6 to O-8): not applied.**
+    O-6 (the add form's "full" counts only today): the repository refuses
+    any day over 20 with the right message, and a form-side any-day
+    check would need the join date chosen first; nothing wrong is ever
+    written. O-7 (a refused add clears the typed name) predates this
+    round and only costs retyping one name. O-8 (state, not ref, as the
+    double-press guard) is correct for discrete events; no change
+    without a failing case.
+  - Design canvas, version 29: the "As shipped in M4" board has the new
+    screenshots (overview, expenses, an itemised expense, the overview
+    dark, and both desktop boards), and the navigation map says "Split a
+    bill" opens on Receipt, an expense's pages stay under Expenses, and a
+    click outside closes a dialog. The drawn household boards needed no
+    change: their desktop table already had the headings.
+  - Verification: `npm run check` (86 files, 1508 passed, 1 skipped);
+    `npm run build` and `check-build.mjs` pass (343,772 bytes of fonts,
+    131,652 for a first view, no gallery); `node scripts/screens.mjs`:
+    14 screens, 84 checks, 0 problems (no sideways scroll at 360 px,
+    every Tab stop in reading order with the focus ring), and the
+    evidence screens are replaced with this run's.
 
 ## Last completed: M3 — Design foundations
 

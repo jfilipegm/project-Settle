@@ -1,5 +1,5 @@
 {
-  "when": "2026-10-10T00:52:23.846Z",
+  "when": "2026-10-10T10:52:47.665Z",
   "screens": [
     {
       "screen": "home",
@@ -1170,35 +1170,35 @@
         },
         {
           "tag": "a",
-          "label": "6 OctContinente(4 items)GroceriesAAna48,",
+          "label": "Date 6 Oct, Description Continente, (4 i",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
         },
         {
           "tag": "a",
-          "label": "5 OctKitchen shelvesHouseholdJJoão69,99 ",
+          "label": "Date 5 Oct, Description Kitchen shelves,",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
         },
         {
           "tag": "a",
-          "label": "4 OctInternetInternetTTiago38,54 €",
+          "label": "Date 4 Oct, Description Internet, Catego",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
         },
         {
           "tag": "a",
-          "label": "3 OctTakeaway, Friday nightEating outJJo",
+          "label": "Date 3 Oct, Description Takeaway, Friday",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
         },
         {
           "tag": "a",
-          "label": "2 OctElectricity, SeptemberUtilitiesMMar",
+          "label": "Date 2 Oct, Description Electricity, Sep",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
@@ -1341,35 +1341,35 @@
         },
         {
           "tag": "a",
-          "label": "6 OctContinente(4 items)GroceriesAAna48,",
+          "label": "Date 6 Oct, Description Continente, (4 i",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
         },
         {
           "tag": "a",
-          "label": "5 OctKitchen shelvesHouseholdJJoão69,99 ",
+          "label": "Date 5 Oct, Description Kitchen shelves,",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
         },
         {
           "tag": "a",
-          "label": "4 OctInternetInternetTTiago38,54 €",
+          "label": "Date 4 Oct, Description Internet, Catego",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
         },
         {
           "tag": "a",
-          "label": "3 OctTakeaway, Friday nightEating outJJo",
+          "label": "Date 3 Oct, Description Takeaway, Friday",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
         },
         {
           "tag": "a",
-          "label": "2 OctElectricity, SeptemberUtilitiesMMar",
+          "label": "Date 2 Oct, Description Electricity, Sep",
           "ring": true,
           "focusVisible": true,
           "outline": "solid 3px"
