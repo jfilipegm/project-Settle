@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-5",
+  "requirements": {
+    "REQ-1": {
+      "description": "The chart notes: the month on screen is not a link in The last six months, Day by day has the same hover, and every chart shows its value at once on hover, focus or tap",
+      "checkpoint_ids": [
+        "CP1"
+      ]
+    },
+    "REQ-2": {
+      "description": "M4's follow-ups: the gallery's chart components and close button (O-12), one set of percentages for donut and legend (O-13), The last six months read once (O-14), the hardened literal-text guard",
+      "checkpoint_ids": [
+        "CP1"
+      ]
+    },
+    "REQ-3": {
+      "description": "Payments stored: the settlement record and its reader, the database's version-2 migration keeping every version-1 record, the repository with its reference checks",
+      "checkpoint_ids": [
+        "CP2"
+      ]
+    },
+    "REQ-4": {
+      "description": "A failed migration has its own state, with nothing changed and a reload (O-4)",
+      "checkpoint_ids": [
+        "CP2"
+      ]
+    },
+    "REQ-5": {
+      "description": "Net balance per member, derived from the ledger: paid minus share plus sent minus received, exact to the cent, summing to zero",
+      "checkpoint_ids": [
+        "CP3",
+        "CP4"
+      ]
+    },
+    "REQ-6": {
+      "description": "Suggested settlement: the fewest payments that clear every balance, with a deterministic tie-break, each with Mark as paid",
+      "checkpoint_ids": [
+        "CP3",
+        "CP4"
+      ]
+    },
+    "REQ-7": {
+      "description": "Record a payment, full or partial, between any two members",
+      "checkpoint_ids": [
+        "CP2",
+        "CP4"
+      ]
+    },
+    "REQ-8": {
+      "description": "Explain a balance: the expenses and payments that make it up, summing to it",
+      "checkpoint_ids": [
+        "CP3",
+        "CP4"
+      ]
+    },
+    "REQ-9": {
+      "description": "Payments in the history, editable and deletable like an expense, without counting in spending totals",
+      "checkpoint_ids": [
+        "CP5"
+      ]
+    },
+    "REQ-10": {
+      "description": "Settle-up summary as text, copied or shared",
+      "checkpoint_ids": [
+        "CP5"
+      ]
+    },
+    "REQ-11": {
+      "description": "Balances on a date",
+      "checkpoint_ids": [
+        "CP3",
+        "CP4"
+      ]
+    },
+    "REQ-12": {
+      "description": "Members who left: their balance is kept and shown, they can pay or be paid, and a member named by a payment can't be deleted",
+      "checkpoint_ids": [
+        "CP2",
+        "CP3",
+        "CP4"
+      ]
+    },
+    "REQ-13": {
+      "description": "Property tests (balances sum to zero, the suggestion clears them, partial payments and members who left covered) and hand-checked examples for Phase 3's edge cases",
+      "checkpoint_ids": [
+        "CP3",
+        "CP6"
+      ]
+    },
+    "REQ-14": {
+      "description": "Both languages, the design canvas's look, 360 px without sideways scroll, keyboard and screen-reader access",
+      "checkpoint_ids": [
+        "CP1",
+        "CP4",
+        "CP5",
+        "CP6"
+      ]
+    },
+    "REQ-15": {
+      "description": "Documentation and the design canvas: ADRs, DESIGN.md, READMEs, roadmap, the navigation map and the shipped board",
+      "checkpoint_ids": [
+        "CP6"
+      ]
+    }
+  }
+}
