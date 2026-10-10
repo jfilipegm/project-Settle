@@ -24,11 +24,14 @@ import { StorageState } from './StorageState.tsx'
 
 type TabId = 'overview' | 'expenses' | 'members'
 
+/** The tab a page belongs to: an expense's pages stay under Expenses. */
 function currentTab(pathname: string, base: string): TabId | undefined {
   const rest = pathname.slice(base.length)
+  const under = (section: string) =>
+    rest === section || rest.startsWith(`${section}/`)
   if (rest === '' || rest === '/') return 'overview'
-  if (rest === '/expenses') return 'expenses'
-  if (rest === '/members') return 'members'
+  if (under('/expenses')) return 'expenses'
+  if (under('/members')) return 'members'
   return undefined
 }
 

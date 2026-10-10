@@ -247,3 +247,31 @@ describe('expenses in Portuguese', () => {
     expect(english(shownText(container))).toEqual([])
   })
 })
+
+describe('the tabs on an expense’s pages', () => {
+  it('keep Expenses as the current tab on the expense, its edit and a new one', async () => {
+    const db = await openDatabase(factory)
+    await saveExpense(
+      db,
+      quickExpense('e1', equalSplit(1000, ['ana', 'marta']), { date: today }),
+    )
+    db.close()
+    for (const path of [
+      '/households/h1/expenses/e1',
+      '/households/h1/expenses/e1/edit',
+      '/households/h1/expenses/new',
+    ]) {
+      const { unmount } = renderApp(path)
+      const tabs = await screen.findByRole('navigation', {
+        name: 'Household',
+      })
+      expect(
+        within(tabs).getByRole('link', { name: 'Expenses' }),
+      ).toHaveAttribute('aria-current', 'page')
+      expect(
+        within(tabs).getByRole('link', { name: 'Overview' }),
+      ).not.toHaveAttribute('aria-current')
+      unmount()
+    }
+  })
+})
