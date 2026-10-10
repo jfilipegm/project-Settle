@@ -1,6 +1,10 @@
 import { useId, useMemo, useState } from 'react'
 import { useRegion } from '../../../app/region.ts'
-import { MissingReferenceError, saveExpense } from '../../../data/repository.ts'
+import {
+  ExpenseNotFoundError,
+  MissingReferenceError,
+  saveExpense,
+} from '../../../data/repository.ts'
 import { useT } from '../../../i18n/language.ts'
 import { formatAmount, negate } from '../../../lib/money.ts'
 import { Amount } from '../../../ui/Amount.tsx'
@@ -198,7 +202,7 @@ export function QuickExpenseForm({
     setSaveError(undefined)
     if (result.expense === null || db === null) return
     const expense = result.expense
-    saveExpense(db, expense).then(
+    saveExpense(db, expense, [], { replacing: initial !== undefined }).then(
       () => {
         changed()
         onSaved(expense.id)
@@ -207,7 +211,9 @@ export function QuickExpenseForm({
         setSaveError(
           failure instanceof MissingReferenceError
             ? t('expense.errors.gone')
-            : t('expense.errors.save'),
+            : failure instanceof ExpenseNotFoundError
+              ? t('expense.errors.deleted')
+              : t('expense.errors.save'),
         ),
     )
   }

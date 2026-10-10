@@ -59,6 +59,9 @@ export class MemberInUseError extends Error {
   }
 }
 
+/** An edit's expense is gone, typically deleted in another tab. */
+export class ExpenseNotFoundError extends Error {}
+
 /** Too many members: 20 active on any one day, 50 in all (H4). */
 export class MemberLimitError extends Error {}
 
@@ -404,16 +407,32 @@ export async function getExpense(
  * member the expense names must be a member of it; otherwise the
  * transaction is aborted, nothing is written, and it rejects with
  * {@link MissingReferenceError}. New members keep the limits of H4: 20
- * active on any one day, 50 in all ({@link MemberLimitError}).
+ * active on any one day, 50 in all ({@link MemberLimitError}). An edit
+ * (`replacing`) only replaces an expense of this household that still
+ * exists, so one deleted in another tab is never brought back
+ * ({@link ExpenseNotFoundError}).
  */
 export async function saveExpense(
   db: IDBDatabase,
   expense: Expense,
   newMembers: readonly Omit<Member, 'position'>[] = [],
+  { replacing = false }: { replacing?: boolean } = {},
 ): Promise<Member[]> {
   const stores: StoreName[] = [STORE.households, STORE.members, STORE.expenses]
   return transaction(db, stores, 'readwrite', async (tx) => {
     await requireHousehold(tx, expense.householdId)
+    if (replacing) {
+      const stored = await result(
+        tx.objectStore(STORE.expenses).get(expense.id),
+      )
+      const storedHousehold =
+        typeof stored === 'object' && stored !== null && 'householdId' in stored
+          ? stored.householdId
+          : undefined
+      if (storedHousehold !== expense.householdId) {
+        throw new ExpenseNotFoundError(expense.id)
+      }
+    }
     const added: Member[] = []
     if (newMembers.length > 0) {
       const { items, unreadable } = await householdMembers(

@@ -666,6 +666,7 @@ export const en = {
       exactSum: 'The amounts add up to {total}, not {amount}.',
       percentSum: 'The percentages add up to {total} %, not 100 %.',
       gone: 'Someone on this expense was removed in another tab. Check the people and save again.',
+      deleted: 'This expense was deleted in another tab, so it wasn’t saved.',
       save: 'This expense couldn’t be saved. Try again.',
     },
   },

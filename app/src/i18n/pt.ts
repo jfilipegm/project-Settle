@@ -666,6 +666,8 @@ export const pt: Catalogue = {
       exactSum: 'Os valores somam {total}, não {amount}.',
       percentSum: 'As percentagens somam {total} %, não 100 %.',
       gone: 'Alguém nesta despesa foi removido noutro separador. Verifique as pessoas e guarde de novo.',
+      deleted:
+        'Esta despesa foi eliminada noutro separador, por isso não foi guardada.',
       save: 'Não foi possível guardar esta despesa. Tente novamente.',
     },
   },

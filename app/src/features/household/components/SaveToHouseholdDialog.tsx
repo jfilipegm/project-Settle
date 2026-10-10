@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { useRegion } from '../../../app/region.ts'
 import { readHouseholdPointer } from '../../../data/pointer.ts'
 import {
+  ExpenseNotFoundError,
   MemberLimitError,
   MissingReferenceError,
   expensesWithReceiptKey,
@@ -345,6 +346,7 @@ export function SaveToHouseholdDialog({
         db,
         expense,
         newMembers.map((m) => ({ ...m, id: real(m.id) })),
+        { replacing: editing !== undefined },
       )
       changed()
       onSaved(householdId, expense.id)
@@ -356,7 +358,9 @@ export function SaveToHouseholdDialog({
           ? t('members.errors.limit')
           : error instanceof MissingReferenceError
             ? t('expense.errors.gone')
-            : t('expense.errors.save'),
+            : error instanceof ExpenseNotFoundError
+              ? t('expense.errors.deleted')
+              : t('expense.errors.save'),
       )
     })
   }

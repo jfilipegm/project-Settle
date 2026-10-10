@@ -15,6 +15,7 @@ import {
 } from '../test/households.ts'
 import { openDatabase } from './db.ts'
 import {
+  ExpenseNotFoundError,
   HouseholdNotFoundError,
   MemberInUseError,
   MemberLimitError,
@@ -224,6 +225,21 @@ describe('expenses', () => {
     expect((await listExpenses(db, 'h1')).items).toEqual([edited])
     await deleteExpense(db, 'e1')
     expect((await listExpenses(db, 'h1')).items).toEqual([])
+  })
+
+  it('never brings back an edited expense deleted in another tab', async () => {
+    const db = await seeded()
+    const expense = quickExpense('e1', equalSplit(1000, ['ana', 'marta']))
+    await saveExpense(db, expense)
+    const edited = { ...expense, description: 'Edited', updatedAt: 'later' }
+    await saveExpense(db, edited, [], { replacing: true })
+    expect((await getExpense(db, 'e1'))?.description).toBe('Edited')
+
+    await deleteExpense(db, 'e1')
+    await expect(
+      saveExpense(db, edited, [], { replacing: true }),
+    ).rejects.toBeInstanceOf(ExpenseNotFoundError)
+    expect(await getExpense(db, 'e1')).toBeNull()
   })
 
   it('refuses an expense naming a member who isn’t there, writing nothing', async () => {
