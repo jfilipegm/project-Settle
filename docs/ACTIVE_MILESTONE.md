@@ -10,8 +10,9 @@ Phase `IMPLEMENTING`.
 
 ## Next action
 
-Implement the remaining checkpoints back to back (the user's choice:
-reviews only after the last one), then the self-review and the
+All six checkpoints are complete. Next, `/milestone-implement
+milestone-4` again: the self-review of the whole diff, the full
+verification, the implementation bundle, then the local and the manual
 implementation reviews.
 
 ## Progress
@@ -191,6 +192,53 @@ implementation reviews.
     - 1000 expenses render and filter within the budget: about 2 s in
       jsdom, against 15 s and 5 s;
     - the Expenses tab in Portuguese.
+- **CP6 — Quality pass and documentation: complete.**
+  - The completion scenario (REQ-11), `data/completion.test.ts`:
+    - 4 members, 34 expenses (24 quick of all four methods, 10 itemised,
+      one with its receipt summary and key);
+    - João leaves, Rui joins;
+    - three edits and three deletes, leaving 31 expenses.
+
+    After a reload, after the test-only version-2 upgrade (L1-I1) and
+    after a fixture round trip, every household, member, expense, share
+    and month total reads back equal. The frozen v1 snapshot reads back
+    equal too.
+  - `scripts/screens.mjs` seeds the browser's own IndexedDB with an
+    invented household, and covers 14 screens: the households list (empty
+    and full), the overview, expenses, members, a new expense, an itemised
+    expense and the save dialog.
+    - All 28 pass 360 px, and every Tab stop has the focus ring.
+    - **Found and fixed:** a date field's calendar button had no focus
+      ring (the input matches neither `:focus-visible` nor `:focus`
+      then); `Field.module.css` now rings it on `:focus-within`.
+  - Design checkers (`milestone-4-evidence/CHECKS.md`):
+    - Impeccable: the CSS is clean. On the screens, only M3's reasoned
+      `repeated-container-text` remains.
+      **Found and fixed:** `cramped-padding` on "Where it went" rows.
+    - ux-lint: only M3's six reasoned rules, on the split's markup; no
+      household screen has a finding. All 528 buttons are named.
+  - Privacy:
+    - page load: 12 requests, all same-origin, no CSP violation, the
+      planted leak caught;
+    - a scan of sample 1: clean;
+    - CI's three smoke steps, run locally in Brave, behave as required.
+  - Docs:
+    - `docs/DESIGN.md`: Tabs, Dialog, Checkbox, date-field focus, a "The
+      household" section with the categories and their icons; category
+      icons are ink, not rust;
+    - `app/README.md`: the ledger, adding a schema change, the test
+      database;
+    - the root `README.md`: what M4 adds, and the eviction caveat until
+      M6;
+    - `docs/ROADMAP.md`: M4 in progress, with H16's reading;
+    - ADR 0005 stands as drafted.
+  - The design canvas, version 28: the navigation map now has Add
+    expense, Expenses and Members as shipped (M4) with their labels, and
+    an "As shipped in M4" board holds 13 screenshots.
+  - Verification on the final code:
+    - `npm run check`: 86 files, 1491 passed, 1 skipped;
+    - `npm run build` and `check-build.mjs` pass (343,772 bytes of fonts,
+      131,652 for a first view, no gallery).
 
 ## Last completed: M3 — Design foundations
 

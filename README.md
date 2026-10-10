@@ -86,9 +86,29 @@ device. In English or European Portuguese.
 - **Phones and desktops.** One web app: a tab bar at the bottom on a
   phone, a menu at the top on a wider screen.
 
-Households, balances and settling up are next on the
-[roadmap](docs/ROADMAP.md); the Household tab is already there as a
-placeholder.
+- **Households** (M4). Keep track of what a group shares over months:
+  a flat, a holiday, a club. A household has a name, its members and
+  its expenses. Several can live on one device, and one can be archived
+  and restored.
+  - **Members** can be added, renamed, and marked as left on a date. Someone
+    who left stays on every past expense.
+  - **A quick expense** is an amount split equally, by shares, by exact
+    amounts or by percentages, with each share shown as you type.
+  - **An itemised expense** is the split above, scanned or typed in, saved
+    into a household. "Save to a household" moves the bill in, and you
+    can edit its items later.
+  - **Who paid** can be anyone in the household, even someone not sharing
+    the expense.
+  - **The overview** shows a month at a time: what was shared, the latest
+    expenses and where the money went.
+  - **The Expenses tab** lists everything, newest first. Filter it by person
+    or category, and search it, ignoring accents ("agua" finds "Água").
+  - Every expense can be edited or deleted; every total is worked out
+    again from the expenses themselves.
+  - Saving the same receipt twice into a household shows a warning.
+
+Balances, settling up, and export and backup are next on the
+[roadmap](docs/ROADMAP.md).
 
 ## Try it
 
@@ -109,7 +129,13 @@ Everything runs in your browser. The bill you're editing, the receipt
 check's summary and your settings (language, theme, region) are saved in
 your browser's storage on this device only, so a refresh doesn't lose
 them. **New bill**
-clears them. Nothing is sent anywhere.
+clears them. Your households, members and expenses are saved in your
+browser's own database (IndexedDB), on this device only. Nothing is sent
+anywhere.
+
+Until export and backup arrive (M6), clearing this site's data in your
+browser deletes your households. Settle asks the browser to keep its data
+when you create your first household.
 
 **Receipts are read on your device and never uploaded.** Settle has no
 server to send them to. The receipt image stays in memory while you

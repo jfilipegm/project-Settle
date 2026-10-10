@@ -33,8 +33,9 @@ themes, as a custom property in `app/src/styles/tokens.css`.
 | Error text / fill          | `--color-error`, `-fill`   | `#A3221B` on `#FBE4E1` | `#F4A39A` on `#3D1C1A` |
 
 - **One accent per screen.** Rust is for links, the focus ring, the
-  active destination and step, and category marks. Primary buttons are
-  ink (light) or near-white (dark), never rust.
+  active destination and step, and the browser's own checkboxes and radios
+  (`accent-color`). Category icons are ink or quiet text (M4). Primary
+  buttons are ink (light) or near-white (dark), never rust.
 - **Green, amber and red** belong to the receipt check and errors only,
   always with an icon and words.
 - **The header colour** (`theme-color`) is the card colour, kept in step
@@ -136,9 +137,13 @@ light/dark and English/Portuguese switches.
 | `Amount`                   | An amount in the figures face, the region's format, a true minus sign, an optional plus.                                                                           |
 | `Steps`                    | Named steps as links, the current one `aria-current="step"`.                                                                                                       |
 | `Icon`                     | A Tabler icon at the house size and stroke.                                                                                                                        |
+| `Tabs`                     | A segmented group of links (M4): a slate track, the current tab on the card colour, bold and `aria-current="page"`.                                                |
+| `Dialog`                   | The native `<dialog>`, modal (M4): a sheet from the bottom under 640 px, a centred card from 640 px, raised. Its title names it; Escape closes it; focus returns.  |
+| `Checkbox`                 | A labelled native checkbox in a 44 px row (M4), for choosing members.                                                                                              |
 
-A segmented `Tabs` group is left for M4's household pages, its first real
-use.
+A date field (`TextField type="date"`) shows the house ring on `:focus`
+and `:focus-within` too. Its parts (day, month, year, the calendar
+button) take focus inside it, where `:focus-visible` doesn't reach.
 
 ## Layout and navigation
 
@@ -154,6 +159,29 @@ use.
   items. A step change moves focus to the step's heading.
 - **Person-first assignment:** choose a person, then tap the items they
   had; "Everyone" shares an item with all; Edit opens the item's fields.
+
+## The household (M4)
+
+- **Its header:** the household's name is a button-like link to the list
+  of households, to switch. Under it are the tabs Overview, Expenses and
+  Members (Balances joins in M5).
+- **The overview:** one month at a time, its title the month, then
+  "{amount} shared across {count} expenses", one primary "Add expense",
+  "Latest expenses" and "Where it went".
+- **An expense row:** the date in the figures face, what it was (with its
+  item count when itemised), the category with its icon, the payer's badge
+  and the amount, right-aligned. It is two lines at phone width and one row
+  of columns from 640 px.
+- **A member's colour** comes from their position in the household (the
+  order they were added), stored on the member. Someone who leaves keeps
+  their colour, so their past expenses don't change colour.
+- **Categories:** nine, each with a Tabler icon always shown beside its
+  name. Groceries `shopping-cart`, Eating out `tools-kitchen-2`, Rent
+  `key`, Utilities `bolt`, Internet `wifi`, Household `sofa`, Transport
+  `bus`, Leisure `confetti`, Other `dots`. Category marks use the ink
+  and the quiet text, never a colour of their own.
+- **Saving a split into a household** happens in a dialog over The split.
+  It says, before saving, that the bill moves into the household.
 
 ## Languages
 

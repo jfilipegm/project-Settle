@@ -113,7 +113,7 @@ scope. Anything not listed as must-have is negotiable there.
 | M2  | Receipt upload and built-in parsing                | 1 · Free local-first core        | Complete    |
 | M2.5| Accurate receipt reading                           | 1 · Free local-first core        | Complete    |
 | M3  | Design foundations                                 | 1 · Free local-first core        | Complete    |
-| M4  | Households, members and the expense ledger         | 1 · Free local-first core        | Not started |
+| M4  | Households, members and the expense ledger         | 1 · Free local-first core        | In progress |
 | M5  | Balances and settling up                           | 1 · Free local-first core        | Not started |
 | M6  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
 | M7  | Installable PWA and public deployment              | 1 · Free local-first core        | Not started |
@@ -458,7 +458,11 @@ other than English and European Portuguese, a native app.
 
 ## M4 — Households, members and the expense ledger
 
-**Status:** Not started
+**Status:** In progress (plan approved 2026-10-09,
+`docs/milestones/milestone-4-PLAN.md`; PR #12). The plan reads "M1's
+single `settle.bill` draft is migrated into the new model" as: the draft
+stays the split's working copy, and its bill becomes an expense when it
+is saved into a household (H16).
 
 **Objective:** Turn one-off bills into a household's running expense
 history. This is the core expense model.
