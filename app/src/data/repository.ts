@@ -7,8 +7,7 @@
 import {
   HOUSEHOLD_LIMITS,
   RECORD_VERSION,
-  isActiveOn,
-  isoDate,
+  peakActiveWith,
   referencedMemberIds,
   type Expense,
   type Household,
@@ -60,7 +59,7 @@ export class MemberInUseError extends Error {
   }
 }
 
-/** Too many members: 20 active, 50 in all (H4). */
+/** Too many members: 20 active on any one day, 50 in all (H4). */
 export class MemberLimitError extends Error {}
 
 function readAll<T>(
@@ -218,12 +217,12 @@ export async function listMembers(
 
 /**
  * Adds a member after the household's last position, within the limits
- * (20 active on `today`, 50 in all), in one transaction.
+ * (20 active on any day of their membership, 50 in all), in one
+ * transaction.
  */
 export async function addMember(
   db: IDBDatabase,
   member: Omit<Member, 'position'>,
-  today: string,
 ): Promise<Member> {
   return transaction(
     db,
@@ -235,15 +234,14 @@ export async function addMember(
         tx,
         member.householdId,
       )
-      const active = items.filter((m) => isActiveOn(m, today)).length
+      const position = Math.max(-1, ...items.map((m) => m.position)) + 1
+      const added: Member = { ...member, v: RECORD_VERSION, position }
       if (
-        active >= HOUSEHOLD_LIMITS.maxActiveMembers ||
+        peakActiveWith(items, added) > HOUSEHOLD_LIMITS.maxActiveMembers ||
         items.length + unreadable >= HOUSEHOLD_LIMITS.maxMembers
       ) {
         throw new MemberLimitError(member.householdId)
       }
-      const position = Math.max(-1, ...items.map((m) => m.position)) + 1
-      const added: Member = { ...member, v: RECORD_VERSION, position }
       await result(tx.objectStore(STORE.members).add(added))
       return added
     },
@@ -280,15 +278,14 @@ export function renameMember(
 
 /**
  * Marks a member as left on a date, or (with `null`) undoes it (H7). A
- * change that makes the member active again on `today` keeps the limit of
- * 20 active members (H4).
+ * change that lengthens the membership keeps the limit of 20 active
+ * members on every day (H4); an earlier leaving date is always allowed.
  */
 export function setMemberLeft(
   db: IDBDatabase,
   householdId: string,
   memberId: string,
   leftOn: string | null,
-  today: string = isoDate(new Date()),
 ): Promise<Member> {
   return transaction(db, [STORE.members], 'readwrite', async (tx) => {
     const { items } = await householdMembers(tx, householdId)
@@ -297,13 +294,14 @@ export function setMemberLeft(
     const next: Member = { ...member }
     if (leftOn === null) delete next.leftOn
     else next.leftOn = leftOn
-    if (isActiveOn(next, today) && !isActiveOn(member, today)) {
-      const others = items.filter(
-        (m) => m.id !== memberId && isActiveOn(m, today),
-      ).length
-      if (others >= HOUSEHOLD_LIMITS.maxActiveMembers) {
-        throw new MemberLimitError(householdId)
-      }
+    const lengthens =
+      member.leftOn !== undefined &&
+      (next.leftOn === undefined || next.leftOn > member.leftOn)
+    if (
+      lengthens &&
+      peakActiveWith(items, next) > HOUSEHOLD_LIMITS.maxActiveMembers
+    ) {
+      throw new MemberLimitError(householdId)
     }
     await result(tx.objectStore(STORE.members).put(next))
     return next
@@ -406,13 +404,12 @@ export async function getExpense(
  * member the expense names must be a member of it; otherwise the
  * transaction is aborted, nothing is written, and it rejects with
  * {@link MissingReferenceError}. New members keep the limits of H4: 20
- * active on `today`, 50 in all ({@link MemberLimitError}).
+ * active on any one day, 50 in all ({@link MemberLimitError}).
  */
 export async function saveExpense(
   db: IDBDatabase,
   expense: Expense,
   newMembers: readonly Omit<Member, 'position'>[] = [],
-  today: string = isoDate(new Date()),
 ): Promise<Member[]> {
   const stores: StoreName[] = [STORE.households, STORE.members, STORE.expenses]
   return transaction(db, stores, 'readwrite', async (tx) => {
@@ -423,17 +420,13 @@ export async function saveExpense(
         tx,
         expense.householdId,
       )
-      const active =
-        items.filter((m) => isActiveOn(m, today)).length +
-        newMembers.filter((m) => isActiveOn({ ...m, position: 0 }, today))
-          .length
       if (
-        active > HOUSEHOLD_LIMITS.maxActiveMembers ||
         items.length + unreadable + newMembers.length >
-          HOUSEHOLD_LIMITS.maxMembers
+        HOUSEHOLD_LIMITS.maxMembers
       ) {
         throw new MemberLimitError(expense.householdId)
       }
+      const all = [...items]
       let position = Math.max(-1, ...items.map((m) => m.position))
       for (const member of newMembers) {
         if (member.householdId !== expense.householdId) {
@@ -441,6 +434,10 @@ export async function saveExpense(
         }
         position++
         const next: Member = { ...member, v: RECORD_VERSION, position }
+        if (peakActiveWith(all, next) > HOUSEHOLD_LIMITS.maxActiveMembers) {
+          throw new MemberLimitError(expense.householdId)
+        }
+        all.push(next)
         await result(tx.objectStore(STORE.members).add(next))
         added.push(next)
       }

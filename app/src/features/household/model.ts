@@ -161,6 +161,28 @@ export function isActiveOn(member: Member, date: string): boolean {
   )
 }
 
+/**
+ * The most members active on any one day while `member` is, `member`
+ * included (H4). Others only become active on their `joinedOn`, so the
+ * peak falls on `member`'s own first day or on another's first day inside
+ * `member`'s membership.
+ */
+export function peakActiveWith(
+  members: readonly Member[],
+  member: Member,
+): number {
+  const others = members.filter((other) => other.id !== member.id)
+  const days = [member.joinedOn, ...others.map((other) => other.joinedOn)]
+  return Math.max(
+    0,
+    ...days
+      .filter((day) => isActiveOn(member, day))
+      .map(
+        (day) => 1 + others.filter((other) => isActiveOn(other, day)).length,
+      ),
+  )
+}
+
 /** The members active on a date, in position order. */
 export function activeMembers(
   members: readonly Member[],

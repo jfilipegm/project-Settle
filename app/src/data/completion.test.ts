@@ -186,17 +186,13 @@ async function buildScenario(factory: IDBFactory) {
   }
   // João leaves at the end of August; Rui joins in September.
   await setMemberLeft(db, 'h1', 'joao', '2026-08-31')
-  await addMember(
-    db,
-    {
-      v: RECORD_VERSION,
-      id: 'rui',
-      householdId: 'h1',
-      name: 'Rui',
-      joinedOn: '2026-09-01',
-    },
-    '2026-09-01',
-  )
+  await addMember(db, {
+    v: RECORD_VERSION,
+    id: 'rui',
+    householdId: 'h1',
+    name: 'Rui',
+    joinedOn: '2026-09-01',
+  })
   // 10 itemised expenses in September; one with its receipt and key.
   for (let i = 0; i < 10; i++) {
     const people = i % 2 === 0 ? ['ana', 'marta', 'rui'] : ['ana', 'tiago']
