@@ -159,8 +159,11 @@ describe('transactions', () => {
       await result(meta.put({ key: 'b' }))
     })
     await expect(run).rejects.toMatchObject({ name: 'ConstraintError' })
-    const kept = await transaction(db, [STORE.meta], 'readonly', (tx) =>
-      result(tx.objectStore(STORE.meta).get('b')),
+    const kept: unknown = await transaction(
+      db,
+      [STORE.meta],
+      'readonly',
+      (tx) => result(tx.objectStore(STORE.meta).get('b')),
     )
     expect(kept).toBeUndefined()
     db.close()

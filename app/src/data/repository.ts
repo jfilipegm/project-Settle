@@ -422,7 +422,7 @@ export async function saveExpense(
   return transaction(db, stores, 'readwrite', async (tx) => {
     await requireHousehold(tx, expense.householdId)
     if (replacing) {
-      const stored = await result(
+      const stored: unknown = await result(
         tx.objectStore(STORE.expenses).get(expense.id),
       )
       const storedHousehold =
