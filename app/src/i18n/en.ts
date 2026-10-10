@@ -669,7 +669,10 @@ export const en = {
     sharedBy: 'Shared by',
     yourShare: '{name}’s share',
     notFound: 'This expense isn’t here any more.',
+    notFoundTitle: 'Expense not found',
     back: 'Back to expenses',
+    close: 'Close',
+    sharesChart: 'Each share of {amount}: {shares}.',
     errors: {
       description: 'Say what it was.',
       descriptionLength: 'Use 80 characters or fewer.',

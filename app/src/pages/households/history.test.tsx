@@ -54,9 +54,7 @@ afterEach(() => {
 function rows() {
   return within(screen.getByRole('main'))
     .getAllByRole('link')
-    .filter((link) =>
-      /\/expenses\/[^/]+$/.test(link.getAttribute('href') ?? ''),
-    )
+    .filter((link) => /[?&]expense=[^&]+/.test(link.getAttribute('href') ?? ''))
     .map((link) => link.textContent ?? '')
 }
 
@@ -102,8 +100,7 @@ describe('the Expenses tab (H12)', () => {
     })
     expect(await screen.findByText('1 expense')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('link', { name: /Eletricidade/ }))
-    await screen.findByRole('heading', {
-      level: 1,
+    await screen.findByRole('dialog', {
       name: 'Eletricidade, setembro',
     })
     fireEvent.click(screen.getByRole('link', { name: 'Expenses' }))

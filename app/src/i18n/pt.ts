@@ -669,7 +669,10 @@ export const pt: Catalogue = {
     sharedBy: 'Partilhado por',
     yourShare: 'Parte de {name}',
     notFound: 'Esta despesa já não existe.',
+    notFoundTitle: 'Despesa não encontrada',
     back: 'Voltar às despesas',
+    close: 'Fechar',
+    sharesChart: 'A parte de cada um em {amount}: {shares}.',
     errors: {
       description: 'Diga o que foi.',
       descriptionLength: 'Use 80 caracteres ou menos.',

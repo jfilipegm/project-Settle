@@ -43,6 +43,25 @@
   font-size: var(--text-22);
 }
 
+/* A title with its close button (`closeLabel`). */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.header .title {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.header > button {
+  flex: none;
+  margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-2)) 0 0;
+}
+
 @keyframes enter {
   from {
     transform: translateY(var(--space-5));

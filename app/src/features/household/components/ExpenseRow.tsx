@@ -1,5 +1,5 @@
 import { IconCalendar } from '@tabler/icons-react'
-import { Link } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import type { Region } from '../../../app/region.ts'
 import type { Translate } from '../../../i18n/t.ts'
 import { Amount } from '../../../ui/Amount.tsx'
@@ -12,6 +12,9 @@ import { formatDate } from '../format.ts'
 import type { Expense, Member } from '../model.ts'
 import { expenseAmount } from '../shares.ts'
 import styles from './ExpenseRow.module.css'
+
+/** The URL parameter that opens an expense over a household page (M-5). */
+export const EXPENSE_PARAM = 'expense'
 
 /**
  * The column headings above a list of {@link ExpenseRow}s, shown from
@@ -38,7 +41,8 @@ export function ExpenseColumns({ t }: { t: Translate }) {
 /**
  * One expense in a list (M4 plan, H12, H13): the date, what it was (with
  * its item count when itemised), the category with its icon, who paid
- * and the amount. The whole row is a link to the expense, whose name pairs
+ * and the amount. The whole row is a link that opens the expense in a
+ * dialog over this page (`?expense=`, review finding M-5); its name pairs
  * each value with its label. At phone width, where there are no column
  * headings, the date has its calendar and the payer a visible "Paid by".
  */
@@ -56,6 +60,11 @@ export function ExpenseRow({
   t: Translate
 }) {
   const payer = members.get(expense.payerId)
+  const location = useLocation()
+  // The expense opens in a dialog over this page (M-5), which keeps its
+  // own parameters (the month, the filters).
+  const search = new URLSearchParams(location.search)
+  search.set(EXPENSE_PARAM, expense.id)
   const amount = expenseAmount(expense)
   const items =
     expense.split.kind === 'itemised' ? expense.split.bill.items.length : null
@@ -83,7 +92,8 @@ export function ExpenseRow({
       <Link
         className={styles.link}
         aria-label={name}
-        to={`/households/${expense.householdId}/expenses/${expense.id}`}
+        to={{ search: `?${search.toString()}` }}
+        state={{ expenseOpened: true }}
       >
         <span className={styles.date}>
           <Icon className={styles.phoneOnly} icon={IconCalendar} size={16} />
@@ -112,11 +122,7 @@ export function ExpenseRow({
           )}
         </span>
         <span className={styles.amount}>
-          {amount !== null && (
-            <>
-              <Amount value={amount} region={region} />
-            </>
-          )}
+          {amount !== null && <Amount value={amount} region={region} />}
         </span>
       </Link>
     </li>

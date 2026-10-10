@@ -1,11 +1,12 @@
 import { useCallback } from 'react'
-import { useNavigate, useParams } from 'react-router'
+import { useLocation, useNavigate, useParams } from 'react-router'
 import { getExpense } from '../../data/repository.ts'
 import { QuickExpenseForm } from '../../features/household/components/QuickExpenseForm.tsx'
 import { useLoaded } from '../../features/household/householdData.ts'
 import { isoDate } from '../../features/household/model.ts'
 import { useT } from '../../i18n/language.ts'
 import { Card } from '../../ui/Card.tsx'
+import { EXPENSE_PARAM } from '../../features/household/components/ExpenseRow.tsx'
 import { useHouseholdContext } from './householdContext.ts'
 
 /** A new quick expense, or editing one (M4 plan, CP3). */
@@ -23,7 +24,9 @@ export function NewExpensePage() {
           members={members}
           today={isoDate(new Date())}
           onSaved={(id) =>
-            void navigate(`${base}/expenses/${id}`, { replace: true })
+            void navigate(`${base}/expenses?${EXPENSE_PARAM}=${id}`, {
+              replace: true,
+            })
           }
           onCancel={() => void navigate(-1)}
         />
@@ -35,6 +38,7 @@ export function NewExpensePage() {
 export function EditExpensePage() {
   const t = useT()
   const navigate = useNavigate()
+  const location = useLocation()
   const { eid = '' } = useParams()
   const { household, members } = useHouseholdContext()
   const loaded = useLoaded(useCallback((db) => getExpense(db, eid), [eid]))
@@ -47,7 +51,20 @@ export function EditExpensePage() {
       </Card>
     )
   }
-  const page = `/households/${household.id}/expenses/${expense.id}`
+  // Back to the expense's dialog it was opened from; on a direct load,
+  // to the dialog over the Expenses list.
+  const back = () => {
+    const fromExpense =
+      typeof location.state === 'object' &&
+      location.state !== null &&
+      'fromExpense' in location.state
+    if (fromExpense) void navigate(-1)
+    else
+      void navigate(
+        `/households/${household.id}/expenses?${EXPENSE_PARAM}=${expense.id}`,
+        { replace: true },
+      )
+  }
   return (
     <>
       <h1>{t('expense.editTitle')}</h1>
@@ -57,8 +74,8 @@ export function EditExpensePage() {
           members={members}
           initial={expense}
           today={isoDate(new Date())}
-          onSaved={() => void navigate(page, { replace: true })}
-          onCancel={() => void navigate(page)}
+          onSaved={back}
+          onCancel={back}
         />
       </Card>
     </>

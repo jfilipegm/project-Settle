@@ -110,7 +110,7 @@ describe('saving a split into a household (H10)', () => {
     await fillAndSave(dialog)
 
     expect(
-      await screen.findByRole('heading', { level: 1, name: 'Pastelaria' }),
+      await screen.findByRole('dialog', { name: 'Pastelaria' }),
     ).toBeInTheDocument()
     const [expense] = await withDb((db) => listExpenses(db, 'h1')).then(
       (listed) => listed.items,
@@ -155,7 +155,7 @@ describe('saving a split into a household (H10)', () => {
     fireEvent.click(
       within(dialog).getByRole('button', { name: 'Save to household' }),
     )
-    await screen.findByRole('heading', { level: 1, name: 'Continente' })
+    await screen.findByRole('dialog', { name: 'Continente' })
     const [saved] = (await withDb((db) => listExpenses(db, 'h1'))).items
     expect(saved).toMatchObject({
       date: '2026-10-05',
@@ -210,7 +210,7 @@ describe('saving a split into a household (H10)', () => {
     fireEvent.click(
       within(dialog).getByRole('button', { name: 'Save to household' }),
     )
-    await screen.findByRole('heading', { level: 1, name: 'Pastelaria' })
+    await screen.findByRole('dialog', { name: 'Pastelaria' })
     const members = (await withDb((db) => listMembers(db, 'h1'))).items
     const added = members.find((m) => m.name === 'Rui')
     expect(added).toMatchObject({ position: 4 })
@@ -240,7 +240,7 @@ describe('saving a split into a household (H10)', () => {
     fireEvent.click(save)
     fireEvent.click(save)
 
-    await screen.findByRole('heading', { level: 1, name: 'Pastelaria' })
+    await screen.findByRole('dialog', { name: 'Pastelaria' })
     expect((await withDb((db) => listExpenses(db, 'h1'))).items).toHaveLength(1)
     const members = (await withDb((db) => listMembers(db, 'h1'))).items
     expect(members.filter((m) => m.name === 'Rui')).toHaveLength(1)
@@ -267,7 +267,7 @@ describe('saving a split into a household (H10)', () => {
       { target: { value: 'tiago' } },
     )
     await fillAndSave(dialog)
-    await screen.findByRole('heading', { level: 1, name: 'Pastelaria' })
+    await screen.findByRole('dialog', { name: 'Pastelaria' })
     const [expense] = (await withDb((db) => listExpenses(db, 'h1'))).items
     expect(expense?.payerId).toBe('tiago')
   })
@@ -423,7 +423,7 @@ describe('editing an itemised expense’s items (H10)', () => {
       within(dialog).getByRole('button', { name: 'Save changes' }),
     )
 
-    await screen.findByRole('heading', { level: 1, name: 'Pastelaria' })
+    await screen.findByRole('dialog', { name: 'Pastelaria' })
     const saved = await withDb((db) => getExpense(db, 'e1'))
     expect(
       saved?.split.kind === 'itemised'
@@ -440,7 +440,7 @@ describe('editing an itemised expense’s items (H10)', () => {
       { target: { value: 'Nobody' } },
     )
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
-    await screen.findByRole('heading', { level: 1, name: 'Pastelaria' })
+    await screen.findByRole('dialog', { name: 'Pastelaria' })
     const saved = await withDb((db) => getExpense(db, 'e1'))
     expect(
       saved?.split.kind === 'itemised'

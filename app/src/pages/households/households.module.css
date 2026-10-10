@@ -238,3 +238,26 @@
     grid-column: 1 / -1;
   }
 }
+
+/* An expense in its dialog (M-5): its parts stacked, the shares bar above
+ * the list it draws. */
+.expense {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.expense .bigAmount {
+  margin: 0;
+}
+
+.expense section {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.subTitle {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-17);
+  font-weight: 600;
+}

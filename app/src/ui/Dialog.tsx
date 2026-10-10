@@ -5,19 +5,24 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react'
+import { IconX } from '@tabler/icons-react'
+import { IconButton } from './Button.tsx'
 import styles from './Dialog.module.css'
 
 /**
  * A modal dialog (M4 plan, H14): the native `<dialog>` opened with
  * `showModal()`, a sheet from the bottom under 640 px and a centred card
- * from 640 px, raised. Its title names it; Escape or a click outside it
- * (on the backdrop) closes it; focus returns to what had it before. Where `showModal` is missing (older browsers,
- * jsdom) it falls back to the `open` attribute.
+ * from 640 px, raised, over a low-key scrim. Its title names it; Escape or
+ * a click outside it (on the backdrop) closes it; focus returns to what had
+ * it before. A dialog opened from inside another (a delete confirmation in
+ * an expense, say) closes alone. Where `showModal` is missing (older
+ * browsers, jsdom) it falls back to the `open` attribute.
  */
 export function Dialog({
   open,
   title,
   onClose,
+  closeLabel,
   children,
 }: {
   open: boolean
@@ -27,6 +32,12 @@ export function Dialog({
    * sets `open` false.
    */
   onClose: () => void
+  /**
+   * Names a close button beside the title, for a dialog that shows things
+   * rather than asks: it gets the first focus, so a long dialog opens at
+   * its top.
+   */
+  closeLabel?: string
   children: ReactNode
 }) {
   const ref = useRef<HTMLDialogElement>(null)
@@ -62,6 +73,8 @@ export function Dialog({
   const onKeyDown = (event: KeyboardEvent<HTMLDialogElement>) => {
     if (event.key === 'Escape') {
       event.preventDefault()
+      // Only the innermost dialog: an enclosing one stays open.
+      event.stopPropagation()
       onClose()
     }
   }
@@ -91,9 +104,24 @@ export function Dialog({
     >
       {open && (
         <div className={styles.content}>
-          <h2 id={titleId} className={styles.title}>
-            {title}
-          </h2>
+          {closeLabel === undefined ? (
+            <h2 id={titleId} className={styles.title}>
+              {title}
+            </h2>
+          ) : (
+            <div className={styles.header}>
+              <h2 id={titleId} className={styles.title}>
+                {title}
+              </h2>
+              <IconButton
+                label={closeLabel}
+                icon={IconX}
+                variant="quiet"
+                size={40}
+                onClick={onClose}
+              />
+            </div>
+          )}
           {children}
         </div>
       )}

@@ -18,6 +18,7 @@ import { Card } from '../../ui/Card.tsx'
 import { Icon } from '../../ui/Icon.tsx'
 import { Tabs } from '../../ui/Tabs.tsx'
 import { NotFoundPage } from '../NotFoundPage.tsx'
+import { ExpenseDialog } from './ExpenseDialog.tsx'
 import type { HouseholdContext } from './householdContext.ts'
 import styles from './households.module.css'
 import { StorageState } from './StorageState.tsx'
@@ -38,7 +39,8 @@ function currentTab(pathname: string, base: string): TabId | undefined {
 /**
  * A household's pages (M4 plan, H9): its name as the way to switch
  * household, then the tabs Overview, Expenses and Members. An unknown id
- * shows Not found.
+ * shows Not found. `?expense=:eid` opens that expense in a dialog over
+ * whichever page is showing (review finding M-5).
  */
 export function HouseholdShell() {
   const t = useT()
@@ -129,6 +131,7 @@ export function HouseholdShell() {
         </Card>
       )}
       <Outlet context={context} />
+      <ExpenseDialog household={household} members={context.members} />
     </div>
   )
 }

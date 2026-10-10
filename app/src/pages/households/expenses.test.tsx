@@ -71,8 +71,7 @@ describe('a quick expense (CP3)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save expense' }))
 
     expect(
-      await screen.findByRole('heading', {
-        level: 1,
+      await screen.findByRole('dialog', {
         name: 'Electricity, September',
       }),
     ).toBeInTheDocument()
@@ -107,7 +106,7 @@ describe('a quick expense (CP3)', () => {
       target: { value },
     })
     fireEvent.click(screen.getByRole('button', { name: 'Save expense' }))
-    await screen.findByRole('heading', { level: 1, name: 'Dinner' })
+    await screen.findByRole('dialog', { name: 'Dinner' })
     const [expense] = await stored()
     expect(expense?.split).toMatchObject(kind)
   })
@@ -145,7 +144,7 @@ describe('a quick expense (CP3)', () => {
     expect(amount).toHaveValue('10,00')
     fireEvent.change(amount, { target: { value: '12,00' } })
     fireEvent.click(screen.getByRole('button', { name: 'Save expense' }))
-    await screen.findByRole('heading', { level: 1, name: 'Groceries' })
+    await screen.findByRole('dialog', { name: 'Groceries' })
     await waitFor(async () =>
       expect((await stored())[0]?.split).toMatchObject({ amount: 1200 }),
     )
