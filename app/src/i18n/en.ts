@@ -458,6 +458,9 @@ export const en = {
     },
     storage: {
       unavailableTitle: 'Households can’t be saved here',
+      migrationFailedTitle: 'Settle couldn’t update its data',
+      migrationFailed:
+        'Settle couldn’t update the data on this device. Nothing was changed. Reload to try again; your split still works.',
       unavailable:
         'This browser isn’t letting Settle save households, often in a private window or with site data blocked. Your split still works.',
       outdated:
@@ -489,11 +492,11 @@ export const en = {
     deleteFor: 'Delete {name}',
     deleteTitle: 'Delete {name}?',
     deleteBody:
-      '{name} isn’t on any expense, so they can be deleted. This can’t be undone.',
+      '{name} can be deleted if they aren’t on any expense or payment. This can’t be undone.',
     inUse:
-      '{name} is on expenses, so they can’t be deleted. Mark them as left instead.',
+      '{name} is on expenses or payments, so they can’t be deleted. Mark them as left instead.',
     unreadable:
-      'Some expenses in this household couldn’t be read, so this person can’t be deleted. Mark them as left instead.',
+      'Some expenses or payments in this household couldn’t be read, so this person can’t be deleted. Mark them as left instead.',
     add: {
       title: 'Add a person',
       name: 'Name',

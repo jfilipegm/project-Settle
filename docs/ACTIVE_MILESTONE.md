@@ -27,11 +27,25 @@
     attribute, and a kit `label` prop (R2-O1). No existing hit.
   - Design canvas: the chart tip is noted on the "As shipped" board in
     CP6, with the rest of M5's canvas work.
-- CP2 to CP6: to do.
+- **CP2 — complete:** payments, the record and its storage.
+  - `Settlement` (`model.ts`) with `settlementContentErrors` and
+    `validateSettlement`; `readSettlement` (`records.ts`).
+  - The database's first real migration: version 2 (`createSchemaV2`)
+    adds the `settlements` store and rewrites nothing. M4's test-only
+    step moved to version 3. `fixtures/v2.json` joins `v1.json`.
+  - The repository: `listSettlements`, `getSettlement`, `saveSettlement`
+    (references re-checked in its transaction; an edit never revives a
+    payment deleted elsewhere), `deleteSettlement`. `deleteMember` also
+    refuses for a payment, readable or not.
+  - A failed upgrade has its own state, "Settle couldn't update its
+    data", with Reload and the split (O-4). The member-delete messages
+    now say "expenses or payments".
+  - ADR 0005, "Version 2: payments".
+- CP3 to CP6: to do.
 
 ## Next action
 
-Continue `/milestone-implement milestone-5` with CP2.
+Continue `/milestone-implement milestone-5` with CP3.
 
 ## Last completed: M4 — Households, members and the expense ledger
 

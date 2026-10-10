@@ -11,6 +11,7 @@ export const STORE = {
   members: 'members',
   expenses: 'expenses',
   meta: 'meta',
+  settlements: 'settlements',
 } as const
 
 export type StoreName = (typeof STORE)[keyof typeof STORE]
@@ -39,8 +40,19 @@ export const createSchemaV1: Migration = (db) => {
   db.createObjectStore(STORE.meta, { keyPath: 'key' })
 }
 
+/**
+ * Version 2 (M5, B3): the payments' store. It creates and rewrites
+ * nothing else; every version-1 record stays as it was.
+ */
+export const createSchemaV2: Migration = (db) => {
+  const settlements = db.createObjectStore(STORE.settlements, {
+    keyPath: 'id',
+  })
+  settlements.createIndex(INDEX.byHousehold, 'householdId')
+}
+
 /** The app's migrations: its database version is their count. */
-export const MIGRATIONS: readonly Migration[] = [createSchemaV1]
+export const MIGRATIONS: readonly Migration[] = [createSchemaV1, createSchemaV2]
 
 /** IndexedDB is missing, or the database couldn't be opened (H3). */
 export class StorageUnavailableError extends Error {}

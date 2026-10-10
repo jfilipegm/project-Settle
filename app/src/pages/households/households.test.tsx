@@ -254,7 +254,7 @@ describe('members (M4 plan, H7)', () => {
     fireEvent.click(within(dialog).getByRole('button', { name: 'Delete' }))
     expect(
       await screen.findByText(
-        'Marta is on expenses, so they can’t be deleted. Mark them as left instead.',
+        'Marta is on expenses or payments, so they can’t be deleted. Mark them as left instead.',
       ),
     ).toBeInTheDocument()
     expect(memberRow('Marta')).toBeInTheDocument()

@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react'
 import {
+  MigrationFailedError,
   StorageOutdatedError,
   browserIndexedDb,
   openDatabase,
@@ -57,7 +58,11 @@ export function HouseholdDataProvider({
       },
       (error: unknown) => {
         setStatus(
-          error instanceof StorageOutdatedError ? 'outdated' : 'unavailable',
+          error instanceof StorageOutdatedError
+            ? 'outdated'
+            : error instanceof MigrationFailedError
+              ? 'migrationFailed'
+              : 'unavailable',
         )
       },
     )

@@ -14,7 +14,7 @@ import {
   household,
   member,
   putRaw,
-  testSchemaV2,
+  testSchemaV3,
   withoutVersion,
 } from '../test/households.ts'
 import { createBill } from '../features/split/billReducer.ts'
@@ -31,7 +31,7 @@ import {
   totalOf,
 } from '../features/household/totals.ts'
 import { cents } from '../lib/money.ts'
-import { createSchemaV1, openDatabase } from './db.ts'
+import { MIGRATIONS, openDatabase } from './db.ts'
 import {
   addMember,
   createHousehold,
@@ -261,14 +261,14 @@ describe('the M4 completion scenario (REQ-11)', () => {
     expect(await snapshot(reloaded)).toEqual(before)
     reloaded.close()
 
-    // 2. An app update: the test-only version-2 upgrade (L1-I1).
+    // 2. An app update: the test-only version-3 upgrade (L1-I1).
     const upgraded = await openDatabase(factory, {
-      migrations: [createSchemaV1, testSchemaV2],
+      migrations: [...MIGRATIONS, testSchemaV3],
     })
     const raw = await getRaw(upgraded)
     expect(raw.expenses.every((r) => (r as { v: number }).v === 2)).toBe(true)
     upgraded.close()
-    // Read back with version-2-aware eyes: the content, without `v`.
+    // Read back with version-3-aware eyes: the content, without `v`.
     const v1Again = freshFactory()
     const back = await openDatabase(v1Again)
     await putRaw(back, {
@@ -282,7 +282,7 @@ describe('the M4 completion scenario (REQ-11)', () => {
     // 3. A fixture round trip: the raw records into a fresh database.
     const exported = await getRaw(
       await openDatabase(factory, {
-        migrations: [createSchemaV1, testSchemaV2],
+        migrations: [...MIGRATIONS, testSchemaV3],
       }),
     )
     const trip = await openDatabase(freshFactory())

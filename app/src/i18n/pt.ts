@@ -454,6 +454,9 @@ export const pt: Catalogue = {
     },
     storage: {
       unavailableTitle: 'Não é possível guardar casas aqui',
+      migrationFailedTitle: 'O Settle não conseguiu atualizar os dados',
+      migrationFailed:
+        'O Settle não conseguiu atualizar os dados neste dispositivo. Nada foi alterado. Recarregue para tentar de novo; a divisão de contas continua a funcionar.',
       unavailable:
         'Este navegador não deixa o Settle guardar casas, muitas vezes numa janela privada ou com os dados do site bloqueados. A divisão continua a funcionar.',
       outdated:
@@ -486,11 +489,11 @@ export const pt: Catalogue = {
     deleteFor: 'Eliminar {name}',
     deleteTitle: 'Eliminar {name}?',
     deleteBody:
-      'Como {name} não está em nenhuma despesa, pode eliminar esta pessoa. Isto não pode ser anulado.',
+      'Pode eliminar {name} se não estiver em nenhuma despesa ou pagamento. Isto não pode ser anulado.',
     inUse:
-      'Como {name} está em despesas, não é possível eliminar esta pessoa. Marque a saída em vez disso.',
+      'Como {name} está em despesas ou pagamentos, não é possível eliminar esta pessoa. Marque a saída em vez disso.',
     unreadable:
-      'Não foi possível ler algumas despesas desta casa, por isso esta pessoa não pode ser eliminada. Marque a saída em vez disso.',
+      'Não foi possível ler algumas despesas ou pagamentos desta casa, por isso esta pessoa não pode ser eliminada. Marque a saída em vez disso.',
     add: {
       title: 'Adicionar uma pessoa',
       name: 'Nome',

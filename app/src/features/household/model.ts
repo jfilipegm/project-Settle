@@ -434,3 +434,113 @@ export function validateExpense(
   }
   return errors
 }
+
+/**
+ * A payment (M5 plan, B2): money one member gave another to settle up. A
+ * record of its own, not an expense: no category, not spending, never in
+ * a month's total. Any two members of the household, one who has left
+ * included; paying more than owed is allowed.
+ */
+export interface Settlement {
+  v: typeof RECORD_VERSION
+  id: string
+  householdId: string
+  /** The member who paid. */
+  fromId: string
+  /** The member who received. */
+  toId: string
+  /** 0,01 to 1 000 000,00. */
+  amount: Cents
+  /** YYYY-MM-DD. */
+  date: string
+  /** Trimmed, 1 to 80 characters. */
+  note?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export const SETTLEMENT_LIMITS = {
+  maxNoteLength: 80,
+} as const
+
+/** Where a payment error belongs, so the form can show it by its field. */
+export type SettlementField = 'from' | 'to' | 'amount' | 'date' | 'note'
+
+export type SettlementErrorCode =
+  /** From and To are the same member. */
+  | 'sameMember'
+  /** Not a whole number of cents in 0,01–1 000 000,00. */
+  | 'amountOutOfRange'
+  /** Not a real date. */
+  | 'dateInvalid'
+  /** Before 2000-01-01 or more than a year after today. */
+  | 'dateOutOfRange'
+  /** Empty after trimming, untrimmed, or longer than 80 characters. */
+  | 'noteInvalid'
+  /** From or To isn't a member of this household. */
+  | 'unknownMember'
+
+export interface SettlementError {
+  code: SettlementErrorCode
+  field: SettlementField
+}
+
+/**
+ * What a payment can check alone (B2): two different members, the
+ * amount's range, the date from 2000-01-01, and the note's length.
+ */
+export function settlementContentErrors(
+  settlement: Settlement,
+): SettlementError[] {
+  const errors: SettlementError[] = []
+  if (settlement.fromId === settlement.toId) {
+    errors.push({ code: 'sameMember', field: 'to' })
+  }
+  if (!isAmount(settlement.amount, 1)) {
+    errors.push({ code: 'amountOutOfRange', field: 'amount' })
+  }
+  if (!isIsoDate(settlement.date)) {
+    errors.push({ code: 'dateInvalid', field: 'date' })
+  } else if (settlement.date < HOUSEHOLD_LIMITS.minDate) {
+    errors.push({ code: 'dateOutOfRange', field: 'date' })
+  }
+  const note = settlement.note
+  if (
+    note !== undefined &&
+    (note.trim().length === 0 ||
+      note.trim() !== note ||
+      note.length > SETTLEMENT_LIMITS.maxNoteLength)
+  ) {
+    errors.push({ code: 'noteInvalid', field: 'note' })
+  }
+  return errors
+}
+
+/**
+ * Every problem that stops a payment from being saved: its content, the
+ * date's upper bound (a year after `today`, as for expenses), and that
+ * both members are members of this household, in any state. The
+ * repository's transaction re-checks the references as the guarantee.
+ */
+export function validateSettlement(
+  settlement: Settlement,
+  members: readonly Member[],
+  today: string,
+): SettlementError[] {
+  const errors = settlementContentErrors(settlement)
+  if (isIsoDate(settlement.date) && settlement.date > maxExpenseDate(today)) {
+    errors.push({ code: 'dateOutOfRange', field: 'date' })
+  }
+  const known = new Set(
+    members
+      .filter((member) => member.householdId === settlement.householdId)
+      .map((member) => member.id),
+  )
+  if (!known.has(settlement.fromId)) {
+    errors.push({ code: 'unknownMember', field: 'from' })
+  }
+  if (!known.has(settlement.toId)) {
+    errors.push({ code: 'unknownMember', field: 'to' })
+  }
+  return errors
+}

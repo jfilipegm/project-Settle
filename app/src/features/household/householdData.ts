@@ -7,6 +7,8 @@ export type HouseholdDataStatus =
   | 'ready'
   /** No IndexedDB here, or it can't open (H3). */
   | 'unavailable'
+  /** An upgrade step failed and was rolled back: nothing changed (O-4). */
+  | 'migrationFailed'
   /** Another tab updated Settle: reload (H2). */
   | 'outdated'
   /** An older tab holds the database: close it (H2). */
