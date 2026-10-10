@@ -6,14 +6,15 @@
 `milestone-4`). Plan revision 4, `docs/milestones/milestone-4-PLAN.md`,
 approved on 2026-10-09 (local and manual external plan reviews both
 APPROVE; approval commit `ee0225d`), on `feature/milestone-4`, PR #12.
-Phase `AWAITING_LOCAL_IMPLEMENTATION_REVIEW`.
+Phase `AWAITING_LOCAL_IMPLEMENTATION_REVIEW` (implementation revision 2).
 
 ## Next action
 
-All six checkpoints and the self-review are complete, and the
-implementation bundle is generated. Next, `/review-implementation
-milestone-4` (the local implementation review), then the manual external
-implementation review and `/approve-review implementation`.
+The local implementation review (round 1) returned REVISE. Its two
+important findings and three of its optional ones are fixed, and the
+post-fix bundle is generated. Next, `/review-implementation milestone-4`
+again (round 2), then the manual external implementation review and
+`/approve-review implementation`.
 
 ## Progress
 
@@ -253,6 +254,44 @@ implementation review and `/approve-review implementation`.
   - Verification after the fix: `npm run check` (typecheck, lint,
     format, 86 files, 1493 passed, 1 skipped); `npm run build` and
     `check-build.mjs` pass.
+- **Local implementation review, round 1: REVISE, applied.**
+  - **I-1 (fixed, `3d13de7`).** "Save to a household" and "Create
+    household" had no guard while their write ran, so a double press
+    saved the bill twice (with two copies of any new member) or made two
+    households, despite H10. Both now ignore a press while saving and
+    disable their buttons. "Add member" was already safe, because it
+    clears the name at once; a test now holds it to that.
+  - **I-2 (fixed, `db411be`).** The 20-active-member limit (H4) was
+    checked only against today, so future (or past) join dates could
+    make 21 or more active on one day. `addMember`, a `setMemberLeft`
+    that lengthens a membership, and the save dialog's new members now
+    check the peak over every day of the membership (`peakActiveWith`).
+    The repository functions no longer take `today`.
+  - **O-1 (fixed, `44fa445`).** Saving an edit no longer brings back an
+    expense deleted in another tab: an edit (`replacing`) requires the
+    expense to still exist in its household, in the same transaction,
+    else `ExpenseNotFoundError` and a message in both languages.
+  - **O-2 (fixed, `2506d11`).** `transaction()` no longer cancels
+    IndexedDB's abort-on-error, so a failed request can never let the
+    rest commit; it reports the request's own error, the first one.
+  - **O-3 (recorded here).** The file layout differs from H2/H18 without
+    changing what they decide: the migration list lives in `data/db.ts`
+    (no `migrations.ts`), and one `data/repository.ts` holds the three
+    repositories H18 names (`households`, `members`, `expenses`), since
+    the member delete and the expense save each span two or three stores
+    in one transaction. The `BroadcastChannel` posts `'changed'`, not the
+    household id: every open list refreshes, which is simpler and as
+    cheap at this size.
+  - **O-4, O-5 (not applied).** O-4: a failed migration shows the
+    storage-unavailable state; the plan names no separate state, the
+    version-1 data is untouched, and a reload retries. That stays as it
+    is until a real migration ships (M6). O-5: the save dialog's name
+    matching and the quick form keep a member chosen when the date moves
+    outside their membership. The model allows it (H4), H6 already keeps
+    members already on an expense, and the choice stays visible and
+    editable.
+  - Verification: `npm run check` (86 files, 1501 passed, 1 skipped),
+    `npm run build` and `check-build.mjs` pass.
 
 ## Last completed: M3 — Design foundations
 
