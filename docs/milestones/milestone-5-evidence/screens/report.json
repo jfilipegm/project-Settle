@@ -1,5 +1,5 @@
 {
-  "when": "2026-10-10T21:15:18.509Z",
+  "when": "2026-10-10T21:53:41.888Z",
   "screens": [
     {
       "screen": "home",
@@ -77,6 +77,14 @@
     },
     {
       "screen": "home",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "home",
       "width": 390,
       "theme": "dark"
     },
@@ -94,6 +102,14 @@
       "screen": "home",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "home",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -219,6 +235,14 @@
     },
     {
       "screen": "receipt",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "receipt",
       "width": 390,
       "theme": "dark"
     },
@@ -236,6 +260,14 @@
       "screen": "receipt",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "receipt",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -622,6 +654,14 @@
     },
     {
       "screen": "who-had-what",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "who-had-what",
       "width": 390,
       "theme": "dark"
     },
@@ -639,6 +679,14 @@
       "screen": "who-had-what",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "who-had-what",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -777,6 +825,14 @@
     },
     {
       "screen": "the-split",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "the-split",
       "width": 390,
       "theme": "dark"
     },
@@ -794,6 +850,14 @@
       "screen": "the-split",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "the-split",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -914,6 +978,14 @@
     },
     {
       "screen": "save-to-household",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "save-to-household",
       "width": 390,
       "theme": "dark"
     },
@@ -931,6 +1003,14 @@
       "screen": "save-to-household",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "save-to-household",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -1011,6 +1091,14 @@
     },
     {
       "screen": "households-empty",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "households-empty",
       "width": 390,
       "theme": "dark"
     },
@@ -1028,6 +1116,14 @@
       "screen": "households-empty",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "households-empty",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -1115,6 +1211,14 @@
     },
     {
       "screen": "households",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "households",
       "width": 390,
       "theme": "dark"
     },
@@ -1132,6 +1236,14 @@
       "screen": "households",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "households",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -1331,6 +1443,14 @@
     },
     {
       "screen": "household-overview",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-overview",
       "width": 390,
       "theme": "dark"
     },
@@ -1357,6 +1477,14 @@
       "theme": "dark",
       "checked": 2,
       "problems": []
+    },
+    {
+      "screen": "household-overview",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
     },
     {
       "screen": "household-expenses",
@@ -1561,6 +1689,14 @@
     },
     {
       "screen": "household-expenses",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-expenses",
       "width": 390,
       "theme": "dark"
     },
@@ -1578,6 +1714,14 @@
       "screen": "household-expenses",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-expenses",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -1869,6 +2013,14 @@
     },
     {
       "screen": "household-members",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-members",
       "width": 390,
       "theme": "dark"
     },
@@ -1886,6 +2038,14 @@
       "screen": "household-members",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-members",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -2111,6 +2271,14 @@
     },
     {
       "screen": "new-expense",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "new-expense",
       "width": 390,
       "theme": "dark"
     },
@@ -2128,6 +2296,14 @@
       "screen": "new-expense",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "new-expense",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -2189,6 +2365,14 @@
     },
     {
       "screen": "itemised-expense",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "itemised-expense",
       "width": 390,
       "theme": "dark"
     },
@@ -2206,6 +2390,14 @@
       "screen": "itemised-expense",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "itemised-expense",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -2250,6 +2442,21 @@
       "clientWidth": 360
     },
     {
+      "screen": "share-bar-tips",
+      "width": 360,
+      "theme": "light",
+      "checked": 2,
+      "problems": []
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
       "screen": "expense-dialog",
       "width": 390,
       "theme": "dark"
@@ -2268,6 +2475,21 @@
       "screen": "expense-dialog",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "share-bar-tips",
+      "width": 360,
+      "theme": "dark",
+      "checked": 2,
+      "problems": []
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -2475,6 +2697,14 @@
     },
     {
       "screen": "household-balances",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-balances",
       "width": 390,
       "theme": "dark"
     },
@@ -2492,6 +2722,14 @@
       "screen": "household-balances",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-balances",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -2676,6 +2914,14 @@
     },
     {
       "screen": "balance-explanation",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "balance-explanation",
       "width": 390,
       "theme": "dark"
     },
@@ -2693,6 +2939,14 @@
       "screen": "balance-explanation",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "balance-explanation",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -2793,6 +3047,14 @@
     },
     {
       "screen": "payment-dialog-empty",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog-empty",
       "width": 390,
       "theme": "dark"
     },
@@ -2810,6 +3072,14 @@
       "screen": "payment-dialog-empty",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog-empty",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -2910,6 +3180,14 @@
     },
     {
       "screen": "payment-dialog-filled",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog-filled",
       "width": 390,
       "theme": "dark"
     },
@@ -2927,6 +3205,14 @@
       "screen": "payment-dialog-filled",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog-filled",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -2980,6 +3266,14 @@
     },
     {
       "screen": "payment-dialog",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog",
       "width": 390,
       "theme": "dark"
     },
@@ -2997,6 +3291,14 @@
       "screen": "payment-dialog",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -3104,6 +3406,14 @@
     },
     {
       "screen": "settings",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "settings",
       "width": 390,
       "theme": "dark"
     },
@@ -3121,6 +3431,14 @@
       "screen": "settings",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "settings",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     },
@@ -3200,6 +3518,14 @@
     },
     {
       "screen": "not-found",
+      "width": 360,
+      "theme": "light",
+      "language": "pt",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "not-found",
       "width": 390,
       "theme": "dark"
     },
@@ -3217,6 +3543,14 @@
       "screen": "not-found",
       "width": 360,
       "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "not-found",
+      "width": 360,
+      "theme": "dark",
+      "language": "pt",
       "scrollWidth": 360,
       "clientWidth": 360
     }

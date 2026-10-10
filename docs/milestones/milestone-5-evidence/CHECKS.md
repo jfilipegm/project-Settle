@@ -2,7 +2,8 @@
 
 The evidence for the plan's acceptance targets (design, privacy,
 performance). It was taken on 2026-10-10 from the production build
-(`npm run build`) in headless Brave by `app/scripts/screens.mjs`.
+(`npm run build`) in headless Brave by `app/scripts/screens.mjs`, and taken again after the local
+implementation review of round 1 (the Portuguese and share-bar checks).
 
 Only invented names and amounts appear:
 
@@ -47,16 +48,20 @@ card and a payment.
 
 ## 360 px
 
-No screen scrolls sideways at 360 px, in either theme:
-`scrollWidth <= clientWidth` on all 40 (`screens/report.json`).
+No screen scrolls sideways at 360 px, in either theme, in English and in
+Portuguese: `scrollWidth <= clientWidth` on all 80 (40 per language,
+`screens/report.json`; the Portuguese entries carry `"language": "pt"`).
 
 **Found and fixed here: four tabs at 360 px.** The first run reported
 every household screen 12 px too wide at 360 px: the fourth tab,
 Balances, left each tab about 77 px, and "Overview" in bold with the
 tabs' 12 px side padding didn't fit. Under 400 px the tabs now take 4 px
 of side padding and 14 px text (`ui/Tabs.module.css`), still 44 px tall.
-After the fix, no screen scrolls, in English or Portuguese ("Resumo",
-"Despesas", "Saldos", "Membros" are shorter).
+
+**Added after the local implementation review (O-1):** the Portuguese
+pass. Round 1 said the Portuguese labels fit because they are shorter;
+`screens.mjs` now loads every screen again at 360 px in Portuguese and
+measures it. None scrolls.
 
 ## The chart tips at 360 px
 
@@ -64,6 +69,11 @@ On the overview at 360 px, in both themes, the script hovers the first
 and the last bar of each bar chart (Day by day, The last six months) and
 measures the tip against its card: every tip stays inside its card (2
 charts each, `screens/report.json`, `chart-tips`).
+
+**Added after the local implementation review (O-3):** in the expense
+dialog at 360 px, the script hovers the share bar's first and last
+segments; each tip stays inside the dialog (`share-bar-tips`, both
+themes).
 
 ## Keyboard
 

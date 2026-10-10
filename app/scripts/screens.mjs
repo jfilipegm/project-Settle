@@ -10,7 +10,9 @@
  * - The keyboard pass: Tab through each screen; every stop must be a
  *   control with a visible focus indicator.
  * - The chart tips (M5, B1): at 360 px, a tip shown on the overview's
- *   first and last bars stays inside its card.
+ *   first and last bars stays inside its card, and the expense dialog's
+ *   share-bar tips inside the dialog.
+ * - The 360 px check again in Portuguese, for every screen.
  *
  * Only invented names and amounts appear. The bill is seeded in storage,
  * like a saved draft, and the household ledger (M4) in IndexedDB; no
@@ -324,6 +326,30 @@ function ledgerScript(ledger) {
 }
 
 /**
+ * At 360 px (M5, B1, review O-3): hovers the expense dialog's share bar's
+ * first and last segments and returns any tip that leaves the dialog.
+ */
+const SHARE_TIP_CHECK = `(async () => {
+  const out = []
+  const segments = [...document.querySelectorAll('[data-testid^="segment-"]')]
+  for (const segment of [segments[0], segments.at(-1)]) {
+    if (!segment) continue
+    segment.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
+    await new Promise((r) => requestAnimationFrame(() => r(true)))
+    const tip = segment.parentElement?.parentElement?.querySelector('[data-testid="chart-tip"]')
+    const box = segment.closest('dialog') ?? document.body
+    if (!tip) { out.push('no tip on ' + segment.dataset.testid); continue }
+    const t = tip.getBoundingClientRect()
+    const c = box.getBoundingClientRect()
+    if (t.left < c.left - 0.5 || t.right > c.right + 0.5 || t.top < c.top - 0.5) {
+      out.push('tip outside the dialog: ' + tip.textContent)
+    }
+    segment.dispatchEvent(new PointerEvent('pointerout', { bubbles: true, pointerType: 'mouse' }))
+  }
+  return { checked: segments.length === 0 ? 0 : 2, problems: out }
+})()`
+
+/**
  * At 360 px (M5, B1): hovers a chart's first and last bars on the
  * overview and returns any tip that leaves its card.
  */
@@ -351,10 +377,10 @@ const TIP_CHECK = `(async () => {
   return { checked: groups.size, problems: out }
 })()`
 
-function storageFor(screen, theme) {
+function storageFor(screen, theme, language = 'en') {
   const entries = {
     'settle.theme': theme,
-    'settle.language': 'en',
+    'settle.language': language,
   }
   if (screen.ledger === true) entries['settle.household'] = 'h1'
   if (screen.bill) {
@@ -393,7 +419,15 @@ async function evaluate(cdp, session, expression) {
 }
 
 /** Loads a screen with its storage, at a width, and waits for the fonts. */
-async function load(cdp, session, origin, screen, theme, width) {
+async function load(
+  cdp,
+  session,
+  origin,
+  screen,
+  theme,
+  width,
+  language = 'en',
+) {
   await cdp.send(
     'Emulation.setDeviceMetricsOverride',
     { width, height: 900, deviceScaleFactor: 1, mobile: width < 640 },
@@ -412,7 +446,7 @@ async function load(cdp, session, origin, screen, theme, width) {
   // Storage is per origin: set it on a page of the app, then load.
   await cdp.send('Page.navigate', { url: `${origin}/` }, session)
   await sleep(300)
-  const storage = JSON.stringify(storageFor(screen, theme))
+  const storage = JSON.stringify(storageFor(screen, theme, language))
   await evaluate(
     cdp,
     session,
@@ -607,6 +641,53 @@ async function main() {
           for (const problem of tips.problems) {
             report.problems.push(`chart tips (${theme}) at 360 px: ${problem}`)
           }
+        }
+        if (screen.name === 'expense-dialog') {
+          const tips = await evaluate(cdp, sessionId, SHARE_TIP_CHECK)
+          report.screens.push({
+            screen: 'share-bar-tips',
+            width: 360,
+            theme,
+            ...tips,
+          })
+          if (tips.checked === 0) {
+            report.problems.push(
+              `share bar tips (${theme}): no share bar found at 360 px`,
+            )
+          }
+          for (const problem of tips.problems) {
+            report.problems.push(
+              `share bar tips (${theme}) at 360 px: ${problem}`,
+            )
+          }
+        }
+        // The same at 360 px in Portuguese (M5, B5, review O-1): its
+        // labels must fit too, not only be shorter.
+        await load(
+          cdp,
+          sessionId,
+          preview.origin,
+          screen,
+          theme,
+          WIDTHS.scroll,
+          'pt',
+        )
+        const scrollPt = await evaluate(
+          cdp,
+          sessionId,
+          '({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth })',
+        )
+        report.screens.push({
+          screen: screen.name,
+          width: 360,
+          theme,
+          language: 'pt',
+          ...scrollPt,
+        })
+        if (scrollPt.scrollWidth > scrollPt.clientWidth) {
+          report.problems.push(
+            `${screen.name} (${theme}, pt) scrolls sideways at 360 px: ${scrollPt.scrollWidth} > ${scrollPt.clientWidth}`,
+          )
         }
       }
     }
