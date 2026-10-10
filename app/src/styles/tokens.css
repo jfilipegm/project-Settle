@@ -44,6 +44,9 @@
   --person-on-5: #ffffff;
   --person-on-6: #ffffff;
 
+  /* M4 (M-6): the dialog backdrop, a low-key darkening, never a veil. */
+  --color-scrim: rgb(18 20 28 / 0.28);
+
   /* S6: only menus and sheets are raised, with a shadow tinted from ink. */
   --shadow-raised:
     0 0.5rem 1.5rem rgb(25 28 39 / 0.12),
@@ -129,6 +132,8 @@
     --person-on-5: #12141c;
     --person-on-6: #12141c;
 
+    --color-scrim: rgb(0 0 0 / 0.5);
+
     --shadow-raised:
       0 0.5rem 1.5rem rgb(0 0 0 / 0.45), 0 0.125rem 0.375rem rgb(0 0 0 / 0.3);
   }
@@ -164,6 +169,8 @@
   --person-on-4: #12141c;
   --person-on-5: #12141c;
   --person-on-6: #12141c;
+
+  --color-scrim: rgb(0 0 0 / 0.5);
 
   --shadow-raised:
     0 0.5rem 1.5rem rgb(0 0 0 / 0.45), 0 0.125rem 0.375rem rgb(0 0 0 / 0.3);

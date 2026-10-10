@@ -35,7 +35,7 @@
 }
 
 .dialog::backdrop {
-  background: color-mix(in srgb, var(--color-ink) 40%, transparent);
+  background: var(--color-scrim);
 }
 
 .title {
