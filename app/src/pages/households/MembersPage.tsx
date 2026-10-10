@@ -123,7 +123,7 @@ export function MembersPage() {
             aria-label={t('members.undoLeavingFor', { name: member.name })}
             onClick={() => {
               if (db !== null) {
-                run(setMemberLeft(db, household.id, member.id, null))
+                run(setMemberLeft(db, household.id, member.id, null, today))
               }
             }}
           >
@@ -250,7 +250,9 @@ export function MembersPage() {
         onClose={() => setEditing(null)}
         onSave={(leftOn) => {
           if (db !== null && editing?.kind === 'leave') {
-            run(setMemberLeft(db, household.id, editing.member.id, leftOn))
+            run(
+              setMemberLeft(db, household.id, editing.member.id, leftOn, today),
+            )
           }
         }}
       />

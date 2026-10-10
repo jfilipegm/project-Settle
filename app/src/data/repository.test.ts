@@ -86,6 +86,55 @@ describe('households and members', () => {
       ),
     ).rejects.toBeInstanceOf(MemberLimitError)
   })
+
+  it('keeps 20 active members when undoing a leave', async () => {
+    const db = await freshDb()
+    const many = Array.from({ length: 20 }, (_, i) =>
+      member(`m${i}`, `M${i}`, i),
+    )
+    await createHousehold(db, household(), many)
+    await setMemberLeft(db, 'h1', 'm0', '2026-09-30', TODAY)
+    await addMember(
+      db,
+      { v: 1, id: 'x', householdId: 'h1', name: 'X', joinedOn: TODAY },
+      TODAY,
+    )
+    await expect(
+      setMemberLeft(db, 'h1', 'm0', null, TODAY),
+    ).rejects.toBeInstanceOf(MemberLimitError)
+    // A later leaving date, still in the past, is fine.
+    await setMemberLeft(db, 'h1', 'm0', '2026-10-01', TODAY)
+    const m0 = (await listMembers(db, 'h1')).items.find((m) => m.id === 'm0')
+    expect(m0?.leftOn).toBe('2026-10-01')
+  })
+
+  it('keeps 20 active members when an expense adds members', async () => {
+    const db = await freshDb()
+    const many = Array.from({ length: 19 }, (_, i) =>
+      member(`m${i}`, `M${i}`, i),
+    )
+    await createHousehold(db, household(), many)
+    const newcomer = (id: string) => ({
+      v: 1 as const,
+      id,
+      householdId: 'h1',
+      name: id,
+      joinedOn: '2026-10-01',
+    })
+    const expense = quickExpense('e1', equalSplit(1000, ['m0', 'n1', 'n2']), {
+      payerId: 'm0',
+    })
+    await expect(
+      saveExpense(db, expense, [newcomer('n1'), newcomer('n2')], TODAY),
+    ).rejects.toBeInstanceOf(MemberLimitError)
+    expect((await listMembers(db, 'h1')).items).toHaveLength(19)
+    expect(await getExpense(db, 'e1')).toBeNull()
+    const one = quickExpense('e1', equalSplit(1000, ['m0', 'n1']), {
+      payerId: 'm0',
+    })
+    await saveExpense(db, one, [newcomer('n1')], TODAY)
+    expect((await listMembers(db, 'h1')).items).toHaveLength(20)
+  })
 })
 
 describe('expenses', () => {

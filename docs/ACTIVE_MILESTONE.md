@@ -6,14 +6,14 @@
 `milestone-4`). Plan revision 4, `docs/milestones/milestone-4-PLAN.md`,
 approved on 2026-10-09 (local and manual external plan reviews both
 APPROVE; approval commit `ee0225d`), on `feature/milestone-4`, PR #12.
-Phase `IMPLEMENTING`.
+Phase `AWAITING_LOCAL_IMPLEMENTATION_REVIEW`.
 
 ## Next action
 
-All six checkpoints are complete. Next, `/milestone-implement
-milestone-4` again: the self-review of the whole diff, the full
-verification, the implementation bundle, then the local and the manual
-implementation reviews.
+All six checkpoints and the self-review are complete, and the
+implementation bundle is generated. Next, `/review-implementation
+milestone-4` (the local implementation review), then the manual external
+implementation review and `/approve-review implementation`.
 
 ## Progress
 
@@ -239,6 +239,20 @@ implementation reviews.
     - `npm run check`: 86 files, 1491 passed, 1 skipped;
     - `npm run build` and `check-build.mjs` pass (343,772 bytes of fonts,
       131,652 for a first view, no gallery).
+- **Self-review of the whole M4 diff: complete.**
+  - **Found and fixed:** the limit of 20 active members (H4) was kept only
+    by "Add member". "Undo leaving" (or a later leaving date) and new
+    members added by the save dialog could take a household past 20.
+    `setMemberLeft` and `saveExpense` now check it inside their own
+    transaction, against `today`, and refuse with `MemberLimitError`
+    (the pages already show its message). Two repository tests cover it.
+  - No other blocking or important finding: the transactions, the
+    readers, the member-delete scan, the shares, the draft's isolation
+    while editing an expense, and the household switch in the save
+    dialog were read again.
+  - Verification after the fix: `npm run check` (typecheck, lint,
+    format, 86 files, 1493 passed, 1 skipped); `npm run build` and
+    `check-build.mjs` pass.
 
 ## Last completed: M3 — Design foundations
 

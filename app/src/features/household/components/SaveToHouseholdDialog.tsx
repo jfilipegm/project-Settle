@@ -339,6 +339,7 @@ export function SaveToHouseholdDialog({
         db,
         expense,
         newMembers.map((m) => ({ ...m, id: real(m.id) })),
+        today,
       )
       changed()
       onSaved(householdId, expense.id)

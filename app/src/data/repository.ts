@@ -8,6 +8,7 @@ import {
   HOUSEHOLD_LIMITS,
   RECORD_VERSION,
   isActiveOn,
+  isoDate,
   referencedMemberIds,
   type Expense,
   type Household,
@@ -277,17 +278,34 @@ export function renameMember(
   return updateMember(db, householdId, memberId, (m) => ({ ...m, name }))
 }
 
-/** Marks a member as left on a date, or (with `null`) undoes it (H7). */
+/**
+ * Marks a member as left on a date, or (with `null`) undoes it (H7). A
+ * change that makes the member active again on `today` keeps the limit of
+ * 20 active members (H4).
+ */
 export function setMemberLeft(
   db: IDBDatabase,
   householdId: string,
   memberId: string,
   leftOn: string | null,
+  today: string = isoDate(new Date()),
 ): Promise<Member> {
-  return updateMember(db, householdId, memberId, (member) => {
+  return transaction(db, [STORE.members], 'readwrite', async (tx) => {
+    const { items } = await householdMembers(tx, householdId)
+    const member = items.find((m) => m.id === memberId)
+    if (member === undefined) throw new MemberNotFoundError(memberId)
     const next: Member = { ...member }
     if (leftOn === null) delete next.leftOn
     else next.leftOn = leftOn
+    if (isActiveOn(next, today) && !isActiveOn(member, today)) {
+      const others = items.filter(
+        (m) => m.id !== memberId && isActiveOn(m, today),
+      ).length
+      if (others >= HOUSEHOLD_LIMITS.maxActiveMembers) {
+        throw new MemberLimitError(householdId)
+      }
+    }
+    await result(tx.objectStore(STORE.members).put(next))
     return next
   })
 }
@@ -387,12 +405,14 @@ export async function getExpense(
  * expenses (H1, M-I-3). Inside it, the household must exist and every
  * member the expense names must be a member of it; otherwise the
  * transaction is aborted, nothing is written, and it rejects with
- * {@link MissingReferenceError}.
+ * {@link MissingReferenceError}. New members keep the limits of H4: 20
+ * active on `today`, 50 in all ({@link MemberLimitError}).
  */
 export async function saveExpense(
   db: IDBDatabase,
   expense: Expense,
   newMembers: readonly Omit<Member, 'position'>[] = [],
+  today: string = isoDate(new Date()),
 ): Promise<Member[]> {
   const stores: StoreName[] = [STORE.households, STORE.members, STORE.expenses]
   return transaction(db, stores, 'readwrite', async (tx) => {
@@ -403,9 +423,14 @@ export async function saveExpense(
         tx,
         expense.householdId,
       )
+      const active =
+        items.filter((m) => isActiveOn(m, today)).length +
+        newMembers.filter((m) => isActiveOn({ ...m, position: 0 }, today))
+          .length
       if (
+        active > HOUSEHOLD_LIMITS.maxActiveMembers ||
         items.length + unreadable + newMembers.length >
-        HOUSEHOLD_LIMITS.maxMembers
+          HOUSEHOLD_LIMITS.maxMembers
       ) {
         throw new MemberLimitError(expense.householdId)
       }
