@@ -12,6 +12,17 @@ and settling up**.
 then `git switch master && git pull` and
 `git switch -c feature/milestone-5`.
 
+**M5's first checkpoint, agreed on 2026-10-10:** the owner's notes on
+M4's charts, after acceptance, together with O-12 to O-14 below:
+- "The last six months": the bar for the month on screen must not be a
+  link (pressing it changes nothing and looks broken); only the other
+  months open theirs.
+- "Day by day" gets the same hover effect as "The last six months".
+- Every chart (both bar charts, the donut, the expense dialog's share
+  bar) shows its value at once on hover, and on focus or tap, through
+  a kit tooltip, instead of the browser's delayed `title`; the text
+  alternatives stay.
+
 ## Last completed: M4 — Households, members and the expense ledger
 
 Settle keeps a household's shared expenses on the device. The split is
