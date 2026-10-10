@@ -15,8 +15,10 @@ import {
   StorageOutdatedError,
   StorageUnavailableError,
   createSchemaV1,
+  STORE,
   openDatabase,
   result,
+  transaction,
   type Migration,
 } from './db.ts'
 import { listExpenses, listHouseholds, listMembers } from './repository.ts'
@@ -141,5 +143,26 @@ describe('the database and its migrations (H2)', () => {
     await expect(openDatabase(undefined)).rejects.toBeInstanceOf(
       StorageUnavailableError,
     )
+  })
+})
+
+describe('transactions', () => {
+  it('rolls back everything when a request fails, even one the body never awaited', async () => {
+    const db = await openDatabase(freshFactory())
+    await transaction(db, [STORE.meta], 'readwrite', (tx) =>
+      result(tx.objectStore(STORE.meta).add({ key: 'a' })),
+    )
+    const run = transaction(db, [STORE.meta], 'readwrite', async (tx) => {
+      const meta = tx.objectStore(STORE.meta)
+      // Not awaited: the duplicate key fails after the body has resolved.
+      meta.add({ key: 'a' }).onerror = () => undefined
+      await result(meta.put({ key: 'b' }))
+    })
+    await expect(run).rejects.toMatchObject({ name: 'ConstraintError' })
+    const kept = await transaction(db, [STORE.meta], 'readonly', (tx) =>
+      result(tx.objectStore(STORE.meta).get('b')),
+    )
+    expect(kept).toBeUndefined()
+    db.close()
   })
 })

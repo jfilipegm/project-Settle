@@ -177,16 +177,18 @@ export function transaction<T>(
         asError(failure?.error ?? tx.error ?? new Error('transaction aborted')),
       )
     tx.onerror = (event) => {
-      // Let onabort report it; keep the first error.
-      failure ??= { error: tx.error }
-      event.preventDefault()
+      // A failed request aborts the transaction (IndexedDB's default, kept
+      // on purpose: nothing can commit after it); onabort reports the
+      // first error.
+      const request = event.target as IDBRequest | null
+      failure ??= { error: request?.error ?? tx.error }
     }
     body(tx).then(
       (v) => {
         value = v
       },
       (error: unknown) => {
-        failure = { error }
+        failure ??= { error }
         try {
           tx.abort()
         } catch {
