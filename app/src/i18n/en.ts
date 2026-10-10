@@ -545,6 +545,13 @@ export const en = {
 
   expenses: {
     title: 'Expenses',
+    columns: {
+      date: 'Date',
+      description: 'Description',
+      category: 'Category',
+      paidBy: 'Paid by',
+      amount: 'Amount',
+    },
     filters: 'Filters',
     member: 'Person',
     allMembers: 'Everyone',

@@ -1,7 +1,9 @@
 /*
  * An expense in a list (M4 plan, H12, H13): two lines at phone width (what
  * and the amount; then the date, category and payer), one row of columns
- * from 640 px. The amount aligns right in the figures face.
+ * under their headings from 640 px. The amount aligns right in the figures
+ * face. At phone width the date shows its calendar and the payer a "Paid
+ * by"; from 640 px the headings name them.
  */
 
 .row {
@@ -30,8 +32,15 @@
   text-decoration: underline;
 }
 
+.columns {
+  display: none;
+}
+
 .date {
+  display: inline-flex;
   grid-area: date;
+  align-items: center;
+  gap: var(--space-1);
   color: var(--color-quiet);
   font-family: var(--font-mono);
   font-size: var(--text-14);
@@ -67,9 +76,16 @@
 }
 
 .payer {
+  display: inline-flex;
   grid-area: payer;
   justify-self: end;
+  align-items: center;
+  gap: var(--space-1);
   font-size: var(--text-14);
+}
+
+.paidBy {
+  color: var(--color-quiet);
 }
 
 .amount {
@@ -79,12 +95,33 @@
 }
 
 @media (min-width: 640px) {
-  .link {
+  .link,
+  .columns {
     grid-template-areas: 'date what category payer amount';
     grid-template-columns: 4.5rem minmax(0, 1fr) 9rem 8rem 7rem;
+    gap: var(--space-1) var(--space-3);
+  }
+
+  .columns {
+    display: grid;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-quiet);
+    font-size: var(--text-14);
+  }
+
+  .columns > span {
+    font-family: inherit;
+    font-weight: 600;
   }
 
   .payer {
     justify-self: start;
+  }
+
+  /* The headings name them: no calendar and no "Paid by". */
+  .phoneOnly,
+  .paidBy {
+    display: none;
   }
 }

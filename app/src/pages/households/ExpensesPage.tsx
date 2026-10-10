@@ -3,7 +3,10 @@ import { useCallback, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { useRegion } from '../../app/region.ts'
 import { listExpenses } from '../../data/repository.ts'
-import { ExpenseRow } from '../../features/household/components/ExpenseRow.tsx'
+import {
+  ExpenseColumns,
+  ExpenseRow,
+} from '../../features/household/components/ExpenseRow.tsx'
 import { dateLocale, formatMonth } from '../../features/household/format.ts'
 import { useLoaded } from '../../features/household/householdData.ts'
 import { CATEGORY_IDS, isCategoryId } from '../../features/household/model.ts'
@@ -143,6 +146,7 @@ export function ExpensesPage() {
                   <Amount value={totalOf(group.expenses)} region={region} />
                 </h2>
                 <Card>
+                  <ExpenseColumns t={t} />
                   <ul className={styles.list}>
                     {group.expenses.map((expense) => (
                       <ExpenseRow

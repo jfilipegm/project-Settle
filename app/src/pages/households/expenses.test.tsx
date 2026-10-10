@@ -275,3 +275,49 @@ describe('the tabs on an expense’s pages', () => {
     }
   })
 })
+
+describe('the labels of an expense row (M-3)', () => {
+  it('heads the columns and names every value of a row with its label', async () => {
+    const db = await openDatabase(factory)
+    await saveExpense(
+      db,
+      quickExpense('e1', equalSplit(1000, ['ana', 'marta']), {
+        description: 'Roomba',
+        date: today,
+        category: 'household',
+        payerId: 'marta',
+      }),
+    )
+    db.close()
+    renderApp('/households/h1/expenses')
+
+    const row = await screen.findByRole('link', { name: /Roomba/ })
+    expect(spaces(row.getAttribute('aria-label'))).toMatch(
+      /^Date \d+ \S+, Description Roomba, Category Household, Paid by Marta, Amount 10,00 €$/,
+    )
+    // The column headings, shown from 640 px, above the rows.
+    const headings = screen.getByTestId('expense-columns')
+    expect(spaces(headings.textContent)).toBe(
+      'DateDescriptionCategoryPaid byAmount',
+    )
+    expect(headings).toHaveAttribute('aria-hidden', 'true')
+  })
+
+  it('names them in Portuguese', async () => {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, 'pt')
+    const db = await openDatabase(factory)
+    await saveExpense(
+      db,
+      quickExpense('e1', equalSplit(1000, ['ana', 'marta']), {
+        description: 'Roomba',
+        date: today,
+      }),
+    )
+    db.close()
+    renderApp('/households/h1/expenses')
+    const headings = await screen.findByTestId('expense-columns')
+    expect(spaces(headings.textContent)).toBe(
+      'DataDescriçãoCategoriaPago porValor',
+    )
+  })
+})

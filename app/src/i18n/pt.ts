@@ -544,6 +544,13 @@ export const pt: Catalogue = {
 
   expenses: {
     title: 'Despesas',
+    columns: {
+      date: 'Data',
+      description: 'Descrição',
+      category: 'Categoria',
+      paidBy: 'Pago por',
+      amount: 'Valor',
+    },
     filters: 'Filtros',
     member: 'Pessoa',
     allMembers: 'Todos',

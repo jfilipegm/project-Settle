@@ -8,7 +8,10 @@ import { Link, useSearchParams } from 'react-router'
 import { useRegion } from '../../app/region.ts'
 import { listExpenses } from '../../data/repository.ts'
 import { CATEGORY_ICONS } from '../../features/household/categories.ts'
-import { ExpenseRow } from '../../features/household/components/ExpenseRow.tsx'
+import {
+  ExpenseColumns,
+  ExpenseRow,
+} from '../../features/household/components/ExpenseRow.tsx'
 import { dateLocale, formatMonth } from '../../features/household/format.ts'
 import { useLoaded } from '../../features/household/householdData.ts'
 import { activeMembers, isoDate } from '../../features/household/model.ts'
@@ -131,18 +134,21 @@ export function OverviewPage() {
               : t('overview.noExpensesMonth')}
           </p>
         ) : (
-          <ul className={styles.list}>
-            {monthly.slice(0, LATEST).map((expense) => (
-              <ExpenseRow
-                key={expense.id}
-                expense={expense}
-                members={byId}
-                region={region}
-                locale={locale}
-                t={t}
-              />
-            ))}
-          </ul>
+          <>
+            <ExpenseColumns t={t} />
+            <ul className={styles.list}>
+              {monthly.slice(0, LATEST).map((expense) => (
+                <ExpenseRow
+                  key={expense.id}
+                  expense={expense}
+                  members={byId}
+                  region={region}
+                  locale={locale}
+                  t={t}
+                />
+              ))}
+            </ul>
+          </>
         )}
         <p>
           <Link to={`${base}/expenses`}>{t('overview.allExpenses')}</Link>
