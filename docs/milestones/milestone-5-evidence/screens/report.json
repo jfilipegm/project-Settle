@@ -1,0 +1,3225 @@
+{
+  "when": "2026-10-10T21:15:18.509Z",
+  "screens": [
+    {
+      "screen": "home",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "home",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "home",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Split a bill",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "home",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "home",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "home",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "home",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "home",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "receipt",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "receipt",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "receipt",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Receipt",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Who had what",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "The split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "file",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "file",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Type it in",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "New bill",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "receipt",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "receipt",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "receipt",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "receipt",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "receipt",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "who-had-what",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "who-had-what",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "who-had-what",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Receipt",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Who had what",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "The split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Dismiss",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Remove a person",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Add a person",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Remove Ana",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Remove Bruno",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Remove Carla",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "label": "split-payer",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "label": "_r_1_",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Pizza margherita14,50 €AB",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Everyone for Pizza margherita",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Edit Pizza margherita",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Bitoque12,90 €B",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Everyone for Bitoque",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Edit Bitoque",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Salada mista6,50 €ABC",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Edit Salada mista",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Vinho da casa12,00 €AC",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Everyone for Vinho da casa",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Edit Vinho da casa",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Add item",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "label": "split-tax-kind",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "label": "split-tax-mode",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "label": "split-tip-kind",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "label": "split-tip-mode",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "label": "split-discount-kind",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Ana",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Bruno",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Carla",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Copy as text",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Save to a household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "New bill",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "who-had-what",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "who-had-what",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "who-had-what",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "who-had-what",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "who-had-what",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "the-split",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "the-split",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "the-split",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Receipt",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Who had what",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "The split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Ana",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Bruno",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "summary",
+          "label": "Breakdown for Carla",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Copy as text",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Save to a household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "New bill",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "the-split",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "the-split",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "the-split",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "the-split",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "the-split",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "save-to-household",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "save-to-household",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "save-to-household",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "select",
+          "label": "Choose…AnaMartaJoãoTiagoAdd as a new mem",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "Choose…AnaMartaJoãoTiagoAdd as a new mem",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "Choose…AnaMartaJoãoTiagoAdd as a new mem",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "Choose…AnaMartaJoãoTiago",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": false,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "GroceriesEating outRentUtilitiesInternet",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Cancel",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "submit",
+          "label": "Save to household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "save-to-household",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "save-to-household",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "save-to-household",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "save-to-household",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "save-to-household",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "households-empty",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "households-empty",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "households-empty",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "New household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "households-empty",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "households-empty",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "households-empty",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "households-empty",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "households-empty",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "households",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "households",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "households",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Rua das Flores 12",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "New household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "households",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "households",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "households",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "households",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "households",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-overview",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "household-overview",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "household-overview",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Rua das Flores 12, switch household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Overview",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Expenses",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Balances",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Members",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Previous month",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Next month",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Add expense",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Details",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "span",
+          "label": "1 Oct: 0,00 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 6 Oct, Description Continente, (4 i",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 5 Oct, Description Kitchen shelves,",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 4 Oct, Description Internet, Catego",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 3 Oct, Description Takeaway, Friday",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 2 Oct, Description Electricity, Sep",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "All expenses",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "span",
+          "label": "October 2026, this month: 286,03 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        }
+      ]
+    },
+    {
+      "screen": "household-overview",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "chart-tips",
+      "width": 360,
+      "theme": "light",
+      "checked": 2,
+      "problems": []
+    },
+    {
+      "screen": "household-overview",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-overview",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-overview",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-overview",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "chart-tips",
+      "width": 360,
+      "theme": "dark",
+      "checked": 2,
+      "problems": []
+    },
+    {
+      "screen": "household-expenses",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "household-expenses",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "household-expenses",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Rua das Flores 12, switch household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Overview",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Expenses",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Balances",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Members",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "EveryoneAnaMartaJoãoTiagoRui",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "All categoriesGroceriesEating outRentUti",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "search",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Payment, 7 Oct, Tiago paid Marta, 20,00 ",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 6 Oct, Description Continente, (4 i",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 5 Oct, Description Kitchen shelves,",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 4 Oct, Description Internet, Catego",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 3 Oct, Description Takeaway, Friday",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 2 Oct, Description Electricity, Sep",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 12 Sept, Description Groceries, the",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 12 Aug, Description Groceries, the ",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 12 Jul, Description Groceries, the ",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 12 Jun, Description Groceries, the ",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Date 12 May, Description Groceries, the ",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        }
+      ]
+    },
+    {
+      "screen": "household-expenses",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-expenses",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-expenses",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-expenses",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-expenses",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-members",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "household-members",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "household-members",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Rua das Flores 12, switch household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Overview",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Expenses",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Balances",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Members",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Rename Ana",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Mark Ana as left",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Delete Ana",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Rename Marta",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Mark Marta as left",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Delete Marta",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Rename João",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Mark João as left",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Delete João",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Rename Tiago",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Mark Tiago as left",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Delete Tiago",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": false,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "submit",
+          "label": "Add",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Rename Rui",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Undo leaving for Rui",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Delete Rui",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Rename household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Archive household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "household-members",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-members",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-members",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-members",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-members",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "new-expense",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "new-expense",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "new-expense",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Rua das Flores 12, switch household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Overview",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Expenses",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Balances",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Members",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": false,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "GroceriesEating outRentUtilitiesInternet",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "AnaMartaJoãoTiago",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "radio",
+          "label": "_r_1_",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "checkbox",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Cancel",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "submit",
+          "label": "Save expense",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "new-expense",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "new-expense",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "new-expense",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "new-expense",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "new-expense",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "itemised-expense",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "itemised-expense",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "itemised-expense",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Edit items",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Edit details",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Delete",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Close",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "itemised-expense",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "itemised-expense",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "itemised-expense",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "itemised-expense",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "itemised-expense",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Edit",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Delete",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "expense-dialog",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-balances",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "household-balances",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "household-balances",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Rua das Flores 12, switch household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Overview",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Expenses",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Balances",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Members",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "AAna",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "MMarta",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "JJoão",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "TTiago",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Mark as paid: Marta pays Ana 242,22 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Mark as paid: João pays Ana 240,89 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Mark as paid: Tiago pays Ana 235,22 €",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Record a payment",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Copy as text",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": false,
+          "outline": "solid 3px"
+        }
+      ]
+    },
+    {
+      "screen": "household-balances",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "household-balances",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-balances",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-balances",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "household-balances",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "balance-explanation",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "balance-explanation",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "balance-explanation",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Rua das Flores 12, switch household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Overview",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Expenses",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Balances",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Members",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "All balances",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Continente",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Kitchen shelves",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Internet",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Takeaway, Friday night",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Electricity, September",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Groceries, the month",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Groceries, the month",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Groceries, the month",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Groceries, the month",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Groceries, the month",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        }
+      ]
+    },
+    {
+      "screen": "balance-explanation",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "balance-explanation",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "balance-explanation",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "balance-explanation",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "balance-explanation",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog-empty",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "payment-dialog-empty",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "payment-dialog-empty",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "select",
+          "label": "Choose someoneAnaMartaJoãoTiagoRui (left",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": false,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Cancel",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "submit",
+          "label": "Save payment",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "payment-dialog-empty",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog-empty",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "payment-dialog-empty",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "payment-dialog-empty",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "payment-dialog-empty",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog-filled",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "payment-dialog-filled",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "payment-dialog-filled",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "select",
+          "label": "Choose someoneAnaMartaJoãoTiagoRui (left",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "date",
+          "label": "",
+          "ring": true,
+          "focusVisible": false,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "input",
+          "type": "text",
+          "label": "",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Cancel",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "submit",
+          "label": "Save payment",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "payment-dialog-filled",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog-filled",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "payment-dialog-filled",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "payment-dialog-filled",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "payment-dialog-filled",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "payment-dialog",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "payment-dialog",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Edit",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Delete",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Close",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        }
+      ]
+    },
+    {
+      "screen": "payment-dialog",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "payment-dialog",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "payment-dialog",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "payment-dialog",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "payment-dialog",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "settings",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "settings",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "settings",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "select",
+          "label": "SystemEnglishPortuguês",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "SystemLightDark",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "Portuguese (Portugal)English (UK)English",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "select",
+          "label": "Euro (€)Pound sterling (£)US dollar ($)",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Third-party licences",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        }
+      ]
+    },
+    {
+      "screen": "settings",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "settings",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "settings",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "settings",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "settings",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "not-found",
+      "width": 390,
+      "theme": "light"
+    },
+    {
+      "screen": "not-found",
+      "width": 1024,
+      "theme": "light"
+    },
+    {
+      "screen": "not-found",
+      "width": 1440,
+      "theme": "light",
+      "keyboard": [
+        {
+          "tag": "a",
+          "label": "Skip to content",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settle, home",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Split",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Household",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "a",
+          "label": "Settings",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        },
+        {
+          "tag": "button",
+          "type": "button",
+          "label": "Theme: light. Switch to dark.",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 2px"
+        },
+        {
+          "tag": "a",
+          "label": "Go to the home page",
+          "ring": true,
+          "focusVisible": true,
+          "outline": "solid 3px"
+        }
+      ]
+    },
+    {
+      "screen": "not-found",
+      "width": 360,
+      "theme": "light",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    },
+    {
+      "screen": "not-found",
+      "width": 390,
+      "theme": "dark"
+    },
+    {
+      "screen": "not-found",
+      "width": 1024,
+      "theme": "dark"
+    },
+    {
+      "screen": "not-found",
+      "width": 1440,
+      "theme": "dark"
+    },
+    {
+      "screen": "not-found",
+      "width": 360,
+      "theme": "dark",
+      "scrollWidth": 360,
+      "clientWidth": 360
+    }
+  ],
+  "problems": []
+}

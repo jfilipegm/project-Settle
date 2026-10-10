@@ -1,14 +1,16 @@
 /**
  * The design evidence (M3 plan, S13, CP6): every screen of the production
- * build in headless Brave, at 360, 390 and 1440 px, light and dark.
+ * build in headless Brave, at 360, 390, 1024 and 1440 px, light and dark.
  *
- * - A screenshot of each screen at 390 and 1440 px, both themes.
+ * - A screenshot of each screen at 390, 1024 and 1440 px, both themes.
  * - Each screen's rendered DOM (`document.documentElement.outerHTML`),
  *   with the built CSS linked as `app.css`, for the design checkers: the
  *   built index.html is only the app shell with an empty #root (L1-I4).
  * - The 360 px check: no horizontal scroll (`scrollWidth <= clientWidth`).
  * - The keyboard pass: Tab through each screen; every stop must be a
  *   control with a visible focus indicator.
+ * - The chart tips (M5, B1): at 360 px, a tip shown on the overview's
+ *   first and last bars stays inside its card.
  *
  * Only invented names and amounts appear. The bill is seeded in storage,
  * like a saved draft, and the household ledger (M4) in IndexedDB; no
@@ -24,7 +26,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { APP_DIR, Cdp, sleep, startBrave, startPreview } from './browser.mjs'
 
-const WIDTHS = { shot: [390, 1440], scroll: 360 }
+const WIDTHS = { shot: [390, 1024, 1440], scroll: 360 }
 const THEMES = ['light', 'dark']
 
 /** An invented bill: three people, four items, a tip. */
@@ -82,7 +84,8 @@ const earlier = (back, n) => {
 
 /**
  * An invented household (M4): four members and one who left, quick
- * expenses of each method, and one itemised expense with its receipt.
+ * expenses of each method, one itemised expense with its receipt, and a
+ * payment (M5).
  */
 const LEDGER = (() => {
   const v = 1
@@ -195,6 +198,20 @@ const LEDGER = (() => {
       receiptKey: 'qr:500000000:INVENTED-1',
     },
   ]
+  const settlements = [
+    {
+      v,
+      id: 's1',
+      householdId: 'h1',
+      fromId: 'tiago',
+      toId: 'marta',
+      amount: 2000,
+      date: day(7),
+      note: 'Electricity share',
+      createdAt: stamp,
+      updatedAt: stamp,
+    },
+  ]
   return {
     households: [
       {
@@ -207,6 +224,7 @@ const LEDGER = (() => {
     ],
     members,
     expenses,
+    settlements,
   }
 })()
 
@@ -238,21 +256,46 @@ const SCREENS = [
     path: '/households/h1/expenses?expense=e2',
     ledger: true,
   },
+  // M5: balances, the payment dialog, a payment in the history.
+  { name: 'household-balances', path: '/households/h1/balances', ledger: true },
+  {
+    name: 'balance-explanation',
+    path: '/households/h1/balances/ana',
+    ledger: true,
+  },
+  {
+    name: 'payment-dialog-empty',
+    path: '/households/h1/balances',
+    ledger: true,
+    click: 'Record a payment',
+  },
+  {
+    name: 'payment-dialog-filled',
+    path: '/households/h1/balances',
+    ledger: true,
+    click: 'Mark as paid',
+  },
+  {
+    name: 'payment-dialog',
+    path: '/households/h1/expenses?settlement=s1',
+    ledger: true,
+  },
   { name: 'settings', path: '/settings' },
   { name: 'not-found', path: '/no/such/page' },
 ]
 
 /**
  * The page script that rebuilds the ledger's database (M4): deleted, then
- * created at version 1 with its stores, as `data/db.ts` does, and filled.
+ * created at version 2 with its stores, as `data/db.ts` does (M5 added the
+ * payments' store), and filled.
  */
 function ledgerScript(ledger) {
-  const records = JSON.stringify(ledger)
+  const records = JSON.stringify({ settlements: [], ...ledger })
   return `new Promise((resolve, reject) => {
     const del = indexedDB.deleteDatabase('settle')
     del.onerror = () => reject(del.error)
     del.onsuccess = () => {
-      const open = indexedDB.open('settle', 1)
+      const open = indexedDB.open('settle', 2)
       open.onupgradeneeded = () => {
         const db = open.result
         db.createObjectStore('households', { keyPath: 'id' })
@@ -261,22 +304,52 @@ function ledgerScript(ledger) {
         e.createIndex('byHousehold', 'householdId')
         e.createIndex('byReceiptKey', ['householdId', 'receiptKey'])
         db.createObjectStore('meta', { keyPath: 'key' })
-          .put({ key: 'schema', version: 1, migratedAt: new Date().toISOString() })
+          .put({ key: 'schema', version: 2, migratedAt: new Date().toISOString() })
+        db.createObjectStore('settlements', { keyPath: 'id' }).createIndex('byHousehold', 'householdId')
       }
       open.onerror = () => reject(open.error)
       open.onsuccess = () => {
         const db = open.result
         const data = ${records}
-        const tx = db.transaction(['households', 'members', 'expenses'], 'readwrite')
+        const tx = db.transaction(['households', 'members', 'expenses', 'settlements'], 'readwrite')
         for (const h of data.households) tx.objectStore('households').put(h)
         for (const m of data.members) tx.objectStore('members').put(m)
         for (const x of data.expenses) tx.objectStore('expenses').put(x)
+        for (const p of data.settlements) tx.objectStore('settlements').put(p)
         tx.oncomplete = () => { db.close(); resolve(true) }
         tx.onerror = () => reject(tx.error)
       }
     }
   })`
 }
+
+/**
+ * At 360 px (M5, B1): hovers a chart's first and last bars on the
+ * overview and returns any tip that leaves its card.
+ */
+const TIP_CHECK = `(async () => {
+  const out = []
+  const slots = [...document.querySelectorAll('[role="group"] [tabindex]')]
+  const groups = new Set(slots.map((s) => s.closest('[role="group"]')))
+  for (const group of groups) {
+    const marks = [...group.querySelectorAll('[tabindex]')]
+    for (const mark of [marks[0], marks.at(-1)]) {
+      if (!mark) continue
+      mark.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
+      await new Promise((r) => requestAnimationFrame(() => r(true)))
+      const tip = group.querySelector('[data-testid="chart-tip"]')
+      const card = group.closest('section') ?? group
+      if (!tip) { out.push('no tip on ' + (mark.getAttribute('aria-label') ?? '?')); continue }
+      const t = tip.getBoundingClientRect()
+      const c = card.getBoundingClientRect()
+      if (t.left < c.left - 0.5 || t.right > c.right + 0.5) {
+        out.push('tip outside its card: ' + tip.textContent + ' ' + Math.round(t.left) + '-' + Math.round(t.right) + ' in ' + Math.round(c.left) + '-' + Math.round(c.right))
+      }
+      mark.dispatchEvent(new PointerEvent('pointerout', { bubbles: true, pointerType: 'mouse' }))
+    }
+  }
+  return { checked: groups.size, problems: out }
+})()`
 
 function storageFor(screen, theme) {
   const entries = {
@@ -352,7 +425,7 @@ async function load(cdp, session, origin, screen, theme, width) {
     ledgerScript(
       screen.ledger === true
         ? LEDGER
-        : { households: [], members: [], expenses: [] },
+        : { households: [], members: [], expenses: [], settlements: [] },
     ),
   )
   await cdp.send('Page.navigate', { url: `${origin}${screen.path}` }, session)
@@ -364,7 +437,7 @@ async function load(cdp, session, origin, screen, theme, width) {
   )
   await sleep(200)
   if (screen.click !== undefined) {
-    // A dialog's screen: open it from its button, by its words.
+    // A dialog's screen: open it from its (first) button, by its words.
     await evaluate(
       cdp,
       session,
@@ -517,6 +590,23 @@ async function main() {
           report.problems.push(
             `${screen.name} (${theme}) scrolls sideways at 360 px: ${scroll.scrollWidth} > ${scroll.clientWidth}`,
           )
+        }
+        if (screen.name === 'household-overview') {
+          const tips = await evaluate(cdp, sessionId, TIP_CHECK)
+          report.screens.push({
+            screen: 'chart-tips',
+            width: 360,
+            theme,
+            ...tips,
+          })
+          if (tips.checked === 0) {
+            report.problems.push(
+              `chart tips (${theme}): no bar chart found at 360 px`,
+            )
+          }
+          for (const problem of tips.problems) {
+            report.problems.push(`chart tips (${theme}) at 360 px: ${problem}`)
+          }
         }
       }
     }

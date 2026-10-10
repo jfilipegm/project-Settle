@@ -154,23 +154,32 @@ interface.
 development-only gallery at `/_kit` (`npm run dev`) shows them all, with
 light/dark and English/Portuguese switches.
 
-| Component                  | Use                                                                                                                                                                                                                                                                                                                                     |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Button`                   | Primary (ink), secondary (card with a border), quiet (a text link look). Heights 40, 44, 48, 52 px; an optional icon; the press scale. `type="button"` by default.                                                                                                                                                                      |
-| `IconButton`               | A square button with an icon and a required `label`.                                                                                                                                                                                                                                                                                    |
-| `TextField`, `SelectField` | The label above; a hint and an error below, both in `aria-describedby`; `aria-invalid` and an icon with the error.                                                                                                                                                                                                                      |
-| `Card`                     | A flat card; with a `title` it is a section named by its `h2`.                                                                                                                                                                                                                                                                          |
-| `StatusChip`               | Success, warning or error: an icon and words.                                                                                                                                                                                                                                                                                           |
-| `PersonBadge`              | A person's colour and initial (or number), with the name shown or read out.                                                                                                                                                                                                                                                             |
-| `Amount`                   | An amount in the figures face, the region's format, a true minus sign, an optional plus.                                                                                                                                                                                                                                                |
-| `Steps`                    | Named steps as links, the current one `aria-current="step"`.                                                                                                                                                                                                                                                                            |
-| `Icon`                     | A Tabler icon at the house size and stroke.                                                                                                                                                                                                                                                                                             |
-| `Tabs`                     | A segmented group of links (M4): a slate track, the current tab on the card colour, bold and `aria-current="page"`.                                                                                                                                                                                                                     |
-| `Dialog`                   | The native `<dialog>`, modal (M4): a sheet from the bottom under 640 px, a centred card from 640 px, raised, over the scrim. Its title names it; Escape or a click on the backdrop closes it; focus returns. An optional close button (`closeLabel`) beside the title takes the first focus. A dialog opened from another closes alone. |
-| `Checkbox`                 | A labelled native checkbox in a 44 px row (M4), for choosing members.                                                                                                                                                                                                                                                                   |
-| `Donut`                    | Part to whole (M4): a thin ring, six slices at most with a 2 px gap, the total in the hole. One image named by a text alternative with every value.                                                                                                                                                                                     |
-| `Bars`                     | Vertical bars on one baseline (M4), scaled to the largest, 4 px rounded tops, "Up to {amount}" on the top hairline, optional ticks and emphasis; bars may link.                                                                                                                                                                         |
-| `ShareBar`                 | One horizontal bar split into each person's share (M4), in their colours with a 2 px gap.                                                                                                                                                                                                                                               |
+| Component                  | Use                                                                                                                                                                                                                                                                                                                                                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Button`                   | Primary (ink), secondary (card with a border), quiet (a text link look). Heights 40, 44, 48, 52 px; an optional icon; the press scale. `type="button"` by default.                                                                                                                                                                                                                                       |
+| `IconButton`               | A square button with an icon and a required `label`.                                                                                                                                                                                                                                                                                                                                                     |
+| `TextField`, `SelectField` | The label above; a hint and an error below, both in `aria-describedby`; `aria-invalid` and an icon with the error.                                                                                                                                                                                                                                                                                       |
+| `Card`                     | A flat card; with a `title` it is a section named by its `h2`.                                                                                                                                                                                                                                                                                                                                           |
+| `StatusChip`               | Success, warning or error: an icon and words.                                                                                                                                                                                                                                                                                                                                                            |
+| `PersonBadge`              | A person's colour and initial (or number), with the name shown or read out.                                                                                                                                                                                                                                                                                                                              |
+| `Amount`                   | An amount in the figures face, the region's format, a true minus sign, an optional plus.                                                                                                                                                                                                                                                                                                                 |
+| `Steps`                    | Named steps as links, the current one `aria-current="step"`.                                                                                                                                                                                                                                                                                                                                             |
+| `Icon`                     | A Tabler icon at the house size and stroke.                                                                                                                                                                                                                                                                                                                                                              |
+| `Tabs`                     | A segmented group of links (M4): a slate track, the current tab on the card colour, bold and `aria-current="page"`.                                                                                                                                                                                                                                                                                      |
+| `Dialog`                   | The native `<dialog>`, modal (M4): a sheet from the bottom under 640 px, a centred card from 640 px, raised, over the scrim. Its title names it; Escape or a click on the backdrop closes it; focus returns. An optional close button (`closeLabel`) beside the title takes the first focus. A dialog opened from another closes alone.                                                                  |
+| `Checkbox`                 | A labelled native checkbox in a 44 px row (M4), for choosing members.                                                                                                                                                                                                                                                                                                                                    |
+| `Donut`                    | Part to whole (M4): a thin ring, six slices at most with a 2 px gap, the total in the hole. One image named by a text alternative with every value; its slices aren’t focusable (the legend prints them). The tip shows a slice on hover or a tap (M5).                                                                                                                                                  |
+| `Bars`                     | Vertical bars on one baseline (M4), scaled to the largest, 4 px rounded tops, "Up to {amount}" on the top hairline, optional ticks and emphasis; bars may link. A named group (by its card’s heading, or a label) described by a summary; each bar is named, a link or an image. One Tab stop with roving focus (arrows, Home, End). Every bar lightens on hover, on focus and while its tip shows (M5). |
+| `ShareBar`                 | One horizontal bar split into each person’s share (M4), in their colours with a 2 px gap. The tip shows a share on hover or a tap (M5).                                                                                                                                                                                                                                                                  |
+
+**The chart tip (M5):** every chart shows a mark's value at once, in a
+small card-coloured tip with a hairline border and the figures face: on
+pointer hover, on a tap of a mark that isn't a link (a tap elsewhere or
+Escape hides it), and on keyboard focus of a bar. It sits above the mark
+and never leaves the chart's width (it shifts by the same fraction of its
+own width as the mark sits across the chart). It is `aria-hidden`: the
+names and figures already say it. Charts carry no `title`, so no
+delayed browser tooltip appears.
 
 A date field (`TextField type="date"`) shows the house ring on `:focus`
 and `:focus-within` too. Its parts (day, month, year, the calendar
@@ -194,14 +203,17 @@ button) take focus inside it, where `:focus-visible` doesn't reach.
 ## The household (M4)
 
 - **Its header:** the household's name is a button-like link to the list
-  of households, to switch. Under it are the tabs Overview, Expenses and
-  Members (Balances joins in M5).
+  of households, to switch. Under it are the tabs Overview, Expenses,
+  Balances and Members (pt: Resumo, Despesas, Saldos, Membros), which
+  fit at 360 px in both languages.
 - **The overview:** one month at a time, its title the month, then
   "{amount} shared across {count} expenses", one primary "Add expense",
-  "Day by day" (the month's spending per day, as bars), "Latest expenses",
-  "Where it went" (a donut beside the category list, which is its legend,
-  with each category's percentage and total) and "The last six months"
-  (each month's total, this one emphasised, each bar opening its month).
+  the balances card (M5, below), "Day by day" (the month's spending per
+  day, as bars), "Latest expenses", "Where it went" (a donut beside the
+  category list, which is its legend, with each category's percentage
+  and total, one set of percentages for both) and "The last six months"
+  (each month's total, this one emphasised and named "this month", the
+  other bars opening their month).
   The charts are drawn on top of the figures, never instead of them, and
   a month with nothing in it draws none.
 - **An expense row:** the date in the figures face, what it was (with its
@@ -224,6 +236,38 @@ button) take focus inside it, where `:focus-visible` doesn't reach.
   chart hue, next to its name.
 - **Saving a split into a household** happens in a dialog over The split.
   It says, before saving, that the bill moves into the household.
+
+## Balances and payments (M5)
+
+- **The Balances tab:** the heading, then one line: "Settle up in 3
+  payments.", "Everyone is settled up." or, with an unreadable record,
+  "Balances from the records that could be read." Then one row per
+  member: their badge (a link to the explanation), "Paid 412,30" under
+  the name, the word ("Gets back", "Owes", "Settled up") in the quiet
+  text and the signed amount in the figures face, right-aligned. A member
+  who has left shows while their balance isn't zero, with "Left on 3 Sep".
+- **Settle up:** a card listing each suggested payment, "Tiago pays Ana",
+  its amount and a secondary "Mark as paid". Under it, "Record a payment",
+  "Copy as text" and, where the browser can, "Share". "Balances on" (a
+  date field) shows a past date's balances and hides every action.
+- **Incomplete balances** (an unreadable record): a bordered notice says
+  how many records couldn't be read and that settling up isn't suggested.
+  The figures stay; no suggestion, no Mark as paid, no text, and never
+  "Everyone is settled up" (a zero reads "No balance").
+- **The payment dialog:** From and To (members in order, those who left
+  last, marked "(left)"), Amount and Date side by side, an optional Note,
+  then the outcome before saving: "After this, Tiago owes 7,65 and Ana is
+  settled up." Saving announces "Payment recorded."
+- **An explanation:** "Ana's balance", the signed amount and its word, the
+  sums ("Paid · Share · Sent · Received"), then the expenses and payments
+  in month groups, each with its effect (+ or −), ending on "Balance".
+  Each line opens its record in a dialog over the page.
+- **A payment in the history:** among the expenses, quieter: an exchange
+  icon, "Tiago paid Ana", the note, the amount in the quiet text. It never
+  counts in a month's total. It opens in a dialog like an expense, with
+  Edit and Delete.
+- **The overview's card:** "Balances", "Across all expenses and
+  payments.", the members' rows, then the settle-up line and "Details".
 
 ## Languages
 

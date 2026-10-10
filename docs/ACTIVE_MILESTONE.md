@@ -98,11 +98,36 @@
     throws over incomplete balances (M-I-1). Copy as text ("Copied.", or
     the refusal) and Share where the browser has it; neither with
     `?on=` or over incomplete balances.
-- CP6: to do.
+- **CP6 — complete:** quality pass and documentation.
+  - The completion scenario with payments: five payments (two from the
+    suggestion, one partial, one by a member who left, one edited) and
+    one deleted; the balances, the suggestion and every explanation are
+    equal across a reload and across the real version-1 to version-2
+    upgrade (`data/completion.test.ts`).
+  - `app/scripts/screens.mjs`: the ledger built at version 2 with a
+    payment; five new screens; 1024 px added; a 360 px check that chart
+    tips stay inside their card. 20 screens, 162 checks, 0 problems,
+    after one fix: the four tabs were 12 px too wide at 360 px, so under
+    400 px they take less padding and 14 px text.
+  - The design checkers and the privacy checks: nothing new on any M5
+    screen; page load and the sample scans pass
+    (`docs/milestones/milestone-5-evidence/CHECKS.md`).
+  - ADR 0006 (balances and the suggestion, with the minimum's proof and
+    the over-16 fallback); `docs/DESIGN.md` (the chart tip, the four
+    tabs, balances and payments); `app/README.md` (version 2 as the
+    worked migration, the engine); the root `README.md`; the roadmap's
+    M5 status.
+  - **The design canvas is not updated yet.** Uploading the M5
+    screenshots to the canvas was blocked by the session's permission
+    check, so the "As shipped in M5" board, the Balances tab at phone
+    width, the navigation map (Balances drawn) and the chart-tip note on
+    the M4 board wait for the user's go-ahead.
 
 ## Next action
 
-Continue `/milestone-implement milestone-5` with CP6.
+`/milestone-implement milestone-5` again: every checkpoint is complete,
+so it enters the self-review, runs the full verification and generates
+the implementation bundle for `/review-implementation`.
 
 ## Last completed: M4 — Households, members and the expense ledger
 
