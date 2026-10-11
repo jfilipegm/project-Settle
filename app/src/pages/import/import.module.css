@@ -199,8 +199,14 @@
 
 .doneList {
   display: grid;
-  gap: var(--space-2);
+  gap: var(--space-3);
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.doneList li {
+  display: grid;
+  gap: var(--space-1);
+  justify-items: start;
 }

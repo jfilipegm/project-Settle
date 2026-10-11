@@ -187,10 +187,49 @@
     expense's shares, payments, a member who left, a member named
     `=Rui`), shares summing to each amount in both regions, formula
     escaping, amounts, and the download from the card.
-- **CP6 — not started:** quality pass and documentation.
+- **CP6 — complete:** quality pass and documentation.
+  - The two-device completion scenario (`data/exchange.completion.test.ts`):
+    M5's household with five payments on A is shared to an empty B; B
+    adds 3 expenses and a payment, edits one expense and deletes
+    another; A edits a different expense and the same one (a conflict);
+    after B→A (decided) and A→B (no question) both hold the same ledger,
+    balances and suggestion, and A's backup restored onto an empty C gives
+    the same ledger again. M5's scenario also round-trips byte for byte.
+    The scenario's builder moved to `test/completion.ts` (setup only).
+  - `screens.mjs`: the database seeded at version 3 with a record version,
+    and seven new screens (the reminder; Open a Settle file: the picker,
+    a conflict undecided and decided, a refused file, done, a household
+    new on this device), from a file generated from the seeded household.
+    27 screens, 274 checks, 0 problems, 360 px in both languages included.
+  - `check-requests.mjs exchange`: opens a generated Settle file, applies
+    it, shares the household file, exports the CSV and backs up, moving
+    through the app's own links; 14 clean requests, no CSP violation, the
+    planted leak caught. Page load and CI's three smoke steps pass too.
+  - The design checkers: no finding on an M6 screen (Impeccable 6 and
+    ux-lint 52, the same as M5's, all reasoned before).
+    `docs/milestones/milestone-6-evidence/CHECKS.md` records it all.
+  - ADR 0007 (the Settle file field by field, its validation and
+    migrations, record versions, the merge rules, the restore check and
+    the known limits, the user's two decisions included) and ADR 0005's
+    "Version 3" section; DESIGN.md (export, import and backup, the
+    conflict pair, the reminder), both READMEs and the roadmap (M6 in
+    progress).
+  - The design canvas (versions 33 and 34): the "As shipped in M6" board
+    (the new screens at phone width in light and dark, and the preview at
+    desktop width), and the navigation map's legend.
+  - The plan reviews' optional points: the equal-clock line is neutral
+    (local O2), the sweep now asserts that no run without a set-back
+    raises a gone-back-in-time conflict (local O3), the decision
+    guarantee is asserted as the plan states it (external O-EXT-1), an
+    equal clock is shown as an ordinary conflict (O-EXT-2), and a failing
+    sweep run prints its seed and trace (O-EXT-3). Local O1 (stale wording
+    in the plan) is plan text, left for the reviews.
+  - The done screen puts "Open …" on its own line.
 
-Verification: `npm run check` passes (108 test files, 1874 passed, 1
-skipped).
+Verification: `npm run check` passes (109 test files, 1876 passed, 1
+skipped). `npm run build` and `check-build.mjs` pass; the screens check
+(27 screens, 0 problems), the privacy checks (page load, exchange) and
+CI's three smoke steps pass locally in Brave.
 
 ## Last completed: M5 — Balances and settling up
 

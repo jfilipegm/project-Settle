@@ -127,7 +127,7 @@ Since M4 the summary also keeps `receiptKey`, the duplicate-receipt key
 computed at import (`features/receipt/receiptKey.ts`). An invalid one reads
 as absent, and the format stays version 1.
 
-## The household ledger (M4, M5)
+## The household ledger (M4, M5, M6)
 
 Households, members, expenses and payments live in **IndexedDB**, in a database named
 `settle`, through a small wrapper of our own (`src/data/db.ts`). There is
@@ -145,6 +145,11 @@ no library. [ADR 0005](../docs/adr/0005-local-ledger-store.md) records why.
   itemised expense stores only its bill.
 - **Lazy.** `HouseholdDataProvider` opens the database on the first
   household page, so the split never touches it.
+- **Versioned records** (M6, version 3). Every write adds 1 for this
+  device to the record's clock in the `versions` store, in the same
+  transaction; a delete keeps the entry with `deletedAt`, and a deleted id
+  is never saved again. The repository checks content with the readers'
+  own rules before writing.
 
 ### Balances (M5)
 
@@ -159,10 +164,41 @@ incomplete balances. [ADR 0006](../docs/adr/0006-balances-and-settlement.md)
 records the grouping programme, why its count is the minimum, and the
 over-16 fallback.
 
+### The Settle file and the merge (M6)
+
+`src/features/exchange/` is pure and framework-free:
+
+- `format.ts`: the file's types and `formatFile`, the canonical writer;
+- `readFile.ts`: the strict reader (all or nothing, problems as codes
+  naming their record);
+- `migrations.ts`: the file's own migration steps (none yet);
+- `merge.ts`: `planImport` classifies every id of a file against this
+  device, `resolveImport` applies the conflict choices (the preview calls
+  it after every choice);
+- `words.ts`: the preview's words; `csv.ts`: the CSV export;
+  `fileName.ts`: the file names.
+
+`src/data/exchange.ts` reads and writes the database for them: the
+household and backup snapshots (records that would make a file Settle
+refuses stay out, counted), `prepareImport` and `applyImport`, one
+transaction that re-reads everything and refuses if another tab changed
+it. `src/data/versions.ts` holds the clocks and `resolveClock`, the one
+place that says which merge outcomes add 1 for this device.
+`src/app/handOver.ts` hands a file to the share sheet or a download. The
+pages are `src/pages/import/` and `src/pages/exchange/`.
+[ADR 0007](../docs/adr/0007-settle-file-and-merge.md) documents the file
+field by field, the merge rules and their known limits.
+
+The merge's property sweep (`src/data/merge.sweep.test.ts`, 500 seeded
+runs on three devices, about 30 s) reads `SWEEP_RUNS` to run fewer while
+working on it. A failing run prints its seed and its trace.
+
 ### Adding a schema change
 
-M5's version 2 is the worked example: `createSchemaV2` in
-`src/data/db.ts` adds the `settlements` store and rewrites nothing.
+M5's version 2 and M6's version 3 are the worked examples:
+`createSchemaV2` in `src/data/db.ts` adds the `settlements` store, and
+`createSchemaV3` the `versions` store and the device id; neither rewrites
+a record.
 
 1. Add a step to `MIGRATIONS` in `src/data/db.ts`. Version `n` is the
    `n`th step. It runs in the upgrade transaction, and anything it throws
@@ -172,13 +208,13 @@ M5's version 2 is the worked example: `createSchemaV2` in
    carries `v`, its own format version. A new store gets its own reader
    (`readSettlement`) and repository functions that re-check references
    in their transaction.
-3. Keep `src/data/fixtures/v1.json` and `v2.json` reading back equal
+3. Keep `src/data/fixtures/v1.json`, `v2.json` and `v3.json` reading back equal
    (`db.test.ts`, `completion.test.ts`). They are frozen data, and every
    later version must still open them.
 4. Test the upgrade from an empty database, from the fixtures and from
    the completion scenario's data (`db.test.ts` upgrades version 1 to 2
    byte for byte; `completion.test.ts` compares the balances across it).
-   The test-only step `testSchemaV3` keeps the runner tested on top of
+   The test-only step `testSchemaV4` keeps the runner tested on top of
    the real steps; move it up whenever a real step is added.
 5. Update `scripts/screens.mjs`'s `ledgerScript`, which builds the
    current version in the real browser.

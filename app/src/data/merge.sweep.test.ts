@@ -378,6 +378,11 @@ async function open(world: World, to: Name, built: Built): Promise<number> {
       throw new Fail(`unexpected left-out id ${item.id}`)
     }
     if (item.classification !== 'conflict') continue
+    // Without a restore, no file counts higher under an own id (E6's
+    // premise; local review of revision 7, O3): no gone-back conflict.
+    if (item.cause === 'goneBack' && world.setBackDevice === undefined) {
+      throw new Fail(`a gone-back conflict on ${item.id} without a set-back`)
+    }
     const choice = rule(to, item.id)
     choices[conflictKey('h1', item.id)] = choice
     decided.push({ item, choice })
