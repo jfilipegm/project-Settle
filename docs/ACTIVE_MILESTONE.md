@@ -70,12 +70,64 @@
     clock over 64 entries, a damaged version entry), every strict-reading
     refusal, `__proto__` dropped, the migration runner with a test-only
     version 2, and the file names.
-- **CP3 — not started:** the merge.
+- **CP3 — complete:** the merge.
+  - `data/versions.ts`: the shared clock-resolution helper
+    (`resolveClock`), which owns which outcomes add 1 for this device
+    (`mergeBumps`: "Keep mine", "kept for references", and either choice
+    between equal clocks).
+  - `features/exchange/merge.ts`, pure: `planImport` classifies every id
+    of the file against this device's side, read by key (E6's table:
+    nothing to decide, new, changed there, deleted there, changed here,
+    conflicts that are concurrent, between equal clocks, or "gone back in
+    time" under any own id; ids left alone as unreadable or used for
+    something else here; records naming a left-out member). It decides
+    whether Apply changes the device id (a strictly higher count under
+    the current id, or an equal-clock conflict naming it). `resolveImport`
+    applies the choices: each record's result and clock, members kept
+    for references (also over a "Keep mine" deletion, with the override
+    noted), member deletions that wait for unreadable records, the
+    member limits on the result, and the counts. `useTheirsForGoneBack`
+    is the restored-phone notice's bulk action.
+  - `data/exchange.ts`: `prepareImport` (this device's state for every
+    id in the file, and the id Apply would give it) and `applyImport`,
+    one transaction over every store, `versions` and `meta` included. It
+    re-reads the state and refuses if anything changed
+    (`ImportChangedError`), re-runs the merge, re-checks content and
+    limits, writes, changes the id with the old one in
+    `formerDeviceIds`, and leaves `firstUnbackedChangeAt` alone for a
+    backup that only adds households. A new household goes through the
+    same path, so no separate `addHouseholdFromFile` was needed.
+  - Found by the sweep and fixed: two deletions of one record with
+    different `deletedAt` never converged. Merging them keeps the
+    earlier time. ADR 0007 will say so.
+  - **The user's decisions (2026-10-11), at the plan's stop condition
+    "an edit disappears without a deletion or a choice":** the sweep found
+    a restored phone's count reused at the *same* number (seed 45: the
+    lost pre-restore edit; seed 39: the restored phone's new edit). Once
+    another phone has merged one of the two versions, the equal-clock
+    rule never sees them meet, and either can replace the other without
+    a question. The user accepted both as part of E6's known limit,
+    widened from "passes" to "equals or passes", to be stated in ADR
+    0007. The sweep exempts and counts them. Closing it would need a
+    plan amendment (counts by time, or a record of the edit that last
+    set each record's content).
+  - Tests: E6's table for every kind and the household record, with the
+    clock each choice writes; the re-edit test; the two stale-file
+    traces; crossed choices and crossed "Use theirs" reaching equal
+    clocks; the gone-back-in-time traces (Keep mine and Use theirs, the
+    2^31 count, an equal-content exposure, a second question); after
+    the id changed; another phone taking a reused count; equal clocks
+    with different content on three devices (both choices, a record
+    against a deletion, a phone the clock doesn't name); restore doesn't
+    roll back; references, unreadable and foreign records, limits,
+    concurrency, round trips, performance; and the seeded sweep (500
+    runs, three devices, 175 set back, 145 with an equal clock made on
+    purpose, 824 decisions; about 30 s).
 - **CP4 — not started:** sharing, opening and backup.
 - **CP5 — not started:** CSV export.
 - **CP6 — not started:** quality pass and documentation.
 
-Verification: `npm run check` passes (100 test files, 1765 passed, 1
+Verification: `npm run check` passes (104 test files, 1837 passed, 1
 skipped).
 
 ## Last completed: M5 — Balances and settling up

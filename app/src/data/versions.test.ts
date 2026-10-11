@@ -8,6 +8,9 @@ import {
   compare,
   dominates,
   join,
+  mergeBumps,
+  resolveClock,
+  type MergeOutcome,
 } from './versions.ts'
 
 describe('clocks (M6 plan, E4, E6)', () => {
@@ -85,5 +88,53 @@ describe('reading stored versions', () => {
     expect(
       readVersion({ ...entry, kind: 'household', deletedAt: 'x' }),
     ).toBeNull()
+  })
+})
+
+describe('the clock each merge outcome writes (E4, E6)', () => {
+  const mine = { me: 2, them: 1 }
+  const theirs = { me: 1, them: 3 }
+
+  it('bumps only "Keep mine", "kept for references" and equal-clock choices', () => {
+    const outcomes: MergeOutcome[] = [
+      'nothingToDecide',
+      'new',
+      'changedThere',
+      'deletedThere',
+      'keepMine',
+      'useTheirs',
+      'keptForReferences',
+    ]
+    expect(outcomes.filter((o) => mergeBumps(o, false))).toEqual([
+      'keepMine',
+      'keptForReferences',
+    ])
+    expect(outcomes.filter((o) => mergeBumps(o, true))).toEqual([
+      'keepMine',
+      'useTheirs',
+      'keptForReferences',
+    ])
+  })
+
+  it('writes a clock newer than or equal to both, strictly newer than the side not taken', () => {
+    const keep = resolveClock('keepMine', mine, theirs, 'me')
+    expect(keep).toEqual({ me: 3, them: 3 })
+    expect(compare(keep, mine)).toBe('newer')
+    expect(compare(keep, theirs)).toBe('newer')
+    const take = resolveClock('useTheirs', mine, theirs, 'me')
+    expect(take).toEqual({ me: 2, them: 3 })
+    expect(compare(take, mine)).toBe('newer')
+    expect(dominates(take, theirs)).toBe(true)
+    // Gone back in time, theirs newer: exactly theirs.
+    expect(resolveClock('useTheirs', { a: 6 }, { a: 7 }, 'b')).toEqual({ a: 7 })
+    // Equal clocks: either choice bumps, under the id given.
+    expect(resolveClock('useTheirs', { a: 5 }, { a: 5 }, 'new')).toEqual({
+      a: 5,
+      new: 1,
+    })
+    expect(resolveClock('keepMine', { a: 5 }, { a: 5 }, 'new')).toEqual({
+      a: 5,
+      new: 1,
+    })
   })
 })

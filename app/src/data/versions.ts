@@ -90,3 +90,50 @@ export function sortClock(clock: Clock): Clock {
   }
   return sorted
 }
+
+/**
+ * What a merge decided for one record (M6 plan, E6): an outcome without a
+ * question, or a conflict's choice.
+ */
+export type MergeOutcome =
+  | 'nothingToDecide'
+  | 'new'
+  | 'changedThere'
+  | 'deletedThere'
+  | 'keepMine'
+  | 'useTheirs'
+  | 'keptForReferences'
+
+/**
+ * Which merge outcomes add 1 for this device (E4's exception, owned here
+ * so the rule and the code can't drift apart): "Keep mine", "kept for
+ * references", and either choice on a conflict between equal clocks.
+ * Taking a record, a deletion, or a "Use theirs" over a concurrent or
+ * newer clock writes no bump, so the sender's next edit is never
+ * concurrent with ours.
+ */
+export function mergeBumps(
+  outcome: MergeOutcome,
+  equalClocks: boolean,
+): boolean {
+  if (outcome === 'keepMine' || outcome === 'keptForReferences') return true
+  return outcome === 'useTheirs' && equalClocks
+}
+
+/**
+ * The clock a merge writes for an outcome (E6): the higher count for each
+ * device, plus 1 under `bumpId` when {@link mergeBumps} says so. The
+ * result is newer than or equal to both sides, and strictly newer than
+ * the clock of every side whose content it didn't take ("What a decision
+ * guarantees").
+ */
+export function resolveClock(
+  outcome: MergeOutcome,
+  mine: Clock,
+  theirs: Clock,
+  bumpId: string,
+): Clock {
+  const joined = join(mine, theirs)
+  const equalClocks = compare(mine, theirs) === 'equal'
+  return mergeBumps(outcome, equalClocks) ? bump(joined, bumpId) : joined
+}

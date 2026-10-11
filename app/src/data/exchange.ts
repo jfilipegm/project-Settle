@@ -11,8 +11,17 @@ import {
   readSettlement,
   readVersion,
 } from './records.ts'
-import { INDEX, STORE, getAll, result, transaction } from './db.ts'
-import type { VersionEntry } from './versions.ts'
+import {
+  INDEX,
+  META,
+  STORE,
+  getAll,
+  result,
+  transaction,
+  type StoreName,
+} from './db.ts'
+import type { Clock, RecordKind, VersionEntry } from './versions.ts'
+import { newId } from '../features/split/billReducer.ts'
 import {
   referencedMemberIds,
   type Expense,
@@ -23,6 +32,7 @@ import {
 import {
   FILE_FORMAT,
   FILE_VERSION,
+  canonical,
   formatFile,
   type FileKind,
   type FileVersion,
@@ -37,6 +47,17 @@ import {
   stricterProblems,
   type FileProblem,
 } from '../features/exchange/readFile.ts'
+import {
+  planImport,
+  resolveImport,
+  type AnyRecord,
+  type Choice,
+  type ImportResolution,
+  type LocalHousehold,
+  type LocalId,
+  type LocalState,
+  type Side,
+} from '../features/exchange/merge.ts'
 
 /**
  * Records that stay out of a file, by reason (E1). They stay on this
@@ -282,4 +303,343 @@ export function snapshotBackup(
   now: string,
 ): Promise<Snapshot> {
   return snapshot(db, 'backup', undefined, now)
+}
+
+// Importing a file (E6, E8)
+
+const ALL_STORES: StoreName[] = [
+  STORE.households,
+  STORE.members,
+  STORE.expenses,
+  STORE.settlements,
+  STORE.versions,
+  STORE.meta,
+]
+
+const STORE_OF: Record<RecordKind, StoreName> = {
+  household: STORE.households,
+  member: STORE.members,
+  expense: STORE.expenses,
+  settlement: STORE.settlements,
+}
+
+const READER_OF: Record<RecordKind, (raw: unknown) => AnyRecord | null> = {
+  household: readHousehold,
+  member: readMember,
+  expense: readExpense,
+  settlement: readSettlement,
+}
+
+function metaValue(raw: unknown): unknown {
+  return typeof raw === 'object' && raw !== null && 'value' in raw
+    ? raw.value
+    : undefined
+}
+
+function householdOf(kind: RecordKind, record: AnyRecord): string {
+  return kind === 'household'
+    ? record.id
+    : (record as Member | Expense | Settlement).householdId
+}
+
+/** Every id of a file entry, with the kind the file gives it. */
+function fileIds(entry: HouseholdEntry): Map<string, RecordKind> {
+  const ids = new Map<string, RecordKind>([[entry.household.id, 'household']])
+  for (const member of entry.members) ids.set(member.id, 'member')
+  for (const expense of entry.expenses) ids.set(expense.id, 'expense')
+  for (const settlement of entry.settlements) {
+    ids.set(settlement.id, 'settlement')
+  }
+  for (const version of entry.versions) ids.set(version.id, version.kind)
+  return ids
+}
+
+/**
+ * What this device holds under one id, read by key in the record's own
+ * store and in `versions` (E6, round 1 I2).
+ */
+async function localId(
+  tx: IDBTransaction,
+  kind: RecordKind,
+  id: string,
+  householdId: string,
+  memberIds: ReadonlySet<string>,
+): Promise<LocalId> {
+  const rawVersion: unknown = await result(
+    tx.objectStore(STORE.versions).get(id),
+  )
+  const raw: unknown = await result(tx.objectStore(STORE_OF[kind]).get(id))
+  let version: VersionEntry | undefined
+  if (rawVersion !== undefined) {
+    const read = readVersion(rawVersion)
+    if (read === null) return { status: 'unreadable' }
+    if (read.kind !== kind || read.householdId !== householdId) {
+      return { status: 'foreign' }
+    }
+    version = read
+  }
+  if (raw !== undefined) {
+    const record = READER_OF[kind](raw)
+    if (record === null) return { status: 'unreadable' }
+    if (householdOf(kind, record) !== householdId) return { status: 'foreign' }
+    if (
+      (kind === 'expense' &&
+        !referencedMemberIds(record as Expense).every((m) =>
+          memberIds.has(m),
+        )) ||
+      (kind === 'settlement' &&
+        (!memberIds.has((record as Settlement).fromId) ||
+          !memberIds.has((record as Settlement).toId)))
+    ) {
+      // As the lists read it: an expense naming a missing member is
+      // unreadable here (H1), so it is left alone.
+      return { status: 'unreadable' }
+    }
+    if (version?.deletedAt !== undefined) return { status: 'unreadable' }
+    return {
+      status: 'ok',
+      side: { type: 'record', record, clock: version?.clock ?? {} },
+    }
+  }
+  if (version === undefined) return { status: 'ok', side: { type: 'none' } }
+  if (version.deletedAt === undefined) return { status: 'unreadable' }
+  return {
+    status: 'ok',
+    side: {
+      type: 'deletion',
+      clock: version.clock,
+      deletedAt: version.deletedAt,
+    },
+  }
+}
+
+async function localHousehold(
+  tx: IDBTransaction,
+  entry: HouseholdEntry,
+): Promise<LocalHousehold> {
+  const householdId = entry.household.id
+  const byHousehold = (store: StoreName) =>
+    getAll(tx.objectStore(store).index(INDEX.byHousehold), householdId)
+  const members: Member[] = []
+  const unreadable = { members: 0, expenses: 0, settlements: 0 }
+  for (const raw of await byHousehold(STORE.members)) {
+    const member = readMember(raw)
+    if (member === null) unreadable.members++
+    else members.push(member)
+  }
+  const memberIds = new Set(members.map((member) => member.id))
+  const expenses: Expense[] = []
+  for (const raw of await byHousehold(STORE.expenses)) {
+    const expense = readExpense(raw)
+    if (
+      expense === null ||
+      !referencedMemberIds(expense).every((id) => memberIds.has(id))
+    ) {
+      unreadable.expenses++
+    } else {
+      expenses.push(expense)
+    }
+  }
+  const settlements: Settlement[] = []
+  for (const raw of await byHousehold(STORE.settlements)) {
+    const settlement = readSettlement(raw)
+    if (
+      settlement === null ||
+      !memberIds.has(settlement.fromId) ||
+      !memberIds.has(settlement.toId)
+    ) {
+      unreadable.settlements++
+    } else {
+      settlements.push(settlement)
+    }
+  }
+  const ids: Record<string, LocalId> = {}
+  for (const [id, kind] of fileIds(entry)) {
+    ids[id] = await localId(tx, kind, id, householdId, memberIds)
+  }
+  const own = ids[householdId] ?? { status: 'unreadable' }
+  const status: LocalHousehold['status'] =
+    own.status !== 'ok'
+      ? own.status
+      : own.side.type === 'record'
+        ? 'present'
+        : own.side.type === 'none'
+          ? 'absent'
+          : 'unreadable'
+  return {
+    householdId,
+    status,
+    members,
+    expenses,
+    settlements,
+    unreadable,
+    ids,
+  }
+}
+
+async function readLocalState(
+  tx: IDBTransaction,
+  file: SettleFile,
+): Promise<LocalState> {
+  const meta = tx.objectStore(STORE.meta)
+  const deviceId = metaValue(await result(meta.get(META.deviceId)))
+  if (typeof deviceId !== 'string' || deviceId.length === 0) {
+    throw new Error('no device id')
+  }
+  const former = metaValue(await result(meta.get(META.formerDeviceIds)))
+  const households: LocalHousehold[] = []
+  for (const entry of file.households) {
+    households.push(await localHousehold(tx, entry))
+  }
+  return {
+    deviceId,
+    formerDeviceIds: Array.isArray(former)
+      ? former.filter((id): id is string => typeof id === 'string')
+      : [],
+    households,
+  }
+}
+
+/**
+ * What the preview was made from: this device's state for the file's ids,
+ * and the id Apply would give this device. Apply compares it with a fresh
+ * read and refuses if anything changed meanwhile (E6, the re-check).
+ */
+export interface ImportPreview {
+  local: LocalState
+  newDeviceId: string
+}
+
+export async function prepareImport(
+  db: IDBDatabase,
+  file: SettleFile,
+): Promise<ImportPreview> {
+  const local = await transaction(db, ALL_STORES, 'readonly', (tx) =>
+    readLocalState(tx, file),
+  )
+  return { local, newDeviceId: newId() }
+}
+
+/** The data changed between the preview and Apply (another tab). */
+export class ImportChangedError extends Error {}
+
+/** Apply was asked with an undecided conflict or a broken limit. */
+export class ImportBlockedError extends Error {}
+
+/** A record the merge would write that its reader refuses (E12). */
+export class ImportInvalidRecordError extends Error {}
+
+export interface AppliedHousehold {
+  householdId: string
+  name: string
+  expenses: number
+}
+
+function versionEntry(
+  id: string,
+  kind: RecordKind,
+  householdId: string,
+  clock: Clock,
+  result: Side,
+): VersionEntry {
+  const entry: VersionEntry = { id, kind, householdId, clock }
+  if (result.type === 'deletion') entry.deletedAt = result.deletedAt
+  return entry
+}
+
+/**
+ * Applies a file under `choices` in one transaction over every store the
+ * households use, `versions` and `meta` included (E6). It re-reads this
+ * device's records, version entries and the raw entries for every id in
+ * the file, and writes nothing if they differ from the preview's. Then it
+ * re-runs the merge, re-checks content and limits, and writes.
+ */
+export async function applyImport(
+  db: IDBDatabase,
+  file: SettleFile,
+  preview: ImportPreview,
+  choices: Readonly<Record<string, Choice>>,
+  now: string = new Date().toISOString(),
+): Promise<AppliedHousehold[]> {
+  return transaction(db, ALL_STORES, 'readwrite', async (tx) => {
+    const local = await readLocalState(tx, file)
+    if (canonical(local) !== canonical(preview.local)) {
+      throw new ImportChangedError('changed')
+    }
+    const plan = planImport(file, local, preview.newDeviceId)
+    const resolution: ImportResolution = resolveImport(plan, choices)
+    if (!resolution.canApply) throw new ImportBlockedError('blocked')
+
+    let wrote = false
+    const applied: AppliedHousehold[] = []
+    for (const household of resolution.households) {
+      const householdId = household.plan.householdId
+      for (const item of household.items) {
+        const store = tx.objectStore(STORE_OF[item.kind])
+        if (item.writesRecord) {
+          if (item.result.type === 'record') {
+            if (READER_OF[item.kind](item.result.record) === null) {
+              throw new ImportInvalidRecordError(item.id)
+            }
+            await result(store.put(item.result.record))
+          } else {
+            await result(store.delete(item.id))
+          }
+          wrote = true
+        }
+        const clock = item.writeClock
+        if (
+          clock !== null &&
+          (Object.keys(clock).length > 0 || item.result.type === 'deletion')
+        ) {
+          await result(
+            tx
+              .objectStore(STORE.versions)
+              .put(
+                versionEntry(
+                  item.id,
+                  item.kind,
+                  householdId,
+                  clock,
+                  item.result,
+                ),
+              ),
+          )
+          wrote = true
+        }
+      }
+      if (household.plan.leftOutWhole === undefined) {
+        applied.push({
+          householdId,
+          name: household.plan.household.name,
+          expenses: household.counts.expenses,
+        })
+      }
+    }
+
+    const meta = tx.objectStore(STORE.meta)
+    if (plan.changesDeviceId) {
+      await result(meta.put({ key: META.deviceId, value: plan.newDeviceId }))
+      await result(
+        meta.put({
+          key: META.formerDeviceIds,
+          value: [...local.formerDeviceIds, local.deviceId],
+        }),
+      )
+    }
+    // A backup that only adds households is already backed up (E5).
+    const onlyAdds =
+      file.kind === 'backup' &&
+      resolution.households.every(
+        (household) =>
+          household.plan.isNew || household.plan.leftOutWhole !== undefined,
+      )
+    if (wrote && !onlyAdds) {
+      const first: unknown = await result(meta.get(META.firstUnbackedChangeAt))
+      if (first === undefined) {
+        await result(meta.put({ key: META.firstUnbackedChangeAt, value: now }))
+      }
+    }
+    return applied
+  })
 }

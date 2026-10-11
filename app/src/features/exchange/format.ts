@@ -78,6 +78,14 @@ function sortedKeys(value: unknown): unknown {
   return value
 }
 
+/**
+ * A value's canonical text: keys sorted, no spacing. Two records are
+ * "equal" when their canonical texts are (E6), so key order never matters.
+ */
+export function canonical(value: unknown): string {
+  return JSON.stringify(sortedKeys(value))
+}
+
 function byId<T extends { id: string }>(records: readonly T[]): T[] {
   return [...records].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
 }
