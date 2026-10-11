@@ -5,7 +5,10 @@
  * reports
  *
  *   (a) JSX text with a letter,
- *   (b) a string-literal `aria-label`, `title`, `placeholder` or `alt`,
+ *   (b) literal text in an `aria-label`, `title`, `placeholder`, `alt` or
+ *       `label` attribute (`label` being the kit components' prop): a
+ *       string or a template, also inside a ternary, `||`, `??`, `&&`,
+ *       parentheses, `as` or `satisfies` (M5, B1, hardening M3's R2-O1),
  *   (c) any other string literal or template text, in any position, that
  *       reads as language: a letter, a space and a letter, or a capital
  *       starting a word and followed by a lower-case letter ("Home"). A
@@ -30,7 +33,13 @@ export interface LiteralFinding {
   text: string
 }
 
-const LABEL_ATTRIBUTES = new Set(['aria-label', 'title', 'placeholder', 'alt'])
+const LABEL_ATTRIBUTES = new Set([
+  'aria-label',
+  'title',
+  'placeholder',
+  'alt',
+  'label',
+])
 
 /** Text that reads as language (rule c). */
 export function readsAsLanguage(text: string): boolean {
@@ -71,24 +80,80 @@ function isSkippedPosition(node: ts.Node): boolean {
 }
 
 /**
- * A label attribute's literal text, written `aria-label="…"` or in braces
- * as `aria-label={'…'}` or a template with no substitution: rule (b)
- * holds for all three, so a lone lower-case word in braces doesn't slip
- * past rule (c) (R1-O2).
+ * The literal text a label attribute's value can show: `aria-label="…"`,
+ * or in braces a string or a template (each literal part of one with
+ * substitutions), reached through a ternary's branches, `||`, `??`, the
+ * right of `&&`, parentheses, `as`, `satisfies` or a type assertion. Rule
+ * (b) holds for all of them, so a lone lower-case word doesn't slip past
+ * rule (c) (R1-O2, R2-O1). A call (`t('…')`) is never looked into.
  */
-function attributeLiteral(
+type LabelLiteral =
+  | ts.StringLiteral
+  | ts.NoSubstitutionTemplateLiteral
+  | ts.TemplateHead
+  | ts.TemplateMiddle
+  | ts.TemplateTail
+
+function labelLiterals(expression: ts.Expression): LabelLiteral[] {
+  if (
+    ts.isStringLiteral(expression) ||
+    ts.isNoSubstitutionTemplateLiteral(expression)
+  ) {
+    return [expression]
+  }
+  if (ts.isTemplateExpression(expression)) {
+    return [
+      expression.head,
+      ...expression.templateSpans.map((span) => span.literal),
+    ]
+  }
+  if (
+    ts.isParenthesizedExpression(expression) ||
+    ts.isAsExpression(expression) ||
+    ts.isSatisfiesExpression(expression) ||
+    ts.isTypeAssertionExpression(expression)
+  ) {
+    return labelLiterals(expression.expression)
+  }
+  if (ts.isConditionalExpression(expression)) {
+    return [
+      ...labelLiterals(expression.whenTrue),
+      ...labelLiterals(expression.whenFalse),
+    ]
+  }
+  if (ts.isBinaryExpression(expression)) {
+    const operator = expression.operatorToken.kind
+    if (
+      operator === ts.SyntaxKind.BarBarToken ||
+      operator === ts.SyntaxKind.QuestionQuestionToken
+    ) {
+      return [
+        ...labelLiterals(expression.left),
+        ...labelLiterals(expression.right),
+      ]
+    }
+    if (operator === ts.SyntaxKind.AmpersandAmpersandToken) {
+      return labelLiterals(expression.right)
+    }
+  }
+  return []
+}
+
+function attributeLiterals(
   initializer: ts.JsxAttributeValue | undefined,
-): string | undefined {
-  if (initializer === undefined) return undefined
-  if (ts.isStringLiteral(initializer)) return initializer.text
-  const expression = ts.isJsxExpression(initializer)
-    ? initializer.expression
-    : undefined
-  return expression !== undefined &&
-    (ts.isStringLiteral(expression) ||
-      ts.isNoSubstitutionTemplateLiteral(expression))
-    ? expression.text
-    : undefined
+): LabelLiteral[] {
+  let literals: LabelLiteral[] = []
+  if (initializer !== undefined && ts.isStringLiteral(initializer)) {
+    literals = [initializer]
+  } else if (
+    initializer !== undefined &&
+    ts.isJsxExpression(initializer) &&
+    initializer.expression !== undefined
+  ) {
+    literals = labelLiterals(initializer.expression)
+  }
+  // Only text with a letter reads as language ('', '0' and '…' don't).
+  return literals.filter((literal) => /\p{L}/u.test(literal.text))
 }
 
 /**
@@ -108,6 +173,8 @@ export function findLiteralText(
     file.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   )
   const findings: LiteralFinding[] = []
+  // A label attribute's literals, reported once under rule (b).
+  const labelled = new Set<ts.Node>()
   const report = (
     node: ts.Node,
     kind: LiteralFinding['kind'],
@@ -124,12 +191,14 @@ export function findLiteralText(
       }
     } else if (
       ts.isJsxAttribute(node) &&
-      LABEL_ATTRIBUTES.has(node.name.getText()) &&
-      attributeLiteral(node.initializer) !== undefined
+      LABEL_ATTRIBUTES.has(node.name.getText())
     ) {
-      const text = attributeLiteral(node.initializer) ?? ''
-      if (!allowed.has(text)) report(node, 'attribute', text)
-      return
+      for (const literal of attributeLiterals(node.initializer)) {
+        labelled.add(literal)
+        if (!allowed.has(literal.text.trim())) {
+          report(literal, 'attribute', literal.text)
+        }
+      }
     } else if (
       ts.isStringLiteral(node) ||
       ts.isNoSubstitutionTemplateLiteral(node) ||
@@ -138,6 +207,7 @@ export function findLiteralText(
       ts.isTemplateTail(node)
     ) {
       if (
+        !labelled.has(node) &&
         readsAsLanguage(node.text) &&
         !allowed.has(node.text) &&
         !isSkippedPosition(node) &&

@@ -2,7 +2,7 @@ import { IconPlus } from '@tabler/icons-react'
 import { useCallback, useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { useRegion } from '../../app/region.ts'
-import { listExpenses } from '../../data/repository.ts'
+import { listExpenses, listSettlements } from '../../data/repository.ts'
 import {
   ExpenseColumns,
   ExpenseRow,
@@ -10,8 +10,16 @@ import {
 import { dateLocale, formatMonth } from '../../features/household/format.ts'
 import { useLoaded } from '../../features/household/householdData.ts'
 import { CATEGORY_IDS, isCategoryId } from '../../features/household/model.ts'
-import { groupByMonth, matchesFilter } from '../../features/household/search.ts'
-import { newestFirst, totalOf } from '../../features/household/totals.ts'
+import { SettlementRow } from '../../features/household/components/SettlementRow.tsx'
+import {
+  groupEntriesByMonth,
+  matchesFilter,
+  newestEntryFirst,
+  settlementMatches,
+  type HistoryEntry,
+} from '../../features/household/search.ts'
+import { totalOf } from '../../features/household/totals.ts'
+import { displayName } from '../../features/split/model.ts'
 import { useLanguage } from '../../i18n/language.ts'
 import { Amount } from '../../ui/Amount.tsx'
 import { Card } from '../../ui/Card.tsx'
@@ -24,6 +32,8 @@ import styles from './households.module.css'
  * A household's history (M4 plan, H12): every expense, newest first by
  * month, filtered by member and category, with a search. The filters live
  * in the URL (`?member=&category=&q=`), so Back and a reload keep them.
+ * Payments are listed among the expenses, styled apart, and never count
+ * in a month's total or the count (M5 plan, B8).
  */
 export function ExpensesPage() {
   const { t, language } = useLanguage()
@@ -33,7 +43,13 @@ export function ExpensesPage() {
   const locale = dateLocale(language, region.locale)
   const base = `/households/${household.id}`
   const loaded = useLoaded(
-    useCallback((db) => listExpenses(db, household.id), [household.id]),
+    useCallback(
+      async (db: IDBDatabase) => ({
+        expenses: await listExpenses(db, household.id),
+        settlements: await listSettlements(db, household.id),
+      }),
+      [household.id],
+    ),
   )
 
   const memberParam = params.get('member')
@@ -52,20 +68,32 @@ export function ExpensesPage() {
     setParams(next, { replace: true })
   }
 
+  const byId = useMemo(() => new Map(members.map((m) => [m.id, m])), [members])
   const all = useMemo(
-    () => (loaded.state === 'ready' ? loaded.value.items : []),
+    () => (loaded.state === 'ready' ? loaded.value.expenses.items : []),
     [loaded],
   )
-  const shown = useMemo(
-    () =>
-      all
-        .filter((expense) =>
-          matchesFilter(expense, { memberId, category, query }, t),
-        )
-        .sort(newestFirst),
-    [all, memberId, category, query, t],
+  const payments = useMemo(
+    () => (loaded.state === 'ready' ? loaded.value.settlements.items : []),
+    [loaded],
   )
-  const byId = new Map(members.map((m) => [m.id, m]))
+  const shown = useMemo(() => {
+    const filter = { memberId, category, query }
+    const nameOf = (id: string) => {
+      const member = byId.get(id)
+      return member === undefined ? '' : displayName(t, member, member.position)
+    }
+    const entries: HistoryEntry[] = [
+      ...all
+        .filter((expense) => matchesFilter(expense, filter, t))
+        .map((expense) => ({ kind: 'expense' as const, expense })),
+      ...payments
+        .filter((settlement) => settlementMatches(settlement, filter, nameOf))
+        .map((settlement) => ({ kind: 'settlement' as const, settlement })),
+    ]
+    return entries.sort(newestEntryFirst)
+  }, [all, payments, memberId, category, query, t, byId])
+  const shownExpenses = shown.filter((entry) => entry.kind === 'expense')
   const filtered =
     memberId !== undefined || category !== undefined || query.trim() !== ''
 
@@ -111,9 +139,9 @@ export function ExpensesPage() {
       {loaded.state === 'ready' && (
         <>
           <p className={styles.summary} role="status">
-            {t('expenses.count', { count: shown.length })}
+            {t('expenses.count', { count: shownExpenses.length })}
           </p>
-          {all.length === 0 ? (
+          {all.length === 0 && payments.length === 0 ? (
             <Card>
               <p className={styles.hint}>{t('overview.firstExpense')}</p>
               <p>
@@ -135,7 +163,7 @@ export function ExpensesPage() {
               )}
             </Card>
           ) : (
-            groupByMonth(shown).map((group) => (
+            groupEntriesByMonth(shown).map((group) => (
               <section
                 key={group.month}
                 className={styles.monthGroup}
@@ -143,29 +171,56 @@ export function ExpensesPage() {
               >
                 <h2 id={`month-${group.month}`} className={styles.monthHeading}>
                   <span>{formatMonth(group.month, locale)}</span>
-                  <Amount value={totalOf(group.expenses)} region={region} />
+                  <Amount
+                    value={totalOf(
+                      group.entries.flatMap((entry) =>
+                        entry.kind === 'expense' ? [entry.expense] : [],
+                      ),
+                    )}
+                    region={region}
+                  />
                 </h2>
                 <Card>
                   <ExpenseColumns t={t} />
                   <ul className={styles.list}>
-                    {group.expenses.map((expense) => (
-                      <ExpenseRow
-                        key={expense.id}
-                        expense={expense}
-                        members={byId}
-                        region={region}
-                        locale={locale}
-                        t={t}
-                      />
-                    ))}
+                    {group.entries.map((entry) =>
+                      entry.kind === 'expense' ? (
+                        <ExpenseRow
+                          key={entry.expense.id}
+                          expense={entry.expense}
+                          members={byId}
+                          region={region}
+                          locale={locale}
+                          t={t}
+                        />
+                      ) : (
+                        <SettlementRow
+                          key={entry.settlement.id}
+                          settlement={entry.settlement}
+                          members={byId}
+                          region={region}
+                          locale={locale}
+                          t={t}
+                        />
+                      ),
+                    )}
                   </ul>
                 </Card>
               </section>
             ))
           )}
-          {loaded.value.unreadable > 0 && (
+          {loaded.value.expenses.unreadable > 0 && (
             <p className={styles.hint}>
-              {t('expenses.unreadable', { count: loaded.value.unreadable })}
+              {t('expenses.unreadable', {
+                count: loaded.value.expenses.unreadable,
+              })}
+            </p>
+          )}
+          {loaded.value.settlements.unreadable > 0 && (
+            <p className={styles.hint}>
+              {t('expenses.unreadablePayments', {
+                count: loaded.value.settlements.unreadable,
+              })}
             </p>
           )}
         </>

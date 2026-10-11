@@ -447,6 +447,7 @@ export const en = {
       label: 'Household',
       overview: 'Overview',
       expenses: 'Expenses',
+      balances: 'Balances',
       members: 'Members',
     },
     archivedNotice: 'This household is archived.',
@@ -458,6 +459,9 @@ export const en = {
     },
     storage: {
       unavailableTitle: 'Households can’t be saved here',
+      migrationFailedTitle: 'Settle couldn’t update its data',
+      migrationFailed:
+        'Settle couldn’t update the data on this device. Nothing was changed. Reload to try again; your split still works.',
       unavailable:
         'This browser isn’t letting Settle save households, often in a private window or with site data blocked. Your split still works.',
       outdated:
@@ -489,11 +493,11 @@ export const en = {
     deleteFor: 'Delete {name}',
     deleteTitle: 'Delete {name}?',
     deleteBody:
-      '{name} isn’t on any expense, so they can be deleted. This can’t be undone.',
+      '{name} can be deleted if they aren’t on any expense or payment. This can’t be undone.',
     inUse:
-      '{name} is on expenses, so they can’t be deleted. Mark them as left instead.',
+      '{name} is on expenses or payments, so they can’t be deleted. Mark them as left instead.',
     unreadable:
-      'Some expenses in this household couldn’t be read, so this person can’t be deleted. Mark them as left instead.',
+      'Some expenses or payments in this household couldn’t be read, so this person can’t be deleted. Mark them as left instead.',
     add: {
       title: 'Add a person',
       name: 'Name',
@@ -545,10 +549,13 @@ export const en = {
     theRest: 'The rest',
     percent: '{percent} %',
     byDay: 'Day by day',
-    byDayChart: 'Spending each day in {month}: {days}.',
+    byDaySummary: '{total} spent in {month}; the most on {day}, {amount}.',
     byDayNone: 'Nothing spent in {month}.',
     lastMonths: 'The last six months',
     monthBar: '{month}: {amount}',
+    monthBarCurrent: '{month}, this month: {amount}',
+    lastMonthsSummary:
+      '{total} over the six months; the most in {month}, {amount}.',
     upTo: 'Up to {amount}',
   },
 
@@ -575,6 +582,10 @@ export const en = {
     unreadable: {
       one: '{count} expense couldn’t be read. It is kept as it was.',
       other: '{count} expenses couldn’t be read. They are kept as they were.',
+    },
+    unreadablePayments: {
+      one: '{count} payment couldn’t be read. It is kept as it was.',
+      other: '{count} payments couldn’t be read. They are kept as they were.',
     },
     itemCount: { one: '({count} item)', other: '({count} items)' },
   },
@@ -688,5 +699,140 @@ export const en = {
       deleted: 'This expense was deleted in another tab, so it wasn’t saved.',
       save: 'This expense couldn’t be saved. Try again.',
     },
+  },
+
+  balances: {
+    title: 'Balances',
+    settleIn: {
+      one: 'Settle up in {count} payment.',
+      other: 'Settle up in {count} payments.',
+    },
+    settled: 'Everyone is settled up.',
+    incompleteHeading: 'Balances from the records that could be read.',
+    incomplete: {
+      one: '{count} record couldn’t be read, so these balances leave something out. Settle up isn’t suggested until it can be read.',
+      other:
+        '{count} records couldn’t be read, so these balances leave something out. Settle up isn’t suggested until they can be read.',
+    },
+    noBalanceIncomplete: 'No balance in the records that could be read.',
+    getsBack: 'Gets back',
+    owes: 'Owes',
+    settledUp: 'Settled up',
+    noBalance: 'No balance',
+    paid: 'Paid {amount}',
+    leftOn: 'Left on {date}',
+    settleUp: 'Settle up',
+    settleUpHint: {
+      one: 'One payment clears every balance.',
+      other: '{count} payments clear every balance.',
+    },
+    pays: '{from} pays {to}',
+    markAsPaid: 'Mark as paid',
+    markAsPaidFor: 'Mark as paid: {from} pays {to} {amount}',
+    record: 'Record a payment',
+    on: 'Balances on',
+    onHint: 'All expenses and payments',
+    onNotice: 'These are the balances on {date}.',
+    showAll: 'Show all',
+    future: {
+      expenses: { one: '{count} expense', other: '{count} expenses' },
+      payments: { one: '{count} payment', other: '{count} payments' },
+      one: 'Includes {what} dated after today.',
+      both: 'Includes {expenses} and {payments} dated after today.',
+    },
+    noRecords: 'No expenses or payments yet.',
+    addExpense: 'Add an expense',
+    across: 'Across all expenses and payments.',
+    details: 'Details',
+    overviewIncomplete: {
+      one: '{count} record couldn’t be read.',
+      other: '{count} records couldn’t be read.',
+    },
+    recorded: 'Payment recorded.',
+    copy: 'Copy as text',
+    copied: 'Copied.',
+    copyFailed: 'Couldn’t copy. Your browser blocked it.',
+    share: 'Share',
+  },
+
+  payment: {
+    title: 'Record a payment',
+    editTitle: 'Edit payment',
+    from: 'From',
+    to: 'To',
+    amount: 'Amount',
+    date: 'Date',
+    note: 'Note',
+    noteHint: 'Optional, up to 80 characters.',
+    choose: 'Choose someone',
+    left: '{name} (left)',
+    after: 'After this, {first} and {second}.',
+    outcome: {
+      owes: '{name} owes {amount}',
+      getsBack: '{name} gets back {amount}',
+      settled: '{name} is settled up',
+    },
+    incomplete: {
+      one: '{count} record couldn’t be read, so the outcome isn’t shown.',
+      other: '{count} records couldn’t be read, so the outcome isn’t shown.',
+    },
+    save: 'Save payment',
+    cancel: 'Cancel',
+    errors: {
+      choose: 'Choose who paid and who received.',
+      same: 'Choose two different people.',
+      date: 'Enter a date.',
+      dateRange: 'Use a date from 2000 to a year from today.',
+      note: 'Use 80 characters or fewer.',
+      gone: 'Someone on this payment was removed in another tab. Check the people and save again.',
+      deleted: 'This payment was deleted in another tab, so it wasn’t saved.',
+      save: 'This payment couldn’t be saved. Try again.',
+    },
+  },
+
+  explain: {
+    title: '{name}’s balance',
+    back: 'All balances',
+    sums: 'Paid {paid} · Share {share} · Sent {sent} · Received {received}',
+    expenseLine: 'Paid {paid} · Share {share}',
+    paidTo: 'Paid {name}',
+    from: 'From {name}',
+    total: 'Balance',
+    nothing: 'No expenses or payments for {name} yet.',
+  },
+
+  history: {
+    paid: '{from} paid {to}',
+    paymentRow: 'Payment, {date}, {paid}, {amount}',
+  },
+
+  paymentView: {
+    from: 'From',
+    to: 'To',
+    date: 'Date',
+    note: 'Note',
+    edit: 'Edit',
+    delete: 'Delete',
+    deleteTitle: 'Delete this payment?',
+    deleteBody: 'The balances change back.',
+    deleteConfirm: 'Delete payment',
+    cancel: 'Cancel',
+    deleteFailed: 'This payment couldn’t be deleted. Try again.',
+    notFoundTitle: 'Payment not found',
+    notFound:
+      'This payment doesn’t exist any more. It may have been deleted in another tab.',
+    close: 'Close',
+  },
+
+  balanceText: {
+    header: '{name}, balances',
+    getsBack: '{name} gets back {amount}',
+    owes: '{name} owes {amount}',
+    settled: '{name} is settled up',
+    toSettle: {
+      one: 'To settle up, {count} payment:',
+      other: 'To settle up, {count} payments:',
+    },
+    pays: '{from} pays {to} {amount}',
   },
 } as const

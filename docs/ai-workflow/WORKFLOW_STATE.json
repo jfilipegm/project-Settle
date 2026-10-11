@@ -4831,6 +4831,478 @@
           "completed_at": "2026-10-10T15:12:48Z"
         }
       }
+    },
+    "milestone-5": {
+      "work_item_type": "product",
+      "work_item_kind": "product",
+      "work_item_id": "milestone-5",
+      "parent_work_item_id": null,
+      "plan_path": "docs/milestones/milestone-5-PLAN.md",
+      "registry_path": "docs/ai-workflow/registry/milestone-5-registry.json",
+      "mapping_path": "docs/ai-workflow/requirements/milestone-5-mapping.json",
+      "governing_workflow_version": "2.2",
+      "phase": "MILESTONE_COMPLETE",
+      "plan_revision": 4,
+      "implementation_revision": 2,
+      "functional_review_round": null,
+      "base_commit": "5222a92699b94b4365de2abed6f2b289b68a9e70",
+      "reviewed_implementation_head": "ab7131ea88cec3f23aab11a64862a7df3c55120b",
+      "current_checkpoint_id": null,
+      "last_completed_checkpoint_id": "CP6",
+      "checkpoints": {
+        "CP1": {
+          "status": "COMPLETE",
+          "start_commit": "bc85333782868cd3e3d6471d7400722d06946799"
+        },
+        "CP2": {
+          "status": "COMPLETE",
+          "start_commit": "8294aa4863c53af6b7c55b1f1270ddfdd1b65e40"
+        },
+        "CP3": {
+          "status": "COMPLETE",
+          "start_commit": "b810871531613fe7c3ba1c81ee6339b64c751c95"
+        },
+        "CP4": {
+          "status": "COMPLETE",
+          "start_commit": "99759c76c68e26f742bbeb1f9caedab902d5d4c2"
+        },
+        "CP5": {
+          "status": "COMPLETE",
+          "start_commit": "e4232d1818554f12952e9ff2463b5135dbf4d3a8"
+        },
+        "CP6": {
+          "status": "COMPLETE",
+          "start_commit": "55099a675930f18c4b4c1dcc87a8d6ba8ec81866"
+        }
+      },
+      "current_bundle_id": "eea85f72bc8261a5a848104bb691738a8fa71e53b117071f21731d8cedf21857",
+      "plan_approval": {
+        "status": "CURRENT",
+        "basis": "USER_OVERRIDE",
+        "reviewed_bundle_id": "eea85f72bc8261a5a848104bb691738a8fa71e53b117071f21731d8cedf21857",
+        "approved_review_content_id": "0e7db6b23e8dde5c3dbe753953d483731fab87cdaaab053b80ba3938e3dc3503",
+        "review_content_manifest": [
+          {
+            "path": "docs/ai-workflow/registry/milestone-5-registry.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3ec55e38b03174d636756bf369d6145b04849e2f"
+          },
+          {
+            "path": "docs/ai-workflow/requirements/milestone-5-mapping.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3b42c6099cd377ba7f7667bd3930724c603b8885"
+          },
+          {
+            "path": "docs/milestones/milestone-5-PLAN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9a3a9df55956e1d6da68ad2f4c9bfc245be9d32c"
+          }
+        ],
+        "reviewed_content_commit": null,
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-5 plan",
+        "waived_guarantees": [],
+        "recorded_at": "2026-10-10T20:23:57Z"
+      },
+      "technical_approval": {
+        "status": "CURRENT",
+        "basis": "EXTERNAL_APPROVE",
+        "reviewed_bundle_id": "aa543d5914a34a8a02e25f38a00bc4fb0bbd29099d43d165ff88af1b36a541b7",
+        "approved_review_content_id": "5f20c4dca6585beb94791fac6d483c67ec06e0b7a4cf7911e776e0e362ce5635",
+        "review_content_manifest": [
+          {
+            "path": "README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "2e09419ec16d49d97d43f3ed9254e59eaab1c688"
+          },
+          {
+            "path": "app/README.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "278dd822eb74300318d04cf2955bf0d2f80ea80b"
+          },
+          {
+            "path": "app/scripts/screens.mjs",
+            "exists": true,
+            "mode": "100644",
+            "blob": "306bf31b3a6605c2d221f2822898eacc6a0f82c7"
+          },
+          {
+            "path": "app/src/app/routes.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "be93bf0b14255dbf248141a807ee2c7d09971519"
+          },
+          {
+            "path": "app/src/data/completion.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d1baf1ef96bc7ad82113d67a65a57eddeafc2005"
+          },
+          {
+            "path": "app/src/data/db.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "073bf43c73872ebc49d6d473e018a52ddeafaa2e"
+          },
+          {
+            "path": "app/src/data/db.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d6d5d79b3eb29260a634b3334b03bf2890e3bb42"
+          },
+          {
+            "path": "app/src/data/fixtures/v2.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "72b754723ffe42d85a3bf8abc772e59a2f2ffa99"
+          },
+          {
+            "path": "app/src/data/records.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d3ca83259b41102bbea65e161b871fc9ed994b71"
+          },
+          {
+            "path": "app/src/data/repository.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b4ddde0c026dfffba7542a36a43d2a488256b51a"
+          },
+          {
+            "path": "app/src/data/settlements.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "70650b7d701b9bb774b8d22e40d38a7f431f13db"
+          },
+          {
+            "path": "app/src/features/household/HouseholdDataProvider.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c95c899d5e4e19545a43eaa703a2e4242852e9fb"
+          },
+          {
+            "path": "app/src/features/household/balanceText.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1c4762d2597d4d774ded46e9f71103ae0787ece2"
+          },
+          {
+            "path": "app/src/features/household/balanceText.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "297ec3e29d55e549a6fcaff3b4c29bd71363d88a"
+          },
+          {
+            "path": "app/src/features/household/balanceWords.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f5e9ff73a668e81665e6e9147e9dd1e92bd3f929"
+          },
+          {
+            "path": "app/src/features/household/balances.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "10d0e1013527e0cfc6a874e7a9ef804f24e65664"
+          },
+          {
+            "path": "app/src/features/household/balances.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "83a7b27755a0fb65d08574359681c95a63aadc69"
+          },
+          {
+            "path": "app/src/features/household/components/ExpenseRow.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "658d531d2b4fd8aa8dd3c44275afcaed60e387d6"
+          },
+          {
+            "path": "app/src/features/household/components/MonthCharts.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d32c3a1cbee491c242d098779ccb23cd91b3927f"
+          },
+          {
+            "path": "app/src/features/household/components/SettlementForm.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "83be0c836a8dae13ae3b8133ccb96c7cdcd09b97"
+          },
+          {
+            "path": "app/src/features/household/components/SettlementRow.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b9e12b687fd77719fad4944453b235c02df3aede"
+          },
+          {
+            "path": "app/src/features/household/householdData.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f92344d0c4b6ef9d5e4eb919e46f02e9cac8967b"
+          },
+          {
+            "path": "app/src/features/household/model.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0538e16d86aa6b6b5e5bb4891e88f70690a41caa"
+          },
+          {
+            "path": "app/src/features/household/model.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0c42768eedadb8b6ba3e20a301798b2b1490da4c"
+          },
+          {
+            "path": "app/src/features/household/search.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "3a23387759d8dd930736c20bb94c74dc5c61d958"
+          },
+          {
+            "path": "app/src/i18n/en.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0e2c842f87b21f2a7a16ea16a90068ffc85ec0ad"
+          },
+          {
+            "path": "app/src/i18n/literalText.test.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7a8c0f18a15124483e80143c87429778fe577cbd"
+          },
+          {
+            "path": "app/src/i18n/pt.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "41e2e9ad388c735861a2fac0c48220c5cacf6d2e"
+          },
+          {
+            "path": "app/src/pages/households/BalanceDetailPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "7c94368f911b260c074b34b75cc58d2c4d4a6678"
+          },
+          {
+            "path": "app/src/pages/households/BalancesCard.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "518b9c2745c9fa8b57bfd602f69435bc670c7438"
+          },
+          {
+            "path": "app/src/pages/households/BalancesPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "dc10460580993e9df029a7b6954bf954dd637170"
+          },
+          {
+            "path": "app/src/pages/households/ExpensesPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f57d2b79317234f7f561ff9de540b99911ab05db"
+          },
+          {
+            "path": "app/src/pages/households/HouseholdShell.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "dc210ca7268a5c04e167548938e3b72faa60d7fe"
+          },
+          {
+            "path": "app/src/pages/households/OverviewPage.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5164c885128d327e382d8c9921f453030ca943f8"
+          },
+          {
+            "path": "app/src/pages/households/SettlementDialog.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "c1b20f894f094f19e0b8ca690867b8252022b471"
+          },
+          {
+            "path": "app/src/pages/households/StorageState.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "d8bbf72e9d36b9fac921791e8650a13f4e1ab224"
+          },
+          {
+            "path": "app/src/pages/households/balances.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "ed2dc1c5c14d8ccc62924ab61915c6971fac391f"
+          },
+          {
+            "path": "app/src/pages/households/households.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9f1565608bfa43ff21381f7f8e5d402f001bfb0d"
+          },
+          {
+            "path": "app/src/pages/households/households.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9d04353e6b7c640e0e93d583fb954ffb8186f3b0"
+          },
+          {
+            "path": "app/src/pages/households/overviewCharts.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "fe65f2b4711e441eda3265ddf2dea814fbb89323"
+          },
+          {
+            "path": "app/src/pages/households/payments.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "5746f9c5c163ca39edd215a08ff305ccfb27170c"
+          },
+          {
+            "path": "app/src/pages/households/storageState.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b3c05f32959423b6ac1ee9818afadc9247663995"
+          },
+          {
+            "path": "app/src/test/households.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9aa1aaf8581b4d0f3d6e3db4fff3ada33cf98fbd"
+          },
+          {
+            "path": "app/src/test/literalText.ts",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9137d16e7de78367e08814a6733138f3dcfbcace"
+          },
+          {
+            "path": "app/src/ui/Card.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b10bf7f3fcff262d9ca560e84058c630607e9a88"
+          },
+          {
+            "path": "app/src/ui/Charts.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "f9d17cfb35bb5072cb10f4383041cbda7b4dbd9b"
+          },
+          {
+            "path": "app/src/ui/Charts.test.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "a113833d931dac252b8ab7cf8d8f8dfbdcf86f27"
+          },
+          {
+            "path": "app/src/ui/Charts.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "149c550933b23bcbac76b999d82aa6fac06fd12c"
+          },
+          {
+            "path": "app/src/ui/Tabs.module.css",
+            "exists": true,
+            "mode": "100644",
+            "blob": "9903859679799d28a197dab1d9358be966981d9f"
+          },
+          {
+            "path": "app/src/ui/gallery/KitGallery.tsx",
+            "exists": true,
+            "mode": "100644",
+            "blob": "1c85adc634a3679179a7a979c0cd63b11c5f56d1"
+          },
+          {
+            "path": "docs/DESIGN.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "29a6330fbc1750a3fd22de5aff36aa4fa6f04e6b"
+          },
+          {
+            "path": "docs/adr/0005-local-ledger-store.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "8845f3503e0f49da822eab9518c350f7551d5728"
+          },
+          {
+            "path": "docs/adr/0006-balances-and-settlement.md",
+            "exists": true,
+            "mode": "100644",
+            "blob": "b56a3021b92d3307bd15b8db07d51d63fbe04324"
+          },
+          {
+            "path": "docs/ai-workflow/registry/milestone-5-artifacts.json",
+            "exists": true,
+            "mode": "100644",
+            "blob": "0cf5141d43e57111aff35a3e33e16f69489f5966"
+          }
+        ],
+        "reviewed_content_commit": "ab7131ea88cec3f23aab11a64862a7df3c55120b",
+        "legacy_evidence": null,
+        "user_confirmation": "I approve milestone-5 implementation",
+        "waived_guarantees": [],
+        "recorded_at": "2026-10-11T14:36:13Z"
+      },
+      "technical_review_block_pins": [],
+      "plan_review_stages": {
+        "review_content_id": "0e7db6b23e8dde5c3dbe753953d483731fab87cdaaab053b80ba3938e3dc3503",
+        "LOCAL_MODEL_PLAN_REVIEW": {
+          "bundle_id": "eea85f72bc8261a5a848104bb691738a8fa71e53b117071f21731d8cedf21857",
+          "verdict": "APPROVE",
+          "round": 4,
+          "completed_at": "2026-10-10T19:47:14Z"
+        },
+        "MANUAL_EXTERNAL_PLAN_REVIEW": {
+          "bundle_id": "eea85f72bc8261a5a848104bb691738a8fa71e53b117071f21731d8cedf21857",
+          "verdict": "APPROVE",
+          "round": 4,
+          "completed_at": "2026-10-10T20:20:43Z"
+        }
+      },
+      "functional_acceptance_status": null,
+      "blocking_decisions": [],
+      "state_revision": 39,
+      "last_transition": "2026-10-11T14:43:51Z",
+      "feedback_layout": "scoped",
+      "plan_review_binding": {
+        "status": "BOUND",
+        "at": "2026-10-10T19:44:32Z",
+        "consumed": {
+          "review_content_id": "747cc7f8463fc229d5768f6f4abfefec62cc0b7e095a9479e1b5271057a7f9ef",
+          "plan_revision": 3,
+          "legacy": false
+        },
+        "published": {
+          "review_content_id": "0e7db6b23e8dde5c3dbe753953d483731fab87cdaaab053b80ba3938e3dc3503",
+          "plan_revision": 4
+        },
+        "bound": {
+          "review_content_id": "0e7db6b23e8dde5c3dbe753953d483731fab87cdaaab053b80ba3938e3dc3503",
+          "bundle_id": "eea85f72bc8261a5a848104bb691738a8fa71e53b117071f21731d8cedf21857",
+          "plan_revision": 4
+        }
+      },
+      "consumed_plan_review_content_ids": [
+        "27069e4af0d42396d3f7981779d45770e1128ebc5ad9dc1ceb6abef102ffd114",
+        "2b0a4f0c311b3fb83f6bd84c8fc5ba61e1836839c12b08efc7ab011d04e2a2b7",
+        "747cc7f8463fc229d5768f6f4abfefec62cc0b7e095a9479e1b5271057a7f9ef"
+      ],
+      "implementation_review_stages": {
+        "review_content_id": "5f20c4dca6585beb94791fac6d483c67ec06e0b7a4cf7911e776e0e362ce5635",
+        "LOCAL_MODEL_IMPLEMENTATION_REVIEW": {
+          "bundle_id": "aa543d5914a34a8a02e25f38a00bc4fb0bbd29099d43d165ff88af1b36a541b7",
+          "verdict": "APPROVE",
+          "round": 3,
+          "completed_at": "2026-10-11T14:30:11Z"
+        },
+        "MANUAL_EXTERNAL_IMPLEMENTATION_REVIEW": {
+          "bundle_id": "aa543d5914a34a8a02e25f38a00bc4fb0bbd29099d43d165ff88af1b36a541b7",
+          "verdict": "APPROVE",
+          "round": 3,
+          "completed_at": "2026-10-11T14:34:55Z"
+        }
+      }
     }
   }
 }

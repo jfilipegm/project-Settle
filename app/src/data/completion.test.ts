@@ -4,6 +4,11 @@
  * REQ-11): a household with 4 members, 30+ expenses of both kinds, a
  * member who leaves and one who joins, and several corrections survives a
  * reload and an app update. Over the real repositories and fake-indexeddb.
+ *
+ * M5 extends it (plan, acceptance targets, "The completion scenario"):
+ * the same household with payments has the same balances, suggestion and
+ * explanations across a reload and across the real version-1 to
+ * version-2 upgrade.
  */
 import { describe, expect, it } from 'vitest'
 import fixture from './fixtures/v1.json'
@@ -14,7 +19,7 @@ import {
   household,
   member,
   putRaw,
-  testSchemaV2,
+  testSchemaV3,
   withoutVersion,
 } from '../test/households.ts'
 import { createBill } from '../features/split/billReducer.ts'
@@ -23,7 +28,14 @@ import {
   RECORD_VERSION,
   type Expense,
   type QuickSplit,
+  type Settlement,
 } from '../features/household/model.ts'
+import {
+  balances,
+  explainBalance,
+  suggestSettlements,
+  type LedgerInput,
+} from '../features/household/balances.ts'
 import { expenseShares } from '../features/household/shares.ts'
 import {
   categoryTotals,
@@ -31,15 +43,23 @@ import {
   totalOf,
 } from '../features/household/totals.ts'
 import { cents } from '../lib/money.ts'
-import { createSchemaV1, openDatabase } from './db.ts'
+import {
+  MIGRATIONS,
+  createSchemaV1,
+  openDatabase,
+  type Migration,
+} from './db.ts'
 import {
   addMember,
   createHousehold,
   deleteExpense,
+  deleteSettlement,
   listExpenses,
+  listSettlements,
   listHouseholds,
   listMembers,
   saveExpense,
+  saveSettlement,
   setMemberLeft,
 } from './repository.ts'
 
@@ -168,8 +188,11 @@ async function snapshot(db: IDBDatabase) {
   }
 }
 
-async function buildScenario(factory: IDBFactory) {
-  const db = await openDatabase(factory)
+async function buildScenario(
+  factory: IDBFactory,
+  migrations: readonly Migration[] = MIGRATIONS,
+) {
+  const db = await openDatabase(factory, { migrations })
   await createHousehold(
     db,
     household(),
@@ -261,14 +284,14 @@ describe('the M4 completion scenario (REQ-11)', () => {
     expect(await snapshot(reloaded)).toEqual(before)
     reloaded.close()
 
-    // 2. An app update: the test-only version-2 upgrade (L1-I1).
+    // 2. An app update: the test-only version-3 upgrade (L1-I1).
     const upgraded = await openDatabase(factory, {
-      migrations: [createSchemaV1, testSchemaV2],
+      migrations: [...MIGRATIONS, testSchemaV3],
     })
     const raw = await getRaw(upgraded)
     expect(raw.expenses.every((r) => (r as { v: number }).v === 2)).toBe(true)
     upgraded.close()
-    // Read back with version-2-aware eyes: the content, without `v`.
+    // Read back with version-3-aware eyes: the content, without `v`.
     const v1Again = freshFactory()
     const back = await openDatabase(v1Again)
     await putRaw(back, {
@@ -282,7 +305,7 @@ describe('the M4 completion scenario (REQ-11)', () => {
     // 3. A fixture round trip: the raw records into a fresh database.
     const exported = await getRaw(
       await openDatabase(factory, {
-        migrations: [createSchemaV1, testSchemaV2],
+        migrations: [...MIGRATIONS, testSchemaV3],
       }),
     )
     const trip = await openDatabase(freshFactory())
@@ -316,5 +339,129 @@ describe('the M4 completion scenario (REQ-11)', () => {
       [...fixture.expenses].sort((a, b) => a.id.localeCompare(b.id)),
     )
     again.close()
+  })
+})
+
+/** What the balances read as: every member's, the suggestion, each explanation. */
+async function ledgerSnapshot(db: IDBDatabase) {
+  const members = await listMembers(db, 'h1')
+  const expenses = await listExpenses(db, 'h1')
+  const settlements = db.objectStoreNames.contains('settlements')
+    ? await listSettlements(db, 'h1')
+    : { items: [], unreadable: 0 }
+  const input: LedgerInput = {
+    members: members.items,
+    expenses: expenses.items,
+    settlements: settlements.items,
+    unreadable: {
+      members: members.unreadable,
+      expenses: expenses.unreadable,
+      settlements: settlements.unreadable,
+    },
+  }
+  const result = balances(input)
+  return {
+    result,
+    suggestion: suggestSettlements(result.members),
+    explanations: result.members.map((row) =>
+      explainBalance(input, row.memberId),
+    ),
+  }
+}
+
+describe('the M5 completion scenario: balances and payments', () => {
+  it('keeps the balances across the real version-1 to version-2 upgrade', async () => {
+    const factory = freshFactory()
+    const v1 = await buildScenario(factory, [createSchemaV1])
+    expect(v1.version).toBe(1)
+    const before = await ledgerSnapshot(v1)
+    expect(before.result.complete).toBe(true)
+    expect(before.result.members.reduce((a, r) => a + r.balance, 0)).toBe(0)
+    expect(before.suggestion.length).toBeGreaterThan(0)
+    v1.close()
+
+    const v2 = await openDatabase(factory)
+    expect(v2.version).toBe(2)
+    expect(await ledgerSnapshot(v2)).toEqual(before)
+    v2.close()
+  })
+
+  it('records five payments, then survives a reload with the same balances', async () => {
+    const factory = freshFactory()
+    const db = await buildScenario(factory)
+    const start = await ledgerSnapshot(db)
+    const payment = (
+      id: string,
+      fromId: string,
+      toId: string,
+      amount: number,
+    ): Settlement => ({
+      v: RECORD_VERSION,
+      id,
+      householdId: 'h1',
+      fromId,
+      toId,
+      amount: cents(amount),
+      date: '2026-10-05',
+      createdAt: NOW,
+      updatedAt: NOW,
+    })
+
+    // Two from the suggestion, as Mark as paid records them.
+    const [first] = start.suggestion
+    if (first === undefined) throw new Error('no suggestion')
+    await saveSettlement(
+      db,
+      payment('s1', first.fromId, first.toId, first.amount),
+    )
+    const [second] = (await ledgerSnapshot(db)).suggestion
+    if (second === undefined) throw new Error('no second suggestion')
+    await saveSettlement(
+      db,
+      payment('s2', second.fromId, second.toId, second.amount),
+    )
+    // One partial: half of the next suggestion. The rest stays owed.
+    const beforePartial = await ledgerSnapshot(db)
+    const [third] = beforePartial.suggestion
+    if (third === undefined) throw new Error('no third suggestion')
+    const half = Math.floor(third.amount / 2)
+    await saveSettlement(db, payment('s3', third.fromId, third.toId, half))
+    const balanceOf = (snap: typeof start, id: string) =>
+      snap.result.members.find((r) => r.memberId === id)?.balance
+    const afterPartial = await ledgerSnapshot(db)
+    expect(balanceOf(afterPartial, third.fromId)).toBe(
+      (balanceOf(beforePartial, third.fromId) ?? 0) + half,
+    )
+    expect(balanceOf(afterPartial, third.fromId)).toBeLessThan(0)
+    // One by João, who has left.
+    await saveSettlement(db, payment('s4', 'joao', 'ana', 1234))
+    // One edited, one deleted.
+    await saveSettlement(db, payment('s5', 'marta', 'rui', 5000))
+    await saveSettlement(
+      db,
+      { ...payment('s5', 'marta', 'rui', 2500), updatedAt: 'edit' },
+      {
+        replacing: true,
+      },
+    )
+    await saveSettlement(db, payment('s6', 'tiago', 'marta', 777))
+    await deleteSettlement(db, 's6')
+
+    const before = await ledgerSnapshot(db)
+    expect(
+      (await listSettlements(db, 'h1')).items.map((s) => s.id).sort(),
+    ).toEqual(['s1', 's2', 's3', 's4', 's5'])
+    expect(before.result.complete).toBe(true)
+    expect(before.result.members.reduce((a, r) => a + r.balance, 0)).toBe(0)
+    for (const explained of before.explanations) {
+      expect(explained?.lines.reduce((a, l) => a + l.effect, 0)).toBe(
+        explained?.balance.balance,
+      )
+    }
+    db.close()
+
+    const reloaded = await openDatabase(factory)
+    expect(await ledgerSnapshot(reloaded)).toEqual(before)
+    reloaded.close()
   })
 })

@@ -17,6 +17,8 @@ import {
   type ItemisedSplit,
   type Member,
   type QuickSplit,
+  type Settlement,
+  settlementContentErrors,
 } from '../features/household/model.ts'
 import { readBill } from '../features/split/draft.ts'
 
@@ -227,4 +229,36 @@ export function readExpense(value: Json): Expense | null {
   }
   if (value.receiptKey !== undefined) expense.receiptKey = value.receiptKey
   return expenseContentErrors(expense).length === 0 ? expense : null
+}
+
+/** A payment (M5, B2), from known fields only, or `null`. */
+export function readSettlement(value: Json): Settlement | null {
+  if (
+    !isObject(value) ||
+    value.v !== RECORD_VERSION ||
+    !isString(value.id) ||
+    !isString(value.householdId) ||
+    !isString(value.fromId) ||
+    !isString(value.toId) ||
+    !isCents(value.amount) ||
+    !isString(value.date) ||
+    !optionalString(value.note) ||
+    !isString(value.createdAt) ||
+    !isString(value.updatedAt)
+  ) {
+    return null
+  }
+  const settlement: Settlement = {
+    v: RECORD_VERSION,
+    id: value.id,
+    householdId: value.householdId,
+    fromId: value.fromId,
+    toId: value.toId,
+    amount: value.amount,
+    date: value.date,
+    createdAt: value.createdAt,
+    updatedAt: value.updatedAt,
+  }
+  if (value.note !== undefined) settlement.note = value.note
+  return settlementContentErrors(settlement).length === 0 ? settlement : null
 }

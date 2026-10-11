@@ -116,6 +116,36 @@ describe('the guard itself', () => {
       ['attribute: photo'],
     ],
     [
+      'a ternary in a label attribute (R2-O1)',
+      `export const A = () => <button aria-label={open ? 'close' : 'open'} />`,
+      ['attribute: close', 'attribute: open'],
+    ],
+    [
+      'a template with substitutions in a label attribute (R2-O1)',
+      'export const A = () => <img alt={`photo of ${name}`} />',
+      ['attribute: photo of'],
+    ],
+    [
+      'a parenthesised literal in a label attribute (R2-O1)',
+      `export const A = () => <button title={('remove')} />`,
+      ['attribute: remove'],
+    ],
+    [
+      'an as literal in a label attribute (R2-O1)',
+      `export const A = () => <button title={'remove' as string} />`,
+      ['attribute: remove'],
+    ],
+    [
+      'a fallback literal in a label attribute (R2-O1)',
+      `export const A = () => <button title={name ?? 'nobody'} />`,
+      ['attribute: nobody'],
+    ],
+    [
+      'a literal passed to a kit component’s label prop (R2-O1)',
+      `export const A = () => <Bars label="spending" bars={[]} />`,
+      ['attribute: spending'],
+    ],
+    [
       'template text',
       'const s = `Reading the text… ${percent}`',
       ['literal: Reading the text…'],
@@ -150,6 +180,18 @@ describe('the guard itself', () => {
     ['a console call', `console.warn('Something went wrong')`],
     ['a literal type', `type Mode = 'Light mode' | 'Dark'`],
     ['JSX with only punctuation', `export const A = () => <span>⚠ </span>`],
+    [
+      'a catalogue call inside a label ternary',
+      `export const A = () => <b title={on ? t('a.b') : t('c.d')} />`,
+    ],
+    [
+      'an empty or numeric label fallback',
+      `export const A = () => <input placeholder={k ? '0' : ''} />`,
+    ],
+    [
+      'a label made only of substitutions',
+      'export const A = () => <b title={`${a}: ${b}`} />',
+    ],
   ])('accepts %s', (_name, source) => {
     expect(find(source)).toEqual([])
   })

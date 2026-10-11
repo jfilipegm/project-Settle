@@ -443,6 +443,7 @@ export const pt: Catalogue = {
       label: 'Casa',
       overview: 'Resumo',
       expenses: 'Despesas',
+      balances: 'Saldos',
       members: 'Membros',
     },
     archivedNotice: 'Esta casa está arquivada.',
@@ -454,6 +455,9 @@ export const pt: Catalogue = {
     },
     storage: {
       unavailableTitle: 'Não é possível guardar casas aqui',
+      migrationFailedTitle: 'O Settle não conseguiu atualizar os dados',
+      migrationFailed:
+        'O Settle não conseguiu atualizar os dados neste dispositivo. Nada foi alterado. Recarregue para tentar de novo; a divisão de contas continua a funcionar.',
       unavailable:
         'Este navegador não deixa o Settle guardar casas, muitas vezes numa janela privada ou com os dados do site bloqueados. A divisão continua a funcionar.',
       outdated:
@@ -486,11 +490,11 @@ export const pt: Catalogue = {
     deleteFor: 'Eliminar {name}',
     deleteTitle: 'Eliminar {name}?',
     deleteBody:
-      'Como {name} não está em nenhuma despesa, pode eliminar esta pessoa. Isto não pode ser anulado.',
+      'Pode eliminar {name} se não estiver em nenhuma despesa ou pagamento. Isto não pode ser anulado.',
     inUse:
-      'Como {name} está em despesas, não é possível eliminar esta pessoa. Marque a saída em vez disso.',
+      'Como {name} está em despesas ou pagamentos, não é possível eliminar esta pessoa. Marque a saída em vez disso.',
     unreadable:
-      'Não foi possível ler algumas despesas desta casa, por isso esta pessoa não pode ser eliminada. Marque a saída em vez disso.',
+      'Não foi possível ler algumas despesas ou pagamentos desta casa, por isso esta pessoa não pode ser eliminada. Marque a saída em vez disso.',
     add: {
       title: 'Adicionar uma pessoa',
       name: 'Nome',
@@ -544,10 +548,12 @@ export const pt: Catalogue = {
     theRest: 'O resto',
     percent: '{percent} %',
     byDay: 'Dia a dia',
-    byDayChart: 'Gastos de cada dia em {month}: {days}.',
+    byDaySummary: '{total} gastos em {month}; o máximo a {day}, {amount}.',
     byDayNone: 'Nada gasto em {month}.',
     lastMonths: 'Os últimos seis meses',
     monthBar: '{month}: {amount}',
+    monthBarCurrent: '{month}, este mês: {amount}',
+    lastMonthsSummary: '{total} nos seis meses; o máximo em {month}, {amount}.',
     upTo: 'Até {amount}',
   },
 
@@ -575,6 +581,11 @@ export const pt: Catalogue = {
       one: 'Não foi possível ler {count} despesa. Fica guardada como estava.',
       other:
         'Não foi possível ler {count} despesas. Ficam guardadas como estavam.',
+    },
+    unreadablePayments: {
+      one: 'Não foi possível ler {count} pagamento. Fica guardado como estava.',
+      other:
+        'Não foi possível ler {count} pagamentos. Ficam guardados como estavam.',
     },
     itemCount: { one: '({count} artigo)', other: '({count} artigos)' },
   },
@@ -689,5 +700,142 @@ export const pt: Catalogue = {
         'Esta despesa foi eliminada noutro separador, por isso não foi guardada.',
       save: 'Não foi possível guardar esta despesa. Tente novamente.',
     },
+  },
+
+  balances: {
+    title: 'Saldos',
+    settleIn: {
+      one: 'Acertar contas em {count} pagamento.',
+      other: 'Acertar contas em {count} pagamentos.',
+    },
+    settled: 'As contas estão todas certas.',
+    incompleteHeading: 'Saldos dos registos que foi possível ler.',
+    incomplete: {
+      one: 'Não foi possível ler {count} registo, por isso estes saldos deixam algo de fora. Acertar contas só é sugerido quando for possível lê-lo.',
+      other:
+        'Não foi possível ler {count} registos, por isso estes saldos deixam algo de fora. Acertar contas só é sugerido quando for possível lê-los.',
+    },
+    noBalanceIncomplete: 'Sem saldo nos registos que foi possível ler.',
+    getsBack: 'Recebe',
+    owes: 'Deve',
+    settledUp: 'Contas certas',
+    noBalance: 'Sem saldo',
+    paid: 'Pagou {amount}',
+    leftOn: 'Saiu a {date}',
+    settleUp: 'Acertar contas',
+    settleUpHint: {
+      one: 'Um pagamento acerta todos os saldos.',
+      other: '{count} pagamentos acertam todos os saldos.',
+    },
+    pays: '{from} paga a {to}',
+    markAsPaid: 'Marcar como pago',
+    markAsPaidFor: 'Marcar como pago: {from} paga a {to} {amount}',
+    record: 'Registar um pagamento',
+    on: 'Saldos a',
+    onHint: 'Todas as despesas e pagamentos',
+    onNotice: 'Estes são os saldos a {date}.',
+    showAll: 'Mostrar tudo',
+    future: {
+      expenses: { one: '{count} despesa', other: '{count} despesas' },
+      payments: { one: '{count} pagamento', other: '{count} pagamentos' },
+      one: 'Inclui {what} com data depois de hoje.',
+      both: 'Inclui {expenses} e {payments} com data depois de hoje.',
+    },
+    noRecords: 'Ainda não há despesas nem pagamentos.',
+    addExpense: 'Adicionar uma despesa',
+    across: 'Em todas as despesas e pagamentos.',
+    details: 'Detalhes',
+    overviewIncomplete: {
+      one: 'Não foi possível ler {count} registo.',
+      other: 'Não foi possível ler {count} registos.',
+    },
+    recorded: 'Pagamento registado.',
+    copy: 'Copiar como texto',
+    copied: 'Copiado.',
+    copyFailed: 'Não foi possível copiar. O navegador bloqueou a cópia.',
+    share: 'Partilhar',
+  },
+
+  payment: {
+    title: 'Registar um pagamento',
+    editTitle: 'Editar pagamento',
+    from: 'De',
+    to: 'Para',
+    amount: 'Valor',
+    date: 'Data',
+    note: 'Nota',
+    noteHint: 'Opcional, até 80 caracteres.',
+    choose: 'Escolha alguém',
+    left: '{name} (saiu)',
+    after: 'Depois disto, {first} e {second}.',
+    outcome: {
+      owes: '{name} deve {amount}',
+      getsBack: '{name} recebe {amount}',
+      settled: '{name} fica com as contas certas',
+    },
+    incomplete: {
+      one: 'Não foi possível ler {count} registo, por isso o resultado não é mostrado.',
+      other:
+        'Não foi possível ler {count} registos, por isso o resultado não é mostrado.',
+    },
+    save: 'Guardar pagamento',
+    cancel: 'Cancelar',
+    errors: {
+      choose: 'Escolha quem pagou e quem recebeu.',
+      same: 'Escolha duas pessoas diferentes.',
+      date: 'Indique uma data.',
+      dateRange: 'Use uma data de 2000 até daqui a um ano.',
+      note: 'Use 80 caracteres ou menos.',
+      gone: 'Alguém neste pagamento foi removido noutro separador. Verifique as pessoas e guarde de novo.',
+      deleted:
+        'Este pagamento foi eliminado noutro separador, por isso não foi guardado.',
+      save: 'Não foi possível guardar este pagamento. Tente de novo.',
+    },
+  },
+
+  explain: {
+    title: 'Saldo de {name}',
+    back: 'Todos os saldos',
+    sums: 'Pagou {paid} · Parte {share} · Enviou {sent} · Recebeu {received}',
+    expenseLine: 'Pagou {paid} · Parte {share}',
+    paidTo: 'Pagou a {name}',
+    from: 'De {name}',
+    total: 'Saldo',
+    nothing: 'Ainda não há despesas nem pagamentos de {name}.',
+  },
+
+  history: {
+    paid: '{from} pagou a {to}',
+    paymentRow: 'Pagamento, {date}, {paid}, {amount}',
+  },
+
+  paymentView: {
+    from: 'De',
+    to: 'Para',
+    date: 'Data',
+    note: 'Nota',
+    edit: 'Editar',
+    delete: 'Eliminar',
+    deleteTitle: 'Eliminar este pagamento?',
+    deleteBody: 'Os saldos voltam ao que eram.',
+    deleteConfirm: 'Eliminar pagamento',
+    cancel: 'Cancelar',
+    deleteFailed: 'Não foi possível eliminar este pagamento. Tente de novo.',
+    notFoundTitle: 'Pagamento não encontrado',
+    notFound:
+      'Este pagamento já não existe. Pode ter sido eliminado noutro separador.',
+    close: 'Fechar',
+  },
+
+  balanceText: {
+    header: '{name}, saldos',
+    getsBack: '{name} recebe {amount}',
+    owes: '{name} deve {amount}',
+    settled: '{name} tem as contas certas',
+    toSettle: {
+      one: 'Para acertar contas, {count} pagamento:',
+      other: 'Para acertar contas, {count} pagamentos:',
+    },
+    pays: '{from} paga a {to} {amount}',
   },
 }

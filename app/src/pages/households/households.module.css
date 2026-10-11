@@ -261,3 +261,78 @@
   font-size: var(--text-17);
   font-weight: 600;
 }
+
+/* Balances (M5 plan, B5, B7): one row per member, the name and what they
+ * paid, then the word and the signed amount, right-aligned. */
+.balanceRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-1) var(--space-3);
+  min-height: 3rem;
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.balanceRow:first-child {
+  border-top: 0;
+}
+
+.balanceWho {
+  display: grid;
+  grid-row: span 2;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.balanceWord {
+  color: var(--color-quiet);
+  font-size: var(--text-14);
+  text-align: right;
+}
+
+.balanceAmount {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-align: right;
+}
+
+.balanceTotal {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-3) 0 0;
+  border-top: 1px solid var(--color-control-border);
+  font-weight: 600;
+}
+
+.notice {
+  border: 1px solid var(--color-control-border);
+}
+
+.notice p {
+  margin: 0;
+}
+
+.cardFoot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+  margin: var(--space-3) 0 0;
+}
+
+@media (min-width: 640px) {
+  .balanceRow {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .balanceWho {
+    grid-row: auto;
+  }
+
+  .balanceWord {
+    min-width: 6rem;
+  }
+}

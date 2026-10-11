@@ -21,9 +21,10 @@ import { NotFoundPage } from '../NotFoundPage.tsx'
 import { ExpenseDialog } from './ExpenseDialog.tsx'
 import type { HouseholdContext } from './householdContext.ts'
 import styles from './households.module.css'
+import { SettlementDialog } from './SettlementDialog.tsx'
 import { StorageState } from './StorageState.tsx'
 
-type TabId = 'overview' | 'expenses' | 'members'
+type TabId = 'overview' | 'expenses' | 'balances' | 'members'
 
 /** The tab a page belongs to: an expense's pages stay under Expenses. */
 function currentTab(pathname: string, base: string): TabId | undefined {
@@ -32,15 +33,17 @@ function currentTab(pathname: string, base: string): TabId | undefined {
     rest === section || rest.startsWith(`${section}/`)
   if (rest === '' || rest === '/') return 'overview'
   if (under('/expenses')) return 'expenses'
+  if (under('/balances')) return 'balances'
   if (under('/members')) return 'members'
   return undefined
 }
 
 /**
  * A household's pages (M4 plan, H9): its name as the way to switch
- * household, then the tabs Overview, Expenses and Members. An unknown id
+ * household, then the tabs Overview, Expenses, Balances (M5) and Members. An unknown id
  * shows Not found. `?expense=:eid` opens that expense in a dialog over
- * whichever page is showing (review finding M-5).
+ * whichever page is showing (review finding M-5), and `?settlement=:sid`
+ * a payment (M5, B8).
  */
 export function HouseholdShell() {
   const t = useT()
@@ -105,6 +108,11 @@ export function HouseholdShell() {
               to: `${base}/expenses`,
             },
             {
+              id: 'balances',
+              label: t('households.tabs.balances'),
+              to: `${base}/balances`,
+            },
+            {
               id: 'members',
               label: t('households.tabs.members'),
               to: `${base}/members`,
@@ -132,6 +140,11 @@ export function HouseholdShell() {
       )}
       <Outlet context={context} />
       <ExpenseDialog household={household} members={context.members} />
+      <SettlementDialog
+        household={household}
+        members={context.members}
+        unreadableMembers={context.unreadableMembers}
+      />
     </div>
   )
 }

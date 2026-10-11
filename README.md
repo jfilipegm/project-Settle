@@ -2,10 +2,10 @@
 
 **Split bills. Settle up. Stay private.**
 
-Split bills fairly, and soon keep track of a shared household's
-expenses, all in your browser. You scan a receipt or type in a bill's
-items, say who had what, and Settle shows who owes what, down to the
-cent. There are no accounts and no server: everything stays on your
+Split bills fairly, and keep track of a shared household's expenses
+and who owes whom, all in your browser. You scan a receipt or type in a
+bill's items, say who had what, and Settle shows who owes what, down to
+the cent. There are no accounts and no server: everything stays on your
 device. In English or European Portuguese.
 
 <img src="docs/milestones/milestone-3-evidence/screens/the-split-390-light.webp" alt="Settle on a phone: the split of a bill between three people, each share a bar in their colour" width="300">
@@ -109,8 +109,30 @@ device. In English or European Portuguese.
     the expenses themselves.
   - Saving the same receipt twice into a household shows a warning.
 
-Balances, settling up, and export and backup are next on the
-[roadmap](docs/ROADMAP.md).
+- **Balances and settling up** (M5). Each household has a Balances tab:
+  - **Each member's balance** across the whole history: "Gets back 91,15"
+    or "Owes 22,40", or "Settled up". It is worked out again from the
+    expenses and payments each time, exact to the cent.
+  - **Settle up in N payments:** the fewest payments that clear every
+    balance, always the same for the same data, each with **Mark as
+    paid**.
+  - **Record a payment** between any two members, for the full amount or
+    part of it. The dialog shows both people's balances after it, before
+    you save. Payments sit in the Expenses list with the expenses, outside
+    the spending totals, and can be edited or deleted.
+  - **Why is my balance this?** A member's balance opens the expenses and
+    payments that make it up, adding up to it.
+  - **Copy as text** (or **Share**, where the browser can) gives the
+    balances and the payments, ready for a group chat.
+  - **Balances on a past date**, to see what was owed then.
+  - The overview shows the balances and the settle-up line too.
+  - If a saved record can't be read, the balances are shown as figures
+    only: Settle never suggests a payment from a ledger it knows is
+    incomplete.
+- **Charts** show each value at once when you point at, tap or tab to a
+  bar or a slice.
+
+Export and backup are next on the [roadmap](docs/ROADMAP.md).
 
 ## Try it
 
@@ -131,9 +153,10 @@ Everything runs in your browser. The bill you're editing, the receipt
 check's summary and your settings (language, theme, region) are saved in
 your browser's storage on this device only, so a refresh doesn't lose
 them. **New bill**
-clears them. Your households, members and expenses are saved in your
-browser's own database (IndexedDB), on this device only. Nothing is sent
-anywhere.
+clears them. Your households, members, expenses and payments are saved
+in your browser's own database (IndexedDB), on this device only. Nothing
+is sent anywhere: Copy as text and Share hand the text only to your own
+clipboard or your device's share sheet.
 
 Until export and backup arrive (M6), clearing this site's data in your
 browser deletes your households. Settle asks the browser to keep its data

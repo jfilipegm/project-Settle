@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-5",
+  "plan_revision": 4,
+  "checkpoints": [
+    {
+      "id": "CP1",
+      "name": "The chart notes and M4's follow-ups: the current month's bar not a link, one hover style, the chart tip on hover, focus and tap, the gallery, one set of percentages, one chart name, the hardened literal-text guard",
+      "depends_on": [],
+      "complexity": 2,
+      "session_target": 1
+    },
+    {
+      "id": "CP2",
+      "name": "Payments, the record and its storage: the settlement model and reader, the version-2 migration, the repository, member deletes checking payments, the failed-migration state",
+      "depends_on": [
+        "CP1"
+      ],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "CP3",
+      "name": "The balances engine: net balances, balances on a date, the fewest-payments suggestion with deterministic tie-breaks, explanations, property tests and hand-checked examples",
+      "depends_on": [
+        "CP2"
+      ],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "CP4",
+      "name": "The Balances tab: the members' balances, settle up with Mark as paid, recording a full or partial payment, explaining a balance, balances on a date, the overview's balances card",
+      "depends_on": [
+        "CP3"
+      ],
+      "complexity": 3,
+      "session_target": 2
+    },
+    {
+      "id": "CP5",
+      "name": "Payments in the history and settle-up text: payment rows, filters and search, the payment dialog with edit and delete, Copy as text and Share",
+      "depends_on": [
+        "CP4"
+      ],
+      "complexity": 2,
+      "session_target": 1
+    },
+    {
+      "id": "CP6",
+      "name": "Quality pass and documentation: the completion scenario and migration tests, screens and design checkers, privacy checks, ADRs, DESIGN.md, READMEs, roadmap, the design canvas",
+      "depends_on": [
+        "CP5"
+      ],
+      "complexity": 2,
+      "session_target": 1
+    }
+  ]
+}

@@ -18,20 +18,25 @@ export function StorageState({ status }: { status: HouseholdDataStatus }) {
   const message =
     status === 'unavailable'
       ? t('households.storage.unavailable')
-      : status === 'outdated'
-        ? t('households.storage.outdated')
-        : t('households.storage.blocked')
+      : status === 'migrationFailed'
+        ? t('households.storage.migrationFailed')
+        : status === 'outdated'
+          ? t('households.storage.outdated')
+          : t('households.storage.blocked')
+  const titled = status === 'unavailable' || status === 'migrationFailed'
   return (
     <Card
       title={
         status === 'unavailable'
           ? t('households.storage.unavailableTitle')
-          : undefined
+          : status === 'migrationFailed'
+            ? t('households.storage.migrationFailedTitle')
+            : undefined
       }
-      role={status === 'unavailable' ? undefined : 'alert'}
+      role={titled ? undefined : 'alert'}
     >
       <p>{message}</p>
-      {status === 'outdated' && (
+      {(status === 'outdated' || status === 'migrationFailed') && (
         <p>
           <Button
             icon={IconRefresh}

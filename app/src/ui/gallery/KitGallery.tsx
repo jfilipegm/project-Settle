@@ -13,9 +13,11 @@ import { cents } from '../../lib/money.ts'
 import { Amount } from '../Amount.tsx'
 import { Button, IconButton } from '../Button.tsx'
 import { Card } from '../Card.tsx'
+import { Bars, Donut, ShareBar } from '../Charts.tsx'
 import { SelectField, TextField } from '../Field.tsx'
 import { Icon } from '../Icon.tsx'
 import { PersonBadge } from '../PersonBadge.tsx'
+import { personColorStyle } from '../personColor.ts'
 import { StatusChip } from '../StatusChip.tsx'
 import { Steps } from '../Steps.tsx'
 import { Checkbox } from '../Checkbox.tsx'
@@ -31,6 +33,7 @@ export default function KitGallery() {
   const [theme, setTheme] = useState<ThemeMode>('light')
   const [checked, setChecked] = useState(true)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [viewOpen, setViewOpen] = useState(false)
   const switchTheme = (mode: ThemeMode) => {
     applyThemeMode(mode)
     setTheme(mode)
@@ -218,6 +221,81 @@ export default function KitGallery() {
             </Button>
           </p>
         </Dialog>
+      </Card>
+
+      <Card title="Dialog with a close button">
+        <Button onClick={() => setViewOpen(true)}>Open</Button>
+        <Dialog
+          open={viewOpen}
+          title="Groceries"
+          closeLabel={t('expense.close')}
+          onClose={() => setViewOpen(false)}
+        >
+          <p>A dialog that shows things, closed by its button.</p>
+        </Dialog>
+      </Card>
+
+      <Card title="Charts">
+        <p>Hover, focus or tap a mark: its tip shows at once.</p>
+        <Donut
+          label="Where it went: Rent 25,50 €, Groceries 4,50 €."
+          slices={[
+            {
+              id: 'rent',
+              value: 2550,
+              colour: 'var(--chart-3)',
+              label: 'Rent: 25,50 €, 85 %',
+            },
+            {
+              id: 'groceries',
+              value: 450,
+              colour: 'var(--chart-1)',
+              label: 'Groceries: 4,50 €, 15 %',
+            },
+          ]}
+        >
+          <Amount value={cents(3000)} region={region} />
+        </Donut>
+        <Bars
+          label="Day by day"
+          summary="30,00 € in the week; the most on 1 Oct, 25,50 €."
+          scale="Up to 25,50 €"
+          bars={[1, 2, 3, 4, 5, 6, 7].map((day) => ({
+            id: `day-${String(day)}`,
+            value: [2550, 450, 0, 0, 1200, 300, 0][day - 1] ?? 0,
+            label: `${String(day)} Oct`,
+            tick: String(day),
+          }))}
+        />
+        <Bars
+          emphasis
+          label="The last six months"
+          bars={['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'].map((m, i) => ({
+            id: m,
+            value: [900, 1200, 400, 0, 9000, 3000][i] ?? 0,
+            label: m,
+            tick: m,
+            current: m === 'Oct',
+            to: m === 'Oct' ? undefined : `?month=${m}`,
+          }))}
+        />
+        <ShareBar
+          label="Ana 30,00 €, Bruno 10,00 €"
+          segments={[
+            {
+              id: 'ana',
+              value: 3000,
+              style: personColorStyle(0),
+              label: 'Ana: 30,00 €',
+            },
+            {
+              id: 'bruno',
+              value: 1000,
+              style: personColorStyle(1),
+              label: 'Bruno: 10,00 €',
+            },
+          ]}
+        />
       </Card>
 
       <Card title="Icon">

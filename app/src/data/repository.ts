@@ -12,6 +12,7 @@ import {
   type Expense,
   type Household,
   type Member,
+  type Settlement,
 } from '../features/household/model.ts'
 import {
   INDEX,
@@ -21,7 +22,12 @@ import {
   transaction,
   type StoreName,
 } from './db.ts'
-import { readExpense, readHousehold, readMember } from './records.ts'
+import {
+  readExpense,
+  readHousehold,
+  readMember,
+  readSettlement,
+} from './records.ts'
 
 /** Records that read, and how many didn't (kept, never deleted, H1). */
 export interface Listed<T> {
@@ -48,8 +54,8 @@ export class MissingReferenceError extends Error {
 }
 
 /**
- * A member delete refused (H7, M-I-4): an expense names the member, or an
- * expense that can't be read might. Nothing was written.
+ * A member delete refused (H7, M-I-4): an expense or a payment names the
+ * member, or one that can't be read might (M5, B3). Nothing was written.
  */
 export class MemberInUseError extends Error {
   readonly reason: 'referenced' | 'unreadable'
@@ -61,6 +67,9 @@ export class MemberInUseError extends Error {
 
 /** An edit's expense is gone, typically deleted in another tab. */
 export class ExpenseNotFoundError extends Error {}
+
+/** An edit's payment is gone, typically deleted in another tab (M5, B3). */
+export class SettlementNotFoundError extends Error {}
 
 /** Too many members: 20 active on any one day, 50 in all (H4). */
 export class MemberLimitError extends Error {}
@@ -327,7 +336,7 @@ export async function deleteMember(
 ): Promise<void> {
   await transaction(
     db,
-    [STORE.members, STORE.expenses],
+    [STORE.members, STORE.expenses, STORE.settlements],
     'readwrite',
     async (tx) => {
       const member = readMember(
@@ -337,22 +346,41 @@ export async function deleteMember(
         throw new MemberNotFoundError(memberId)
       }
       let refusal: 'referenced' | 'unreadable' | undefined
-      await eachRaw(tx.objectStore(STORE.expenses), (raw) => {
-        if (refusal === 'referenced') return
-        const rawHousehold =
-          typeof raw === 'object' && raw !== null && 'householdId' in raw
-            ? raw.householdId
-            : undefined
-        if (typeof rawHousehold === 'string' && rawHousehold !== householdId) {
-          return
+      const check =
+        <T>(
+          read: (raw: unknown) => T | null,
+          names: (record: T) => readonly string[],
+        ) =>
+        (raw: unknown) => {
+          if (refusal === 'referenced') return
+          const rawHousehold =
+            typeof raw === 'object' && raw !== null && 'householdId' in raw
+              ? raw.householdId
+              : undefined
+          if (
+            typeof rawHousehold === 'string' &&
+            rawHousehold !== householdId
+          ) {
+            return
+          }
+          const record = read(raw)
+          if (record === null) {
+            refusal = 'unreadable'
+          } else if (names(record).includes(memberId)) {
+            refusal = 'referenced'
+          }
         }
-        const expense = readExpense(raw)
-        if (expense === null) {
-          refusal = 'unreadable'
-        } else if (referencedMemberIds(expense).includes(memberId)) {
-          refusal = 'referenced'
-        }
-      })
+      await eachRaw(
+        tx.objectStore(STORE.expenses),
+        check(readExpense, referencedMemberIds),
+      )
+      await eachRaw(
+        tx.objectStore(STORE.settlements),
+        check(readSettlement, (settlement) => [
+          settlement.fromId,
+          settlement.toId,
+        ]),
+      )
       if (refusal !== undefined) throw new MemberInUseError(refusal)
       await result(tx.objectStore(STORE.members).delete(memberId))
     },
@@ -497,5 +525,102 @@ export async function expensesWithReceiptKey(
       [householdId, receiptKey],
     )
     return readAll(raws, readExpense).items
+  })
+}
+
+// Payments (M5, B3)
+
+/**
+ * The household's readable payments whose two members are readable
+ * members of it; the rest are counted as unreadable and kept.
+ */
+export async function listSettlements(
+  db: IDBDatabase,
+  householdId: string,
+): Promise<Listed<Settlement>> {
+  return transaction(
+    db,
+    [STORE.members, STORE.settlements],
+    'readonly',
+    async (tx) => {
+      const members = await householdMembers(tx, householdId)
+      const known = new Set(members.items.map((member) => member.id))
+      const raws = await getAll(
+        tx.objectStore(STORE.settlements).index(INDEX.byHousehold),
+        householdId,
+      )
+      return readAll(raws, (raw) => {
+        const settlement = readSettlement(raw)
+        return settlement !== null &&
+          known.has(settlement.fromId) &&
+          known.has(settlement.toId)
+          ? settlement
+          : null
+      })
+    },
+  )
+}
+
+export async function getSettlement(
+  db: IDBDatabase,
+  id: string,
+): Promise<Settlement | null> {
+  return transaction(db, [STORE.settlements], 'readonly', async (tx) =>
+    readSettlement(await result(tx.objectStore(STORE.settlements).get(id))),
+  )
+}
+
+/**
+ * Saves (adds or replaces) a payment in one transaction over households,
+ * members and payments. Inside it the household must exist and both
+ * members must belong to it ({@link MissingReferenceError} otherwise);
+ * an edit (`replacing`) only replaces a payment of this household that
+ * still exists ({@link SettlementNotFoundError}), so one deleted in
+ * another tab is never brought back.
+ */
+export async function saveSettlement(
+  db: IDBDatabase,
+  settlement: Settlement,
+  { replacing = false }: { replacing?: boolean } = {},
+): Promise<void> {
+  const stores: StoreName[] = [
+    STORE.households,
+    STORE.members,
+    STORE.settlements,
+  ]
+  await transaction(db, stores, 'readwrite', async (tx) => {
+    await requireHousehold(tx, settlement.householdId)
+    if (replacing) {
+      const stored: unknown = await result(
+        tx.objectStore(STORE.settlements).get(settlement.id),
+      )
+      const storedHousehold =
+        typeof stored === 'object' && stored !== null && 'householdId' in stored
+          ? stored.householdId
+          : undefined
+      if (storedHousehold !== settlement.householdId) {
+        throw new SettlementNotFoundError(settlement.id)
+      }
+    }
+    const missing: string[] = []
+    for (const memberId of new Set([settlement.fromId, settlement.toId])) {
+      const member = readMember(
+        await result(tx.objectStore(STORE.members).get(memberId)),
+      )
+      if (member === null || member.householdId !== settlement.householdId) {
+        missing.push(memberId)
+      }
+    }
+    if (missing.length > 0) throw new MissingReferenceError(missing)
+    await result(tx.objectStore(STORE.settlements).put(settlement))
+  })
+}
+
+export async function deleteSettlement(
+  db: IDBDatabase,
+  id: string,
+): Promise<void> {
+  await transaction(db, [STORE.settlements], 'readwrite', async (tx) => {
+    await result(tx.objectStore(STORE.settlements).delete(id))
   })
 }

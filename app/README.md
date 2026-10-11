@@ -63,9 +63,10 @@ app/
     │   ├── split/        The bill splitter: model and validation,
     │   │   │             the split engine, bill reducer, saved draft
     │   │   └── components/  The Split page's sections and inputs
-    │   ├── household/    Households, members and expenses (M4): the
-    │   │                 model, shares, totals, search, form logic,
-    │   │                 the data provider; components/
+    │   ├── household/    Households, members, expenses (M4) and
+    │   │                 payments (M5): the model, shares, totals,
+    │   │                 search, the balances engine and its text,
+    │   │                 form logic, the data provider; components/
     │   └── receipt/      Receipt reading (M2), see below
     │       ├── components/  The scan section and the receipt check
     │       └── fixtures/ Text receipts, sample receipts, browser files
@@ -126,16 +127,16 @@ Since M4 the summary also keeps `receiptKey`, the duplicate-receipt key
 computed at import (`features/receipt/receiptKey.ts`). An invalid one reads
 as absent, and the format stays version 1.
 
-## The household ledger (M4)
+## The household ledger (M4, M5)
 
-Households, members and expenses live in **IndexedDB**, in a database named
+Households, members, expenses and payments live in **IndexedDB**, in a database named
 `settle`, through a small wrapper of our own (`src/data/db.ts`). There is
 no library. [ADR 0005](../docs/adr/0005-local-ledger-store.md) records why.
 
 - **One transaction per user action** (`src/data/repository.ts`). Saving an
-  expense re-checks, inside its own transaction, that its household and
-  every member it names exist. Deleting a member reads every raw expense
-  and refuses unless it can prove none names them.
+  expense or a payment re-checks, inside its own transaction, that its
+  household and every member it names exist. Deleting a member reads every
+  raw expense and payment and refuses unless it can prove none names them.
 - **Readers, not trust** (`src/data/records.ts`). Every record is rebuilt
   from known fields. One that fails is counted and **kept**, never deleted
   or rewritten.
@@ -145,18 +146,42 @@ no library. [ADR 0005](../docs/adr/0005-local-ledger-store.md) records why.
 - **Lazy.** `HouseholdDataProvider` opens the database on the first
   household page, so the split never touches it.
 
+### Balances (M5)
+
+`features/household/balances.ts` is pure and framework-free: each
+member's balance (paid − share + sent − received, in integer cents), the
+fewest payments that settle everyone, a member's explanation, and the
+payment dialog's "after this" outcome. Nothing is stored. The result
+carries `complete`: false when any member, expense or payment couldn't
+be read, and then no surface suggests a payment or claims everyone is
+settled up. `balanceText.ts` writes the settle-up text and refuses
+incomplete balances. [ADR 0006](../docs/adr/0006-balances-and-settlement.md)
+records the grouping programme, why its count is the minimum, and the
+over-16 fallback.
+
 ### Adding a schema change
+
+M5's version 2 is the worked example: `createSchemaV2` in
+`src/data/db.ts` adds the `settlements` store and rewrites nothing.
 
 1. Add a step to `MIGRATIONS` in `src/data/db.ts`. Version `n` is the
    `n`th step. It runs in the upgrade transaction, and anything it throws
-   rolls the whole upgrade back.
+   rolls the whole upgrade back; the app then shows "Settle couldn't
+   update its data", with Reload.
 2. Bump the record readers if a record's shape changes. Every record
-   carries `v`, its own format version.
-3. Keep `src/data/fixtures/v1.json` reading back equal (`db.test.ts`,
-   `completion.test.ts`). It is the frozen version-1 data, and every later
-   version must still open it.
-4. Test the step on the completion scenario's data, the way
-   `testSchemaV2` does.
+   carries `v`, its own format version. A new store gets its own reader
+   (`readSettlement`) and repository functions that re-check references
+   in their transaction.
+3. Keep `src/data/fixtures/v1.json` and `v2.json` reading back equal
+   (`db.test.ts`, `completion.test.ts`). They are frozen data, and every
+   later version must still open them.
+4. Test the upgrade from an empty database, from the fixtures and from
+   the completion scenario's data (`db.test.ts` upgrades version 1 to 2
+   byte for byte; `completion.test.ts` compares the balances across it).
+   The test-only step `testSchemaV3` keeps the runner tested on top of
+   the real steps; move it up whenever a real step is added.
+5. Update `scripts/screens.mjs`'s `ledgerScript`, which builds the
+   current version in the real browser.
 
 ### The test database
 

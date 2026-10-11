@@ -94,11 +94,38 @@ household is created.
 dependency only, gives Vitest a spec-conforming IndexedDB; each test gets
 a fresh factory.
 
+## Version 2: payments (M5)
+
+M5 ships the database's first real migration. Version 2's step,
+`createSchemaV2`, creates the `settlements` store (`keyPath: 'id'`, index
+`byHousehold`) and rewrites nothing: every household, member and expense
+record stays version 1, byte for byte. M4's test-only step moved to
+version 3, so the runner keeps its test on top of the real step, and
+`app/src/data/fixtures/v2.json` joins the version-1 snapshot.
+
+**A payment is a record of its own, not an expense.** A settlement is
+money one member gave another: it has no category, is not spending, and
+never counts in a month's total or charts. Stored as an expense, every
+total, chart and filter would have to tell the two apart, and an
+expense's shares would have to model "all of it to one person". Kept
+apart, the balances are simply what each member paid, less their shares,
+plus what they sent, less what they received.
+
+The repository treats payments as it treats expenses: each action is one
+transaction that re-checks its references (the household exists, both
+members belong to it), an edit never brings back a payment deleted in
+another tab, unreadable payments are counted and kept, and a member named
+by any payment of the household, readable or not, can't be deleted.
+
+A failed upgrade now has its own state ("Settle couldn't update the data
+on this device. Nothing was changed."), replacing the "unavailable"
+message M4 showed for it (M4's O-4).
+
 ## Consequences
 
 - Clearing the site's data deletes the ledger. Persistent storage lowers
   the risk of eviction; M6's export is the real answer.
-- Every schema change adds a migration step and keeps the version-1
-  snapshot test passing.
+- Every schema change adds a migration step and keeps the version-1 and
+  version-2 snapshot tests passing.
 - The data layer imports no React; the pages reach it through providers
   and hooks.
