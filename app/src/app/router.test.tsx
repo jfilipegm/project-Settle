@@ -229,6 +229,7 @@ describe('the route table (M3 plan, S12)', () => {
       'households/:hid',
       'finances',
       'settings',
+      'import',
       '*',
     ])
   })
@@ -242,6 +243,7 @@ describe('the route table (M3 plan, S12)', () => {
       'households/:hid',
       'finances',
       'settings',
+      'import',
       '_kit',
       '*',
     ])

@@ -1,4 +1,4 @@
-import { IconPlus, IconTrash } from '@tabler/icons-react'
+import { IconFileImport, IconPlus, IconTrash } from '@tabler/icons-react'
 import { useCallback, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import {
@@ -32,6 +32,7 @@ import { Dialog } from '../../ui/Dialog.tsx'
 import { TextField } from '../../ui/Field.tsx'
 import styles from './households.module.css'
 import { StorageState } from './StorageState.tsx'
+import { BackupReminder } from '../exchange/BackupReminder.tsx'
 
 interface Row {
   household: Household
@@ -52,9 +53,13 @@ async function loadRows(db: IDBDatabase, today: string) {
   return { rows, unreadable }
 }
 
-/** The households on this device (M4 plan, H9): open, create, restore. */
+/**
+ * The households on this device (M4 plan, H9): open, create, restore; and
+ * since M6, open a Settle file, with the backup reminder (E7, E10).
+ */
 export function HouseholdsPage() {
   const t = useT()
+  const navigate = useNavigate()
   const { status, db, changed } = useHouseholdData()
   const today = isoDate(new Date())
   const loaded = useLoaded(useCallback((d) => loadRows(d, today), [today]))
@@ -80,9 +85,22 @@ export function HouseholdsPage() {
       {loaded.state === 'ready' && (
         <>
           <p className={styles.intro}>{t('households.intro')}</p>
+          <BackupReminder />
           {active.length === 0 ? (
             <Card title={t('households.empty')}>
               <p className={styles.hint}>{t('households.emptyHint')}</p>
+              {loaded.value.rows.length === 0 && (
+                <p>
+                  <Button
+                    icon={IconFileImport}
+                    onClick={() => {
+                      void navigate('/import')
+                    }}
+                  >
+                    {t('exchange.open.restoreBackup')}
+                  </Button>
+                </p>
+              )}
             </Card>
           ) : (
             <Card>
@@ -105,7 +123,7 @@ export function HouseholdsPage() {
               </ul>
             </Card>
           )}
-          <p>
+          <p className={styles.actions}>
             <Button
               variant="primary"
               size={48}
@@ -113,6 +131,15 @@ export function HouseholdsPage() {
               onClick={() => setCreating(true)}
             >
               {t('households.new')}
+            </Button>
+            <Button
+              size={48}
+              icon={IconFileImport}
+              onClick={() => {
+                void navigate('/import')
+              }}
+            >
+              {t('exchange.open.action')}
             </Button>
           </p>
           {loaded.value.unreadable > 0 && (

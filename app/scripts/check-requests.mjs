@@ -51,6 +51,11 @@
  *       (--expect-bill: the run also fails unless the imported bill matches
  *       that sample's expected bill by P2's measure, no edit needed: the
  *       CI browser smoke test of M2.5's CP4)
+ *   node scripts/check-requests.mjs exchange
+ *       (M6, E7, E10, E11: opens a generated Settle file at /import,
+ *       applies it, then shares the household file, exports the CSV and
+ *       backs up, moving between pages through the app's own links; the
+ *       file's names, descriptions and amounts join the value set)
  * Common: [--out <log.json>] [--brave <path>] [--path <route>] [--port <n>]
  *   [--probe-csp yes] (triggers one CSP violation, so the run must fail)
  *   (the proxy listens on --port, default 4179; vite preview on the next)
@@ -58,7 +63,8 @@
  * Run `npm run build` first. Exit code 0 is a pass, 1 a failure.
  */
 import http from 'node:http'
-import { readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { scoreImage } from '../src/features/receipt/accuracy.ts'
@@ -137,6 +143,95 @@ function dateForms(iso) {
     `${d}.${m}.${y}`,
     `${d}.${m}.${y.slice(2)}`,
   ]
+}
+
+/**
+ * The exchange mode's Settle file (M6): an invented household, written
+ * the way Settle writes one, and the values it holds, which must never
+ * leave the browser.
+ */
+export function exchangeSample() {
+  const stamp = '2026-10-11T10:00:00.000Z'
+  const v = 1
+  const people = [
+    ['ines', 'Inês Moreira'],
+    ['duarte', 'Duarte Vilela'],
+    ['leonor', 'Leonor Quintas'],
+  ]
+  const members = people.map(([id, name], position) => ({
+    householdId: 'h1',
+    id,
+    joinedOn: '2026-01-01',
+    name,
+    position,
+    v,
+  }))
+  const expense = (id, description, payerId, amount, date) => ({
+    category: 'groceries',
+    createdAt: stamp,
+    date,
+    description,
+    householdId: 'h1',
+    id,
+    payerId,
+    split: { amount, kind: 'equal', memberIds: ['ines', 'duarte', 'leonor'] },
+    updatedAt: stamp,
+    v,
+  })
+  const expenses = [
+    expense('x1', 'Mercado do Bolhão', 'ines', 4287, '2026-10-03'),
+    expense('x2', 'Gás de garrafa', 'duarte', 2913, '2026-10-06'),
+  ]
+  const settlements = [
+    {
+      amount: 1517,
+      createdAt: stamp,
+      date: '2026-10-08',
+      fromId: 'leonor',
+      householdId: 'h1',
+      id: 'p1',
+      note: 'Acerto de outubro',
+      toId: 'ines',
+      updatedAt: stamp,
+      v,
+    },
+  ]
+  const household = {
+    createdAt: stamp,
+    id: 'h1',
+    name: 'Casa da Ribeira',
+    updatedAt: stamp,
+    v,
+  }
+  const versions = [household, ...members, ...expenses, ...settlements]
+    .map((record) => ({
+      clock: {},
+      id: record.id,
+      kind:
+        record === household
+          ? 'household'
+          : 'position' in record
+            ? 'member'
+            : 'fromId' in record
+              ? 'settlement'
+              : 'expense',
+    }))
+    .sort((a, b) => (a.id < b.id ? -1 : 1))
+  const file = {
+    format: 'settle',
+    formatVersion: 1,
+    kind: 'household',
+    exportedAt: stamp,
+    households: [{ household, members, expenses, settlements, versions }],
+  }
+  const values = [
+    household.name,
+    ...people.map(([, name]) => name),
+    ...expenses.map((e) => e.description),
+    settlements[0].note,
+    ...[4287, 2913, 1517].flatMap(amountForms),
+  ]
+  return { text: `${JSON.stringify(file, null, 2)}\n`, values }
 }
 
 /**
@@ -338,14 +433,15 @@ function parseArgs(argv) {
 
 export async function run(options) {
   const mode = options.mode
-  if (mode !== 'page-load' && mode !== 'scan')
+  if (mode !== 'page-load' && mode !== 'scan' && mode !== 'exchange')
     throw new Error(`Unknown mode ${mode}`)
   if (!(await isBuildFile('/index.html')))
     throw new Error('No build: run `npm run build` first')
   const expected = options.values
     ? JSON.parse(await readFile(options.values, 'utf8'))
     : {}
-  const pagePath = options.path ?? '/split'
+  const pagePath = options.path ?? (mode === 'exchange' ? '/import' : '/split')
+  const sample = mode === 'exchange' ? exchangeSample() : undefined
 
   const port = Number(options.port ?? 4179)
   const preview = await startPreview(port + 1)
@@ -544,6 +640,70 @@ export async function run(options) {
       }
     }
 
+    if (mode === 'exchange' && sample !== undefined) {
+      // Downloads (the household file, the CSV, the backup) are blob:
+      // links: never a request, and never saved here.
+      await cdp.send('Browser.setDownloadBehavior', { behavior: 'deny' })
+      const evaluate = async (expression) =>
+        (
+          await cdp.send(
+            'Runtime.evaluate',
+            { expression, awaitPromise: true, returnByValue: true },
+            page,
+          )
+        ).result.value
+      const waitForPage = (expression, what) =>
+        waitFor(async () => Boolean(await evaluate(expression)), 60_000, what)
+      const click = (selector, words) =>
+        evaluate(
+          `(() => { const el = [...document.querySelectorAll(${JSON.stringify(selector)})].find((e) => ${JSON.stringify(words)} === undefined || e.textContent.trim() === ${JSON.stringify(words)}); if (el) el.click(); return Boolean(el) })()`,
+        )
+      const button = (words) =>
+        `[...document.querySelectorAll('button')].some((b) => b.textContent.trim() === ${JSON.stringify(words)} && !b.disabled)`
+
+      const folder = await mkdtemp(path.join(tmpdir(), 'settle-exchange-'))
+      const file = path.join(folder, 'Settle - Casa da Ribeira.json')
+      await writeFile(file, sample.text)
+      await waitForPage(
+        `Boolean(document.querySelector('input[type=file]:not([disabled])'))`,
+        'the file picker',
+      )
+      const { root } = await cdp.send('DOM.getDocument', { depth: -1 }, page)
+      const { nodeId } = await cdp.send(
+        'DOM.querySelector',
+        { nodeId: root.nodeId, selector: 'input[type=file]' },
+        page,
+      )
+      await cdp.send('DOM.setFileInputFiles', { nodeId, files: [file] }, page)
+      await waitForPage(button('Apply'), 'Apply')
+      await click('button', 'Apply')
+      await waitForPage(
+        `Boolean(document.querySelector('a[href="/households/h1"]'))`,
+        'the result',
+      )
+      await rm(folder, { recursive: true, force: true })
+      await click('a[href="/households/h1"]')
+      await waitForPage(
+        `Boolean(document.querySelector('a[href="/households/h1/members"]'))`,
+        'the household',
+      )
+      await click('a[href="/households/h1/members"]')
+      await waitForPage(button('Share household file'), 'Share household file')
+      await click('button', 'Share household file')
+      await idle(1000)
+      await click('button', 'Export CSV')
+      await idle(1000)
+      await click('a[href="/settings"]')
+      await waitForPage(button('Back up now'), 'Back up now')
+      await click('button', 'Back up now')
+      await waitForPage(
+        `document.body.textContent.includes('Backup ready')`,
+        'the backup',
+      )
+      await idle(2000)
+      read = { exchange: await evaluate('location.pathname') }
+    }
+
     if (options['probe-csp'] !== undefined) {
       // Proves violations are captured: an inline script is blocked by
       // this policy, so this run must fail on its CSP check. (DevTools'
@@ -560,7 +720,10 @@ export async function run(options) {
     }
 
     // The QR payload: --qr, or the sample's `.expected.json` (CP3).
-    const values = valueSet({ expected, qr: options.qr ?? expected.qr, read })
+    const values = [
+      ...valueSet({ expected, qr: options.qr ?? expected.qr, read }),
+      ...(sample?.values ?? []),
+    ]
     // The planted leak: one tagged same-origin GET with a receipt value in
     // a custom header, sent through Runtime.evaluate, not app code.
     const plantedValue = values[0] ?? 'Restaurante O Cantinho'

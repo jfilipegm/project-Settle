@@ -835,4 +835,244 @@ export const en = {
     },
     pays: '{from} pays {to} {amount}',
   },
+
+  exchange: {
+    csv: {
+      export: 'Export CSV',
+      type: 'Type',
+      date: 'Date',
+      description: 'Description',
+      category: 'Category',
+      paidBy: 'Paid by',
+      to: 'To',
+      amount: 'Amount ({currency})',
+      expense: 'Expense',
+      payment: 'Payment',
+      done: 'Spreadsheet file ready: every expense and payment, with each person’s share.',
+      failed: 'The spreadsheet file couldn’t be made. Try again.',
+    },
+    share: {
+      title: 'Share and export',
+      privacy:
+        'The file has names, amounts, dates, descriptions and shop names. Anyone who gets it can read it.',
+      shareFile: 'Share household file',
+      ready:
+        'File ready. Send it to your housemates; they open it with Open a Settle file.',
+      nothing: 'This household can’t be read, so there is nothing to share.',
+      failed: 'The file couldn’t be made. Try again.',
+    },
+    leftOut: {
+      intro: {
+        one: '{count} record isn’t in the file: {reasons}.',
+        other: '{count} records aren’t in the file: {reasons}.',
+      },
+      unreadable: {
+        one: '{count} couldn’t be read',
+        other: '{count} couldn’t be read',
+      },
+      invalid: {
+        one: '{count} has a value a file can’t hold',
+        other: '{count} have a value a file can’t hold',
+      },
+      namesLeftOut: {
+        one: '{count} names a record that isn’t in it',
+        other: '{count} name a record that isn’t in it',
+      },
+      keep: 'They stay on this phone.',
+      continue: 'Make the file anyway',
+      cancel: 'Cancel',
+    },
+    data: {
+      title: 'Your data',
+      lastBackup: 'Last backup: {date}',
+      noBackup: 'No backup yet',
+      hint: 'A backup is one file with every household. Keep it somewhere other than this phone.',
+      backUp: 'Back up now',
+      restore: 'Restore from a file',
+      restoreHint:
+        'Restoring adds what this phone is missing. It doesn’t undo changes made since the backup.',
+      done: 'Backup ready. Keep the file somewhere other than this phone.',
+      failed: 'The backup couldn’t be made. Try again.',
+      word: 'backup',
+    },
+    reminder: {
+      label: 'Backup reminder',
+      text: {
+        one: 'Your changes from the last {count} day aren’t backed up.',
+        other: 'Your changes from the last {count} days aren’t backed up.',
+      },
+      later: 'Later',
+    },
+    open: {
+      title: 'Open a Settle file',
+      action: 'Open a Settle file',
+      restoreBackup: 'Restore from a backup',
+      intro:
+        'Choose a Settle file that someone shared with you, or one of your backups.',
+      file: 'Settle file',
+      hint: 'Settle checks it and shows what it would do. Nothing is written until you press Apply.',
+      reading: 'Checking the file…',
+      cantOpen: 'This file can’t be opened',
+      nothingWritten:
+        'Nothing was written. Ask for a new file, or choose another one.',
+      more: {
+        one: 'And {count} more problem.',
+        other: 'And {count} more problems.',
+      },
+      another: 'Choose another file',
+    },
+    problem: {
+      tooLarge: 'The file is over 20 MB, so it isn’t a Settle file.',
+      notJson: 'The file is damaged (it isn’t valid JSON).',
+      notSettle: 'The file isn’t a Settle file.',
+      newerVersion:
+        'This file was made by a newer Settle. Update Settle to open it.',
+      migrationFailed:
+        'This file is from an older Settle and couldn’t be brought up to date.',
+      badShape: 'The file is damaged: part of it is missing or out of shape.',
+      unknownKey: 'The file has a part this Settle doesn’t know: “{key}”.',
+      unknownKind: 'The file is neither a household nor a backup.',
+      householdCount: 'A household file must hold exactly one household.',
+      badTimestamp: 'The file has a time that isn’t valid.',
+      badTimestampOf: '{record} has a time that isn’t valid.',
+      unreadable: '{record} can’t be read.',
+      badId: '{record} has an id that isn’t valid.',
+      badPosition: '{record} has a position that isn’t valid.',
+      wrongHousehold: '{record} belongs to another household.',
+      missingMember: '{record} names a member who isn’t in the file.',
+      duplicateId: '{record} appears twice.',
+      tooManyActive: '{record} would have more than 20 people on {date}.',
+      tooManyMembers: '{record} would have more than 50 people.',
+      missingVersion: '{record} has no version.',
+      duplicateVersion: '{record} has two versions.',
+      versions: 'The file’s record versions are damaged.',
+    },
+    record: {
+      expense: 'The expense “{label}” on {date}',
+      expenseNoDate: 'The expense “{label}”',
+      settlement: 'The payment on {date}',
+      settlementNoDate: 'A payment',
+      member: 'The member “{label}”',
+      household: 'The household “{label}”',
+      unnamed: 'A record',
+    },
+    preview: {
+      fileName: 'File: {name}',
+      newHousehold: '{name}: new on this device.',
+      newCounts: '{members}, {expenses}, {payments}.',
+      people: { one: '{count} person', other: '{count} people' },
+      expenses: { one: '{count} expense', other: '{count} expenses' },
+      payments: { one: '{count} payment', other: '{count} payments' },
+      nothingNew: 'Nothing new',
+      nothingNewFile: 'Nothing new in this file.',
+      count: {
+        newExpense: {
+          one: '{count} new expense',
+          other: '{count} new expenses',
+        },
+        newPayment: {
+          one: '{count} new payment',
+          other: '{count} new payments',
+        },
+        newMember: { one: '{count} new person', other: '{count} new people' },
+        changed: { one: '{count} changed', other: '{count} changed' },
+        deleted: { one: '{count} deleted', other: '{count} deleted' },
+      },
+      leftOutWhole:
+        'Kept as it is: this phone can’t read this household’s own record.',
+      leftOutWholeForeign:
+        'Left out: this phone uses that household’s id for something else.',
+      keptRecord: 'Kept as it is: {record} couldn’t be read here.',
+      foreignRecord:
+        'Left out: {record} uses an id this phone uses for something else.',
+      notAdded:
+        'Not added: {record} names {name}, whose record couldn’t be read here.',
+      kept: {
+        one: '{name} stays: on {count} record you’re keeping.',
+        other: '{name} stays: on {count} records you’re keeping.',
+      },
+      keptFromFile: {
+        one: '{name} stays: on {count} record from the other phone.',
+        other: '{name} stays: on {count} records from the other phone.',
+      },
+      keptOverride: {
+        one: '{name} stays, although you chose to keep them deleted: on {count} record you’re keeping.',
+        other:
+          '{name} stays, although you chose to keep them deleted: on {count} records you’re keeping.',
+      },
+      keptUnreadable:
+        '{name} stays: some records here can’t be read and might name them.',
+      restored:
+        'This phone seems to have been restored from an older copy. Check these records: the file has changes this phone made before the restore.',
+      useTheirsAll: 'Use theirs for all of these',
+      conflicts: {
+        one: '{count} to decide',
+        other: '{count} to decide',
+      },
+      changedOnBoth: 'Changed on both phones',
+      deletedOnOne: 'Deleted on one phone, changed on the other',
+      sameHistory:
+        'Both versions have the same history, so Settle can’t tell which is newer.',
+      thisPhone: 'This phone',
+      theFile: 'The file',
+      keepMine: 'Keep mine',
+      useTheirs: 'Use theirs',
+      differs: 'What differs: {fields}.',
+      field: {
+        description: 'the description',
+        amount: 'the amount',
+        date: 'the date',
+        category: 'the category',
+        payer: 'who paid',
+        split: 'the split',
+        name: 'the name',
+        left: 'the leaving date',
+        joined: 'the joining date',
+        from: 'who paid',
+        to: 'who received',
+        note: 'the note',
+        archived: 'archived or not',
+        other: 'other details',
+      },
+      deleted: 'Deleted',
+      tooManyActive:
+        'This would make more than 20 people active on {date}. Choose differently, or mark someone as left on one phone first.',
+      tooManyMembers:
+        'This would make more than 50 people. Choose differently, or delete someone on one phone first.',
+      undecided: {
+        one: 'Choose for {count} record before you apply.',
+        other: 'Choose for {count} records before you apply.',
+      },
+      showChanges: {
+        one: 'Show the {count} change',
+        other: 'Show the {count} changes',
+      },
+      change: {
+        new: 'New: {what}',
+        changed: 'Changed: {what}',
+        deleted: 'Deleted: {what}',
+      },
+      newDevice:
+        'Apply also gives this phone a new id for its changes, so other phones never mix them up.',
+      apply: 'Apply',
+      applying: 'Applying…',
+      cancel: 'Cancel',
+      changedMeanwhile:
+        'Your data changed while you were reviewing. Review the file again.',
+      reviewAgain: 'Review again',
+      failed: 'The file couldn’t be applied. Nothing was written.',
+    },
+    describe: {
+      expense: '{description}, {amount}, {date}, paid by {payer}',
+      payment: '{paid} {amount}, {date}',
+      memberLeft: '{name}, left on {date}',
+      householdArchived: '{name}, archived',
+    },
+    done: {
+      title: 'Done',
+      household: '{name} now has {expenses}.',
+      open: 'Open {name}',
+      nothing: 'Done. Nothing needed changing.',
+    },
+  },
 } as const

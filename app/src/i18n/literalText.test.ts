@@ -36,6 +36,7 @@ const ALLOWED = new Map([
     'a PaddleFailure detail for developers, never shown',
   ],
   ['VersionError', 'a DOMException name compared in code (data/db.ts)'],
+  ['AbortError', 'a DOMException name compared in code (app/handOver.ts)'],
   ['Enter', 'a KeyboardEvent.key name compared in code'],
   ['Escape', 'a KeyboardEvent.key name compared in code'],
   ['ArrowDown', 'a KeyboardEvent.key name compared in code'],

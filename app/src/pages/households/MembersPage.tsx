@@ -28,6 +28,7 @@ import { newId } from '../../features/split/billReducer.ts'
 import { useLanguage } from '../../i18n/language.ts'
 import { Button } from '../../ui/Button.tsx'
 import { Card } from '../../ui/Card.tsx'
+import { ShareCard } from '../exchange/ShareCard.tsx'
 import { Dialog } from '../../ui/Dialog.tsx'
 import { TextField } from '../../ui/Field.tsx'
 import { PersonBadge } from '../../ui/PersonBadge.tsx'
@@ -191,6 +192,8 @@ export function MembersPage() {
           {t('members.unreadableCount', { count: unreadableMembers })}
         </p>
       )}
+
+      <ShareCard householdId={household.id} householdName={household.name} />
 
       <Card title={t('members.household.title')}>
         <div className={styles.actions}>

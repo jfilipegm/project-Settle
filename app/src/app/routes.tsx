@@ -4,6 +4,7 @@ import { HomePage } from '../pages/HomePage.tsx'
 import { NotFoundPage } from '../pages/NotFoundPage.tsx'
 import { SettingsPage } from '../pages/SettingsPage.tsx'
 import { SplitPage } from '../pages/SplitPage.tsx'
+import { ImportPage } from '../pages/import/ImportPage.tsx'
 import { BalanceDetailPage } from '../pages/households/BalanceDetailPage.tsx'
 import { BalancesPage } from '../pages/households/BalancesPage.tsx'
 import { ExpensesPage } from '../pages/households/ExpensesPage.tsx'
@@ -62,6 +63,8 @@ export function routeTable({ dev }: { dev: boolean }): RouteObject[] {
     // dropped (M3 plan, S8): a bookmark lands on the Household tab.
     { path: 'finances', element: <Navigate to="/household" replace /> },
     { path: 'settings', element: <SettingsPage /> },
+    // Open a Settle file (M6, E7): from Households and Settings.
+    { path: 'import', element: <ImportPage /> },
   ]
   if (dev && KitGallery !== undefined) {
     pages.push({

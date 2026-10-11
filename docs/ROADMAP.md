@@ -9,7 +9,7 @@ This is a living document. Milestones after the current one are a
 direction, not a commitment. They get re-ordered, merged or dropped as we
 learn.
 
-Last updated: 2026-10-11 (M5 complete; M4 complete on 2026-10-10; M3 complete on 2026-10-09; M3 Design foundations added
+Last updated: 2026-10-12 (M6 implemented, in review; M5 complete on 2026-10-11; M4 complete on 2026-10-10; M3 complete on 2026-10-09; M3 Design foundations added
 after M2.5, and every later milestone moved down one, on 2026-10-08; M2.5 complete on 2026-10-07; M2 complete and M2.5 added for
 receipt-reading accuracy on 2026-09-30; restructured around the free-first product strategy on
 2026-09-28, see [Roadmap strategy](#roadmap-strategy))
@@ -114,7 +114,7 @@ scope. Anything not listed as must-have is negotiable there.
 | M3  | Design foundations                                 | 1 · Free local-first core        | Complete    |
 | M4  | Households, members and the expense ledger         | 1 · Free local-first core        | Complete    |
 | M5  | Balances and settling up                           | 1 · Free local-first core        | Complete    |
-| M6  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
+| M6  | Export, import, backup and sharing                 | 1 · Free local-first core        | In progress |
 | M7  | Installable PWA and public deployment              | 1 · Free local-first core        | Not started |
 | M8  | Privacy-first product analytics                    | 2 · Analytics and developer BO   | Not started |
 | M9  | Minimal developer backoffice                       | 2 · Analytics and developer BO   | Not started |
@@ -583,7 +583,12 @@ notifications.
 
 ## M6 — Export, import, backup and sharing
 
-**Status:** Not started
+**Status:** In progress: plan revision 7 approved on 2026-10-11, all six
+checkpoints implemented on `feature/milestone-6` (PR #14), awaiting the
+implementation reviews. The merge is in scope (the user's decision), and
+the file stays plain JSON with no password. Plan:
+`docs/milestones/milestone-6-PLAN.md`; the file format and the merge rules
+are ADR 0007.
 
 **Objective:** Users own their data, can back it up, move it to another
 device, and share a household with their roommates without an account or a

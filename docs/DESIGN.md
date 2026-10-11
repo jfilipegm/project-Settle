@@ -269,6 +269,53 @@ button) take focus inside it, where `:focus-visible` doesn't reach.
 - **The overview's card:** "Balances", "Across all expenses and
   payments.", the members' rows, then the settle-up line and "Details".
 
+## Export, import and backup (M6)
+
+- **Share and export** (a card on the Members tab, above the household's
+  own card): the privacy line, always visible ("The file has names,
+  amounts, dates, descriptions and shop names. Anyone who gets it can
+  read it."), then **Share household file** (primary) and **Export CSV**.
+  After a share or a download: "File ready. Send it to your housemates;
+  they open it with Open a Settle file." When records stay out of a file,
+  a bordered notice says how many and why, with "Make the file anyway"
+  and Cancel, before the file is made.
+- **Your data** (a card in Settings): "Last backup: 2 Oct 2026" or "No
+  backup yet", the hint to keep the file off the phone, **Back up now**
+  (primary) and **Restore from a file**, and "Restoring adds what this
+  phone is missing. It doesn't undo changes made since the backup."
+- **The reminder** (on Households and a household's Overview, after 7
+  days of changes without a backup): a warning-fill block with "Your
+  changes from the last 9 days aren't backed up.", **Back up now** and
+  **Later** (hides it for 7 days). It never blocks anything.
+- **Open a Settle file** (`/import`, from a button on Households, Restore
+  from a backup in its empty state, and Settings' Restore from a file):
+  a card with the file field. A refused file shows "This file can't be
+  opened", its problems in words (up to five, then "And 3 more
+  problems."), "Nothing was written…" and **Choose another file**.
+- **The preview:** one card per household. A new one says "Flat: new on
+  this device. 4 people, 37 expenses, 5 payments." A merge says "3 new
+  expenses, 1 changed, 1 deleted, 2 new payments" (or "Nothing new"),
+  then the lines for kept and left-out records in the quiet text, then
+  "1 to decide". The changes Apply makes are under "Show the 6 changes".
+- **The conflict pair:** a group named "Changed on both phones: The
+  expense “Groceries” on 3 Oct" (or "Deleted on one phone, changed on
+  the other"). Two boxes, "This phone" on the card and "The file" on the
+  ground, describe each side as the history does ("Groceries, 23,40 €,
+  3 Oct, paid by Ana", or "Deleted"); "What differs: the amount." under
+  them; then **Keep mine** and **Use theirs** as two radio buttons drawn
+  as 44 px tiles, the chosen one with a 2 px ink border. There is no
+  default. A conflict between equal clocks adds "Both versions have the
+  same history, so Settle can't tell which is newer."
+- **Restored from an older copy:** a warning-fill notice above the
+  preview ("This phone seems to have been restored from an older copy…")
+  with **Use theirs for all of these**; every choice stays changeable.
+- **Apply** (primary, 48 px) stays disabled until every conflict is
+  decided and the member limits hold; the reason sits beside it in a
+  polite live region ("Choose for 1 record before you apply.", "This would
+  make more than 20 people active on 3 Oct…"). **Cancel** writes nothing.
+  Done: "Rua das Flores 12 now has 40 expenses." and "Open Rua das Flores
+  12" on its own line, for each household.
+
 ## Languages
 
 English and European Portuguese, from one typed catalogue in

@@ -11,6 +11,7 @@ import {
 import { Amount } from '../ui/Amount.tsx'
 import { Card } from '../ui/Card.tsx'
 import { SelectField } from '../ui/Field.tsx'
+import { YourDataCard } from './exchange/YourDataCard.tsx'
 import styles from './SettingsPage.module.css'
 
 const LANGUAGE_SETTINGS: readonly LanguageSetting[] = ['system', 'en', 'pt']
@@ -19,8 +20,9 @@ const THEME_MODES: readonly ThemeMode[] = ['system', 'light', 'dark']
 const EXAMPLE_AMOUNT = cents(123456)
 
 /**
- * Settings (M3 plan, S8, S11) on the kit: Language, Theme, Region, and
- * receipt reading with its licences.
+ * Settings (M3 plan, S8, S11) on the kit: Language, Theme, Region, your
+ * data (M6, E10: backup and restore), and receipt reading with its
+ * licences.
  */
 export function SettingsPage() {
   const { region, setRegion } = useRegion()
@@ -108,6 +110,8 @@ export function SettingsPage() {
           </output>
         </p>
       </Card>
+
+      <YourDataCard />
 
       <Card title={t('settings.receipts.heading')}>
         <p>{t('settings.receipts.builtIn')}</p>

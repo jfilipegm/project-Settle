@@ -37,7 +37,16 @@ export function HouseholdDataProvider({
   const [db, setDb] = useState<IDBDatabase | null>(null)
   const [revision, setRevision] = useState(0)
   const opening = useRef(false)
+  // Unmounted before the database opened: close it, and change nothing.
+  const unmounted = useRef(false)
   const channel = useRef<BroadcastChannel | null>(null)
+
+  useEffect(() => {
+    unmounted.current = false
+    return () => {
+      unmounted.current = true
+    }
+  }, [])
 
   const open = useCallback(() => {
     if (opening.current) return
@@ -53,10 +62,15 @@ export function HouseholdDataProvider({
       },
     }).then(
       (opened) => {
+        if (unmounted.current) {
+          opened.close()
+          return
+        }
         setDb(opened)
         setStatus('ready')
       },
       (error: unknown) => {
+        if (unmounted.current) return
         setStatus(
           error instanceof StorageOutdatedError
             ? 'outdated'

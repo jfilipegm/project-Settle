@@ -1,0 +1,7 @@
+﻿Tipo;Data;Descrição;Categoria;Pago por;Para;Valor (EUR);Ana;João;"Marta ""M""";'=Rui
+Despesa;2026-09-01;"Café, pão e ""bolos""";Supermercado;Ana;;10,00;3,33;3,33;3,34;
+Pagamento;2026-09-02;;;'=Rui;"Marta ""M""";5,00;;;;
+Despesa;2026-09-05;'=SUM(A1:A9);Refeições fora;'=Rui;;45,67;15,22;;;30,45
+Despesa;2026-09-10;Continente;Supermercado;"Marta ""M""";;4,87;1,62;;3,25;
+Pagamento;2026-09-20;"Renda
+de setembro";;João;Ana;1234,56;;;;

@@ -16,20 +16,12 @@ import {
   NOW,
   freshFactory,
   getRaw,
-  household,
-  member,
   putRaw,
-  testSchemaV3,
+  testSchemaV4,
   withoutVersion,
 } from '../test/households.ts'
-import { createBill } from '../features/split/billReducer.ts'
-import type { Bill } from '../features/split/model.ts'
-import {
-  RECORD_VERSION,
-  type Expense,
-  type QuickSplit,
-  type Settlement,
-} from '../features/household/model.ts'
+import { buildScenario } from '../test/completion.ts'
+import { RECORD_VERSION, type Settlement } from '../features/household/model.ts'
 import {
   balances,
   explainBalance,
@@ -46,127 +38,17 @@ import { cents } from '../lib/money.ts'
 import {
   MIGRATIONS,
   createSchemaV1,
+  createSchemaV2,
   openDatabase,
-  type Migration,
 } from './db.ts'
 import {
-  addMember,
-  createHousehold,
-  deleteExpense,
   deleteSettlement,
   listExpenses,
   listSettlements,
   listHouseholds,
   listMembers,
-  saveExpense,
   saveSettlement,
-  setMemberLeft,
 } from './repository.ts'
-
-const MEMBERS = ['ana', 'marta', 'joao', 'tiago']
-
-function quick(
-  i: number,
-  split: QuickSplit,
-  extra: Partial<Expense> = {},
-): Expense {
-  const month = i < 12 ? '08' : '09'
-  return {
-    v: RECORD_VERSION,
-    id: `q${i}`,
-    householdId: 'h1',
-    description: `Quick ${i}`,
-    date: `2026-${month}-${String((i % 27) + 1).padStart(2, '0')}`,
-    category:
-      (['groceries', 'utilities', 'rent', 'internet'] as const)[i % 4] ??
-      'other',
-    payerId: MEMBERS[i % 4] ?? 'ana',
-    split,
-    createdAt: NOW,
-    updatedAt: NOW,
-    ...extra,
-  }
-}
-
-function quickSplit(i: number, people: string[]): QuickSplit {
-  const amount = cents(1000 + i * 137)
-  switch (i % 4) {
-    case 0:
-      return { kind: 'equal', amount, memberIds: people }
-    case 1:
-      return {
-        kind: 'shares',
-        amount,
-        shares: people.map((memberId, k) => ({ memberId, weight: k + 1 })),
-      }
-    case 2: {
-      const each = Math.floor(amount / people.length)
-      return {
-        kind: 'exact',
-        amount,
-        amounts: people.map((memberId, k) => ({
-          memberId,
-          amount: cents(k === 0 ? amount - each * (people.length - 1) : each),
-        })),
-      }
-    }
-    default: {
-      const units = Math.floor(100_000 / people.length)
-      return {
-        kind: 'percent',
-        amount,
-        percents: people.map((memberId, k) => ({
-          memberId,
-          ratio: {
-            numerator: k === 0 ? 100_000 - units * (people.length - 1) : units,
-            denominator: 1000,
-          },
-        })),
-      }
-    }
-  }
-}
-
-function itemisedBill(i: number, people: string[]): Bill {
-  const bill = createBill([people[0] ?? 'p', people[1] ?? 'q', `item-${i}`])
-  bill.people = people.map((id) => ({ id, name: id }))
-  bill.items = [
-    {
-      id: `item-${i}`,
-      name: `Thing ${i}`,
-      quantity: { numerator: 1 + (i % 3), denominator: 1 },
-      unitPrice: cents(299 + i * 41),
-      assignees: people.map((personId) => ({ personId, weight: 1 })),
-    },
-  ]
-  bill.tip = { kind: 'percent', ratio: { numerator: 5, denominator: 1 } }
-  bill.payerId = people[0] ?? ''
-  return bill
-}
-
-function itemised(
-  i: number,
-  people: string[],
-  extra: Partial<Expense> = {},
-): Expense {
-  return {
-    v: RECORD_VERSION,
-    id: `it${i}`,
-    householdId: 'h1',
-    description: `Shop ${i}`,
-    date: `2026-09-${String(i + 10).padStart(2, '0')}`,
-    category: 'groceries',
-    payerId: people[i % people.length] ?? 'ana',
-    split: {
-      kind: 'itemised',
-      bill: itemisedBill(i, people),
-      members: people.map((id) => ({ personId: id, memberId: id })),
-    },
-    createdAt: NOW,
-    updatedAt: NOW,
-    ...extra,
-  }
-}
 
 /** What a household reads as: its records, shares and month totals. */
 async function snapshot(db: IDBDatabase) {
@@ -186,76 +68,6 @@ async function snapshot(db: IDBDatabase) {
       categoryTotals(inMonth(expenses, month)),
     ]),
   }
-}
-
-async function buildScenario(
-  factory: IDBFactory,
-  migrations: readonly Migration[] = MIGRATIONS,
-) {
-  const db = await openDatabase(factory, { migrations })
-  await createHousehold(
-    db,
-    household(),
-    MEMBERS.map((id, position) =>
-      member(id, id[0]?.toUpperCase() + id.slice(1), position),
-    ),
-  )
-  // 24 quick expenses, the four methods in turn.
-  for (let i = 0; i < 24; i++) {
-    await saveExpense(
-      db,
-      quick(i, quickSplit(i, i < 12 ? MEMBERS : MEMBERS.slice(0, 3))),
-    )
-  }
-  // João leaves at the end of August; Rui joins in September.
-  await setMemberLeft(db, 'h1', 'joao', '2026-08-31')
-  await addMember(db, {
-    v: RECORD_VERSION,
-    id: 'rui',
-    householdId: 'h1',
-    name: 'Rui',
-    joinedOn: '2026-09-01',
-  })
-  // 10 itemised expenses in September; one with its receipt and key.
-  for (let i = 0; i < 10; i++) {
-    const people = i % 2 === 0 ? ['ana', 'marta', 'rui'] : ['ana', 'tiago']
-    await saveExpense(
-      db,
-      itemised(
-        i,
-        people,
-        i === 0
-          ? {
-              receipt: {
-                merchant: 'Continente',
-                date: '2026-09-10',
-                total: cents(1000),
-                totalSource: 'qr',
-              },
-              receiptKey: 'qr:502011475:ABC-1',
-            }
-          : {},
-      ),
-    )
-  }
-  // Six corrections: three edits (amount, payer, split), three deletes.
-  await saveExpense(
-    db,
-    quick(
-      1,
-      { ...quickSplit(1, MEMBERS), amount: cents(9999) },
-      { updatedAt: 'edit' },
-    ),
-  )
-  await saveExpense(
-    db,
-    quick(2, quickSplit(2, MEMBERS), { payerId: 'rui', date: '2026-09-02' }),
-  )
-  await saveExpense(db, quick(3, quickSplit(3, ['ana', 'tiago'])))
-  await deleteExpense(db, 'q20')
-  await deleteExpense(db, 'q21')
-  await deleteExpense(db, 'it9')
-  return db
 }
 
 describe('the M4 completion scenario (REQ-11)', () => {
@@ -286,7 +98,7 @@ describe('the M4 completion scenario (REQ-11)', () => {
 
     // 2. An app update: the test-only version-3 upgrade (L1-I1).
     const upgraded = await openDatabase(factory, {
-      migrations: [...MIGRATIONS, testSchemaV3],
+      migrations: [...MIGRATIONS, testSchemaV4],
     })
     const raw = await getRaw(upgraded)
     expect(raw.expenses.every((r) => (r as { v: number }).v === 2)).toBe(true)
@@ -305,7 +117,7 @@ describe('the M4 completion scenario (REQ-11)', () => {
     // 3. A fixture round trip: the raw records into a fresh database.
     const exported = await getRaw(
       await openDatabase(factory, {
-        migrations: [...MIGRATIONS, testSchemaV3],
+        migrations: [...MIGRATIONS, testSchemaV4],
       }),
     )
     const trip = await openDatabase(freshFactory())
@@ -380,10 +192,37 @@ describe('the M5 completion scenario: balances and payments', () => {
     expect(before.suggestion.length).toBeGreaterThan(0)
     v1.close()
 
-    const v2 = await openDatabase(factory)
+    const v2 = await openDatabase(factory, {
+      migrations: [createSchemaV1, createSchemaV2],
+    })
     expect(v2.version).toBe(2)
     expect(await ledgerSnapshot(v2)).toEqual(before)
     v2.close()
+  })
+
+  it('keeps every record and the balances across the real version-2 to version-3 upgrade (M6, E5)', async () => {
+    const factory = freshFactory()
+    const v2 = await buildScenario(factory, [createSchemaV1, createSchemaV2])
+    expect(v2.version).toBe(2)
+    const before = await ledgerSnapshot(v2)
+    const rawBefore = await getRaw(v2)
+    v2.close()
+
+    const v3 = await openDatabase(factory)
+    expect(v3.version).toBe(3)
+    expect(await ledgerSnapshot(v3)).toEqual(before)
+    const raw = await getRaw(v3)
+    const byId = (records: unknown[]) =>
+      [...records].sort((a, b) =>
+        String((a as { id: string }).id).localeCompare(
+          String((b as { id: string }).id),
+        ),
+      )
+    for (const store of ['households', 'members', 'expenses'] as const) {
+      expect(byId(raw[store])).toEqual(byId(rawBefore[store]))
+    }
+    expect(raw.versions).toEqual([])
+    v3.close()
   })
 
   it('records five payments, then survives a reload with the same balances', async () => {

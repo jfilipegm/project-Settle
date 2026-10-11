@@ -3,6 +3,7 @@
  * wrapper of our own: open it, run its migrations, and run transactions.
  * No React here.
  */
+import { newId } from '../features/split/billReducer.ts'
 
 export const DB_NAME = 'settle'
 
@@ -12,6 +13,7 @@ export const STORE = {
   expenses: 'expenses',
   meta: 'meta',
   settlements: 'settlements',
+  versions: 'versions',
 } as const
 
 export type StoreName = (typeof STORE)[keyof typeof STORE]
@@ -51,8 +53,35 @@ export const createSchemaV2: Migration = (db) => {
   settlements.createIndex(INDEX.byHousehold, 'householdId')
 }
 
+/** The `meta` store's keys beside `schema` (M6 plan, E4, E5). */
+export const META = {
+  /** This device's own id in record clocks. */
+  deviceId: 'deviceId',
+  /** Ids this device used before, retired for good (E4). */
+  formerDeviceIds: 'formerDeviceIds',
+  /** When the last backup was handed over (E10). */
+  lastBackupAt: 'lastBackupAt',
+  /** The first change since then, or absent (E5). */
+  firstUnbackedChangeAt: 'firstUnbackedChangeAt',
+} as const
+
+/**
+ * Version 3 (M6, E4, E5): the `versions` store, which keeps every
+ * record's clock and is also the deletion log, and this device's id. It
+ * rewrites no record and creates no version entry.
+ */
+export const createSchemaV3: Migration = (db, tx) => {
+  const versions = db.createObjectStore(STORE.versions, { keyPath: 'id' })
+  versions.createIndex(INDEX.byHousehold, 'householdId')
+  tx.objectStore(STORE.meta).put({ key: META.deviceId, value: newId() })
+}
+
 /** The app's migrations: its database version is their count. */
-export const MIGRATIONS: readonly Migration[] = [createSchemaV1, createSchemaV2]
+export const MIGRATIONS: readonly Migration[] = [
+  createSchemaV1,
+  createSchemaV2,
+  createSchemaV3,
+]
 
 /** IndexedDB is missing, or the database couldn't be opened (H3). */
 export class StorageUnavailableError extends Error {}

@@ -13,6 +13,10 @@
  *   first and last bars stays inside its card, and the expense dialog's
  *   share-bar tips inside the dialog.
  * - The 360 px check again in Portuguese, for every screen.
+ * - M6: the backup reminder, and Open a Settle file: the picker, a
+ *   preview with a conflict (undecided and decided), a refused file, the
+ *   result, and a household new on this device. The file is generated
+ *   from the seeded household, with one record changed on both phones.
  *
  * Only invented names and amounts appear. The bill is seeded in storage,
  * like a saved draft, and the household ledger (M4) in IndexedDB; no
@@ -227,6 +231,92 @@ const LEDGER = (() => {
     members,
     expenses,
     settlements,
+    // M6: this phone's id, and e1's version, edited here twice.
+    versions: [
+      {
+        id: 'e1',
+        kind: 'expense',
+        householdId: 'h1',
+        clock: { 'this-phone': 2 },
+      },
+    ],
+    meta: [{ key: 'deviceId', value: 'this-phone' }],
+  }
+})()
+
+/**
+ * The Settle file another phone sent (M6): the seeded household, with e1
+ * changed there too (a conflict), a new expense, and e4 deleted there.
+ */
+const IMPORT_FILES = (() => {
+  const { households, members, expenses, settlements } = LEDGER
+  const stamp = households[0].createdAt
+  const changed = expenses.map((expense) =>
+    expense.id === 'e1'
+      ? {
+          ...expense,
+          description: 'Electricity, September (corrected)',
+          split: { ...expense.split, amount: 9640 },
+        }
+      : expense,
+  )
+  const added = {
+    ...expenses.find((expense) => expense.id === 'e2'),
+    id: 'e9',
+    description: 'Cinema, Saturday',
+    category: 'leisure',
+  }
+  const kept = [...changed.filter((expense) => expense.id !== 'e4'), added]
+  const kindOf = (record) =>
+    record === households[0]
+      ? 'household'
+      : 'position' in record
+        ? 'member'
+        : 'fromId' in record
+          ? 'settlement'
+          : 'expense'
+  const versions = [households[0], ...members, ...kept, ...settlements].map(
+    (record) => ({
+      id: record.id,
+      kind: kindOf(record),
+      clock:
+        record.id === 'e1'
+          ? { 'this-phone': 1, 'other-phone': 1 }
+          : record.id === 'e9'
+            ? { 'other-phone': 1 }
+            : {},
+    }),
+  )
+  versions.push({
+    id: 'e4',
+    kind: 'expense',
+    clock: { 'other-phone': 1 },
+    deletedAt: stamp,
+  })
+  const conflict = {
+    format: 'settle',
+    formatVersion: 1,
+    kind: 'household',
+    exportedAt: stamp,
+    households: [
+      {
+        household: households[0],
+        members,
+        expenses: kept,
+        settlements,
+        versions,
+      },
+    ],
+  }
+  return {
+    conflict: JSON.stringify(conflict),
+    broken: JSON.stringify({
+      format: 'settle',
+      formatVersion: 1,
+      kind: 'household',
+      exportedAt: 'yesterday',
+      households: [],
+    }),
   }
 })()
 
@@ -283,21 +373,63 @@ const SCREENS = [
     ledger: true,
   },
   { name: 'settings', path: '/settings' },
+  // M6: the backup reminder, and Open a Settle file.
+  {
+    name: 'households-reminder',
+    path: '/households',
+    ledger: true,
+    reminder: true,
+  },
+  { name: 'import', path: '/import', ledger: true },
+  {
+    name: 'import-preview',
+    path: '/import',
+    ledger: true,
+    importFile: 'conflict',
+  },
+  {
+    name: 'import-decided',
+    path: '/import',
+    ledger: true,
+    importFile: 'conflict',
+    decide: true,
+  },
+  { name: 'import-error', path: '/import', ledger: true, importFile: 'broken' },
+  {
+    name: 'import-done',
+    path: '/import',
+    ledger: true,
+    importFile: 'conflict',
+    decide: true,
+    apply: true,
+  },
+  {
+    name: 'import-new-household',
+    path: '/import',
+    ledger: 'empty',
+    importFile: 'conflict',
+  },
   { name: 'not-found', path: '/no/such/page' },
 ]
 
 /**
  * The page script that rebuilds the ledger's database (M4): deleted, then
- * created at version 2 with its stores, as `data/db.ts` does (M5 added the
- * payments' store), and filled.
+ * created at version 3 with its stores, as `data/db.ts` does (M5 added
+ * the payments' store, M6 the record versions and the device id), and
+ * filled.
  */
 function ledgerScript(ledger) {
-  const records = JSON.stringify({ settlements: [], ...ledger })
+  const records = JSON.stringify({
+    settlements: [],
+    versions: [],
+    meta: [],
+    ...ledger,
+  })
   return `new Promise((resolve, reject) => {
     const del = indexedDB.deleteDatabase('settle')
     del.onerror = () => reject(del.error)
     del.onsuccess = () => {
-      const open = indexedDB.open('settle', 2)
+      const open = indexedDB.open('settle', 3)
       open.onupgradeneeded = () => {
         const db = open.result
         db.createObjectStore('households', { keyPath: 'id' })
@@ -305,24 +437,46 @@ function ledgerScript(ledger) {
         const e = db.createObjectStore('expenses', { keyPath: 'id' })
         e.createIndex('byHousehold', 'householdId')
         e.createIndex('byReceiptKey', ['householdId', 'receiptKey'])
-        db.createObjectStore('meta', { keyPath: 'key' })
-          .put({ key: 'schema', version: 2, migratedAt: new Date().toISOString() })
+        const meta = db.createObjectStore('meta', { keyPath: 'key' })
+        meta.put({ key: 'schema', version: 3, migratedAt: new Date().toISOString() })
+        meta.put({ key: 'deviceId', value: 'screens-device' })
         db.createObjectStore('settlements', { keyPath: 'id' }).createIndex('byHousehold', 'householdId')
+        db.createObjectStore('versions', { keyPath: 'id' }).createIndex('byHousehold', 'householdId')
       }
       open.onerror = () => reject(open.error)
       open.onsuccess = () => {
         const db = open.result
         const data = ${records}
-        const tx = db.transaction(['households', 'members', 'expenses', 'settlements'], 'readwrite')
+        const tx = db.transaction(['households', 'members', 'expenses', 'settlements', 'versions', 'meta'], 'readwrite')
         for (const h of data.households) tx.objectStore('households').put(h)
         for (const m of data.members) tx.objectStore('members').put(m)
         for (const x of data.expenses) tx.objectStore('expenses').put(x)
         for (const p of data.settlements) tx.objectStore('settlements').put(p)
+        for (const v of data.versions) tx.objectStore('versions').put(v)
+        for (const m of data.meta) tx.objectStore('meta').put(m)
         tx.oncomplete = () => { db.close(); resolve(true) }
         tx.onerror = () => reject(tx.error)
       }
     }
   })`
+}
+
+/** The page script that opens a Settle file in /import's picker (M6). */
+function importScript(text) {
+  return `(async () => {
+    for (let i = 0; i < 50; i++) {
+      const input = document.querySelector('input[type=file]')
+      if (input && !input.disabled) {
+        const transfer = new DataTransfer()
+        transfer.items.add(new File([${JSON.stringify(text)}], 'Settle - Rua das Flores 12.json', { type: 'application/json' }))
+        input.files = transfer.files
+        input.dispatchEvent(new Event('change', { bubbles: true }))
+        return true
+      }
+      await new Promise((r) => setTimeout(r, 100))
+    }
+    return false
+  })()`
 }
 
 /**
@@ -452,14 +606,26 @@ async function load(
     session,
     `localStorage.clear(); for (const [k, v] of Object.entries(${storage})) localStorage.setItem(k, v)`,
   )
-  // The ledger (M4): rebuilt for each load, empty or seeded.
+  // The ledger (M4): rebuilt for each load, empty or seeded. The
+  // reminder's screen marks changes waiting 9 days for a backup (M6).
+  const seeded =
+    screen.ledger === true
+      ? LEDGER
+      : { households: [], members: [], expenses: [], settlements: [] }
+  const nineDaysAgo = new Date(Date.now() - 9 * 86_400_000).toISOString()
   await evaluate(
     cdp,
     session,
     ledgerScript(
-      screen.ledger === true
-        ? LEDGER
-        : { households: [], members: [], expenses: [], settlements: [] },
+      screen.reminder === true
+        ? {
+            ...seeded,
+            meta: [
+              ...(seeded.meta ?? []),
+              { key: 'firstUnbackedChangeAt', value: nineDaysAgo },
+            ],
+          }
+        : seeded,
     ),
   )
   await cdp.send('Page.navigate', { url: `${origin}${screen.path}` }, session)
@@ -470,6 +636,27 @@ async function load(
     `document.fonts.ready.then(() => new Promise((r) => requestAnimationFrame(() => r(true))))`,
   )
   await sleep(200)
+  if (screen.importFile !== undefined) {
+    // Open a Settle file (M6): pick the file, decide, apply.
+    await evaluate(cdp, session, importScript(IMPORT_FILES[screen.importFile]))
+    await sleep(800)
+    if (screen.decide) {
+      await evaluate(
+        cdp,
+        session,
+        `[...document.querySelectorAll('fieldset')].forEach((f) => f.querySelectorAll('input[type=radio]')[1]?.click()) ?? true`,
+      )
+      await sleep(300)
+    }
+    if (screen.apply) {
+      await evaluate(
+        cdp,
+        session,
+        `[...document.querySelectorAll('button')].find((b) => ['Apply', 'Aplicar'].includes(b.textContent.trim()))?.click() ?? true`,
+      )
+      await sleep(800)
+    }
+  }
   if (screen.click !== undefined) {
     // A dialog's screen: open it from its (first) button, by its words.
     await evaluate(

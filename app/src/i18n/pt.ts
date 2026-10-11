@@ -838,4 +838,252 @@ export const pt: Catalogue = {
     },
     pays: '{from} paga a {to} {amount}',
   },
+
+  exchange: {
+    csv: {
+      export: 'Exportar CSV',
+      type: 'Tipo',
+      date: 'Data',
+      description: 'Descrição',
+      category: 'Categoria',
+      paidBy: 'Pago por',
+      to: 'Para',
+      amount: 'Valor ({currency})',
+      expense: 'Despesa',
+      payment: 'Pagamento',
+      done: 'Folha de cálculo pronta: todas as despesas e pagamentos, com a parte de cada pessoa.',
+      failed: 'Não foi possível criar a folha de cálculo. Tente outra vez.',
+    },
+    share: {
+      title: 'Partilhar e exportar',
+      privacy:
+        'O ficheiro tem nomes, valores, datas, descrições e nomes de lojas. Quem o receber pode lê-lo.',
+      shareFile: 'Partilhar o ficheiro da casa',
+      ready:
+        'Ficheiro pronto. Envie-o a quem vive consigo; abrem-no com Abrir um ficheiro do Settle.',
+      nothing:
+        'Não é possível ler esta casa, por isso não há nada para partilhar.',
+      failed: 'Não foi possível criar o ficheiro. Tente outra vez.',
+    },
+    leftOut: {
+      intro: {
+        one: '{count} registo não está no ficheiro: {reasons}.',
+        other: '{count} registos não estão no ficheiro: {reasons}.',
+      },
+      unreadable: {
+        one: '{count} não pôde ser lido',
+        other: '{count} não puderam ser lidos',
+      },
+      invalid: {
+        one: '{count} tem um valor que um ficheiro não aceita',
+        other: '{count} têm um valor que um ficheiro não aceita',
+      },
+      namesLeftOut: {
+        one: '{count} refere um registo que não está nele',
+        other: '{count} referem um registo que não está nele',
+      },
+      keep: 'Ficam neste telemóvel.',
+      continue: 'Criar o ficheiro mesmo assim',
+      cancel: 'Cancelar',
+    },
+    data: {
+      title: 'Os seus dados',
+      lastBackup: 'Última cópia de segurança: {date}',
+      noBackup: 'Ainda sem cópia de segurança',
+      hint: 'Uma cópia de segurança é um ficheiro com todas as casas. Guarde-a noutro sítio que não este telemóvel.',
+      backUp: 'Fazer cópia agora',
+      restore: 'Restaurar de um ficheiro',
+      restoreHint:
+        'Restaurar acrescenta o que falta neste telemóvel. Não desfaz as alterações feitas depois da cópia.',
+      done: 'Cópia de segurança pronta. Guarde o ficheiro noutro sítio que não este telemóvel.',
+      failed: 'Não foi possível fazer a cópia de segurança. Tente outra vez.',
+      word: 'cópia de segurança',
+    },
+    reminder: {
+      label: 'Lembrete de cópia de segurança',
+      text: {
+        one: 'As alterações do último {count} dia não têm cópia de segurança.',
+        other:
+          'As alterações dos últimos {count} dias não têm cópia de segurança.',
+      },
+      later: 'Mais tarde',
+    },
+    open: {
+      title: 'Abrir um ficheiro do Settle',
+      action: 'Abrir um ficheiro do Settle',
+      restoreBackup: 'Restaurar uma cópia de segurança',
+      intro:
+        'Escolha um ficheiro do Settle que alguém partilhou consigo, ou uma das suas cópias de segurança.',
+      file: 'Ficheiro do Settle',
+      hint: 'O Settle verifica-o e mostra o que faria. Nada é gravado até carregar em Aplicar.',
+      reading: 'A verificar o ficheiro…',
+      cantOpen: 'Não é possível abrir este ficheiro',
+      nothingWritten:
+        'Nada foi gravado. Peça um ficheiro novo ou escolha outro.',
+      more: {
+        one: 'E mais {count} problema.',
+        other: 'E mais {count} problemas.',
+      },
+      another: 'Escolher outro ficheiro',
+    },
+    problem: {
+      tooLarge:
+        'O ficheiro tem mais de 20 MB, por isso não é um ficheiro do Settle.',
+      notJson: 'O ficheiro está danificado (não é JSON válido).',
+      notSettle: 'O ficheiro não é um ficheiro do Settle.',
+      newerVersion:
+        'Este ficheiro foi criado por um Settle mais recente. Atualize o Settle para o abrir.',
+      migrationFailed:
+        'Este ficheiro é de um Settle mais antigo e não foi possível atualizá-lo.',
+      badShape:
+        'O ficheiro está danificado: falta uma parte ou tem a forma errada.',
+      unknownKey:
+        'O ficheiro tem uma parte que este Settle não conhece: «{key}».',
+      unknownKind: 'O ficheiro não é de uma casa nem uma cópia de segurança.',
+      householdCount: 'Um ficheiro de casa tem de ter exatamente uma casa.',
+      badTimestamp: 'O ficheiro tem uma hora que não é válida.',
+      badTimestampOf: '{record} tem uma hora que não é válida.',
+      unreadable: 'Não é possível ler {record}.',
+      badId: '{record} tem um identificador que não é válido.',
+      badPosition: '{record} tem uma posição que não é válida.',
+      wrongHousehold: '{record} pertence a outra casa.',
+      missingMember: '{record} refere um membro que não está no ficheiro.',
+      duplicateId: '{record} aparece duas vezes.',
+      tooManyActive: '{record} teria mais de 20 pessoas a {date}.',
+      tooManyMembers: '{record} teria mais de 50 pessoas.',
+      missingVersion: '{record} não tem versão.',
+      duplicateVersion: '{record} tem duas versões.',
+      versions: 'As versões dos registos do ficheiro estão danificadas.',
+    },
+    record: {
+      expense: 'A despesa «{label}» de {date}',
+      expenseNoDate: 'A despesa «{label}»',
+      settlement: 'O pagamento de {date}',
+      settlementNoDate: 'Um pagamento',
+      member: 'O membro «{label}»',
+      household: 'A casa «{label}»',
+      unnamed: 'Um registo',
+    },
+    preview: {
+      fileName: 'Ficheiro: {name}',
+      newHousehold: '{name}: nova neste dispositivo.',
+      newCounts: '{members}, {expenses}, {payments}.',
+      people: { one: '{count} pessoa', other: '{count} pessoas' },
+      expenses: { one: '{count} despesa', other: '{count} despesas' },
+      payments: { one: '{count} pagamento', other: '{count} pagamentos' },
+      nothingNew: 'Nada de novo',
+      nothingNewFile: 'Nada de novo neste ficheiro.',
+      count: {
+        newExpense: {
+          one: '{count} despesa nova',
+          other: '{count} despesas novas',
+        },
+        newPayment: {
+          one: '{count} pagamento novo',
+          other: '{count} pagamentos novos',
+        },
+        newMember: {
+          one: '{count} pessoa nova',
+          other: '{count} pessoas novas',
+        },
+        changed: { one: '{count} alterado', other: '{count} alterados' },
+        deleted: { one: '{count} apagado', other: '{count} apagados' },
+      },
+      leftOutWhole:
+        'Fica como está: este telemóvel não consegue ler o registo desta casa.',
+      leftOutWholeForeign:
+        'Fica de fora: este telemóvel usa o identificador desta casa para outra coisa.',
+      keptRecord: 'Fica como está: não foi possível ler aqui {record}.',
+      foreignRecord:
+        'Fica de fora: {record} usa um identificador que este telemóvel usa para outra coisa.',
+      notAdded:
+        'Não acrescentado: {record} refere {name}, cujo registo não foi possível ler aqui.',
+      kept: {
+        one: '{name} fica: está em {count} registo que vai manter.',
+        other: '{name} fica: está em {count} registos que vai manter.',
+      },
+      keptFromFile: {
+        one: '{name} fica: está em {count} registo do outro telemóvel.',
+        other: '{name} fica: está em {count} registos do outro telemóvel.',
+      },
+      keptOverride: {
+        one: '{name} fica, embora tenha escolhido manter a eliminação: está em {count} registo que vai manter.',
+        other:
+          '{name} fica, embora tenha escolhido manter a eliminação: está em {count} registos que vai manter.',
+      },
+      keptUnreadable:
+        '{name} fica: há aqui registos que não é possível ler e que o podem referir.',
+      restored:
+        'Parece que este telemóvel foi restaurado de uma cópia mais antiga. Verifique estes registos: o ficheiro tem alterações que este telemóvel fez antes do restauro.',
+      useTheirsAll: 'Usar o deles em todos estes',
+      conflicts: {
+        one: '{count} por decidir',
+        other: '{count} por decidir',
+      },
+      changedOnBoth: 'Alterado nos dois telemóveis',
+      deletedOnOne: 'Apagado num telemóvel, alterado no outro',
+      sameHistory:
+        'As duas versões têm a mesma história, por isso o Settle não consegue saber qual é a mais recente.',
+      thisPhone: 'Este telemóvel',
+      theFile: 'O ficheiro',
+      keepMine: 'Manter o meu',
+      useTheirs: 'Usar o deles',
+      differs: 'O que difere: {fields}.',
+      field: {
+        description: 'a descrição',
+        amount: 'o valor',
+        date: 'a data',
+        category: 'a categoria',
+        payer: 'quem pagou',
+        split: 'a divisão',
+        name: 'o nome',
+        left: 'a data de saída',
+        joined: 'a data de entrada',
+        from: 'quem pagou',
+        to: 'quem recebeu',
+        note: 'a nota',
+        archived: 'se está arquivada',
+        other: 'outros detalhes',
+      },
+      deleted: 'Apagado',
+      tooManyActive:
+        'Isto daria mais de 20 pessoas ativas a {date}. Escolha de outra forma, ou marque primeiro alguém como tendo saído num dos telemóveis.',
+      tooManyMembers:
+        'Isto daria mais de 50 pessoas. Escolha de outra forma, ou apague primeiro alguém num dos telemóveis.',
+      undecided: {
+        one: 'Escolha para {count} registo antes de aplicar.',
+        other: 'Escolha para {count} registos antes de aplicar.',
+      },
+      showChanges: {
+        one: 'Mostrar a {count} alteração',
+        other: 'Mostrar as {count} alterações',
+      },
+      change: {
+        new: 'Novo: {what}',
+        changed: 'Alterado: {what}',
+        deleted: 'Apagado: {what}',
+      },
+      newDevice:
+        'Aplicar também dá a este telemóvel um novo identificador para as suas alterações, para que os outros telemóveis nunca as confundam.',
+      apply: 'Aplicar',
+      applying: 'A aplicar…',
+      cancel: 'Cancelar',
+      changedMeanwhile:
+        'Os seus dados mudaram enquanto revia. Reveja o ficheiro outra vez.',
+      reviewAgain: 'Rever outra vez',
+      failed: 'Não foi possível aplicar o ficheiro. Nada foi gravado.',
+    },
+    describe: {
+      expense: '{description}, {amount}, {date}, pago por {payer}',
+      payment: '{paid} {amount}, {date}',
+      memberLeft: '{name}, saiu a {date}',
+      householdArchived: '{name}, arquivada',
+    },
+    done: {
+      title: 'Feito',
+      household: '{name} tem agora {expenses}.',
+      open: 'Abrir {name}',
+      nothing: 'Feito. Não foi preciso alterar nada.',
+    },
+  },
 }

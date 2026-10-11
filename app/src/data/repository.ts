@@ -16,6 +16,7 @@ import {
 } from '../features/household/model.ts'
 import {
   INDEX,
+  META,
   STORE,
   getAll,
   result,
@@ -27,7 +28,9 @@ import {
   readHousehold,
   readMember,
   readSettlement,
+  readVersion,
 } from './records.ts'
+import { bump, type RecordKind, type VersionEntry } from './versions.ts'
 
 /** Records that read, and how many didn't (kept, never deleted, H1). */
 export interface Listed<T> {
@@ -73,6 +76,147 @@ export class SettlementNotFoundError extends Error {}
 
 /** Too many members: 20 active on any one day, 50 in all (H4). */
 export class MemberLimitError extends Error {}
+
+/**
+ * A record its own reader would refuse (M6 plan, E12): the forms check
+ * first, so only a caller that skips them meets this. Nothing was written.
+ */
+export class InvalidRecordError extends Error {}
+
+/**
+ * A record's version entry is damaged, or names another kind or
+ * household (M6, E4). The write is refused rather than starting the
+ * record's clock again. Nothing was written.
+ */
+export class VersionEntryError extends Error {}
+
+/** This device has no readable id (M6, E4): the database is damaged. */
+export class DeviceIdError extends Error {}
+
+/** The stores every write opens besides its own (M6, E4, E5). */
+const TRACKING: readonly StoreName[] = [STORE.versions, STORE.meta]
+
+/** One write transaction's change: this device's id and the time. */
+interface Change {
+  deviceId: string
+  now: string
+}
+
+function metaValue(raw: unknown): unknown {
+  return typeof raw === 'object' && raw !== null && 'value' in raw
+    ? raw.value
+    : undefined
+}
+
+/**
+ * Starts a tracked change (E4, E5): reads this device's id and marks the
+ * first change not yet backed up, if none is marked.
+ */
+async function beginChange(tx: IDBTransaction): Promise<Change> {
+  const meta = tx.objectStore(STORE.meta)
+  const deviceId = metaValue(await result(meta.get(META.deviceId)))
+  if (typeof deviceId !== 'string' || deviceId.length === 0) {
+    throw new DeviceIdError('no device id')
+  }
+  const now = new Date().toISOString()
+  const first: unknown = await result(meta.get(META.firstUnbackedChangeAt))
+  if (first === undefined) {
+    await result(meta.put({ key: META.firstUnbackedChangeAt, value: now }))
+  }
+  return { deviceId, now }
+}
+
+/** A deleted id's save is refused like an edit of a deleted record (M4). */
+function deletedError(kind: RecordKind, id: string): Error {
+  switch (kind) {
+    case 'household':
+      return new HouseholdNotFoundError(id)
+    case 'member':
+      return new MemberNotFoundError(id)
+    case 'expense':
+      return new ExpenseNotFoundError(id)
+    case 'settlement':
+      return new SettlementNotFoundError(id)
+  }
+}
+
+/**
+ * Adds 1 for this device to the record's clock, in the write's own
+ * transaction (E4). With `deleting`, the entry stays as the deletion log's
+ * entry. A deleted id is never written again by a save.
+ */
+async function bumpVersion(
+  tx: IDBTransaction,
+  change: Change,
+  kind: RecordKind,
+  id: string,
+  householdId: string,
+  { deleting = false }: { deleting?: boolean } = {},
+): Promise<void> {
+  const store = tx.objectStore(STORE.versions)
+  const raw: unknown = await result(store.get(id))
+  let clock = {}
+  if (raw !== undefined) {
+    const entry = readVersion(raw)
+    if (
+      entry === null ||
+      entry.kind !== kind ||
+      entry.householdId !== householdId
+    ) {
+      throw new VersionEntryError(id)
+    }
+    if (entry.deletedAt !== undefined) throw deletedError(kind, id)
+    clock = entry.clock
+  }
+  const next: VersionEntry = {
+    id,
+    kind,
+    householdId,
+    clock: bump(clock, change.deviceId),
+  }
+  if (deleting) next.deletedAt = change.now
+  await result(store.put(next))
+}
+
+function requireReadable<T>(value: T, read: (raw: unknown) => T | null): T {
+  if (read(value) === null) {
+    const id =
+      typeof value === 'object' && value !== null && 'id' in value
+        ? String(value.id)
+        : ''
+    throw new InvalidRecordError(id)
+  }
+  return value
+}
+
+/**
+ * Deletes a record and keeps its version entry with `deletedAt` (E4). A
+ * record that isn't there is a no-op. The household comes from the raw
+ * record, or else from its version entry.
+ */
+async function deleteTracked(
+  tx: IDBTransaction,
+  store: StoreName,
+  kind: RecordKind,
+  id: string,
+): Promise<void> {
+  const raw: unknown = await result(tx.objectStore(store).get(id))
+  if (raw === undefined) return
+  const change = await beginChange(tx)
+  let householdId =
+    typeof raw === 'object' && raw !== null && 'householdId' in raw
+      ? raw.householdId
+      : undefined
+  if (typeof householdId !== 'string') {
+    householdId = readVersion(
+      await result(tx.objectStore(STORE.versions).get(id)),
+    )?.householdId
+  }
+  if (typeof householdId === 'string') {
+    await bumpVersion(tx, change, kind, id, householdId, { deleting: true })
+  }
+  await result(tx.objectStore(store).delete(id))
+}
 
 function readAll<T>(
   raws: unknown[],
@@ -163,13 +307,23 @@ export async function createHousehold(
   if (members.length > HOUSEHOLD_LIMITS.maxActiveMembers) {
     throw new MemberLimitError(String(members.length))
   }
+  requireReadable(household, readHousehold)
+  for (const member of members) {
+    requireReadable(member, readMember)
+    if (member.householdId !== household.id) {
+      throw new InvalidRecordError(member.id)
+    }
+  }
   await transaction(
     db,
-    [STORE.households, STORE.members],
+    [STORE.households, STORE.members, ...TRACKING],
     'readwrite',
     async (tx) => {
+      const change = await beginChange(tx)
+      await bumpVersion(tx, change, 'household', household.id, household.id)
       await result(tx.objectStore(STORE.households).add(household))
       for (const member of members) {
+        await bumpVersion(tx, change, 'member', member.id, household.id)
         await result(tx.objectStore(STORE.members).add(member))
       }
     },
@@ -181,11 +335,20 @@ async function updateHousehold(
   id: string,
   change: (household: Household) => Household,
 ): Promise<Household> {
-  return transaction(db, [STORE.households], 'readwrite', async (tx) => {
-    const next = change(await requireHousehold(tx, id))
-    await result(tx.objectStore(STORE.households).put(next))
-    return next
-  })
+  return transaction(
+    db,
+    [STORE.households, ...TRACKING],
+    'readwrite',
+    async (tx) => {
+      const next = requireReadable(
+        change(await requireHousehold(tx, id)),
+        readHousehold,
+      )
+      await bumpVersion(tx, await beginChange(tx), 'household', id, id)
+      await result(tx.objectStore(STORE.households).put(next))
+      return next
+    },
+  )
 }
 
 export function renameHousehold(
@@ -238,7 +401,7 @@ export async function addMember(
 ): Promise<Member> {
   return transaction(
     db,
-    [STORE.households, STORE.members],
+    [STORE.households, STORE.members, ...TRACKING],
     'readwrite',
     async (tx) => {
       await requireHousehold(tx, member.householdId)
@@ -254,6 +417,9 @@ export async function addMember(
       ) {
         throw new MemberLimitError(member.householdId)
       }
+      requireReadable(added, readMember)
+      const change = await beginChange(tx)
+      await bumpVersion(tx, change, 'member', added.id, added.householdId)
       await result(tx.objectStore(STORE.members).add(added))
       return added
     },
@@ -266,17 +432,24 @@ async function updateMember(
   memberId: string,
   change: (member: Member) => Member,
 ): Promise<Member> {
-  return transaction(db, [STORE.members], 'readwrite', async (tx) => {
-    const member = readMember(
-      await result(tx.objectStore(STORE.members).get(memberId)),
-    )
-    if (member === null || member.householdId !== householdId) {
-      throw new MemberNotFoundError(memberId)
-    }
-    const next = change(member)
-    await result(tx.objectStore(STORE.members).put(next))
-    return next
-  })
+  return transaction(
+    db,
+    [STORE.members, ...TRACKING],
+    'readwrite',
+    async (tx) => {
+      const member = readMember(
+        await result(tx.objectStore(STORE.members).get(memberId)),
+      )
+      if (member === null || member.householdId !== householdId) {
+        throw new MemberNotFoundError(memberId)
+      }
+      const next = requireReadable(change(member), readMember)
+      const tracked = await beginChange(tx)
+      await bumpVersion(tx, tracked, 'member', memberId, householdId)
+      await result(tx.objectStore(STORE.members).put(next))
+      return next
+    },
+  )
 }
 
 export function renameMember(
@@ -299,25 +472,33 @@ export function setMemberLeft(
   memberId: string,
   leftOn: string | null,
 ): Promise<Member> {
-  return transaction(db, [STORE.members], 'readwrite', async (tx) => {
-    const { items } = await householdMembers(tx, householdId)
-    const member = items.find((m) => m.id === memberId)
-    if (member === undefined) throw new MemberNotFoundError(memberId)
-    const next: Member = { ...member }
-    if (leftOn === null) delete next.leftOn
-    else next.leftOn = leftOn
-    const lengthens =
-      member.leftOn !== undefined &&
-      (next.leftOn === undefined || next.leftOn > member.leftOn)
-    if (
-      lengthens &&
-      peakActiveWith(items, next) > HOUSEHOLD_LIMITS.maxActiveMembers
-    ) {
-      throw new MemberLimitError(householdId)
-    }
-    await result(tx.objectStore(STORE.members).put(next))
-    return next
-  })
+  return transaction(
+    db,
+    [STORE.members, ...TRACKING],
+    'readwrite',
+    async (tx) => {
+      const { items } = await householdMembers(tx, householdId)
+      const member = items.find((m) => m.id === memberId)
+      if (member === undefined) throw new MemberNotFoundError(memberId)
+      const next: Member = { ...member }
+      if (leftOn === null) delete next.leftOn
+      else next.leftOn = leftOn
+      const lengthens =
+        member.leftOn !== undefined &&
+        (next.leftOn === undefined || next.leftOn > member.leftOn)
+      if (
+        lengthens &&
+        peakActiveWith(items, next) > HOUSEHOLD_LIMITS.maxActiveMembers
+      ) {
+        throw new MemberLimitError(householdId)
+      }
+      requireReadable(next, readMember)
+      const change = await beginChange(tx)
+      await bumpVersion(tx, change, 'member', memberId, householdId)
+      await result(tx.objectStore(STORE.members).put(next))
+      return next
+    },
+  )
 }
 
 /**
@@ -336,7 +517,7 @@ export async function deleteMember(
 ): Promise<void> {
   await transaction(
     db,
-    [STORE.members, STORE.expenses, STORE.settlements],
+    [STORE.members, STORE.expenses, STORE.settlements, ...TRACKING],
     'readwrite',
     async (tx) => {
       const member = readMember(
@@ -382,7 +563,7 @@ export async function deleteMember(
         ]),
       )
       if (refusal !== undefined) throw new MemberInUseError(refusal)
-      await result(tx.objectStore(STORE.members).delete(memberId))
+      await deleteTracked(tx, STORE.members, 'member', memberId)
     },
   )
 }
@@ -446,9 +627,16 @@ export async function saveExpense(
   newMembers: readonly Omit<Member, 'position'>[] = [],
   { replacing = false }: { replacing?: boolean } = {},
 ): Promise<Member[]> {
-  const stores: StoreName[] = [STORE.households, STORE.members, STORE.expenses]
+  requireReadable(expense, readExpense)
+  const stores: StoreName[] = [
+    STORE.households,
+    STORE.members,
+    STORE.expenses,
+    ...TRACKING,
+  ]
   return transaction(db, stores, 'readwrite', async (tx) => {
     await requireHousehold(tx, expense.householdId)
+    const change = await beginChange(tx)
     if (replacing) {
       const stored: unknown = await result(
         tx.objectStore(STORE.expenses).get(expense.id),
@@ -484,7 +672,9 @@ export async function saveExpense(
         if (peakActiveWith(all, next) > HOUSEHOLD_LIMITS.maxActiveMembers) {
           throw new MemberLimitError(expense.householdId)
         }
+        requireReadable(next, readMember)
         all.push(next)
+        await bumpVersion(tx, change, 'member', next.id, next.householdId)
         await result(tx.objectStore(STORE.members).add(next))
         added.push(next)
       }
@@ -499,6 +689,7 @@ export async function saveExpense(
       }
     }
     if (missing.length > 0) throw new MissingReferenceError(missing)
+    await bumpVersion(tx, change, 'expense', expense.id, expense.householdId)
     await result(tx.objectStore(STORE.expenses).put(expense))
     return added
   })
@@ -508,9 +699,9 @@ export async function deleteExpense(
   db: IDBDatabase,
   id: string,
 ): Promise<void> {
-  await transaction(db, [STORE.expenses], 'readwrite', async (tx) => {
-    await result(tx.objectStore(STORE.expenses).delete(id))
-  })
+  await transaction(db, [STORE.expenses, ...TRACKING], 'readwrite', (tx) =>
+    deleteTracked(tx, STORE.expenses, 'expense', id),
+  )
 }
 
 /** The household's readable expenses with this receipt key (H11). */
@@ -583,10 +774,12 @@ export async function saveSettlement(
   settlement: Settlement,
   { replacing = false }: { replacing?: boolean } = {},
 ): Promise<void> {
+  requireReadable(settlement, readSettlement)
   const stores: StoreName[] = [
     STORE.households,
     STORE.members,
     STORE.settlements,
+    ...TRACKING,
   ]
   await transaction(db, stores, 'readwrite', async (tx) => {
     await requireHousehold(tx, settlement.householdId)
@@ -612,6 +805,14 @@ export async function saveSettlement(
       }
     }
     if (missing.length > 0) throw new MissingReferenceError(missing)
+    const change = await beginChange(tx)
+    await bumpVersion(
+      tx,
+      change,
+      'settlement',
+      settlement.id,
+      settlement.householdId,
+    )
     await result(tx.objectStore(STORE.settlements).put(settlement))
   })
 }
@@ -620,7 +821,81 @@ export async function deleteSettlement(
   db: IDBDatabase,
   id: string,
 ): Promise<void> {
-  await transaction(db, [STORE.settlements], 'readwrite', async (tx) => {
-    await result(tx.objectStore(STORE.settlements).delete(id))
+  await transaction(db, [STORE.settlements, ...TRACKING], 'readwrite', (tx) =>
+    deleteTracked(tx, STORE.settlements, 'settlement', id),
+  )
+}
+
+// Versions and change tracking (M6, E4, E5)
+
+/** This device's id and the ids it used before (E4). */
+export interface DeviceIds {
+  deviceId: string
+  formerDeviceIds: string[]
+}
+
+export async function getDeviceIds(db: IDBDatabase): Promise<DeviceIds> {
+  return transaction(db, [STORE.meta], 'readonly', async (tx) => {
+    const meta = tx.objectStore(STORE.meta)
+    const deviceId = metaValue(await result(meta.get(META.deviceId)))
+    if (typeof deviceId !== 'string' || deviceId.length === 0) {
+      throw new DeviceIdError('no device id')
+    }
+    const former = metaValue(await result(meta.get(META.formerDeviceIds)))
+    return {
+      deviceId,
+      formerDeviceIds: Array.isArray(former)
+        ? former.filter((id): id is string => typeof id === 'string')
+        : [],
+    }
+  })
+}
+
+/** A record's version entry, or `null` when it has none or it can't be read. */
+export async function getVersion(
+  db: IDBDatabase,
+  id: string,
+): Promise<VersionEntry | null> {
+  return transaction(db, [STORE.versions], 'readonly', async (tx) =>
+    readVersion(await result(tx.objectStore(STORE.versions).get(id))),
+  )
+}
+
+/** When the last backup was made, and the first change since (E5). */
+export interface BackupStatus {
+  lastBackupAt?: string
+  firstUnbackedChangeAt?: string
+}
+
+export async function getBackupStatus(db: IDBDatabase): Promise<BackupStatus> {
+  return transaction(db, [STORE.meta], 'readonly', async (tx) => {
+    const meta = tx.objectStore(STORE.meta)
+    const status: BackupStatus = {}
+    const last = metaValue(await result(meta.get(META.lastBackupAt)))
+    if (typeof last === 'string') status.lastBackupAt = last
+    const first = metaValue(await result(meta.get(META.firstUnbackedChangeAt)))
+    if (typeof first === 'string') status.firstUnbackedChangeAt = first
+    return status
+  })
+}
+
+/**
+ * A backup was handed over (E5, E10): `lastBackupAt` becomes `at`. The
+ * first unbacked change is cleared only if it came before the snapshot the
+ * backup was built from (`snapshotAt`), so a change made while the file
+ * was being shared stays waiting.
+ */
+export async function recordBackup(
+  db: IDBDatabase,
+  at: string,
+  snapshotAt: string,
+): Promise<void> {
+  await transaction(db, [STORE.meta], 'readwrite', async (tx) => {
+    const meta = tx.objectStore(STORE.meta)
+    await result(meta.put({ key: META.lastBackupAt, value: at }))
+    const first = metaValue(await result(meta.get(META.firstUnbackedChangeAt)))
+    if (typeof first !== 'string' || first <= snapshotAt) {
+      await result(meta.delete(META.firstUnbackedChangeAt))
+    }
   })
 }

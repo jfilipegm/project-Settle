@@ -36,6 +36,7 @@ import { Card } from '../../ui/Card.tsx'
 import { Dialog } from '../../ui/Dialog.tsx'
 import { Icon } from '../../ui/Icon.tsx'
 import { BalancesCard } from './BalancesCard.tsx'
+import { BackupReminder } from '../exchange/BackupReminder.tsx'
 import { useHouseholdContext } from './householdContext.ts'
 import styles from './households.module.css'
 
@@ -129,6 +130,7 @@ export function OverviewPage() {
           {t('overview.addExpense')}
         </Button>
       </p>
+      <BackupReminder />
       {active.length === 0 && (
         <p id={noMembersId} className={styles.hint}>
           {t('overview.noMembersHint')}{' '}

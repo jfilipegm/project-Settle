@@ -121,11 +121,30 @@ A failed upgrade now has its own state ("Settle couldn't update the data
 on this device. Nothing was changed."), replacing the "unavailable"
 message M4 showed for it (M4's O-4).
 
+## Version 3: record versions (M6)
+
+M6's step, `createSchemaV3`, creates the `versions` store (`keyPath:
+'id'`, index `byHousehold`) and writes this device's random `deviceId`
+into `meta`. It rewrites no record and creates no version entry: records
+from before it read as `clock: {}` until they change. M5's test-only step
+moved to version 4, and `app/src/data/fixtures/v3.json` joins the two
+earlier snapshots.
+
+Every write transaction now also opens `versions` and `meta`: it adds 1
+for this device to the record's clock, keeps a deleted record's entry as
+the deletion log (`deletedAt`), refuses to save a deleted id again, and
+marks the first change not yet backed up (`firstUnbackedChangeAt`).
+Content is checked in the repository too, with the readers' own rules
+(`InvalidRecordError`), now that an import writes records without the
+forms (M5's carried-forward finding). ADR 0007 has the clocks, the merge
+and their limits.
+
 ## Consequences
 
 - Clearing the site's data deletes the ledger. Persistent storage lowers
-  the risk of eviction; M6's export is the real answer.
-- Every schema change adds a migration step and keeps the version-1 and
-  version-2 snapshot tests passing.
+  the risk of eviction; M6's backup file and its reminder are the real
+  answer.
+- Every schema change adds a migration step and keeps the version-1,
+  version-2 and version-3 snapshot tests passing.
 - The data layer imports no React; the pages reach it through providers
   and hooks.

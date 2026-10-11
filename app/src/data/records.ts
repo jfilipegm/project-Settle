@@ -21,6 +21,13 @@ import {
   settlementContentErrors,
 } from '../features/household/model.ts'
 import { readBill } from '../features/split/draft.ts'
+import {
+  MAX_COUNT,
+  RECORD_KINDS,
+  type Clock,
+  type RecordKind,
+  type VersionEntry,
+} from './versions.ts'
 
 type Json = unknown
 
@@ -261,4 +268,53 @@ export function readSettlement(value: Json): Settlement | null {
   }
   if (value.note !== undefined) settlement.note = value.note
   return settlementContentErrors(settlement).length === 0 ? settlement : null
+}
+
+/** A clock: device ids to whole counts from 1 to 2^31, or `null`. */
+export function readClock(value: Json): Clock | null {
+  if (!isObject(value)) return null
+  const clock: Record<string, number> = {}
+  for (const [device, count] of Object.entries(value)) {
+    if (
+      device.length === 0 ||
+      typeof count !== 'number' ||
+      !Number.isSafeInteger(count) ||
+      count < 1 ||
+      count > MAX_COUNT
+    ) {
+      return null
+    }
+    clock[device] = count
+  }
+  return clock
+}
+
+function isRecordKind(value: Json): value is RecordKind {
+  return RECORD_KINDS.some((kind) => kind === value)
+}
+
+/** A record's version entry (M6, E4), from known fields only, or `null`. */
+export function readVersion(value: Json): VersionEntry | null {
+  if (
+    !isObject(value) ||
+    !isString(value.id) ||
+    !isRecordKind(value.kind) ||
+    !isString(value.householdId) ||
+    !optionalString(value.deletedAt)
+  ) {
+    return null
+  }
+  const clock = readClock(value.clock)
+  if (clock === null) return null
+  const entry: VersionEntry = {
+    id: value.id,
+    kind: value.kind,
+    householdId: value.householdId,
+    clock,
+  }
+  if (value.deletedAt !== undefined) {
+    if (value.kind === 'household') return null
+    entry.deletedAt = value.deletedAt
+  }
+  return entry
 }

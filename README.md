@@ -132,7 +132,26 @@ device. In English or European Portuguese.
 - **Charts** show each value at once when you point at, tap or tab to a
   bar or a slice.
 
-Export and backup are next on the [roadmap](docs/ROADMAP.md).
+- **Your data, in a file** (M6):
+  - **Share household file**, on a household's Members tab, sends one
+    Settle file (documented JSON) through your phone's share sheet, or
+    downloads it. The card says what the file holds before you share it.
+  - **Open a Settle file**, from Households or Settings, checks the file
+    and shows what it would do: a household new on this device is added;
+    one already here is merged by its records, with **Keep mine** or **Use
+    theirs** for anything changed on both phones. Nothing is written
+    until **Apply**. Two or more phones can keep one household this way,
+    passing the file back and forth, with no account and no server.
+  - **Back up now**, in Settings, saves every household in one file, and
+    **Restore from a file** opens it through the same preview. A reminder
+    appears after a week of changes without a backup.
+  - **Export CSV** gives a spreadsheet of a household's expenses and
+    payments, with each person's share.
+  - A file from a newer Settle is refused, with "Update Settle to open
+    it."
+
+An installable app and a public address are next on the
+[roadmap](docs/ROADMAP.md).
 
 ## Try it
 
@@ -155,12 +174,15 @@ your browser's storage on this device only, so a refresh doesn't lose
 them. **New bill**
 clears them. Your households, members, expenses and payments are saved
 in your browser's own database (IndexedDB), on this device only. Nothing
-is sent anywhere: Copy as text and Share hand the text only to your own
-clipboard or your device's share sheet.
+is sent anywhere: Copy as text, Share, the Settle file, the backup and
+the CSV go only to your own clipboard, your device's share sheet or a
+download.
 
-Until export and backup arrive (M6), clearing this site's data in your
-browser deletes your households. Settle asks the browser to keep its data
-when you create your first household.
+Clearing this site's data in your browser deletes your households, so
+keep a backup file somewhere other than the phone (Settings, Your data).
+Settle asks the browser to keep its data when you create your first
+household. A Settle file leaves the device only through your own share
+sheet or a download; it is plain JSON, so anyone who gets it can read it.
 
 **Receipts are read on your device and never uploaded.** Settle has no
 server to send them to. The receipt image stays in memory while you

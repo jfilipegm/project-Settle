@@ -1,0 +1,60 @@
+/*
+ * Export, backup and the reminder (M6 plan, E7, E9, E10): cards on the
+ * kit, one accent per screen.
+ */
+
+.card {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.card > p,
+.confirm > p {
+  margin: 0;
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--text-14);
+  color: var(--color-quiet);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.status {
+  margin: 0;
+  font-size: var(--text-15);
+}
+
+.error {
+  margin: 0;
+  font-size: var(--text-15);
+  color: var(--color-error);
+}
+
+.confirm {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  background: var(--color-warning-fill);
+}
+
+.reminder {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-warning-fill);
+}
+
+.reminder p {
+  margin: 0;
+  font-weight: 600;
+}
