@@ -2,6 +2,9 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { SettingsPage } from '../pages/SettingsPage.tsx'
+import { IDBFactory } from 'fake-indexeddb'
+import { MemoryRouter } from 'react-router'
+import { HouseholdDataProvider } from '../features/household/HouseholdDataProvider.tsx'
 import { RegionProvider } from '../app/RegionProvider.tsx'
 import {
   LANGUAGE_STORAGE_KEY,
@@ -68,7 +71,11 @@ function renderSettings() {
     <LanguageProvider>
       <RegionProvider>
         <Probe />
-        <SettingsPage />
+        <MemoryRouter>
+          <HouseholdDataProvider factory={new IDBFactory()}>
+            <SettingsPage />
+          </HouseholdDataProvider>
+        </MemoryRouter>
       </RegionProvider>
     </LanguageProvider>,
   )

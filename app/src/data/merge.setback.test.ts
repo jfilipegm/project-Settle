@@ -43,7 +43,7 @@ import {
   conflictKey,
   planImport,
   resolveImport,
-  useTheirsForGoneBack,
+  chooseTheirsForGoneBack,
 } from '../features/exchange/merge.ts'
 import { prepareImport } from './exchange.ts'
 
@@ -135,7 +135,7 @@ describe('gone back in time (round 2, I2)', () => {
     const file = await fileOf(b)
     const preview = await prepareImport(a.db, file)
     const plan = planImport(file, preview.local, preview.newDeviceId)
-    const all = useTheirsForGoneBack(plan, {})
+    const all = chooseTheirsForGoneBack(plan, {})
     expect(all).toEqual({ [conflictKey('h1', 'e1')]: 'theirs' })
     expect(resolveImport(plan, all).canApply).toBe(true)
     const changed = { ...all, [conflictKey('h1', 'e1')]: 'mine' as const }

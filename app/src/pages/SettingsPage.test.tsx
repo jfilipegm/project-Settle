@@ -1,13 +1,21 @@
 import { fireEvent, render, screen } from '@testing-library/react'
+import { IDBFactory } from 'fake-indexeddb'
+import { MemoryRouter } from 'react-router'
 import { afterEach, describe, expect, it } from 'vitest'
 import { RegionProvider } from '../app/RegionProvider.tsx'
+import { HouseholdDataProvider } from '../features/household/HouseholdDataProvider.tsx'
 import { REGION_STORAGE_KEY } from '../app/region.ts'
 import { SettingsPage } from './SettingsPage.tsx'
 
 function renderSettings() {
+  // Your data (M6) reads the ledger's database and links to /import.
   return render(
     <RegionProvider>
-      <SettingsPage />
+      <MemoryRouter>
+        <HouseholdDataProvider factory={new IDBFactory()}>
+          <SettingsPage />
+        </HouseholdDataProvider>
+      </MemoryRouter>
     </RegionProvider>,
   )
 }

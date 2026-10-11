@@ -54,6 +54,8 @@ const SAME_IN_BOTH = new Map([
   ['saveToHousehold.duplicate.body', 'a format: what, when and how much'],
   ['overview.percent', 'a format: a percentage'],
   ['overview.monthBar', 'a format: a month and its total'],
+  ['exchange.describe.payment', 'a format: who paid whom, how much, when'],
+  ['exchange.preview.newCounts', 'a format: people, expenses and payments'],
 ])
 
 describe('the catalogues', () => {

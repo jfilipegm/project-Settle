@@ -1,0 +1,206 @@
+/*
+ * Open a Settle file (M6 plan, E7, E8): the picker, the preview with its
+ * conflict pairs, and the result. Working from 360 px.
+ */
+
+.page {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 48rem;
+}
+
+.page h1 {
+  margin-bottom: 0;
+}
+
+.card {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.card p,
+.refused p,
+.notice p,
+.done p {
+  margin: 0;
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--text-14);
+  color: var(--color-quiet);
+}
+
+.picker {
+  display: grid;
+  gap: var(--space-2);
+  font-weight: 600;
+}
+
+.pickerLabel {
+  font-size: var(--text-15);
+}
+
+.input {
+  min-height: 3rem;
+  padding: var(--space-2);
+  border: 1.5px dashed var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-card);
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 400;
+  max-width: 100%;
+}
+
+.refused,
+.notice,
+.done {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-card);
+}
+
+.refused h2,
+.done h2 {
+  margin: 0;
+}
+
+.refused ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-left: var(--space-5);
+}
+
+.notice {
+  background: var(--color-warning-fill);
+}
+
+.conflicts {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.conflicts h3 {
+  margin: 0;
+  font-size: var(--text-16);
+}
+
+.conflict {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-3) 0 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.legend {
+  float: left;
+  width: 100%;
+  margin-bottom: var(--space-2);
+  padding: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.sides {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.side {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  overflow-wrap: anywhere;
+}
+
+.theirs {
+  background: var(--color-ground);
+}
+
+.sideLabel {
+  font-size: var(--text-13);
+  font-weight: 700;
+  color: var(--color-quiet);
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.choice {
+  display: inline-flex;
+  flex: 1 1 9rem;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-control);
+  background: var(--color-card);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.choice:has(input:checked) {
+  border: 2px solid var(--color-ink);
+}
+
+.choice input {
+  margin: 0;
+  accent-color: var(--color-ink);
+}
+
+.limit {
+  color: var(--color-error);
+}
+
+.changes summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.changes ul {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-5);
+  overflow-wrap: anywhere;
+}
+
+.footer {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.reason {
+  min-height: 1.25rem;
+  margin: 0;
+  color: var(--color-quiet);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.doneList {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

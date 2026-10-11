@@ -682,7 +682,7 @@ export function resolveImport(
 }
 
 /** Every gone-back-in-time conflict set to "Use theirs" (round 3, O2). */
-export function useTheirsForGoneBack(
+export function chooseTheirsForGoneBack(
   plan: ImportPlan,
   choices: Readonly<Record<string, Choice>>,
 ): Record<string, Choice> {

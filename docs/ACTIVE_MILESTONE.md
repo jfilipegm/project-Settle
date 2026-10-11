@@ -123,11 +123,56 @@
     concurrency, round trips, performance; and the seeded sweep (500
     runs, three devices, 175 set back, 145 with an equal clock made on
     purpose, 824 decisions; about 30 s).
-- **CP4 — not started:** sharing, opening and backup.
+- **CP4 — complete:** sharing, opening and backup.
+  - The design canvas first (version 32): Households with the backup
+    reminder and Open a Settle file, Members with Share and export,
+    Settings with Your data, the import preview with a conflict, and
+    pick, error and done, each at phone width in light and dark. The
+    navigation map now draws Open a Settle file (from Households and
+    Settings' Restore from a file) and the share sheet from Members.
+  - `app/handOver.ts`: the share sheet with the file where the browser
+    can share files, otherwise a download through a blob link (no new
+    CSP source). A cancelled share is nothing; any other share failure
+    falls back to the download.
+  - `pages/import/ImportPage.tsx` at `/import`: pick a file (refused
+    over 20 MB before reading), the strict check with up to five
+    problems in words, then the preview per household (new on this
+    device, or the merge's counts, kept and left-out records, each
+    conflict as a pair with what differs and Keep mine or Use theirs,
+    the restored-phone notice with Use theirs for all of these, an
+    equal-clock conflict's "same history" line, the member-limit
+    reason, the changes under a disclosure). Apply is disabled until
+    every conflict is decided, with the reason in a polite live region;
+    Cancel writes nothing; another tab's change asks to review again.
+    Done links each household.
+  - The Members tab's "Share and export" card (privacy line, Share
+    household file), Settings' "Your data" card (last backup, Back up
+    now, Restore from a file, the restore line), and the reminder on
+    Households and the Overview after 7 days of unbacked changes, with
+    Later hiding it for 7 days (`settle.backupSnooze`). Records that
+    stay out of a file are named before it is made, with "Make the file
+    anyway". Open a Settle file is on the Households page, and Restore
+    from a backup in its empty state.
+  - Every new string in `en.ts` and `pt.ts`; the pure words of the
+    preview in `features/exchange/words.ts`.
+  - `HouseholdDataProvider` now closes a database that opens after it
+    has unmounted, instead of updating state (it surfaced as unhandled
+    errors in the Settings tests).
+  - Existing tests: the route table lists `/import`; the Settings and
+    language tests render Settings inside a router and the data
+    provider, which Your data needs; the literal-text guard allows
+    `AbortError`, a DOMException name.
+  - Tests: the hand-over (share, download, no Web Share, cancelled,
+    failed, revoked URL); open, preview, decide, Apply and Cancel; a
+    backup of several households; refused files and their messages;
+    nothing new; another tab's change; the share card (download, share
+    sheet, cancelled, records left out); Your data; the reminder's
+    timing, Later and its backup; Open a Settle file from Households;
+    Portuguese with no English sentinel.
 - **CP5 — not started:** CSV export.
 - **CP6 — not started:** quality pass and documentation.
 
-Verification: `npm run check` passes (104 test files, 1837 passed, 1
+Verification: `npm run check` passes (107 test files, 1867 passed, 1
 skipped).
 
 ## Last completed: M5 — Balances and settling up
