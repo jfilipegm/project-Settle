@@ -37,13 +37,45 @@
     version 2's migrations, and the completion scenario copies its
     records raw into an older database, since today's repository writes
     version 3. No assertion changed.
-- **CP2 — not started:** the Settle file.
+- **CP2 — complete:** the Settle file.
+  - `features/exchange/format.ts`: the file's types (`SettleFile`, one
+    entry per household with its records and `versions`) and
+    `formatFile`, the canonical writer: fixed top-level and entry key
+    order, sorted record keys, records and versions sorted by id, two
+    spaces, a final newline.
+  - `features/exchange/readFile.ts` (E2), pure and all or nothing: 20 MB
+    limit before parsing, `format`, newer versions refused, unknown
+    top-level and entry keys refused, every record through the
+    database's own reader, then the stricter rules (the id rule on every
+    nested id, ISO timestamps, positions from 0 to 2^31 − 1), records in
+    their household, references inside the file, duplicate ids, the
+    member limits, and the version rules (one per record, deletions,
+    clocks of at most 64 entries). Problems are codes naming the record
+    (kind, id, name or description, date), up to five, with the total.
+  - `features/exchange/migrations.ts` (E3): the ordered step list
+    (empty) and its runner. `fileName.ts`: the file names, with the
+    characters a file system refuses replaced by `-`; the word "backup"
+    comes from the catalogue.
+  - `data/exchange.ts`: `snapshotHousehold` and `snapshotBackup` in one
+    read-only transaction. Records that can't be read, that the file's
+    stricter rules refuse, or that name a left-out record stay out and
+    are counted by reason; a household whose own record can't be read is
+    left out whole. The built text must pass `readFile` before it is
+    returned (`ExportCheckError` otherwise).
+  - Tests: the file round trip (read back to the same canonical text,
+    two exports differing only in `exportedAt`), a backup of three
+    households (one archived, one nearly empty), deletions and `{}`
+    clocks, the left-out records (an unreadable member named by
+    readable expenses, a non-ISO `createdAt`, a position out of range, a
+    clock over 64 entries, a damaged version entry), every strict-reading
+    refusal, `__proto__` dropped, the migration runner with a test-only
+    version 2, and the file names.
 - **CP3 — not started:** the merge.
 - **CP4 — not started:** sharing, opening and backup.
 - **CP5 — not started:** CSV export.
 - **CP6 — not started:** quality pass and documentation.
 
-Verification: `npm run check` passes (98 test files, 1732 passed, 1
+Verification: `npm run check` passes (100 test files, 1765 passed, 1
 skipped).
 
 ## Last completed: M5 — Balances and settling up
