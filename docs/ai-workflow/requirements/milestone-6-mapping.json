@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-6",
+  "requirements": {
+    "REQ-1": {
+      "description": "Record versions, the deletion log and change tracking (database version 3)",
+      "checkpoint_ids": [
+        "CP1",
+        "CP3"
+      ]
+    },
+    "REQ-2": {
+      "description": "Content checks in the repository (M5's carried-forward finding)",
+      "checkpoint_ids": [
+        "CP1"
+      ]
+    },
+    "REQ-3": {
+      "description": "The Settle file: versioned, documented, strictly validated, friendly errors",
+      "checkpoint_ids": [
+        "CP2",
+        "CP6"
+      ]
+    },
+    "REQ-4": {
+      "description": "Exact round trip, and older files through migrations",
+      "checkpoint_ids": [
+        "CP2",
+        "CP6"
+      ]
+    },
+    "REQ-5": {
+      "description": "Merge by stable record ids, with a preview and conflict choices",
+      "checkpoint_ids": [
+        "CP3",
+        "CP4"
+      ]
+    },
+    "REQ-6": {
+      "description": "Share a household by file, and open one",
+      "checkpoint_ids": [
+        "CP4"
+      ]
+    },
+    "REQ-7": {
+      "description": "Back up and restore all data",
+      "checkpoint_ids": [
+        "CP2",
+        "CP4"
+      ]
+    },
+    "REQ-8": {
+      "description": "The backup reminder",
+      "checkpoint_ids": [
+        "CP1",
+        "CP4"
+      ]
+    },
+    "REQ-9": {
+      "description": "CSV export of expenses and payments",
+      "checkpoint_ids": [
+        "CP5"
+      ]
+    },
+    "REQ-10": {
+      "description": "Data safety: unreadable records kept, references and limits, nothing lost without a deletion or a choice",
+      "checkpoint_ids": [
+        "CP1",
+        "CP3",
+        "CP4"
+      ]
+    },
+    "REQ-11": {
+      "description": "Privacy: nothing leaves except through the user's share or download; CSP unchanged",
+      "checkpoint_ids": [
+        "CP4",
+        "CP6"
+      ]
+    },
+    "REQ-12": {
+      "description": "Both languages, design, 360 px, accessibility",
+      "checkpoint_ids": [
+        "CP4",
+        "CP5",
+        "CP6"
+      ]
+    },
+    "REQ-13": {
+      "description": "Documentation and the design canvas",
+      "checkpoint_ids": [
+        "CP6"
+      ]
+    }
+  }
+}

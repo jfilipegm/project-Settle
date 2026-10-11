@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "work_item_id": "milestone-6",
+  "plan_revision": 7,
+  "checkpoints": [
+    {
+      "id": "CP1",
+      "name": "Storage version 3: record versions and the deletion log, the device id, change tracking, content checks in the repository",
+      "depends_on": [],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "CP2",
+      "name": "The Settle file: the versioned format, the canonical writer, strict reading with friendly errors, file migrations, the household and device snapshots",
+      "depends_on": [
+        "CP1"
+      ],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "CP3",
+      "name": "The merge: version comparison by record id, conflicts, references and limits, unreadable and foreign records kept, one-transaction apply with its re-check, property tests",
+      "depends_on": [
+        "CP2"
+      ],
+      "complexity": 3,
+      "session_target": 1
+    },
+    {
+      "id": "CP4",
+      "name": "Sharing, opening and backup: the canvas, Share household file, Open a Settle file and the import preview, Back up and Restore, the reminder",
+      "depends_on": [
+        "CP3"
+      ],
+      "complexity": 3,
+      "session_target": 2
+    },
+    {
+      "id": "CP5",
+      "name": "CSV export: the region-aware spreadsheet file of expenses and payments with shares, formula-safe",
+      "depends_on": [
+        "CP4"
+      ],
+      "complexity": 2,
+      "session_target": 1
+    },
+    {
+      "id": "CP6",
+      "name": "Quality pass and documentation: the two-device completion scenario, screens and design checkers, privacy checks, ADR 0007, ADR 0005, DESIGN.md, READMEs, roadmap, the design canvas",
+      "depends_on": [
+        "CP5"
+      ],
+      "complexity": 2,
+      "session_target": 1
+    }
+  ]
+}
