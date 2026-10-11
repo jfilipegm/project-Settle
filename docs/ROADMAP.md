@@ -9,7 +9,7 @@ This is a living document. Milestones after the current one are a
 direction, not a commitment. They get re-ordered, merged or dropped as we
 learn.
 
-Last updated: 2026-10-10 (M5 implemented, in review; M4 complete; M3 complete on 2026-10-09; M3 Design foundations added
+Last updated: 2026-10-11 (M5 complete; M4 complete on 2026-10-10; M3 complete on 2026-10-09; M3 Design foundations added
 after M2.5, and every later milestone moved down one, on 2026-10-08; M2.5 complete on 2026-10-07; M2 complete and M2.5 added for
 receipt-reading accuracy on 2026-09-30; restructured around the free-first product strategy on
 2026-09-28, see [Roadmap strategy](#roadmap-strategy))
@@ -17,9 +17,9 @@ receipt-reading accuracy on 2026-09-30; restructured around the free-first produ
 ## Current goal
 
 > **Phase 1: finish the free, local-first core.** The next milestone is
-> **M5 — Balances and settling up**: what everyone owes or is owed
-> across a household's ledger (M4), and settling it with as few
-> payments as possible, in English and European Portuguese.
+> **M6 — Export, import, backup and sharing**: users own their data,
+> back it up, move it to another device and share a household with
+> their roommates, with no account and no server.
 
 Nothing in Phases 3–8 is being built yet.
 
@@ -113,7 +113,7 @@ scope. Anything not listed as must-have is negotiable there.
 | M2.5| Accurate receipt reading                           | 1 · Free local-first core        | Complete    |
 | M3  | Design foundations                                 | 1 · Free local-first core        | Complete    |
 | M4  | Households, members and the expense ledger         | 1 · Free local-first core        | Complete    |
-| M5  | Balances and settling up                           | 1 · Free local-first core        | In progress |
+| M5  | Balances and settling up                           | 1 · Free local-first core        | Complete    |
 | M6  | Export, import, backup and sharing                 | 1 · Free local-first core        | Not started |
 | M7  | Installable PWA and public deployment              | 1 · Free local-first core        | Not started |
 | M8  | Privacy-first product analytics                    | 2 · Analytics and developer BO   | Not started |
@@ -527,9 +527,20 @@ settling up, sharing and every later phase build on this model.
 
 ## M5 — Balances and settling up
 
-**Status:** In progress: plan revision 4 approved on 2026-10-10, all six
-checkpoints implemented on `feature/milestone-5` (PR #13), awaiting the
-implementation reviews. Plan: `docs/milestones/milestone-5-PLAN.md`.
+**Status:** Complete (accepted 2026-10-11; PR #13). Plan archived at
+`docs/milestones/completed/milestone-5-PLAN.md`. Delivered:
+- balances derived from the ledger, exact to the cent;
+- the fewest payments to settle up (exact up to 16 non-zero balances,
+  ADR 0006), with Mark as paid;
+- full and partial payments, recorded, edited and deleted, in the
+  history;
+- an explanation of each balance, and balances on a date;
+- settle-up text to copy or share;
+- the overview's balances card.
+
+Incomplete data never produces a suggestion. Carried forward: "Mark a
+period as settled" (Useful, not built), and a repository-level check of
+payment content when M6's import writes records.
 
 **Objective:** Everyone can see what they owe or are owed across the
 whole history, and settle it with as few payments as possible.
