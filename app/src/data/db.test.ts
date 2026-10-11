@@ -2,6 +2,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import fixture from './fixtures/v1.json'
 import fixtureV2 from './fixtures/v2.json'
+import fixtureV3 from './fixtures/v3.json'
 import { expenseShares } from '../features/household/shares.ts'
 import { inMonth, monthOf, totalOf } from '../features/household/totals.ts'
 import {
@@ -9,7 +10,7 @@ import {
   freshFactory,
   getRaw,
   putRaw,
-  testSchemaV3,
+  testSchemaV4,
   withoutVersion,
 } from '../test/households.ts'
 import {
@@ -19,6 +20,7 @@ import {
   StorageUnavailableError,
   createSchemaV1,
   createSchemaV2,
+  createSchemaV3,
   STORE,
   openDatabase,
   result,
@@ -26,11 +28,21 @@ import {
   type Migration,
 } from './db.ts'
 import {
+  getDeviceIds,
+  getVersion,
   listExpenses,
   listHouseholds,
   listMembers,
   listSettlements,
 } from './repository.ts'
+
+const V2: readonly Migration[] = [createSchemaV1, createSchemaV2]
+
+async function metaRecords(db: IDBDatabase): Promise<unknown[]> {
+  return transaction(db, [STORE.meta], 'readonly', (tx) =>
+    result(tx.objectStore(STORE.meta).getAll()),
+  )
+}
 
 const byId = (a: unknown, b: unknown) =>
   String((a as { id: string }).id).localeCompare(
@@ -70,26 +82,118 @@ async function derived(db: IDBDatabase) {
   }
 }
 
-describe('the database and its migrations (H2, M5 B3)', () => {
-  it('creates version 2 fresh, with its stores and schema record', async () => {
+describe('the database and its migrations (H2, M5 B3, M6 E4)', () => {
+  it('creates version 3 fresh, with its stores, device id and schema record', async () => {
     const db = await openDatabase(freshFactory(), { now: () => NOW })
-    expect(MIGRATIONS).toEqual([createSchemaV1, createSchemaV2])
-    expect(db.version).toBe(2)
+    expect(MIGRATIONS).toEqual([createSchemaV1, createSchemaV2, createSchemaV3])
+    expect(db.version).toBe(3)
     expect([...db.objectStoreNames].sort()).toEqual([
       'expenses',
       'households',
       'members',
       'meta',
       'settlements',
+      'versions',
     ])
     expect([
       ...db.transaction('settlements').objectStore('settlements').indexNames,
     ]).toEqual(['byHousehold'])
+    expect([
+      ...db.transaction('versions').objectStore('versions').indexNames,
+    ]).toEqual(['byHousehold'])
     expect(await schemaVersion(db)).toEqual({
       key: 'schema',
-      version: 2,
+      version: 3,
       migratedAt: NOW,
     })
+    const { deviceId, formerDeviceIds } = await getDeviceIds(db)
+    expect(deviceId).toMatch(/^[A-Za-z0-9-]{1,64}$/)
+    expect(formerDeviceIds).toEqual([])
+    db.close()
+  })
+
+  it('gives each new database its own device id', async () => {
+    const a = await openDatabase(freshFactory())
+    const b = await openDatabase(freshFactory())
+    expect((await getDeviceIds(a)).deviceId).not.toBe(
+      (await getDeviceIds(b)).deviceId,
+    )
+    a.close()
+    b.close()
+  })
+
+  it('upgrades version 2 to version 3 keeping every record byte for byte (E5)', async () => {
+    const factory = freshFactory()
+    const v2 = await openDatabase(factory, { migrations: V2 })
+    await putRaw(v2, fixtureV2)
+    const rawBefore = await getRaw(v2)
+    const derivedBefore = await derived(v2)
+    v2.close()
+
+    const db = await openDatabase(factory, { now: () => NOW })
+    expect(db.version).toBe(3)
+    const raw = await getRaw(db)
+    for (const store of [
+      'households',
+      'members',
+      'expenses',
+      'settlements',
+    ] as const) {
+      expect(sorted(raw[store] ?? [])).toEqual(sorted(rawBefore[store] ?? []))
+      expect(sorted(raw[store] ?? [])).toEqual(sorted(fixtureV2[store]))
+    }
+    // No version entry is created: records read as `clock: {}` until
+    // they change (E4).
+    expect(raw.versions).toEqual([])
+    expect(await derived(db)).toEqual(derivedBefore)
+    const meta = await metaRecords(db)
+    expect(
+      meta.filter((r) => (r as { key: string }).key === 'deviceId'),
+    ).toHaveLength(1)
+    expect(await schemaVersion(db)).toMatchObject({ version: 3 })
+    db.close()
+  })
+
+  it('reads the frozen version-3 snapshot back equal, versions included', async () => {
+    const db = await openDatabase(freshFactory())
+    await putRaw(db, fixtureV3)
+    const households = await listHouseholds(db)
+    expect(sorted(households.items)).toEqual(sorted(fixtureV3.households))
+    expect(sorted((await listExpenses(db, 'h1')).items)).toEqual(
+      sorted(fixtureV3.expenses),
+    )
+    expect(sorted((await listSettlements(db, 'h1')).items)).toEqual(
+      sorted(fixtureV3.settlements),
+    )
+    for (const entry of fixtureV3.versions) {
+      expect(await getVersion(db, entry.id)).toEqual(entry)
+    }
+    expect(await getVersion(db, 'e2')).toBeNull()
+    db.close()
+  })
+
+  it('rolls back a failing version-3 step: the version-2 data is unchanged', async () => {
+    const factory = freshFactory()
+    const v2 = await openDatabase(factory, { migrations: V2 })
+    await putRaw(v2, fixtureV2)
+    v2.close()
+    const failing: Migration = (db, tx) => {
+      createSchemaV3(db, tx)
+      throw new Error('step failed')
+    }
+    await expect(
+      openDatabase(factory, { migrations: [...V2, failing] }),
+    ).rejects.toBeInstanceOf(MigrationFailedError)
+    const db = await openDatabase(factory, { migrations: V2 })
+    expect(db.version).toBe(2)
+    expect(db.objectStoreNames.contains('versions')).toBe(false)
+    const raw = await getRaw(db)
+    expect(sorted(raw.expenses)).toEqual(sorted(fixtureV2.expenses))
+    expect(
+      (await metaRecords(db)).some(
+        (r) => (r as { key: string }).key === 'deviceId',
+      ),
+    ).toBe(false)
     db.close()
   })
 
@@ -126,7 +230,7 @@ describe('the database and its migrations (H2, M5 B3)', () => {
     const factory = freshFactory()
     const v1 = await openDatabase(factory, { migrations: [createSchemaV1] })
     v1.close()
-    const db = await openDatabase(factory, { now: () => NOW })
+    const db = await openDatabase(factory, { migrations: V2, now: () => NOW })
     expect(db.version).toBe(2)
     expect(db.objectStoreNames.contains('settlements')).toBe(true)
     expect(await schemaVersion(db)).toMatchObject({ version: 2 })
@@ -147,7 +251,7 @@ describe('the database and its migrations (H2, M5 B3)', () => {
     const derivedBefore = await derived(before)
     before.close()
 
-    const db = await openDatabase(factory, { now: () => NOW })
+    const db = await openDatabase(factory, { migrations: V2, now: () => NOW })
     expect(db.version).toBe(2)
     const raw = await getRaw(db)
     // Nothing rewritten: the very records version 1 stored.
@@ -161,16 +265,16 @@ describe('the database and its migrations (H2, M5 B3)', () => {
     db.close()
   })
 
-  it('upgrades version 2 to a test-only version 3, every record intact', async () => {
+  it('upgrades version 3 to a test-only version 4, every record intact', async () => {
     const factory = freshFactory()
-    const v2 = await openDatabase(factory)
-    await putRaw(v2, fixtureV2)
-    v2.close()
+    const v3 = await openDatabase(factory)
+    await putRaw(v3, fixtureV3)
+    v3.close()
     const db = await openDatabase(factory, {
-      migrations: [...MIGRATIONS, testSchemaV3],
+      migrations: [...MIGRATIONS, testSchemaV4],
       now: () => NOW,
     })
-    expect(db.version).toBe(3)
+    expect(db.version).toBe(4)
     expect([
       ...db.transaction('expenses').objectStore('expenses').indexNames,
     ]).toContain('byDate')
@@ -178,11 +282,12 @@ describe('the database and its migrations (H2, M5 B3)', () => {
     for (const store of ['households', 'members', 'expenses'] as const) {
       expect(raw[store].every((r) => (r as { v: number }).v === 2)).toBe(true)
       expect(sorted(withoutVersion(raw[store]))).toEqual(
-        sorted(withoutVersion(fixtureV2[store])),
+        sorted(withoutVersion(fixtureV3[store])),
       )
     }
-    expect(sorted(raw.settlements ?? [])).toEqual(sorted(fixtureV2.settlements))
-    expect(await schemaVersion(db)).toMatchObject({ version: 3 })
+    expect(sorted(raw.settlements ?? [])).toEqual(sorted(fixtureV3.settlements))
+    expect(sorted(raw.versions ?? [])).toEqual(sorted(fixtureV3.versions))
+    expect(await schemaVersion(db)).toMatchObject({ version: 4 })
     db.close()
   })
 
@@ -210,7 +315,7 @@ describe('the database and its migrations (H2, M5 B3)', () => {
   it('refuses a database newer than the code (another tab updated)', async () => {
     const factory = freshFactory()
     const newer = await openDatabase(factory, {
-      migrations: [...MIGRATIONS, testSchemaV3],
+      migrations: [...MIGRATIONS, testSchemaV4],
     })
     newer.close()
     await expect(openDatabase(factory)).rejects.toBeInstanceOf(

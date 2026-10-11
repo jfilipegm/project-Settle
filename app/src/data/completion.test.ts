@@ -19,7 +19,7 @@ import {
   household,
   member,
   putRaw,
-  testSchemaV3,
+  testSchemaV4,
   withoutVersion,
 } from '../test/households.ts'
 import { createBill } from '../features/split/billReducer.ts'
@@ -46,6 +46,7 @@ import { cents } from '../lib/money.ts'
 import {
   MIGRATIONS,
   createSchemaV1,
+  createSchemaV2,
   openDatabase,
   type Migration,
 } from './db.ts'
@@ -188,10 +189,30 @@ async function snapshot(db: IDBDatabase) {
   }
 }
 
+/**
+ * The scenario in a database of `migrations`' version. Today's repository
+ * writes version 3's record versions (M6, E4), so an older database gets
+ * the same records copied in raw, as its own version stored them.
+ */
 async function buildScenario(
   factory: IDBFactory,
   migrations: readonly Migration[] = MIGRATIONS,
 ) {
+  if (migrations.length < MIGRATIONS.length) {
+    const scratch = await buildScenario(freshFactory())
+    const raw = await getRaw(scratch)
+    scratch.close()
+    const db = await openDatabase(factory, { migrations })
+    await putRaw(db, {
+      households: raw.households,
+      members: raw.members,
+      expenses: raw.expenses,
+      settlements: db.objectStoreNames.contains('settlements')
+        ? raw.settlements
+        : [],
+    })
+    return db
+  }
   const db = await openDatabase(factory, { migrations })
   await createHousehold(
     db,
@@ -286,7 +307,7 @@ describe('the M4 completion scenario (REQ-11)', () => {
 
     // 2. An app update: the test-only version-3 upgrade (L1-I1).
     const upgraded = await openDatabase(factory, {
-      migrations: [...MIGRATIONS, testSchemaV3],
+      migrations: [...MIGRATIONS, testSchemaV4],
     })
     const raw = await getRaw(upgraded)
     expect(raw.expenses.every((r) => (r as { v: number }).v === 2)).toBe(true)
@@ -305,7 +326,7 @@ describe('the M4 completion scenario (REQ-11)', () => {
     // 3. A fixture round trip: the raw records into a fresh database.
     const exported = await getRaw(
       await openDatabase(factory, {
-        migrations: [...MIGRATIONS, testSchemaV3],
+        migrations: [...MIGRATIONS, testSchemaV4],
       }),
     )
     const trip = await openDatabase(freshFactory())
@@ -380,10 +401,37 @@ describe('the M5 completion scenario: balances and payments', () => {
     expect(before.suggestion.length).toBeGreaterThan(0)
     v1.close()
 
-    const v2 = await openDatabase(factory)
+    const v2 = await openDatabase(factory, {
+      migrations: [createSchemaV1, createSchemaV2],
+    })
     expect(v2.version).toBe(2)
     expect(await ledgerSnapshot(v2)).toEqual(before)
     v2.close()
+  })
+
+  it('keeps every record and the balances across the real version-2 to version-3 upgrade (M6, E5)', async () => {
+    const factory = freshFactory()
+    const v2 = await buildScenario(factory, [createSchemaV1, createSchemaV2])
+    expect(v2.version).toBe(2)
+    const before = await ledgerSnapshot(v2)
+    const rawBefore = await getRaw(v2)
+    v2.close()
+
+    const v3 = await openDatabase(factory)
+    expect(v3.version).toBe(3)
+    expect(await ledgerSnapshot(v3)).toEqual(before)
+    const raw = await getRaw(v3)
+    const byId = (records: unknown[]) =>
+      [...records].sort((a, b) =>
+        String((a as { id: string }).id).localeCompare(
+          String((b as { id: string }).id),
+        ),
+      )
+    for (const store of ['households', 'members', 'expenses'] as const) {
+      expect(byId(raw[store])).toEqual(byId(rawBefore[store]))
+    }
+    expect(raw.versions).toEqual([])
+    v3.close()
   })
 
   it('records five payments, then survives a reload with the same balances', async () => {

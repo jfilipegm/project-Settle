@@ -2,15 +2,49 @@
 
 ## Milestone
 
-None active. M5 (Balances and settling up) was accepted on 2026-10-11;
-the next roadmap milestone is **M6 — Export, import, backup and
-sharing**.
+**M6 — Export, import, backup and sharing** (`milestone-6`), on
+`feature/milestone-6`, PR #14. Plan revision 7 was approved on
+2026-10-11 (`0bff772`). The plan is `docs/milestones/milestone-6-PLAN.md`.
 
-## Next action
+## Checkpoints
 
-`/milestone-plan` for M6, after PR #13 (M5) is merged into `master`:
-then `git switch master && git pull` and
-`git switch -c feature/milestone-6`.
+- **CP1 — complete:** storage version 3.
+  - `createSchemaV3` adds the `versions` store (indexed `byHousehold`)
+    and writes this device's random `deviceId` into `meta`. It rewrites
+    no record and creates no version entry. M5's test-only step moved
+    to version 4. `fixtures/v3.json` joins `v1.json` and `v2.json`.
+  - `data/versions.ts`, pure: `bump` (refused past 2^31), `join` (the
+    higher count per device), `compare` (equal, newer, older,
+    concurrent), and the `VersionEntry` type. `readClock` and
+    `readVersion` in `records.ts`.
+  - The repository: every write bumps its record's clock in its own
+    transaction, which now also opens `versions` and `meta`. Deletes
+    keep the version entry with `deletedAt`. A save of a deleted id is
+    refused with the same error as an edit of a record deleted in
+    another tab. A damaged version entry, or one of another kind or
+    household, refuses the write (`VersionEntryError`).
+  - Content checks in the repository (E12, M5's carried-forward
+    finding): households, members, expenses and payments that their own
+    readers would refuse throw `InvalidRecordError` and write nothing.
+  - Change tracking (E5): the first write sets `firstUnbackedChangeAt`;
+    `recordBackup` sets `lastBackupAt` and clears it only when the
+    change came before the backup's snapshot.
+  - Tests: the v2-to-v3 upgrade byte for byte from `v2.json` and from
+    the completion scenario, the frozen `v3.json`, a failing version-3
+    step, each write's bump (refused writes leave clocks untouched),
+    the deletion log, deleted ids, the content checks, change tracking.
+  - Existing tests: only setup changed. The v1-to-v2 tests now pin
+    version 2's migrations, and the completion scenario copies its
+    records raw into an older database, since today's repository writes
+    version 3. No assertion changed.
+- **CP2 — not started:** the Settle file.
+- **CP3 — not started:** the merge.
+- **CP4 — not started:** sharing, opening and backup.
+- **CP5 — not started:** CSV export.
+- **CP6 — not started:** quality pass and documentation.
+
+Verification: `npm run check` passes (98 test files, 1732 passed, 1
+skipped).
 
 ## Last completed: M5 — Balances and settling up
 
@@ -97,8 +131,8 @@ None.
 
 ## Active plan
 
-None. M5's plan is archived at
-`docs/milestones/completed/milestone-5-PLAN.md`.
+`docs/milestones/milestone-6-PLAN.md` (revision 7). M5's plan is
+archived at `docs/milestones/completed/milestone-5-PLAN.md`.
 
 ## Functional review checklist
 

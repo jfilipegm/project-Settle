@@ -101,6 +101,8 @@ export interface RawRecords {
   expenses: unknown[]
   /** Version 2's payments (M5); absent from version-1 snapshots. */
   settlements?: unknown[]
+  /** Version 3's record versions (M6); absent before version 3. */
+  versions?: unknown[]
 }
 
 /** A payment from `fromId` to `toId` in household h1 (M5, B2). */
@@ -131,8 +133,10 @@ export async function putRaw(
   records: RawRecords,
 ): Promise<void> {
   const settlements = records.settlements ?? []
+  const versions = records.versions ?? []
   const stores = ['households', 'members', 'expenses']
   if (settlements.length > 0) stores.push('settlements')
+  if (versions.length > 0) stores.push('versions')
   await new Promise<void>((resolve, reject) => {
     const tx = db.transaction(stores, 'readwrite')
     for (const record of records.households)
@@ -141,12 +145,16 @@ export async function putRaw(
     for (const record of records.expenses)
       tx.objectStore('expenses').put(record)
     for (const record of settlements) tx.objectStore('settlements').put(record)
+    for (const record of versions) tx.objectStore('versions').put(record)
     tx.oncomplete = () => resolve()
     tx.onerror = () => reject(tx.error ?? new Error('putRaw failed'))
   })
 }
 
-/** Every raw record, as stored; `settlements` only from version 2 on. */
+/**
+ * Every raw record, as stored; `settlements` only from version 2 on, and
+ * `versions` from version 3.
+ */
 export async function getRaw(db: IDBDatabase): Promise<RawRecords> {
   const all = (store: string) =>
     new Promise<unknown[]>((resolve, reject) => {
@@ -163,15 +171,18 @@ export async function getRaw(db: IDBDatabase): Promise<RawRecords> {
   if (db.objectStoreNames.contains('settlements')) {
     raw.settlements = await all('settlements')
   }
+  if (db.objectStoreNames.contains('versions')) {
+    raw.versions = await all('versions')
+  }
   return raw
 }
 
 /**
- * The test-only step (H2, R2-O1), version 3 on top of M5's real version 2
- * (B3): a new index, and every record rewritten from `v: 1` to `v: 2`
+ * The test-only step (H2, R2-O1), version 4 on top of M6's real version 3
+ * (E4): a new index, and every record rewritten from `v: 1` to `v: 2`
  * with the same content.
  */
-export const testSchemaV3: Migration = (_db, tx) => {
+export const testSchemaV4: Migration = (_db, tx) => {
   tx.objectStore('expenses').createIndex('byDate', 'date')
   for (const store of ['households', 'members', 'expenses']) {
     const request = tx.objectStore(store).openCursor()
