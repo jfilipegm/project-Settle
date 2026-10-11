@@ -129,11 +129,20 @@
   optional findings are applied: the Portuguese 360 px pass (O-1), the
   "paga a" wording recorded in `docs/DESIGN.md` (O-2), and the share-bar
   tip check (O-3).
+- **Round 2:** local APPROVE; manual external REVISE, only for B-EXT-1
+  (completed CI not shown). No code changed. All required checks are
+  green on `cb215e7` and `53aae66`, with the run IDs in the bundle's
+  `TEST_RESULTS.md`; the round was republished as same content
+  (`53aae66`).
+- **Round 3:** local APPROVE and manual external APPROVE. Technical
+  approval `fc6f337` (2026-10-11). Optional findings carried forward:
+  check payment content in the repository when M6 adds import, and keep
+  the exact-versus-fallback wording accurate in product copy.
 
 ## Next action
 
-`/review-implementation milestone-5` on the post-fix bundle (round 2,
-local), then the manual external review.
+Manual functional review: the checklist below. Then `/accept-milestone`,
+or `/apply-functional-review` for findings.
 
 ## Last completed: M4 — Households, members and the expense ledger
 
@@ -216,7 +225,164 @@ None.
 
 ## Functional review checklist
 
-None. M4's round-1 checklist is in commit `42618b9`.
+M5, round 1 (implementation revision 2, technical approval `fc6f337`).
+Write each finding, with the flow number, to
+`.ai-review/milestone-5/feedback/FUNCTIONAL_REVIEW.md`. Every amount is
+exact to the cent. A balance that doesn't follow from the expenses and
+payments, balances that don't add up to zero, a suggested payment that
+doesn't clear them, or anything lost is a finding.
+
+### Setup
+
+1. `npm --prefix app ci`, then `npm --prefix app run build`.
+2. Desktop: `npm --prefix app run preview` and open the address it
+   prints. Phone: `npm --prefix app run preview -- --host`, then open the
+   `Network:` address on the phone, on the same Wi-Fi.
+3. Keep the browser data from M4 for flow 1: its households open in a
+   database that this version upgrades on first load.
+4. Use one browser profile throughout. Everything lives in this
+   browser's IndexedDB, on this device only (until M6).
+
+### Test data
+
+A new household, "M5 test", with three people: Ana, João, Marta. Add two
+quick expenses, both dated this month:
+
+- 90,00 €, paid by Ana, Equally among Ana, João and Marta (30,00 each);
+- 30,00 €, paid by Marta, Equally among João and Marta (15,00 each).
+
+The expected balances are Ana +60,00, João −45,00 and Marta −15,00.
+They add up to zero.
+
+### Flows and expected results
+
+1. **Nothing lost from M4.** Open an M4 household. *Expected:* every
+   member and expense is as it was, and the month totals and charts are
+   unchanged. There are now four tabs: Overview, Expenses, Balances,
+   Members.
+2. **The Balances tab.** In "M5 test", open Balances. *Expected:* "Settle
+   up in 2 payments." The rows are Ana, Gets back, +60,00 (Paid 90,00);
+   João, Owes, −45,00; Marta, Owes, −15,00 (Paid 30,00). The amounts use
+   a true minus sign. Under Settle up: "João pays Ana 45,00 €", then
+   "Marta pays Ana 15,00 €", each with Mark as paid. Record a payment,
+   Copy as text and (where the browser offers it) Share are there too.
+3. **Explaining a balance.** Tap Ana's row. *Expected:* "Ana’s
+   balance", "Paid 90,00 · Share 30,00 · Sent 0,00 · Received 0,00",
+   the 90,00 expense with "+60,00", and "Balance +60,00". Tap that
+   line: the expense opens in its dialog. Back or Escape returns to the
+   explanation, and "All balances" returns to the tab. Do the same for
+   Marta: her two lines, +15,00 and −30,00, sum to −15,00.
+4. **Mark as paid, whole.** Mark as paid on "Marta pays Ana".
+   *Expected:* the dialog opens with From Marta, To Ana, 15,00 and
+   today's date. The line under the fields reads "After this, Marta is
+   settled up and Ana gets back 45,00 €" (or similar). Save payment:
+   the dialog closes and the tab now says "Settle up in 1 payment."
+   with "João pays Ana 45,00 €". Marta reads Settled up.
+5. **Mark as paid, partial.** Mark as paid on "João pays Ana", then
+   change the amount to 20,00. *Expected:* the outcome line changes as
+   you type, to "João owes 25,00 €" and "Ana gets back 25,00 €". Save:
+   the suggestion becomes "João pays Ana 25,00 €".
+6. **Record a payment, and its errors.** Record a payment: the dialog
+   opens empty. Save straight away; then choose Ana in both From and
+   To; then enter 0 or leave the amount empty. *Expected:* each error
+   shows next to its field ("Choose who paid and who received.",
+   "Choose two different people.", the amount's message) and nothing is
+   saved. Pressing Save twice quickly never makes two payments. A note
+   over 80 characters is refused.
+7. **Paying more than owed.** Record João paying Ana 40,00. *Expected:*
+   the outcome line says Ana owes and João gets back; once saved, the
+   suggestion turns the other way (Ana pays João 15,00 €). Keep this
+   payment for flow 9, then delete it.
+8. **Payments in the history.** Open Expenses. *Expected:* the payments
+   sit among the expenses by date, with an exchange icon and "João paid
+   Ana", styled apart from the expenses. The month's total and count
+   are expenses only (120,00 € across 2 expenses), as are the overview's
+   "shared" line and charts. Filter by Person = Marta: her payment and
+   expenses show. A Category filter hides the payments. A search for
+   "Marta", or for a word in a payment's note, finds the payment.
+9. **A payment in its dialog.** Open a payment. *Expected:* From, To,
+   amount, date and note, with Edit and Delete. Edit: the dialog is
+   filled in. Lowering an amount shows the outcome of the new amount
+   alone, not the old amount added on top. Save. Delete: "Delete this
+   payment? The balances change back."; confirming removes it and the
+   balances return. Close, Escape, a click on the backdrop and Back each
+   return to the list.
+10. **Balances on a date.** On Balances, set "Balances on" to a day
+    before the payments. *Expected:* the balances are as they were that
+    day, and "These are the balances on {date}. Show all." appears.
+    Settle up, Mark as paid, Record a payment, Copy and Share are
+    hidden. The date is in the address and survives a reload; Show all
+    clears it. Explanations follow the date. A date after today typed
+    into the address (`?on=`) is ignored.
+11. **Records dated after today.** Add an expense dated next month.
+    *Expected:* without a date set, the balances include it and a line
+    says "Includes 1 expense dated after today." Delete it afterwards.
+12. **Settle-up text.** Copy as text, then paste it somewhere.
+    *Expected:* "M5 test, balances", then one line per person ("Ana
+    gets back 25,00 €", "João owes 25,00 €"), then "To settle up, 1
+    payment:" and the payment, in the region's money format. "Copied."
+    is announced. On the phone, Share opens the share sheet, and
+    cancelling it is not an error.
+13. **The overview's balances card.** Open Overview. *Expected:* a
+    balances card with each person's balance, "Across all expenses and
+    payments.", the settle-up line and Details (which opens Balances).
+    The card shows the same balances whichever month the overview is
+    on. A household with no expenses and no payments has no card.
+14. **Everyone settled.** Record João paying Ana 25,00. *Expected:*
+    "Everyone is settled up." on the tab, on the card and in the copied
+    text. Everyone reads Settled up, and there are no payments to
+    suggest.
+15. **Members and payments.** Add Rui, record Rui paying Ana 5,00,
+    then try to delete Rui on Members. *Expected:* refused, because
+    he's on a payment ("…is on expenses or payments…"), with "Mark as
+    left" offered instead. Delete that payment: now Rui can be
+    deleted. Mark Marta as left: while her balance is zero she
+    isn't listed on Balances. If she leaves with a balance, she is
+    listed with "Left on {date}" and still appears in From/To as
+    "Marta (left)".
+16. **The chart notes (M4's follow-ups).** On an M4 household's
+    Overview. *Expected:*
+    - In "The last six months", the month on screen isn't a link; the
+      other months are.
+    - Every bar lightens on hover, and its value shows at once in a tip
+      above the bar. This holds on both bar charts, the donut and the
+      expense dialog's share bar. There is no second, delayed browser
+      tooltip.
+    - On the phone, tapping a bar that isn't a link shows its tip, and
+      tapping elsewhere hides it.
+    - The donut and its legend show the same percentage for each
+      category.
+17. **Keyboard.** Tab to a bar chart. *Expected:* the whole chart is one
+    Tab stop. The arrow keys, Home and End move between bars, each
+    showing its tip; Enter on a linked month opens it. In the payment
+    dialog, focus starts inside and stays there; after Save, "Payment
+    recorded." is announced and focus lands somewhere sensible.
+18. **Portuguese.** Settings → Language → Português, then walk flows 2
+    to 14. *Expected:* everything in European Portuguese, including
+    Saldos, Recebe / Deve / Contas certas, "Acertar contas em 2
+    pagamentos.", Marcar como pago, Registar um pagamento, Saldos a,
+    and "João paga a Ana" (no article: see `docs/DESIGN.md`,
+    "Languages"). Plurals read right with 1 and with 2 or more. No
+    English is left. Note any wording that is wrong, Brazilian or
+    awkward.
+19. **Phone and desktop, both themes.** At 360 px and on a desktop, in
+    light and dark, in both languages. *Expected:* the four tabs fit,
+    nothing scrolls sideways, the payment dialog fits the phone, and
+    chart tips stay inside their card.
+
+### Known limitations (not findings)
+
+- Data lives only in this browser on this device until M6 (sync and
+  backup); clearing site data deletes it. Export is M6.
+- Payments are only written down. Settle doesn't move money and sends no
+  reminders. "Mark a period as settled" is out of scope.
+- Above 16 people with a non-zero balance, the suggestion may use more
+  than the fewest payments (at most one fewer than the number of
+  people). See ADR 0006.
+- How the page behaves with records that can't be read (no suggestion,
+  the notice) is covered by automated tests: a damaged record can't be
+  made from the app.
+- The optional findings carried forward (Implementation review, above).
 
 <!--
 This file is `workflow_state.FUNCTIONAL_CHECKLIST_PATH`. It is
