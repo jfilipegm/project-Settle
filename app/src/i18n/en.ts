@@ -837,6 +837,20 @@ export const en = {
   },
 
   exchange: {
+    csv: {
+      export: 'Export CSV',
+      type: 'Type',
+      date: 'Date',
+      description: 'Description',
+      category: 'Category',
+      paidBy: 'Paid by',
+      to: 'To',
+      amount: 'Amount ({currency})',
+      expense: 'Expense',
+      payment: 'Payment',
+      done: 'Spreadsheet file ready: every expense and payment, with each person’s share.',
+      failed: 'The spreadsheet file couldn’t be made. Try again.',
+    },
     share: {
       title: 'Share and export',
       privacy:

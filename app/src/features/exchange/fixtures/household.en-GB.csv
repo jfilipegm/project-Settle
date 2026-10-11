@@ -1,0 +1,7 @@
+﻿Type,Date,Description,Category,Paid by,To,Amount (GBP),Ana,João,"Marta ""M""",'=Rui
+Expense,2026-09-01,"Café, pão e ""bolos""",Groceries,Ana,,10.00,3.33,3.33,3.34,
+Payment,2026-09-02,,,'=Rui,"Marta ""M""",5.00,,,,
+Expense,2026-09-05,'=SUM(A1:A9),Eating out,'=Rui,,45.67,15.22,,,30.45
+Expense,2026-09-10,Continente,Groceries,"Marta ""M""",,4.87,1.62,,3.25,
+Payment,2026-09-20,"Renda
+de setembro",,João,Ana,1234.56,,,,

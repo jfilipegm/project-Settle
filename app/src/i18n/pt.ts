@@ -840,6 +840,20 @@ export const pt: Catalogue = {
   },
 
   exchange: {
+    csv: {
+      export: 'Exportar CSV',
+      type: 'Tipo',
+      date: 'Data',
+      description: 'Descrição',
+      category: 'Categoria',
+      paidBy: 'Pago por',
+      to: 'Para',
+      amount: 'Valor ({currency})',
+      expense: 'Despesa',
+      payment: 'Pagamento',
+      done: 'Folha de cálculo pronta: todas as despesas e pagamentos, com a parte de cada pessoa.',
+      failed: 'Não foi possível criar a folha de cálculo. Tente outra vez.',
+    },
     share: {
       title: 'Partilhar e exportar',
       privacy:

@@ -1,7 +1,19 @@
-import { IconShare } from '@tabler/icons-react'
-import { useCallback, type ReactNode } from 'react'
+import { IconFileSpreadsheet, IconShare } from '@tabler/icons-react'
+import { useCallback, useState } from 'react'
+import { handOver } from '../../app/handOver.ts'
+import { useRegion } from '../../app/region.ts'
 import { snapshotHousehold } from '../../data/exchange.ts'
-import { householdFileName } from '../../features/exchange/fileName.ts'
+import {
+  listExpenses,
+  listMembers,
+  listSettlements,
+} from '../../data/repository.ts'
+import { householdCsv } from '../../features/exchange/csv.ts'
+import {
+  csvFileName,
+  householdFileName,
+} from '../../features/exchange/fileName.ts'
+import { useHouseholdData } from '../../features/household/householdData.ts'
 import { isoDate } from '../../features/household/model.ts'
 import { useT } from '../../i18n/language.ts'
 import { Button } from '../../ui/Button.tsx'
@@ -10,21 +22,49 @@ import styles from './exchange.module.css'
 import { ExportStatus } from './ExportStatus.tsx'
 import { useExport } from './useExport.ts'
 
+type CsvState = 'idle' | 'working' | 'done' | 'failed'
+
 /**
- * The Members tab's "Share and export" card (M6 plan, E9): the privacy
- * line, always visible, and Share household file. `children` holds the
- * other exports (CSV).
+ * The Members tab's "Share and export" card (M6 plan, E9, E11): the
+ * privacy line, always visible, Share household file, and Export CSV.
  */
 export function ShareCard({
   householdId,
   householdName,
-  children,
 }: {
   householdId: string
   householdName: string
-  children?: ReactNode
 }) {
   const t = useT()
+  const { region } = useRegion()
+  const { db } = useHouseholdData()
+  const [csv, setCsv] = useState<CsvState>('idle')
+
+  const exportCsv = () => {
+    if (db === null) return
+    setCsv('working')
+    const run = async () => {
+      const members = await listMembers(db, householdId)
+      const expenses = await listExpenses(db, householdId)
+      const settlements = await listSettlements(db, householdId)
+      const text = householdCsv({
+        t,
+        region,
+        members: members.items,
+        expenses: expenses.items,
+        settlements: settlements.items,
+      })
+      const file = new File(
+        [text],
+        csvFileName(householdName, isoDate(new Date())),
+        { type: 'text/csv' },
+      )
+      setCsv((await handOver(file)) === 'cancelled' ? 'idle' : 'done')
+    }
+    run().catch(() => {
+      setCsv('failed')
+    })
+  }
   const make = useCallback(
     async (db: IDBDatabase) => {
       const now = new Date()
@@ -54,7 +94,13 @@ export function ShareCard({
         >
           {t('exchange.share.shareFile')}
         </Button>
-        {children}
+        <Button
+          icon={IconFileSpreadsheet}
+          disabled={csv === 'working'}
+          onClick={exportCsv}
+        >
+          {t('exchange.csv.export')}
+        </Button>
       </div>
       <ExportStatus
         state={state}
@@ -63,6 +109,16 @@ export function ShareCard({
         onConfirm={confirm}
         onCancel={cancel}
       />
+      {csv === 'done' && (
+        <p className={styles.status} role="status">
+          {t('exchange.csv.done')}
+        </p>
+      )}
+      {csv === 'failed' && (
+        <p className={styles.error} role="alert">
+          {t('exchange.csv.failed')}
+        </p>
+      )}
     </Card>
   )
 }

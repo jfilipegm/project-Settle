@@ -170,6 +170,28 @@ describe('Share and export on the Members tab (M6 plan, E7, E9)', () => {
   })
 })
 
+describe('Export CSV (M6 plan, E11)', () => {
+  it('downloads the household’s spreadsheet file', async () => {
+    ;(await seed()).close()
+    renderApp('/households/h1/members')
+    fireEvent.click(await screen.findByRole('button', { name: 'Export CSV' }))
+    expect(
+      await screen.findByText(
+        'Spreadsheet file ready: every expense and payment, with each person’s share.',
+      ),
+    ).toBeInTheDocument()
+    const [file] = downloads
+    expect(file?.name).toBe(`Settle - Rua das Flores 12 - ${today}.csv`)
+    expect(file?.type).toBe('text/csv')
+    const text = (await file?.text()) ?? ''
+    // The default region is pt-PT: `;` between cells, a decimal comma.
+    expect(text).toContain('Type;Date;Description;Category;Paid by;To')
+    expect(text).toContain(
+      'Expense;2026-10-01;Groceries;Groceries;Ana;;10,00;10,00',
+    )
+  })
+})
+
 describe('Your data in Settings (M6 plan, E10)', () => {
   it('backs up every household, and records it', async () => {
     const db = await seed()

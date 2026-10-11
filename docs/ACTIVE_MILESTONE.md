@@ -169,10 +169,27 @@
     sheet, cancelled, records left out); Your data; the reminder's
     timing, Later and its backup; Open a Settle file from Households;
     Portuguese with no English sentinel.
-- **CP5 — not started:** CSV export.
+- **CP5 — complete:** CSV export.
+  - `features/exchange/csv.ts`, pure: every expense and payment, oldest
+    first, with Type, Date (`YYYY-MM-DD`), Description, Category, Paid
+    by, To, Amount (with the currency in the header), then each
+    member's share in member order (members who left included). A
+    payment fills Paid by, To and Amount and leaves the shares empty.
+    `pt-PT` uses `;` and a decimal comma, the others `,` and a point; no
+    symbol or grouping. UTF-8 with a byte-order mark, RFC 4180 quoting,
+    CRLF. A text cell starting with `=`, `+`, `-`, `@`, a tab or a
+    carriage return gets a leading `'`, member names in the header too.
+  - Export CSV on the "Share and export" card, handed over like the
+    Settle file (`text/csv`, `Settle - Flat - 2026-10-11.csv`). The
+    canvas already drew the button.
+  - Tests: golden files for `pt-PT` and `en-GB` (accents, quotes, a
+    newline in a note, a description starting with `=`, an itemised
+    expense's shares, payments, a member who left, a member named
+    `=Rui`), shares summing to each amount in both regions, formula
+    escaping, amounts, and the download from the card.
 - **CP6 — not started:** quality pass and documentation.
 
-Verification: `npm run check` passes (107 test files, 1867 passed, 1
+Verification: `npm run check` passes (108 test files, 1874 passed, 1
 skipped).
 
 ## Last completed: M5 — Balances and settling up
